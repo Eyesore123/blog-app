@@ -35,7 +35,7 @@ export default function MainPage() {
   const handlePageChange = (page: number) => {
     const params = new URLSearchParams();
     if (currentTopic) params.append('topic', currentTopic);
-    params.append('page', page.toString());
+    params.append('page', (page + 1).toString());
     router.get('/', Object.fromEntries(params));
   };
   

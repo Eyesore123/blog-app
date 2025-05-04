@@ -9,12 +9,16 @@ class PostController extends Controller
 {
     public function index()
     {
-        // Fetch all posts
-        $posts = Post::latest()->get();
+        $posts = Post::latest()->paginate(6);
 
-        // Return to Inertia + React component (MainPage)
         return Inertia::render('MainPage', [
-            'posts' => $posts,
+            'posts' => $posts->items(),
+            'currentPage' => $posts->currentPage() - 1,
+            'hasMore' => $posts->hasMorePages(),
+            'total' => $posts->total(),
+            'topics' => [],
+            'currentTopic' => null,
+            'user' => auth()->user() ? ['name' => auth()->user()->name] : null,
         ]);
     }
 }
