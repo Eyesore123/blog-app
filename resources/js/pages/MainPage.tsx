@@ -4,6 +4,7 @@ import { Toaster } from 'sonner';
 import SignOutButton from '@/components/SignOutButton';
 import { CreatePost } from '../components/CreatePost';
 import { BlogPost } from '../components/BlogPost';
+import Header from '../components/Header';
 import useTheme from '../hooks/useTheme';
 import '../../css/app.css';
 
@@ -69,10 +70,7 @@ export default function MainPage() {
           </div>
         </header>
 
-        <div className="text-center !py-8 bg-gradient-to-r from-[#5800FF] via-[#E900FF] to-[#FFC600] text-white">
-          <h1 className="text-4xl font-bold">Joni's Blog</h1>
-        </div>
-
+            <Header />
         <main className="!p-8">
           <div className="w-full  !mx-auto flex !gap-18">
             {/* Sidebar */}
@@ -112,7 +110,7 @@ export default function MainPage() {
                         </li>
                       ))
                     ) : (
-                      <li>No topics available</li>
+                      <li className="!ml-2">No topics available</li>
                     )}
 
                   </ul>
@@ -121,11 +119,11 @@ export default function MainPage() {
             </aside>
 
             {/* Main content */}
-            <div className="flex-1">
+            <div className="flex-1 justify-center items-center flex flex-col">
               {user && <CreatePost />}
               <div className="!space-y-8">
                 {posts.length === 0 ? (
-                  <div className="text-center opacity-70">No blog posts yet.</div>
+                  <div className="text-center opacity-70 !mt-30">No blog posts yet.</div>
                 ) : (
                   <>
                     {posts.map((post) => (

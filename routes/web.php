@@ -1,15 +1,31 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use Inertia\Inertia;
+use App\Http\Controllers\AuthController;
 use App\Http\Controllers\PostController;
+use Illuminate\Support\Facades\Auth;
 
 Route::get('/', [PostController::class, 'index'])->name('home');
+Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
+Route::post('/login', [AuthController::class, 'login']);
 
-Route::post('/logout', function () {
-    auth()->logout();
+Route::post('/anonymous-login', function () {
+    $user = \App\Models\User::create([
+        'name' => 'Anonymous',
+        'email' => uniqid() . '@anon.local',
+        'password' => bcrypt(str()->random(16)),
+    ]);
+
+    Auth::login($user);
+
     return redirect('/');
-})->name('logout');
+});
+
+Route::get('/register', [AuthController::class, 'showRegister'])->name('register');
+Route::post('/register', [AuthController::class, 'register']);
+
+Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+
 
 require __DIR__.'/settings.php';
 require __DIR__.'/auth.php';

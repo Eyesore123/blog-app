@@ -1,46 +1,80 @@
 "use client";
 import { useState } from "react";
+import { usePage, router } from "@inertiajs/react";
+import InputError from "../components/input-error";
+import '../../css/app.css';
 
 export default function SignInForm() {
+  const { errors } = usePage().props as { errors: Record<string, string> };
+
   const [flow, setFlow] = useState<"signIn" | "signUp">("signIn");
   const [submitting, setSubmitting] = useState(false);
 
+  // Anonymous sign in logic
+function handleAnonymousSignIn() {
+  setSubmitting(true);
+  router.post("/anonymous-login", {}, {
+    onFinish: () => setSubmitting(false),
+    onSuccess: () => router.get("/"),
+  });
+}
+
   return (
-    <div className="w-full">
+    <div className="w-full !mt-10 !mb-10">
       <form
         className="flex flex-col gap-4"
         onSubmit={(e) => {
           e.preventDefault();
           setSubmitting(true);
-          const formData = new FormData(e.target as HTMLFormElement);
-          formData.set("flow", flow);
-          void signIn("password", formData).catch((error: any) => {
-            const toastTitle =
-              flow === "signIn"
-                ? "Could not sign in, did you mean to sign up?"
-                : "Could not sign up, did you mean to sign in?";
-            setSubmitting(false);
+
+          const formData = new FormData(e.currentTarget);
+          const action = flow === "signIn" ? "/login" : "/register";
+
+          router.post(action, formData, {
+            onFinish: () => setSubmitting(false),
+            onSuccess: () => router.get("/"),
           });
         }}
       >
         <input
-          className="input-field"
+          className="input-field border border-white !p-2 w-80"
           type="email"
           name="email"
           placeholder="Email"
           required
         />
-        <input
-          className="input-field"
-          type="password"
-          name="password"
-          placeholder="Password"
-          required
-        />
+        <InputError message={errors.email} />
+        <div className="input-container">
+          <input
+            className="input-field border border-white !p-2 w-80"
+            type="text"
+            name="name"
+            placeholder="Name"
+            required={flow === "signUp"}
+          />
+        </div>
+        <InputError message={errors.password} />
+
+        {flow === "signUp" && (
+          <>
+          <div className="input-container">
+            <input
+              className="input-field"
+              type="password"
+              name="password_confirmation"
+              placeholder="Confirm Password"
+              required
+            />
+            </div>
+            <InputError message={errors.password_confirmation} />
+          </>
+        )}
+
         <button className="auth-button" type="submit" disabled={submitting}>
           {flow === "signIn" ? "Sign in" : "Sign up"}
         </button>
-        <div className="text-center text-sm text-slate-600">
+
+        <div className="text-center text-slate-600">
           <span>
             {flow === "signIn"
               ? "Don't have an account? "
@@ -55,14 +89,17 @@ export default function SignInForm() {
           </button>
         </div>
       </form>
-      <div className="flex items-center justify-center my-3">
-        <hr className="my-4 grow" />
-        <span className="mx-4 text-slate-400 ">or</span>
-        <hr className="my-4 grow" />
+
+      <div className="flex items-center justify-center !my-3">
+        <hr className="!my-4 grow" />
+        <span className="!mx-4 text-slate-400">or</span>
+        <hr className="!my-4 grow" />
       </div>
-      <button className="auth-button" onClick={() => void signIn("anonymous")}>
+      <div className="button-container flex w-full items-center justify-center">        
+      <button className="auth-button" onClick={handleAnonymousSignIn}>
         Sign in anonymously
       </button>
+      </div>
     </div>
   );
 }

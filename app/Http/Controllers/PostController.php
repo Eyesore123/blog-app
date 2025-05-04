@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Post;
 use Inertia\Inertia;
+use Illuminate\Support\Facades\Auth;
 
 class PostController extends Controller
 {
@@ -18,7 +19,7 @@ class PostController extends Controller
             'total' => $posts->total(),
             'topics' => [],
             'currentTopic' => null,
-            'user' => auth()->user() ? ['name' => auth()->user()->name] : null,
+            'user' => Auth::user() ? ['name' => Auth::user()->name] : null,
         ]);
     }
 }
