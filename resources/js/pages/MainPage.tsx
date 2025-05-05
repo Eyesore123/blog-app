@@ -1,12 +1,12 @@
-import { usePage, Link } from '@inertiajs/react';
+import { usePage } from '@inertiajs/react';
 import { router } from '@inertiajs/react';
 import { Toaster } from 'sonner';
-import SignOutButton from '@/components/SignOutButton';
 import { CreatePost } from '../components/CreatePost';
 import { BlogPost } from '../components/BlogPost';
 import Header from '../components/Header';
 import useTheme from '../hooks/useTheme';
 import '../../css/app.css';
+import { Navbar } from '@/components/Navbar';
 
 interface BlogPostType {
   id: number;
@@ -49,33 +49,14 @@ export default function MainPage() {
   return (
     <div className={`min-h-screen ${theme}`}>
       <div className="min-h-screen bg-[var(--bg-primary)] text-[var(--text-primary)]">
-        <header className="sticky top-0 z-10 bg-[var(--nav-bg)] text-[var(--nav-text)] !p-4 flex justify-between items-center">
-          <div className="flex items-center gap-4">
-            {user && <span className="text-[#FFC600]">Welcome, {user.name}!</span>}
-          </div>
-          <div className="flex items-center gap-14">
-            <button onClick={toggleTheme} className="p-2 hover:text-[#FFC600] transition-colors">
-              {theme === 'dark' ? '🌞' : '🌙'}
-            </button>
-            {user ? (
-              <SignOutButton />
-            ) : (
-              <Link
-                href={route('login')}
-                className="!px-4 !py-2 rounded bg-[#5800FF] text-white hover:bg-[#E900FF] transition-colors"
-              >
-                Sign In
-              </Link>
-            )}
-          </div>
-        </header>
 
+        <Navbar />
             <Header />
         <main className="!p-8">
-          <div className="w-full  !mx-auto flex !gap-18">
+          <div className="w-full !mx-auto flex md:!gap-10 xl:!gap-18">
             {/* Sidebar */}
-            <aside className="!w-80 !lg:w-150 lg:!ml-50">
-              <div className="sticky top-24 !space-y-6">
+            <aside className="!w-80 lg:!w-150 lg:!ml-50">
+              <div className="sticky top-24 !space-y-6 !w-60 md:!w-80 !-ml-0  !xl:ml-0 lg:!w-100 xl:!w-120">
                 <div className="rounded-lg bg-[#5800FF]/10 !p-4">
                   <h3 className="font-semibold !mb-2">About</h3>
                   <p className="opacity-80">
@@ -120,7 +101,6 @@ export default function MainPage() {
 
             {/* Main content */}
             <div className="flex-1 justify-center items-center flex flex-col">
-              {user && <CreatePost />}
               <div className="!space-y-8">
                 {posts.length === 0 ? (
                   <div className="text-center opacity-70 !mt-30">No blog posts yet.</div>

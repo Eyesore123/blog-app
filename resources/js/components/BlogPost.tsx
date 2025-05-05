@@ -1,32 +1,35 @@
 import { useState } from "react";
+import { usePage, Link } from "@inertiajs/react";
 import '../../css/app.css';
 
 export function BlogPost({ post }: { post: { title: string; content: string; topic: string; _id: string } }) {
+  const { auth } = usePage().props as unknown as { auth: { user: { name: string } | null } };
+  const user = auth?.user;
+  const isSignedIn = Boolean(user);
+
   const [showComments, setShowComments] = useState(false);
   const [comments, setComments] = useState<{ _id: string; authorName: string; content: string }[]>([]);
   const [newComment, setNewComment] = useState("");
-  const [authorName, setAuthorName] = useState("");
 
   async function handleSubmitComment(e: React.FormEvent) {
     e.preventDefault();
-    if (!newComment || !authorName) return;
+    if (!newComment) return;
 
     const newCommentData = {
-      _id: Date.now().toString(), // Generates a unique ID using the current timestamp
+      _id: Date.now().toString(),
       postId: post._id,
       content: newComment,
-      authorName,
+      authorName: user?.name ?? "Unknown",
     };
 
     // Simulating a new comment submission (Replace this with actual API call)
     setComments([...comments, newCommentData]);
 
     setNewComment("");
-    setAuthorName("");
   }
 
   return (
-    <article className="rounded-lg bg-[#5800FF]/5 !p-6 lg:max-w-300">
+    <article className="rounded-lg bg-[#5800FF]/5 !p-6 md:!w-300">
       <h2 className="text-2xl font-bold flex justify-start !mb-10">{post.title}</h2>
       <div className="prose max-w-none opacity-90">{post.content}</div>
 
@@ -51,28 +54,29 @@ export function BlogPost({ post }: { post: { title: string; content: string; top
               <p className="text-sm opacity-60 italic">No comments yet. Be the first!</p>
             )}
 
-            <form onSubmit={handleSubmitComment} className="!mt-6">
-              <input
-                type="text"
-                placeholder="Your name"
-                value={authorName}
-                onChange={(e) => setAuthorName(e.target.value)}
-                className="w-full !p-2 rounded border border-[#5800FF]/20 bg-[var(--bg-primary)] !mb-2"
-              />
-              <textarea
-                placeholder="Write a comment..."
-                value={newComment}
-                onChange={(e) => setNewComment(e.target.value)}
-                className="w-full !p-2 rounded border border-[#5800FF]/20 bg-[var(--bg-primary)]"
-              />
-              <button
-                type="submit"
-                disabled={!newComment || !authorName}
-                className="!mt-2 !px-4 !py-2 bg-[#5800FF] text-white rounded hover:bg-[#E900FF] disabled:opacity-50 transition-colors"
-              >
-                Post Comment
-              </button>
-            </form>
+            {isSignedIn ? (
+              <form onSubmit={handleSubmitComment} className="!mt-6">
+                <textarea
+                  placeholder="Write a comment..."
+                  value={newComment}
+                  onChange={(e) => setNewComment(e.target.value)}
+                  className="w-full !p-2 rounded border border-[#5800FF]/20 bg-[var(--bg-primary)]"
+                />
+                <button
+                  type="submit"
+                  disabled={!newComment}
+                  className="!mt-2 !px-4 !py-2 bg-[#5800FF] text-white rounded hover:bg-[#E900FF] disabled:opacity-50 transition-colors"
+                >
+                  Post Comment
+                </button>
+              </form>
+            ) : (
+              <p className="text-sm opacity-70 italic">
+                <Link href={route('login')} className="underline text-[#5800FF] hover:text-[#E900FF]">
+                  Sign in to write a comment
+                </Link>
+              </p>
+            )}
           </div>
         )}
       </div>

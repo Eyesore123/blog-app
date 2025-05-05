@@ -26,7 +26,7 @@ export function CreatePost() {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="!space-y-4 !mt-8 w-2/3 flex justify-center items-center flex-col">
+    <form onSubmit={handleSubmit} className="!space-y-4 !mt-8 w-200 flex justify-center items-center flex-col">
       <input
         type="text"
         placeholder="Post title"
@@ -45,7 +45,7 @@ export function CreatePost() {
         placeholder="Write your post..."
         value={content}
         onChange={(e) => setContent(e.target.value)}
-        className="w-full h-32 !p-2 rounded border border-[#5800FF] bg-[var(--bg-primary)]"
+        className="w-full h-100 !p-2 rounded border border-[#5800FF] bg-[var(--bg-primary)]"
       />
       <button
         type="submit"

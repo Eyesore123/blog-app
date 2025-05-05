@@ -1,15 +1,19 @@
-import { Inertia } from '@inertiajs/inertia';
+import { router } from "@inertiajs/react";
 import '../../css/app.css';
 
 export default function SignOutButton() {
-  const handleSignOut = () => {
-    // Inertia.js makes an API call to the Laravel route to log out
-    Inertia.post(route('logout'));
-  };
+  function handleSignOut() {
+    router.post("/logout", {}, {
+      onSuccess: () => {
+        // Optionally show snackbar or UI feedback
+        console.log("Signed out");
+      },
+    });
+  }
 
   return (
     <button onClick={handleSignOut}>
-      Sign Out
+      Sign out
     </button>
   );
 }

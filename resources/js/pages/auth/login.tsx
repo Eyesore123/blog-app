@@ -1,10 +1,12 @@
 import React from 'react';
 import SignInForm from '../../components/SignInForm';
 import Header from '@/components/Header';
+import { Navbar } from '@/components/Navbar';
 
 const SignInPage: React.FC = () => {
     return (
         <>
+        <Navbar />
         <Header />
         <div className="min-h-screen flex items-center justify-center bg-[var(--bg-primary)] text-[var(--text-primary)]">
       <div className="w-full max-w-md !p-8">

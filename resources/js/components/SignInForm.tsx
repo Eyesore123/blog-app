@@ -46,29 +46,41 @@ function handleAnonymousSignIn() {
         <InputError message={errors.email} />
         <div className="input-container">
           <input
-            className="input-field border border-white !p-2 w-80"
-            type="text"
-            name="name"
-            placeholder="Name"
-            required={flow === "signUp"}
-          />
+          className="input-field border border-white !p-2 w-80"
+          type="name"
+          name="name"
+          placeholder="Name"
+          required
+        />
         </div>
         <InputError message={errors.password} />
 
         {flow === "signUp" && (
-          <>
-          <div className="input-container">
-            <input
-              className="input-field"
-              type="password"
-              name="password_confirmation"
-              placeholder="Confirm Password"
-              required
-            />
-            </div>
-            <InputError message={errors.password_confirmation} />
-          </>
-        )}
+  <>
+    <div className="input-container">
+      <input
+        className="input-field border border-white !p-2 w-80"
+        type="password"
+        name="password"
+        placeholder="Password"
+        required
+      />
+    </div>
+    <InputError message={errors.password} />
+
+    <div className="input-container">
+      <input
+        className="input-field border border-white !p-2 w-80"
+        type="password"
+        name="password_confirmation"
+        placeholder="Confirm Password"
+        required
+      />
+    </div>
+    <InputError message={errors.password_confirmation} />
+  </>
+)}
+
 
         <button className="auth-button" type="submit" disabled={submitting}>
           {flow === "signIn" ? "Sign in" : "Sign up"}
