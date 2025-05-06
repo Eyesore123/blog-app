@@ -1,31 +1,68 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { usePage, Link } from "@inertiajs/react";
+import axiosInstance from "./axiosInstance"; // Assuming you have a separate axiosInstance setup
+import { getCsrfToken } from "../components/auth"; // Adjust the import path as necessary
 import '../../css/app.css';
 
 export function BlogPost({ post }: { post: { title: string; content: string; topic: string; _id: string } }) {
-  const { auth } = usePage().props as unknown as { auth: { user: { name: string } | null } };
+  const { auth } = usePage().props as unknown as { auth: { user: { name: string; token: string | null } | null } };
   const user = auth?.user;
   const isSignedIn = Boolean(user);
+  const token = user?.token; // Assuming the token is available in the user object
 
   const [showComments, setShowComments] = useState(false);
   const [comments, setComments] = useState<{ _id: string; authorName: string; content: string }[]>([]);
   const [newComment, setNewComment] = useState("");
+  const [submitting, setSubmitting] = useState(false);
 
+  // Fetch comments when the component mounts
+  useEffect(() => {
+    async function fetchComments() {
+      try {
+        const response = await axiosInstance.get(`api/comments/${post._id}`);
+        setComments(response.data);
+      } catch (error) {
+        console.error('Failed to fetch comments', error);
+        console.log('Error loading comments');
+      }
+    }
+
+    fetchComments();
+  }, [post._id]);
+
+  // Handle submitting a comment
   async function handleSubmitComment(e: React.FormEvent) {
     e.preventDefault();
     if (!newComment) return;
 
     const newCommentData = {
-      _id: Date.now().toString(),
-      postId: post._id,
+      post_id: post._id,
       content: newComment,
-      authorName: user?.name ?? "Unknown",
     };
 
-    // Simulating a new comment submission (Replace this with actual API call)
-    setComments([...comments, newCommentData]);
+    setSubmitting(true);
 
-    setNewComment("");
+    // Ensure CSRF token is set before making the request
+    await getCsrfToken(); // This will set the CSRF token for the next request
+
+    try {
+      const response = await axiosInstance.post(
+        '/api/comments',
+        newCommentData,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`, // Pass the token for authorization
+          },
+        }
+      );
+      setComments([...comments, response.data]);
+      setNewComment(""); // Clear the input field
+    } catch (error) {
+      console.error('Failed to post comment', error);
+      alert('Error posting comment');
+    } finally {
+      setSubmitting(false);
+    }
   }
 
   return (
@@ -64,10 +101,10 @@ export function BlogPost({ post }: { post: { title: string; content: string; top
                 />
                 <button
                   type="submit"
-                  disabled={!newComment}
+                  disabled={!newComment || submitting}
                   className="!mt-2 !px-4 !py-2 bg-[#5800FF] text-white rounded hover:bg-[#E900FF] disabled:opacity-50 transition-colors"
                 >
-                  Post Comment
+                  {submitting ? 'Posting...' : 'Post Comment'}
                 </button>
               </form>
             ) : (

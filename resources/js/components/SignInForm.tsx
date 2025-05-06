@@ -2,40 +2,65 @@
 import { useState } from "react";
 import { usePage, router } from "@inertiajs/react";
 import InputError from "../components/input-error";
+import { getCsrfToken } from '../components/auth'; // Adjust the import path as necessary
 import '../../css/app.css';
 
-export default function SignInForm() {
-  const { errors } = usePage().props as { errors: Record<string, string> };
+type SignInFormProps = {
+  flow: "signIn" | "signUp";
+  setFlow: React.Dispatch<React.SetStateAction<"signIn" | "signUp">>;
+};
 
-  const [flow, setFlow] = useState<"signIn" | "signUp">("signIn");
+// Helper function to store token
+function storeAuthToken(token: string) {
+  localStorage.setItem('auth_token', token);
+}
+
+export default function SignInForm({ flow, setFlow }: SignInFormProps) {
+  const { errors } = usePage().props as { errors: Record<string, string> };
   const [submitting, setSubmitting] = useState(false);
 
-  // Anonymous sign in logic
-function handleAnonymousSignIn() {
-  setSubmitting(true);
-  router.post("/anonymous-login", {}, {
-    onFinish: () => setSubmitting(false),
-    onSuccess: () => router.get("/"),
-  });
-}
+  // Handles common onSuccess logic: optionally extract token and redirect
+  const handleSuccess = (page: any) => {
+    const token = (page?.props?.auth_token as string) || null;
+    if (token) {
+      storeAuthToken(token);
+    }
+    router.get("/");  // redirect to home
+  };
+
+  // Anonymous sign-in logic
+  async function handleAnonymousSignIn() {
+    setSubmitting(true);
+
+    // Fetch CSRF token before posting
+    await getCsrfToken();
+
+    router.post("/anonymous-login", {}, {
+      onFinish: () => setSubmitting(false),
+      onSuccess: (page) => handleSuccess(page),
+    });
+  }
+
+  // Regular sign-in / sign-up logic
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    setSubmitting(true);
+
+    // Ensure CSRF token before posting
+    await getCsrfToken();
+
+    const formData = new FormData(e.currentTarget); // Form data taken from the form element
+    const action = flow === "signIn" ? "/login" : "/register"; // Choose the endpoint based on the flow
+
+    router.post(action, formData, {
+      onFinish: () => setSubmitting(false),
+      onSuccess: (page) => handleSuccess(page),
+    });
+  }
 
   return (
     <div className="w-full !mt-10 !mb-10">
-      <form
-        className="flex flex-col gap-4"
-        onSubmit={(e) => {
-          e.preventDefault();
-          setSubmitting(true);
-
-          const formData = new FormData(e.currentTarget);
-          const action = flow === "signIn" ? "/login" : "/register";
-
-          router.post(action, formData, {
-            onFinish: () => setSubmitting(false),
-            onSuccess: () => router.get("/"),
-          });
-        }}
-      >
+      <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
         <input
           className="input-field border border-white !p-2 w-80"
           type="email"
@@ -44,43 +69,43 @@ function handleAnonymousSignIn() {
           required
         />
         <InputError message={errors.email} />
-        <div className="input-container">
-          <input
-          className="input-field border border-white !p-2 w-80"
-          type="name"
-          name="name"
-          placeholder="Name"
-          required
-        />
-        </div>
-        <InputError message={errors.password} />
 
         {flow === "signUp" && (
-  <>
-    <div className="input-container">
-      <input
-        className="input-field border border-white !p-2 w-80"
-        type="password"
-        name="password"
-        placeholder="Password"
-        required
-      />
-    </div>
-    <InputError message={errors.password} />
+          <div className="input-container">
+            <input
+              className="input-field border border-white !p-2 w-80"
+              type="text"
+              name="name"
+              placeholder="Name"
+              required
+            />
+            <InputError message={errors.name} />
+          </div>
+        )}
 
-    <div className="input-container">
-      <input
-        className="input-field border border-white !p-2 w-80"
-        type="password"
-        name="password_confirmation"
-        placeholder="Confirm Password"
-        required
-      />
-    </div>
-    <InputError message={errors.password_confirmation} />
-  </>
-)}
+        <div className="input-container">
+          <input
+            className="input-field border border-white !p-2 w-80"
+            type="password"
+            name="password"
+            placeholder="Password"
+            required
+          />
+          <InputError message={errors.password} />
+        </div>
 
+        {flow === "signUp" && (
+          <div className="input-container">
+            <input
+              className="input-field border border-white !p-2 w-80"
+              type="password"
+              name="password_confirmation"
+              placeholder="Confirm Password"
+              required
+            />
+            <InputError message={errors.password_confirmation} />
+          </div>
+        )}
 
         <button className="auth-button" type="submit" disabled={submitting}>
           {flow === "signIn" ? "Sign in" : "Sign up"}
@@ -107,10 +132,11 @@ function handleAnonymousSignIn() {
         <span className="!mx-4 text-slate-400">or</span>
         <hr className="!my-4 grow" />
       </div>
-      <div className="button-container flex w-full items-center justify-center">        
-      <button className="auth-button" onClick={handleAnonymousSignIn}>
-        Sign in anonymously
-      </button>
+
+      <div className="button-container flex w-full items-center justify-center">
+        <button className="auth-button" onClick={handleAnonymousSignIn} disabled={submitting}>
+          Sign in anonymously
+        </button>
       </div>
     </div>
   );

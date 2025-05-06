@@ -1,7 +1,6 @@
 import { usePage, Link } from '@inertiajs/react';
 import SignOutButton from '@/components/SignOutButton';
-import useTheme from '../hooks/useTheme';
-import '../../css/app.css';
+import { useTheme } from '../context/ThemeContext';
 
 interface PagePropsWithAuth {
   auth: {
@@ -11,7 +10,6 @@ interface PagePropsWithAuth {
     } | null;
   };
 }
-
 export function Navbar() {
   const props = usePage().props;
   const { theme, toggleTheme } = useTheme();

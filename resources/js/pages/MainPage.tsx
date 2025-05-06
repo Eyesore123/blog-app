@@ -1,12 +1,11 @@
 import { usePage } from '@inertiajs/react';
 import { router } from '@inertiajs/react';
 import { Toaster } from 'sonner';
-import { CreatePost } from '../components/CreatePost';
 import { BlogPost } from '../components/BlogPost';
 import Header from '../components/Header';
-import useTheme from '../hooks/useTheme';
 import '../../css/app.css';
 import { Navbar } from '@/components/Navbar';
+import { useTheme } from '../context/ThemeContext';
 
 interface BlogPostType {
   id: number;
@@ -30,8 +29,8 @@ interface PageProps {
 
 export default function MainPage() {
   const { props } = usePage<PageProps>();
+  const { theme } = useTheme();
   const { posts, topics, currentTopic, currentPage, hasMore, total, user } = props;
-  const { theme, toggleTheme } = useTheme();
 
   const handlePageChange = (page: number) => {
     const params = new URLSearchParams();
