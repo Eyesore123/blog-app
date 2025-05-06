@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Inertia } from "@inertiajs/inertia"; // Import Inertia.js
 
 export function CreatePost() {
   const [title, setTitle] = useState("");
@@ -16,13 +17,18 @@ export function CreatePost() {
       topic,
     };
 
-    // Simulate post creation here (Replace with actual API call)
-    console.log("Creating post:", newPost);
-
-    // Reset the form after submission
-    setTitle("");
-    setContent("");
-    setTopic("");
+    // Send the post request to the backend using Inertia.js
+    Inertia.post('/posts', newPost, {
+      onSuccess: () => {
+        // Optionally reset form after successful submission
+        setTitle("");
+        setContent("");
+        setTopic("");
+      },
+      onError: (error) => {
+        console.error("Error creating post:", error);
+      }
+    });
   }
 
   return (

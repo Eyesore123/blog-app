@@ -2,61 +2,48 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Comment;
 use Illuminate\Http\Request;
+use App\Models\Comment;
+use Illuminate\Support\Facades\Auth;
 
 class CommentController extends Controller
 {
-    // Method to store a new comment
-    public function store(Request $request)
+    // GET /api/comments/{post_id}
+    public function index($post_id)
     {
-        // Validate incoming data
-        $request->validate([
-            'content' => 'required|string|max:500',
-            'post_id' => 'required|exists:posts,id',
-        ]);
-        
-        // Check if user is authenticated
-        if (!auth()->check()) {
-            return response()->json(['message' => 'Unauthorized'], 401);
-        }
-
-        // Create and save a new comment
-        $comment = new Comment();
-        $comment->content = $request->content;
-        $comment->post_id = $request->post_id;
-        $comment->user_id = auth()->id();
-        $comment->save();
-        
-        // Return the created comment in the expected format
-        return response()->json([
-            '_id' => $comment->id,
-            'authorName' => auth()->user()->name,
-            'content' => $comment->content,
-        ], 201);
-    }
-
-    // Method to fetch comments for a specific post
-    public function index($postId)
-    {
-        $comments = Comment::where('post_id', $postId)
-            ->with('user')
+        $comments = Comment::where('post_id', $post_id)
+            ->with('user')  // include user info
+            ->orderBy('created_at', 'asc')
             ->get()
             ->map(function ($comment) {
                 return [
                     '_id' => $comment->id,
-                    'authorName' => $comment->user->name,
+                    'authorName' => $comment->user->name ?? 'Anonymous',
                     'content' => $comment->content,
                 ];
             });
-        
+
         return response()->json($comments);
     }
 
-    // Method to fetch a single comment by ID (not used in the frontend, but included here)
-    public function show($id)
+    // POST /api/comments
+    public function store(Request $request)
     {
-        $comment = Comment::findOrFail($id);
-        return response()->json($comment);
+        $request->validate([
+            'post_id' => 'required|exists:posts,id',
+            'content' => 'required|string|max:1000',
+        ]);
+
+        $comment = Comment::create([
+            'post_id' => $request->post_id,
+            'user_id' => Auth::id(),
+            'content' => $request->content,
+        ]);
+
+        return response()->json([
+            '_id' => $comment->id,
+            'authorName' => Auth::user()->name ?? 'Anonymous',
+            'content' => $comment->content,
+        ]);
     }
 }

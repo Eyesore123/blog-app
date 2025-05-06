@@ -4,7 +4,7 @@ import axiosInstance from "./axiosInstance"; // Assuming you have a separate axi
 import { getCsrfToken } from "../components/auth"; // Adjust the import path as necessary
 import '../../css/app.css';
 
-export function BlogPost({ post }: { post: { title: string; content: string; topic: string; _id: string } }) {
+export function BlogPost({ post }: { post: { title: string; content: string; topic: string; id: number } }) {
   const { auth } = usePage().props as unknown as { auth: { user: { name: string; token: string | null } | null } };
   const user = auth?.user;
   const isSignedIn = Boolean(user);
@@ -19,7 +19,7 @@ export function BlogPost({ post }: { post: { title: string; content: string; top
   useEffect(() => {
     async function fetchComments() {
       try {
-        const response = await axiosInstance.get(`api/comments/${post._id}`);
+        const response = await axiosInstance.get(`api/comments/${post.id}`);
         setComments(response.data);
       } catch (error) {
         console.error('Failed to fetch comments', error);
@@ -28,7 +28,7 @@ export function BlogPost({ post }: { post: { title: string; content: string; top
     }
 
     fetchComments();
-  }, [post._id]);
+  }, [post.id]);
 
   // Handle submitting a comment
   async function handleSubmitComment(e: React.FormEvent) {
@@ -36,7 +36,7 @@ export function BlogPost({ post }: { post: { title: string; content: string; top
     if (!newComment) return;
 
     const newCommentData = {
-      post_id: post._id,
+      post_id: post.id,
       content: newComment,
     };
 
@@ -49,11 +49,6 @@ export function BlogPost({ post }: { post: { title: string; content: string; top
       const response = await axiosInstance.post(
         '/api/comments',
         newCommentData,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`, // Pass the token for authorization
-          },
-        }
       );
       setComments([...comments, response.data]);
       setNewComment(""); // Clear the input field

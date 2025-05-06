@@ -25,7 +25,6 @@ Route::post('login', function (Request $request) {
 
 
 Route::get('/comments/{postId}', [CommentController::class, 'index']);
-Route::get('/comments/{id}', [CommentController::class, 'show']);
-Route::post('/comments', [CommentController::class, 'store']);
+Route::get('/comments/{id}', [CommentController::class, 'show']);;
 Route::middleware('auth:sanctum')->post('/comments', [CommentController::class, 'store']);
 

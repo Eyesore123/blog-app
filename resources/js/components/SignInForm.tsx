@@ -45,18 +45,28 @@ export default function SignInForm({ flow, setFlow }: SignInFormProps) {
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setSubmitting(true);
-
-    // Ensure CSRF token before posting
+  
     await getCsrfToken();
-
-    const formData = new FormData(e.currentTarget); // Form data taken from the form element
-    const action = flow === "signIn" ? "/login" : "/register"; // Choose the endpoint based on the flow
-
+  
+    const form = e.target as HTMLFormElement;   // SAFER than currentTarget
+    if (!(form instanceof HTMLFormElement)) {
+      console.error("handleSubmit: target is not a form");
+      setSubmitting(false);
+      return;
+    }
+  
+    const formData = new FormData(form);
+    const action = flow === "signIn" ? "/login" : "/register";
+  
     router.post(action, formData, {
+      forceFormData: true,
       onFinish: () => setSubmitting(false),
       onSuccess: (page) => handleSuccess(page),
     });
   }
+  
+  
+
 
   return (
     <div className="w-full !mt-10 !mb-10">

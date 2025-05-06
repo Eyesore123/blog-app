@@ -21,9 +21,11 @@ Route::post('/anonymous-login', function () {
 
     return redirect('/');
 });
-
+Route::post('/posts', [PostController::class, 'store'])->middleware('auth');
 Route::middleware('auth')->post('/logout', [AuthController::class, 'logout'])->name('logout');
 Route::get('/admin', [AdminController::class, 'index']);  // ✅ clean & correct
+Route::get('api/comments/{post_id}', [CommentController::class, 'index']);
+Route::post('api/comments', [CommentController::class, 'store']);
 
 require __DIR__.'/settings.php';
 require __DIR__.'/auth.php';
