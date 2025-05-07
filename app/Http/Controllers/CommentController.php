@@ -20,6 +20,7 @@ class CommentController extends Controller
                     '_id' => $comment->id,
                     'authorName' => $comment->user->name ?? 'Anonymous',
                     'content' => $comment->content,
+                    'createdAt' => $comment->created_at->toDateTimeString(),
                 ];
             });
 
@@ -45,5 +46,13 @@ class CommentController extends Controller
             'authorName' => Auth::user()->name ?? 'Anonymous',
             'content' => $comment->content,
         ]);
+    }
+
+        public function destroy($comment_id)
+    {
+        $comment = Comment::findOrFail($comment_id);
+        $comment->delete();
+
+        return response()->json(['message' => 'Comment deleted']);
     }
 }

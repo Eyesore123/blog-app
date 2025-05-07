@@ -54,7 +54,7 @@ export default function MainPage() {
         <main className="!p-8">
           <div className="w-full !mx-auto flex md:!gap-10 xl:!gap-18">
             {/* Sidebar */}
-            <aside className="!w-80 lg:!w-150 lg:!ml-50">
+            <aside className="!w-80 lg:!w-120 lg:!ml-50">
               <div className="sticky top-24 !space-y-6 !w-60 md:!w-80 !-ml-0  !xl:ml-0 lg:!w-100 xl:!w-120">
                 <div className="rounded-lg bg-[#5800FF]/10 !p-4">
                   <h3 className="font-semibold !mb-2">About</h3>

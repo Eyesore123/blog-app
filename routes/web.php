@@ -26,6 +26,8 @@ Route::middleware('auth')->post('/logout', [AuthController::class, 'logout'])->n
 Route::get('/admin', [AdminController::class, 'index']);  // ✅ clean & correct
 Route::get('api/comments/{post_id}', [CommentController::class, 'index']);
 Route::post('api/comments', [CommentController::class, 'store']);
+Route::delete('api/comments/{comment_id}', [CommentController::class, 'destroy']);
+Route::get('/', [PostController::class, 'index']);
 
 require __DIR__.'/settings.php';
 require __DIR__.'/auth.php';

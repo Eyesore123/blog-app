@@ -6,20 +6,22 @@ import '../../css/app.css';
 
 export function BlogPost({ post }: { post: { title: string; content: string; topic: string; id: number } }) {
   const { auth } = usePage().props as unknown as { auth: { user: { name: string; token: string | null } | null } };
-  const user = auth?.user;
+  const user = auth?.user as { name: string; token: string | null; is_admin: boolean };
   const isSignedIn = Boolean(user);
   const token = user?.token; // Assuming the token is available in the user object
 
   const [showComments, setShowComments] = useState(false);
-  const [comments, setComments] = useState<{ _id: string; authorName: string; content: string }[]>([]);
+  const [comments, setComments] = useState<{ _id: string; authorName: string; content: string; createdAt: string }[]>([]);
   const [newComment, setNewComment] = useState("");
   const [submitting, setSubmitting] = useState(false);
+  
 
   // Fetch comments when the component mounts
   useEffect(() => {
     async function fetchComments() {
       try {
         const response = await axiosInstance.get(`api/comments/${post.id}`);
+        console.log('Fetched comments:', response.data);
         setComments(response.data);
       } catch (error) {
         console.error('Failed to fetch comments', error);
@@ -60,8 +62,22 @@ export function BlogPost({ post }: { post: { title: string; content: string; top
     }
   }
 
+  // Handle deleting a comment
+
+  async function handleDeleteComment(commentId: string) {
+    if (!confirm("Are you sure you want to delete this comment?")) return;
+
+    try {
+      await axiosInstance.delete(`/api/comments/${commentId}`);
+      setComments(comments.filter((comment) => comment._id !== commentId));
+    } catch (error) {
+      console.error('Failed to delete comment', error);
+      alert('Error deleting comment');
+    }
+  }
+
   return (
-    <article className="rounded-lg bg-[#5800FF]/5 !p-6 md:!w-300">
+    <article className="rounded-lg bg-[#5800FF]/5 !p-6 md:!w-300 !max-w-300">
       <h2 className="text-2xl font-bold flex justify-start !mb-10">{post.title}</h2>
       <div className="prose max-w-none opacity-90">{post.content}</div>
 
@@ -80,6 +96,14 @@ export function BlogPost({ post }: { post: { title: string; content: string; top
                 <div key={comment._id} className="bg-[#5800FF]/10 rounded !p-3">
                   <p className="font-medium text-sm">{comment.authorName}</p>
                   <p className="opacity-80">{comment.content}</p>
+                  <p className="text-xs opacity-60 italic">{new Date(comment.createdAt).toLocaleString()}</p>
+                  {/* Delete button admin only */}
+                  {Boolean(user?.is_admin) && (
+                    <button
+                      onClick={() => handleDeleteComment(comment._id)}
+                      className="text-red-500 text-xs hover:underline"
+                    > Delete</button>
+                  )}
                 </div>
               ))
             ) : (
