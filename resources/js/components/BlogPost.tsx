@@ -103,7 +103,7 @@ export function BlogPost({ post }: { post: Post }) {
   
   
   return (
-    <article className="rounded-lg bg-[#5800FF]/5 !p-6 md:!w-300 !max-w-300">
+    <article className="rounded-lg bg-[#5800FF]/5 !p-6 md:!w-260 !max-w-260">
       <h2
         className="text-2xl font-bold flex justify-start !mb-10 cursor-pointer hover:underline"
         onClick={goToPostPage}

@@ -156,7 +156,7 @@ const PostPage: React.FC<PostPageProps> = ({ post }) => {
             
             {/* Main content */}
             <div className="flex-1 justify-center items-center flex flex-col max-w-500">
-              <article className="rounded-lg bg-[#5800FF]/5 !p-6 md:!w-300 !max-w-300 w-full">
+              <article className="rounded-lg bg-[#5800FF]/5 !p-6 md:!w-260 !max-w-260">
                 <h1 className="text-3xl font-bold !mb-6">{post.title}</h1>
                 
                 {post.image_url && (
