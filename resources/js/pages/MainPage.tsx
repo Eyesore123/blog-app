@@ -17,20 +17,28 @@ interface BlogPostType {
 }
 
 interface PageProps {
-    posts: BlogPostType[];
-    topics: string[];
-    currentTopic: string | null;
-    currentPage: number;
-    hasMore: boolean;
-    total: number;
-    user: { name: string } | null;
-    [key: string]: any;
-  }
+  posts: BlogPostType[];
+  topics: string[];
+  currentTopic: string | null;
+  currentPage: number;
+  hasMore: boolean;
+  total: number;
+  user: { name: string } | null;
+  auth?: {
+    user: {
+      is_admin: boolean;
+      name: string;
+    } | null;
+  };
+  [key: string]: any;
+}
 
 export default function MainPage() {
   const { props } = usePage<PageProps>();
   const { theme } = useTheme();
-  const { posts, topics, currentTopic, currentPage, hasMore, total, user } = props;
+  const { posts, topics, currentTopic, currentPage, hasMore, total } = props;
+
+  const isAdmin = props.auth?.user?.is_admin ?? false;
 
   const handlePageChange = (page: number) => {
     const params = new URLSearchParams();
@@ -38,19 +46,28 @@ export default function MainPage() {
     params.append('page', (page + 1).toString());
     router.get('/', Object.fromEntries(params));
   };
-  
+
   const handleTopicChange = (topic: string | null) => {
     const params = new URLSearchParams();
     if (topic) params.append('topic', topic);
     router.get('/', Object.fromEntries(params));
   };
 
+  const handleDeletePost = (postId: number) => {
+    if (confirm('Are you sure you want to delete this post?')) {
+      router.delete(`/posts/${postId}`, {
+        onSuccess: () => {
+          console.log(`Post ${postId} deleted`);
+        },
+      });
+    }
+  };
+
   return (
     <div className={`min-h-screen ${theme}`}>
       <div className="min-h-screen bg-[var(--bg-primary)] text-[var(--text-primary)]">
-
         <Navbar />
-            <Header />
+        <Header />
         <main className="!p-8">
           <div className="w-full !mx-auto flex md:!gap-10 xl:!gap-18">
             {/* Sidebar */}
@@ -92,23 +109,32 @@ export default function MainPage() {
                     ) : (
                       <li className="!ml-2">No topics available</li>
                     )}
-
                   </ul>
                 </div>
               </div>
             </aside>
 
             {/* Main content */}
-            <div className="flex-1 justify-center items-center flex flex-col">
+            <div className="flex-1 justify-center items-center flex flex-col max-w-500">
               <div className="!space-y-8">
                 {posts.length === 0 ? (
                   <div className="text-center opacity-70 !mt-30">No blog posts yet.</div>
                 ) : (
                   <>
                     {posts.map((post) => (
-                    <BlogPost key={post.id} post={{ ...post, _id: post.id.toString() }} />
-                  ))}
-                    <div className="flex justify-center items-center gap-10 !mt-8">
+                      <div key={post.id} className="relative">
+                        <BlogPost post={{ ...post, _id: post.id.toString() }} />
+                        {isAdmin && (
+                          <button
+                            onClick={() => handleDeletePost(post.id)}
+                            className="absolute top-30 left-5 !px-3 !py-1 bg-red-600 text-white rounded hover:bg-red-800 transition-colors"
+                          >
+                            Delete
+                          </button>
+                        )}
+                      </div>
+                    ))}
+                    <div className="flex justify-center items-center gap-10 !mt-18">
                       <button
                         onClick={() => handlePageChange(currentPage - 1)}
                         disabled={currentPage === 0}
@@ -133,7 +159,6 @@ export default function MainPage() {
             </div>
           </div>
         </main>
-
         <Toaster />
       </div>
     </div>

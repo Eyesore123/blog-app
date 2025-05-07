@@ -45,6 +45,7 @@ class CommentController extends Controller
             '_id' => $comment->id,
             'authorName' => Auth::user()->name ?? 'Anonymous',
             'content' => $comment->content,
+            'createdAt' => $comment->created_at->toDateTimeString(),
         ]);
     }
 

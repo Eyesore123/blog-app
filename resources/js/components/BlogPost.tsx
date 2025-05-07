@@ -1,52 +1,53 @@
 import { useState, useEffect } from "react";
 import { usePage, Link } from "@inertiajs/react";
-import axiosInstance from "./axiosInstance"; // Assuming you have a separate axiosInstance setup
-import { getCsrfToken } from "../components/auth"; // Adjust the import path as necessary
+import axiosInstance from "./axiosInstance";
+import { getCsrfToken } from "../components/auth";
 import '../../css/app.css';
 
-export function BlogPost({ post }: { post: { title: string; content: string; topic: string; id: number } }) {
+export function BlogPost({ post }: { post: { 
+  title: string; 
+  content: string; 
+  topic: string; 
+  id: number;
+  _id?: string;
+  image_url?: string | null;
+}}) {
   const { auth } = usePage().props as unknown as { auth: { user: { name: string; token: string | null } | null } };
   const user = auth?.user as { name: string; token: string | null; is_admin: boolean };
   const isSignedIn = Boolean(user);
-  const token = user?.token; // Assuming the token is available in the user object
-
+  const token = user?.token;
   const [showComments, setShowComments] = useState(false);
-  const [comments, setComments] = useState<{ _id: string; authorName: string; content: string; createdAt: string }[]>([]);
   const [newComment, setNewComment] = useState("");
   const [submitting, setSubmitting] = useState(false);
-  
+  const [comments, setComments] = useState<{ _id: string; authorName: string; content: string; createdAt: string, image?: string }[]>([]);
 
-  // Fetch comments when the component mounts
   useEffect(() => {
     async function fetchComments() {
       try {
         const response = await axiosInstance.get(`api/comments/${post.id}`);
         console.log('Fetched comments:', response.data);
-        setComments(response.data);
+        const formattedComments = response.data.map((comment: any) => ({
+          ...comment,
+          createdAt: new Date(comment.createdAt).toISOString(),
+        }));
+        setComments(formattedComments);
       } catch (error) {
         console.error('Failed to fetch comments', error);
-        console.log('Error loading comments');
       }
     }
-
     fetchComments();
   }, [post.id]);
 
-  // Handle submitting a comment
   async function handleSubmitComment(e: React.FormEvent) {
     e.preventDefault();
     if (!newComment) return;
-
     const newCommentData = {
       post_id: post.id,
       content: newComment,
     };
-
     setSubmitting(true);
-
     // Ensure CSRF token is set before making the request
     await getCsrfToken(); // This will set the CSRF token for the next request
-
     try {
       const response = await axiosInstance.post(
         '/api/comments',
@@ -63,10 +64,8 @@ export function BlogPost({ post }: { post: { title: string; content: string; top
   }
 
   // Handle deleting a comment
-
   async function handleDeleteComment(commentId: string) {
     if (!confirm("Are you sure you want to delete this comment?")) return;
-
     try {
       await axiosInstance.delete(`/api/comments/${commentId}`);
       setComments(comments.filter((comment) => comment._id !== commentId));
@@ -79,8 +78,23 @@ export function BlogPost({ post }: { post: { title: string; content: string; top
   return (
     <article className="rounded-lg bg-[#5800FF]/5 !p-6 md:!w-300 !max-w-300">
       <h2 className="text-2xl font-bold flex justify-start !mb-10">{post.title}</h2>
+      
+      {/* Image below title if exists */}
+      {post.image_url && (
+        <div className="!mb-20 !mt-40">
+          <img 
+            src={post.image_url} 
+            alt={post.title} 
+            className="w-200 h-auto rounded-lg" 
+            onError={(e) => {
+              console.error('Image failed to load:', post.image_url);
+              e.currentTarget.style.display = 'none';
+            }}
+          />
+        </div>
+      )}
+      
       <div className="prose max-w-none opacity-90">{post.content}</div>
-
       <div className="!mt-6 !pt-6 border-t border-[#5800FF]/20">
         <button
           onClick={() => setShowComments(!showComments)}
@@ -88,7 +102,6 @@ export function BlogPost({ post }: { post: { title: string; content: string; top
         >
           {showComments ? "Hide Comments" : `Show Comments (${comments.length})`}
         </button>
-
         {showComments && (
           <div className="!mt-4 !space-y-4">
             {comments.length > 0 ? (
@@ -109,7 +122,6 @@ export function BlogPost({ post }: { post: { title: string; content: string; top
             ) : (
               <p className="text-sm opacity-60 italic">No comments yet. Be the first!</p>
             )}
-
             {isSignedIn ? (
               <form onSubmit={handleSubmitComment} className="!mt-6">
                 <textarea

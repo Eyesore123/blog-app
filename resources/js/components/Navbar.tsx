@@ -33,6 +33,12 @@ export function Navbar() {
               Admin Dashboard
             </Link>
           )}
+          {Boolean(user?.is_admin) && (
+            <Link href="/" className="hover:text-purple-400">
+              Main Page
+            </Link>
+          )}
+
 
           </div>
           <div className="flex items-center gap-14">

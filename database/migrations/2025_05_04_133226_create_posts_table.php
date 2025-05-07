@@ -17,6 +17,7 @@ return new class extends Migration
             $table->string('title');
             $table->string('topic') ->nullable();
             $table->text('content');
+            $table->string('image_path')->nullable();
         });
     }
 

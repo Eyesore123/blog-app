@@ -6,6 +6,10 @@ use Illuminate\Database\Eloquent\Model;
 
 class Post extends Model
 {
-    // These are the fields we allow to be mass assigned (for create / update)
-    protected $fillable = ['title', 'content', 'published', 'topic'];
+    protected $fillable = ['title', 'content', 'published', 'topic', 'image_path', 'user_id'];
+
+    public function comments()
+    {
+        return $this->hasMany(Comment::class);
+    }
 }

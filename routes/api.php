@@ -5,6 +5,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\CommentController;
 use App\Models\User;
+use App\Http\Controllers\PostController;
 
 Route::post('login', function (Request $request) {
     $request->validate([
