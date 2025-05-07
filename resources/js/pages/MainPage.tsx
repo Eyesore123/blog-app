@@ -127,7 +127,7 @@ export default function MainPage() {
                         {isAdmin && (
                           <button
                             onClick={() => handleDeletePost(post.id)}
-                            className="absolute top-30 left-5 !px-3 !py-1 bg-red-600 text-white rounded hover:bg-red-800 transition-colors"
+                            className="absolute top-30 left-200 !px-3 !py-1 bg-red-600 text-white rounded hover:bg-red-800 transition-colors"
                           >
                             Delete
                           </button>

@@ -1,31 +1,49 @@
 import { useState, useEffect } from "react";
 import { usePage, Link } from "@inertiajs/react";
+import { Inertia } from '@inertiajs/inertia';
 import axiosInstance from "./axiosInstance";
 import { getCsrfToken } from "../components/auth";
 import '../../css/app.css';
 
-export function BlogPost({ post }: { post: { 
-  title: string; 
-  content: string; 
-  topic: string; 
+interface Post {
+  title: string;
+  content: string;
+  topic: string;
   id: number;
   _id?: string;
   image_url?: string | null;
-}}) {
-  const { auth } = usePage().props as unknown as { auth: { user: { name: string; token: string | null } | null } };
-  const user = auth?.user as { name: string; token: string | null; is_admin: boolean };
+  slug?: string;
+}
+
+interface Comment {
+  _id: string;
+  authorName: string;
+  content: string;
+  createdAt: string;
+  image?: string;
+}
+
+interface AuthUser {
+  name: string;
+  token: string | null;
+  is_admin: boolean;
+}
+
+export function BlogPost({ post }: { post: Post }) {
+  const { auth } = usePage().props as { auth: { user: AuthUser | null } };
+  const user = auth?.user;
   const isSignedIn = Boolean(user);
   const token = user?.token;
+
   const [showComments, setShowComments] = useState(false);
   const [newComment, setNewComment] = useState("");
   const [submitting, setSubmitting] = useState(false);
-  const [comments, setComments] = useState<{ _id: string; authorName: string; content: string; createdAt: string, image?: string }[]>([]);
+  const [comments, setComments] = useState<Comment[]>([]);
 
   useEffect(() => {
     async function fetchComments() {
       try {
         const response = await axiosInstance.get(`api/comments/${post.id}`);
-        console.log('Fetched comments:', response.data);
         const formattedComments = response.data.map((comment: any) => ({
           ...comment,
           createdAt: new Date(comment.createdAt).toISOString(),
@@ -41,20 +59,19 @@ export function BlogPost({ post }: { post: {
   async function handleSubmitComment(e: React.FormEvent) {
     e.preventDefault();
     if (!newComment) return;
+
     const newCommentData = {
       post_id: post.id,
       content: newComment,
     };
+
     setSubmitting(true);
-    // Ensure CSRF token is set before making the request
-    await getCsrfToken(); // This will set the CSRF token for the next request
+    await getCsrfToken();
+
     try {
-      const response = await axiosInstance.post(
-        '/api/comments',
-        newCommentData,
-      );
+      const response = await axiosInstance.post('/api/comments', newCommentData);
       setComments([...comments, response.data]);
-      setNewComment(""); // Clear the input field
+      setNewComment("");
     } catch (error) {
       console.error('Failed to post comment', error);
       alert('Error posting comment');
@@ -63,7 +80,6 @@ export function BlogPost({ post }: { post: {
     }
   }
 
-  // Handle deleting a comment
   async function handleDeleteComment(commentId: string) {
     if (!confirm("Are you sure you want to delete this comment?")) return;
     try {
@@ -75,17 +91,33 @@ export function BlogPost({ post }: { post: {
     }
   }
 
+  function goToPostPage() {
+    if (post.slug) {
+      Inertia.visit(`/post/${post.slug}`);
+    } else {
+      // Use the post ID as a fallback when slug is missing
+      Inertia.visit(`/post/${post.id}`);
+      console.log('Using post ID for navigation since slug is missing');
+    }
+  }
+  
+  
   return (
     <article className="rounded-lg bg-[#5800FF]/5 !p-6 md:!w-300 !max-w-300">
-      <h2 className="text-2xl font-bold flex justify-start !mb-10">{post.title}</h2>
-      
-      {/* Image below title if exists */}
+      <h2
+        className="text-2xl font-bold flex justify-start !mb-10 cursor-pointer hover:underline"
+        onClick={goToPostPage}
+      >
+        {post.title}
+      </h2>
+
       {post.image_url && (
         <div className="!mb-20 !mt-40">
-          <img 
-            src={post.image_url} 
-            alt={post.title} 
-            className="w-200 h-auto rounded-lg" 
+          <img
+            src={post.image_url}
+            alt={post.title}
+            className="w-200 h-auto rounded-lg cursor-pointer hover:opacity-80"
+            onClick={goToPostPage}
             onError={(e) => {
               console.error('Image failed to load:', post.image_url);
               e.currentTarget.style.display = 'none';
@@ -93,8 +125,9 @@ export function BlogPost({ post }: { post: {
           />
         </div>
       )}
-      
+
       <div className="prose max-w-none opacity-90">{post.content}</div>
+
       <div className="!mt-6 !pt-6 border-t border-[#5800FF]/20">
         <button
           onClick={() => setShowComments(!showComments)}
@@ -102,6 +135,7 @@ export function BlogPost({ post }: { post: {
         >
           {showComments ? "Hide Comments" : `Show Comments (${comments.length})`}
         </button>
+
         {showComments && (
           <div className="!mt-4 !space-y-4">
             {comments.length > 0 ? (
@@ -110,18 +144,21 @@ export function BlogPost({ post }: { post: {
                   <p className="font-medium text-sm">{comment.authorName}</p>
                   <p className="opacity-80">{comment.content}</p>
                   <p className="text-xs opacity-60 italic">{new Date(comment.createdAt).toLocaleString()}</p>
-                  {/* Delete button admin only */}
+
                   {Boolean(user?.is_admin) && (
                     <button
                       onClick={() => handleDeleteComment(comment._id)}
                       className="text-red-500 text-xs hover:underline"
-                    > Delete</button>
+                    >
+                      Delete
+                    </button>
                   )}
                 </div>
               ))
             ) : (
               <p className="text-sm opacity-60 italic">No comments yet. Be the first!</p>
             )}
+
             {isSignedIn ? (
               <form onSubmit={handleSubmitComment} className="!mt-6">
                 <textarea

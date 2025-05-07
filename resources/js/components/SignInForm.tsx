@@ -4,6 +4,7 @@ import { usePage, router } from "@inertiajs/react";
 import InputError from "../components/input-error";
 import { getCsrfToken } from '../components/auth'; // Adjust the import path as necessary
 import '../../css/app.css';
+import { useTheme } from '../context/ThemeContext';
 
 type SignInFormProps = {
   flow: "signIn" | "signUp";
@@ -18,6 +19,7 @@ function storeAuthToken(token: string) {
 export default function SignInForm({ flow, setFlow }: SignInFormProps) {
   const { errors } = usePage().props as { errors: Record<string, string> };
   const [submitting, setSubmitting] = useState(false);
+  const { theme } = useTheme();
 
   // Handles common onSuccess logic: optionally extract token and redirect
   const handleSuccess = (page: any) => {
@@ -65,14 +67,12 @@ export default function SignInForm({ flow, setFlow }: SignInFormProps) {
     });
   }
   
-  
-
-
   return (
     <div className="w-full !mt-10 !mb-10">
       <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
         <input
           className="input-field border border-white !p-2 w-80"
+          style={{borderColor: theme === 'dark' ? '#fff' : '#000'}}
           type="email"
           name="email"
           placeholder="Email"
@@ -84,6 +84,7 @@ export default function SignInForm({ flow, setFlow }: SignInFormProps) {
           <div className="input-container">
             <input
               className="input-field border border-white !p-2 w-80"
+              style={{borderColor: theme === 'dark' ? '#fff' : '#000'}}
               type="text"
               name="name"
               placeholder="Name"
@@ -96,6 +97,7 @@ export default function SignInForm({ flow, setFlow }: SignInFormProps) {
         <div className="input-container">
           <input
             className="input-field border border-white !p-2 w-80"
+            style={{borderColor: theme === 'dark' ? '#fff' : '#000'}}
             type="password"
             name="password"
             placeholder="Password"
@@ -108,6 +110,7 @@ export default function SignInForm({ flow, setFlow }: SignInFormProps) {
           <div className="input-container">
             <input
               className="input-field border border-white !p-2 w-80"
+              style={{borderColor: theme === 'dark' ? '#fff' : '#000'}}
               type="password"
               name="password_confirmation"
               placeholder="Confirm Password"

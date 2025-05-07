@@ -174,4 +174,20 @@ class PostController extends Controller
         
         abort(403, 'Unauthorized action.');
     }
+
+        public function show($identifier)
+    {
+        // Check if the identifier is numeric (ID) or a string (slug)
+        if (is_numeric($identifier)) {
+            $post = Post::with(['comments.user'])->findOrFail($identifier);
+        } else {
+            $post = Post::with(['comments.user'])->where('slug', $identifier)->firstOrFail();
+        }
+        
+        return Inertia::render('PostPage', [
+            'post' => $post,
+            'comments' => $post->comments,
+            'user' => auth()->user(),
+        ]);
+    }
 }
