@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { Inertia } from '@inertiajs/inertia';
+import { router } from '@inertiajs/react';
 import { usePage } from '@inertiajs/react';
 import { Toaster } from 'sonner';
 import Header from '../components/Header';
+import SearchComponent from '@/components/SearchComponent';
 import '../../css/app.css';
 import { Navbar } from '@/components/Navbar';
 import { useTheme } from '../context/ThemeContext';
@@ -47,12 +48,13 @@ interface PostPageProps {
   auth?: {
     user: AuthUser | null;
   };
+  allPosts?: any[];
 }
 
 const PostPage: React.FC<PostPageProps> = ({ post }) => {
   const { props } = usePage<PostPageProps>();
   const { theme } = useTheme();
-  const { auth } = props;
+  const { auth, allPosts } = props;
   const user = auth?.user;
   const isAdmin = user?.is_admin ?? false;
   const isSignedIn = Boolean(user);
@@ -112,6 +114,8 @@ const PostPage: React.FC<PostPageProps> = ({ post }) => {
     }
   }
 
+  console.log('BlogPost image path:', post.image_url);
+
   return (
     <div className={`min-h-screen ${theme}`}>
       <div className="min-h-screen bg-[var(--bg-primary)] text-[var(--text-primary)]">
@@ -133,7 +137,7 @@ const PostPage: React.FC<PostPageProps> = ({ post }) => {
                   <ul className="!space-y-1">
                     <li>
                       <button
-                        onClick={() => Inertia.visit('/')}
+                        onClick={() => router.visit('/')}
                         className="w-full text-left !px-2 !py-1 rounded hover:bg-[#5800FF]/20"
                       >
                         Back to All Posts
@@ -142,7 +146,7 @@ const PostPage: React.FC<PostPageProps> = ({ post }) => {
                     {isAdmin && (
                       <li>
                         <button
-                          onClick={() => Inertia.visit(`/post/${post.id}/edit`)}
+                          onClick={() => router.visit(`/post/${post.id}/edit`)}
                           className="w-full text-left !px-2 !py-1 rounded hover:bg-[#5800FF]/20"
                         >
                           Edit Post
@@ -151,20 +155,26 @@ const PostPage: React.FC<PostPageProps> = ({ post }) => {
                     )}
                   </ul>
                 </div>
+                <div className="rounded-lg bg-[#5800FF]/10 !p-4">
+                <SearchComponent 
+                  posts={Array.isArray(allPosts) ? allPosts : 
+                        (allPosts && allPosts.data ? allPosts.data : [])} 
+                />
+              </div>
               </div>
             </aside>
             
             {/* Main content */}
             <div className="flex-1 justify-center items-center flex flex-col max-w-500">
               <article className="rounded-lg bg-[#5800FF]/5 !p-6 md:!w-260 !max-w-260">
-                <h1 className="text-3xl font-bold !mb-6">{post.title}</h1>
-                
+                <h2 className="text-3xl font-bold !mb-10">{post.title}</h2>
+                {/* Image */}
                 {post.image_url && (
                   <div className="!mb-6">
                     <img
-                      src={post.image_url}
+                      src={post.image_url.startsWith('/') ? post.image_url : `/${post.image_url}`}
                       alt={post.title}
-                      className="w-full h-auto rounded-lg"
+                      className="w-100 lg:w-200 h-auto rounded-lg"
                       onError={(e) => {
                         console.error('Image failed to load:', post.image_url);
                         e.currentTarget.style.display = 'none';
@@ -172,7 +182,7 @@ const PostPage: React.FC<PostPageProps> = ({ post }) => {
                     />
                   </div>
                 )}
-                
+
                 <div className="prose max-w-none opacity-90 !mb-8">{post.content}</div>
                 
                 <div className="!mt-10 !pt-6 border-t border-[#5800FF]/20">

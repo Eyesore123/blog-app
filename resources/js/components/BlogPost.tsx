@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { usePage, Link } from "@inertiajs/react";
-import { Inertia } from '@inertiajs/inertia';
+import { router } from '@inertiajs/react';
 import axiosInstance from "./axiosInstance";
 import { getCsrfToken } from "../components/auth";
 import '../../css/app.css';
@@ -93,17 +93,18 @@ export function BlogPost({ post }: { post: Post }) {
 
   function goToPostPage() {
     if (post.slug) {
-      Inertia.visit(`/post/${post.slug}`);
+      router.visit(`/post/${post.slug}`);
     } else {
       // Use the post ID as a fallback when slug is missing
-      Inertia.visit(`/post/${post.id}`);
+      router.visit(`/post/${post.id}`);
       console.log('Using post ID for navigation since slug is missing');
     }
   }
   
+  console.log('BlogPost image path:', post.image_url);
   
   return (
-    <article className="rounded-lg bg-[#5800FF]/5 !p-6 md:!w-260 !max-w-260">
+    <article className="rounded-lg bg-[#5800FF]/5 !p-6 md:!w-260 md:!max-w-260 xl:!w-320 xl:!max-w-320 !mb-10">
       <h2
         className="text-2xl font-bold flex justify-start !mb-10 cursor-pointer hover:underline"
         onClick={goToPostPage}
@@ -116,7 +117,7 @@ export function BlogPost({ post }: { post: Post }) {
           <img
             src={post.image_url}
             alt={post.title}
-            className="w-200 h-auto rounded-lg cursor-pointer hover:opacity-80"
+            className="w-100 lg:w-200 h-auto rounded-lg cursor-pointer hover:opacity-80"
             onClick={goToPostPage}
             onError={(e) => {
               console.error('Image failed to load:', post.image_url);

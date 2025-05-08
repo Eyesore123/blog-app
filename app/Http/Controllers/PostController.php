@@ -59,6 +59,7 @@ class PostController extends Controller
                 'name' => Auth::user()->name,
                 'is_admin' => Auth::user()->is_admin ?? false
             ] : null,
+            'allPosts' => $posts, // For search functionality
         ]);
     }
 
@@ -175,7 +176,7 @@ class PostController extends Controller
         abort(403, 'Unauthorized action.');
     }
 
-        public function show($identifier)
+    public function show($identifier)
     {
         // Check if the identifier is numeric (ID) or a string (slug)
         if (is_numeric($identifier)) {
@@ -183,11 +184,29 @@ class PostController extends Controller
         } else {
             $post = Post::with(['comments.user'])->where('slug', $identifier)->firstOrFail();
         }
+        // Get all posts for the sidebar
+        $allPosts = Post::all();
+        
+        // Image URL transformation logic
+        $imageUrl = $post->image_path
+            ? (strpos($post->image_path, 'uploads/') === 0
+                ? '/' . $post->image_path
+                : '/storage/' . $post->image_path)
+            : null;
         
         return Inertia::render('PostPage', [
-            'post' => $post,
+            'post' => [
+                'id' => $post->id,
+                'title' => $post->title,
+                'content' => $post->content,
+                'topic' => $post->topic,
+                'image_url' => $imageUrl,
+                'slug' => $post->slug,
+            ],
             'comments' => $post->comments,
+            'allPosts' => $allPosts,
             'user' => auth()->user(),
         ]);
     }
+    
 }

@@ -5,6 +5,7 @@ import { BlogPost } from '../components/BlogPost';
 import Header from '../components/Header';
 import '../../css/app.css';
 import { Navbar } from '@/components/Navbar';
+import SearchComponent from '@/components/SearchComponent';
 import { useTheme } from '../context/ThemeContext';
 
 interface BlogPostType {
@@ -16,8 +17,14 @@ interface BlogPostType {
   created_at: string;
 }
 
+interface PaginatedPosts {
+  current_page: number;
+  data: BlogPostType[];
+}
+
 interface PageProps {
   posts: BlogPostType[];
+  allPosts: PaginatedPosts;
   topics: string[];
   currentTopic: string | null;
   currentPage: number;
@@ -36,7 +43,7 @@ interface PageProps {
 export default function MainPage() {
   const { props } = usePage<PageProps>();
   const { theme } = useTheme();
-  const { posts, topics, currentTopic, currentPage, hasMore, total } = props;
+  const { posts, allPosts, topics, currentTopic, currentPage, hasMore, total } = props;
 
   const isAdmin = props.auth?.user?.is_admin ?? false;
 
@@ -62,6 +69,8 @@ export default function MainPage() {
       });
     }
   };
+
+  console.log('allPosts:', allPosts);
 
   return (
     <div className={`min-h-screen ${theme}`}>
@@ -111,7 +120,11 @@ export default function MainPage() {
                     )}
                   </ul>
                 </div>
+                <div className="rounded-lg bg-[#5800FF]/10 !p-4">
+                <SearchComponent posts={allPosts.data} />
               </div>
+              </div>
+  
             </aside>
 
             {/* Main content */}
@@ -127,7 +140,7 @@ export default function MainPage() {
                         {isAdmin && (
                           <button
                             onClick={() => handleDeletePost(post.id)}
-                            className="absolute top-30 left-200 !px-3 !py-1 bg-red-600 text-white rounded hover:bg-red-800 transition-colors"
+                            className="absolute top-10 right-30 !px-3 !py-1 bg-red-600 text-white rounded hover:bg-red-800 transition-colors"
                           >
                             Delete
                           </button>
