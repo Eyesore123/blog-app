@@ -9,8 +9,8 @@ export default function AdminDashboard() {
         <Navbar />
       <Header />
       <Head title="Admin Dashboard" />
-      <div className="min-h-screen !px-4 flex flex-col items-center justify-center bg-[var(--bg-primary)] text-[var(--text-primary)]">
-        <h1 className="text-3xl text-amber-300 font-bold !mb-6">Admin Dashboard</h1>
+      <div className="!mt-20 !px-4 flex flex-col items-center justify-center bg-[var(--bg-primary)] text-[var(--text-primary)]">
+        <h1 className="text-3xl text-amber-300 font-bold">Admin Dashboard</h1>
         <CreatePost />
       </div>
     </>

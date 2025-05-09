@@ -32,7 +32,7 @@ export function CreatePost() {
   }
 
   return (
-    <form onSubmit={handleSubmit} encType="multipart/form-data" className="!space-y-4 !mt-8 w-200 flex justify-center items-center flex-col">
+    <form onSubmit={handleSubmit} encType="multipart/form-data" className="!space-y-4 min-h-240 w-200 flex justify-center items-center flex-col">
       <input
         type="text"
         placeholder="Post title"

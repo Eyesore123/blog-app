@@ -24,9 +24,10 @@ Route::post('/anonymous-login', function () {
 Route::post('/posts', [PostController::class, 'store'])
 ->middleware(['auth']);
 Route::middleware('auth')->post('/logout', [AuthController::class, 'logout'])->name('logout');
-Route::get('/admin', [AdminController::class, 'index']);  // ✅ clean & correct
+Route::get('/admin', [AdminController::class, 'index']);
 Route::get('api/comments/{post_id}', [CommentController::class, 'index']);
 Route::get('/post/{identifier}', [PostController::class, 'show'])->name('post.show');
+Route::get('/post/{id}/edit', [AdminController::class, 'edit'])->name('admin.edit');
 Route::post('api/comments', [CommentController::class, 'store']);
 Route::delete('api/comments/{comment_id}', [CommentController::class, 'destroy']);
 Route::delete('/posts/{post_id}', [PostController::class, 'destroy'])->middleware('auth')->name('posts.destroy');

@@ -5,6 +5,7 @@ import { Toaster } from 'sonner';
 import Header from '../components/Header';
 import SearchComponent from '@/components/SearchComponent';
 import '../../css/app.css';
+import YearFilterComponent from '@/components/YearFilterComponent';
 import { Navbar } from '@/components/Navbar';
 import { useTheme } from '../context/ThemeContext';
 import axiosInstance from "../components/axiosInstance";
@@ -160,13 +161,16 @@ const PostPage: React.FC<PostPageProps> = ({ post }) => {
                   posts={Array.isArray(allPosts) ? allPosts : 
                         (allPosts && allPosts.data ? allPosts.data : [])} 
                 />
+                <YearFilterComponent posts={Array.isArray(allPosts) ? allPosts :
+                        (allPosts && allPosts.data ? allPosts.data : [])}
+                />
               </div>
               </div>
             </aside>
             
             {/* Main content */}
             <div className="flex-1 justify-center items-center flex flex-col max-w-500">
-              <article className="rounded-lg bg-[#5800FF]/5 !p-6 md:!w-260 !max-w-260">
+              <article className="rounded-lg bg-[#5800FF]/5 !p-6 md:!w-260 !max-w-260 xl:!w-320 xl:!max-w-320 !mb-10">
                 <h2 className="text-3xl font-bold !mb-10">{post.title}</h2>
                 {/* Image */}
                 {post.image_url && (

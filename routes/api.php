@@ -24,9 +24,9 @@ Route::post('login', function (Request $request) {
     ]);
 });
 
-
 Route::get('/comments/{postId}', [CommentController::class, 'index']);
 Route::get('/comments/{id}', [CommentController::class, 'show']);;
 Route::delete('/comments/{id}', [CommentController::class, 'destroy']);
 Route::middleware('auth:sanctum')->post('/comments', [CommentController::class, 'store']);
+Route::put('/posts/{post}', [PostController::class, 'update']);
 

@@ -209,4 +209,23 @@ class PostController extends Controller
         ]);
     }
     
+    public function update(Request $request, Post $post)
+    {
+        $validated = $request->validate([
+            'title' => 'required|string|max:255',
+            'content' => 'required|string',
+            'topic' => 'required|string|max:255',
+            'image' => 'nullable|image|max:2048',
+        ]);
+    
+        if ($request->hasFile('image')) {
+            $imagePath = $request->file('image')->store('uploads', 'public');
+            $validated['image_url'] = '/storage/' . $imagePath;
+        }
+    
+        $post->update($validated);
+    
+        return response()->json(['message' => 'Post updated successfully']);
+    }
+    
 }

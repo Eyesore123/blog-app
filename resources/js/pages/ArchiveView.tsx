@@ -38,27 +38,30 @@ interface PageProps {
       name: string;
     } | null;
   };
+  archiveYear: number;
   [key: string]: any;
 }
 
-export default function MainPage() {
+export default function ArchiveView() {
   const { props } = usePage<PageProps>();
   const { theme } = useTheme();
-  const { posts, allPosts, topics, currentTopic, currentPage, hasMore, total } = props;
+  const { posts, allPosts, topics, currentTopic, currentPage, hasMore, total, archiveYear } = props;
 
   const isAdmin = props.auth?.user?.is_admin ?? false;
 
   const handlePageChange = (page: number) => {
     const params = new URLSearchParams();
+    params.append('year', archiveYear.toString());
     if (currentTopic) params.append('topic', currentTopic);
     params.append('page', (page + 1).toString());
-    router.get('/', Object.fromEntries(params));
+    router.get('/archive', Object.fromEntries(params));
   };
 
   const handleTopicChange = (topic: string | null) => {
     const params = new URLSearchParams();
+    params.append('year', archiveYear.toString());
     if (topic) params.append('topic', topic);
-    router.get('/', Object.fromEntries(params));
+    router.get('/archive', Object.fromEntries(params));
   };
 
   const handleDeletePost = (postId: number) => {
@@ -84,7 +87,7 @@ export default function MainPage() {
                 <div className="rounded-lg bg-[#5800FF]/10 !p-4">
                   <h3 className="font-semibold !mb-2">About</h3>
                   <p className="opacity-80">
-                    Welcome to my personal blog where I share my thoughts and experiments with web development, design, and technology.
+                    Viewing posts from <strong>{archiveYear}</strong>. Browse other years or topics to explore more.
                   </p>
                 </div>
 
@@ -119,19 +122,22 @@ export default function MainPage() {
                     )}
                   </ul>
                 </div>
+
                 <div className="rounded-lg bg-[#5800FF]/10 !p-4">
-                <SearchComponent posts={allPosts.data} />
-                <YearFilterComponent posts={allPosts.data} />
+                  <SearchComponent posts={allPosts.data} />
+                  <YearFilterComponent posts={allPosts.data} />
+                </div>
               </div>
-              </div>
-  
             </aside>
 
             {/* Main content */}
             <div className="flex-1 justify-center items-center flex flex-col max-w-500">
+              <h2 className="text-2xl font-bold mb-4 text-center">
+                Archive — Posts from {archiveYear}
+              </h2>
               <div className="!space-y-8">
                 {posts.length === 0 ? (
-                  <div className="text-center opacity-70 !mt-30">No blog posts yet.</div>
+                  <div className="text-center opacity-70 !mt-30">No blog posts found for {archiveYear}.</div>
                 ) : (
                   <>
                     {posts.map((post) => (
