@@ -17,6 +17,8 @@ interface BlogPostType {
   author?: string;
   created_at: string;
   image_url?: string | null;
+    updated_at?: string;
+    _id?: string;
   slug?: string;
   [key: string]: any; // Allow for quoted property names
 }
@@ -180,6 +182,8 @@ export default function ArchiveView() {
                             image_url: imageUrl,
                             slug: slug,
                             author: author,
+                            created_at: post.created_at,
+                            updated_at: post.updated_at || post.created_at
                         }}
                     />
                         {isAdmin && (

@@ -17,6 +17,11 @@ interface BlogPostType {
   topic: string;
   author: string;
   created_at: string;
+  image_url?: string | null;
+  updated_at?: string;
+  _id?: string;
+  slug?: string;
+  [key: string]: any;
 }
 
 interface PaginatedPosts {

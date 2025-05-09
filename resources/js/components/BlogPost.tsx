@@ -14,6 +14,8 @@ interface Post {
   image_url?: string | null;
   slug?: string;
   author?: string;
+  created_at: string;
+  updated_at?: string;
 }
 
 interface Comment {
@@ -136,7 +138,20 @@ export function BlogPost({ post }: { post: Post }) {
         </div>
       )}
       
-      <div className="prose max-w-none opacity-90">{post.content}</div>
+      <div className="prose max-w-none opacity-90 !mb-10">{post.content}</div>
+
+      <div className="text-sm text-gray-500 !mt-3 !pt-6 !space-y-1 border-t border-[#5800FF]/20">
+        {post.created_at && (
+          <div>
+            Created: {new Date(post.created_at).toLocaleString()}
+          </div>
+        )}
+        {post.updated_at && post.updated_at !== post.created_at && (
+          <div className="italic">
+            Updated: {new Date(post.updated_at).toLocaleString()}
+          </div>
+        )}
+</div>
       
       <div className="!mt-6 !pt-6 border-t border-[#5800FF]/20">
         <button

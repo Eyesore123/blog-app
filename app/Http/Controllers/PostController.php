@@ -39,6 +39,7 @@ class PostController extends Controller
                 'content' => $post->content,
                 'topic' => $post->topic,
                 'created_at' => $post->created_at,
+                'updated_at' => $post->updated_at,
                 // Handle both storage and direct upload paths
                 'image_url' => $post->image_path 
                     ? (strpos($post->image_path, 'uploads/') === 0 
@@ -194,6 +195,7 @@ class PostController extends Controller
                 : '/storage/' . $post->image_path)
             : null;
         
+        // In the show method, modify the post array
         return Inertia::render('PostPage', [
             'post' => [
                 'id' => $post->id,
@@ -202,11 +204,14 @@ class PostController extends Controller
                 'topic' => $post->topic,
                 'image_url' => $imageUrl,
                 'slug' => $post->slug,
+                'created_at' => $post->created_at,
+                'updated_at' => $post->updated_at, // Add this line
             ],
             'comments' => $post->comments,
             'allPosts' => $allPosts,
             'user' => auth()->user(),
         ]);
+
     }
     
     public function update(Request $request, Post $post)
