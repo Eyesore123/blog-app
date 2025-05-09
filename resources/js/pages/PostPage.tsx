@@ -22,6 +22,7 @@ interface Comment {
   _id: string;
   authorName: string;
   content: string;
+  parent_id?: string | null;
   createdAt: string;
   image?: string;
 }
@@ -104,16 +105,37 @@ const PostPage: React.FC<PostPageProps> = ({ post }) => {
     }
   }
 
-  async function handleDeleteComment(commentId: string) {
-    if (!confirm("Are you sure you want to delete this comment?")) return;
-    try {
-      await axiosInstance.delete(`/api/comments/${commentId}`);
-      setComments(comments.filter((comment) => comment._id !== commentId));
-    } catch (error) {
-      console.error('Failed to delete comment', error);
-      alert('Error deleting comment');
+  const handleDeleteComment = (commentId: string) => {
+    if (confirm('Are you sure you want to delete this comment?')) {
+      // Use the URL format that matches your web.php route
+      router.delete(`/api/comments/${commentId}`, {
+        onSuccess: () => {
+          console.log(`Comment ${commentId} deleted`);
+          
+          // Update the UI based on the comment's position in the thread
+          const comment = comments.find(c => c._id === commentId);
+          const hasReplies = comments.some(c => c.parent_id === commentId);
+          const isReply = comment?.parent_id;
+          
+          if (hasReplies || isReply) {
+            // If it's part of a conversation, mark as deleted but keep in the list
+            setComments(comments.map(c => 
+              c._id === commentId 
+                ? { ...c, deleted: true, content: "[Message removed by moderator]" } 
+                : c
+            ));
+          } else {
+            // If it's a standalone comment, remove it completely
+            setComments(comments.filter(c => c._id !== commentId));
+          }
+        },
+        onError: (errors) => {
+          console.error('Failed to delete comment', errors);
+          alert('Error deleting comment. Please try again.');
+        }
+      });
     }
-  }
+  };
 
   console.log('BlogPost image path:', post.image_url);
 
