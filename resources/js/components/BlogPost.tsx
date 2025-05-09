@@ -13,6 +13,7 @@ interface Post {
   _id?: string;
   image_url?: string | null;
   slug?: string;
+  author?: string;
 }
 
 interface Comment {
@@ -34,7 +35,6 @@ export function BlogPost({ post }: { post: Post }) {
   const user = auth?.user;
   const isSignedIn = Boolean(user);
   const token = user?.token;
-
   const [showComments, setShowComments] = useState(false);
   const [newComment, setNewComment] = useState("");
   const [submitting, setSubmitting] = useState(false);
@@ -67,7 +67,6 @@ export function BlogPost({ post }: { post: Post }) {
 
     setSubmitting(true);
     await getCsrfToken();
-
     try {
       const response = await axiosInstance.post('/api/comments', newCommentData);
       setComments([...comments, response.data]);
@@ -101,7 +100,17 @@ export function BlogPost({ post }: { post: Post }) {
     }
   }
   
+  // Debug the image URL
   console.log('BlogPost image path:', post.image_url);
+  
+  // Determine if we have a valid image URL
+    const hasValidImageUrl = Boolean(
+      post.image_url && 
+      post.image_url !== 'null' &&
+      post.image_url !== 'undefined'
+  );
+  
+  console.log('Resolved image URL:', hasValidImageUrl ? post.image_url : null);
   
   return (
     <article className="rounded-lg bg-[#5800FF]/5 !p-6 md:!w-260 md:!max-w-260 xl:!w-320 xl:!max-w-320 !mb-10">
@@ -111,8 +120,8 @@ export function BlogPost({ post }: { post: Post }) {
       >
         {post.title}
       </h2>
-
-      {post.image_url && (
+      
+      {hasValidImageUrl && (
         <div className="!mb-20 !mt-40">
           <img
             src={post.image_url}
@@ -126,9 +135,9 @@ export function BlogPost({ post }: { post: Post }) {
           />
         </div>
       )}
-
+      
       <div className="prose max-w-none opacity-90">{post.content}</div>
-
+      
       <div className="!mt-6 !pt-6 border-t border-[#5800FF]/20">
         <button
           onClick={() => setShowComments(!showComments)}
@@ -136,7 +145,7 @@ export function BlogPost({ post }: { post: Post }) {
         >
           {showComments ? "Hide Comments" : `Show Comments (${comments.length})`}
         </button>
-
+        
         {showComments && (
           <div className="!mt-4 !space-y-4">
             {comments.length > 0 ? (
@@ -145,7 +154,6 @@ export function BlogPost({ post }: { post: Post }) {
                   <p className="font-medium text-sm">{comment.authorName}</p>
                   <p className="opacity-80">{comment.content}</p>
                   <p className="text-xs opacity-60 italic">{new Date(comment.createdAt).toLocaleString()}</p>
-
                   {Boolean(user?.is_admin) && (
                     <button
                       onClick={() => handleDeleteComment(comment._id)}
@@ -159,28 +167,30 @@ export function BlogPost({ post }: { post: Post }) {
             ) : (
               <p className="text-sm opacity-60 italic">No comments yet. Be the first!</p>
             )}
-
+            
             {isSignedIn ? (
               <form onSubmit={handleSubmitComment} className="!mt-6">
                 <textarea
                   placeholder="Write a comment..."
                   value={newComment}
                   onChange={(e) => setNewComment(e.target.value)}
-                  className="w-full !p-2 rounded border border-[#5800FF]/20 bg-[var(--bg-primary)]"
+                  className="w-full !p-2 rounded border border-[#5800FF]/20 focus:border-[#5800FF] focus:ring-1 focus:ring-[#5800FF] outline-none"
+                  rows={3}
                 />
                 <button
                   type="submit"
-                  disabled={!newComment || submitting}
+                  disabled={submitting || !newComment}
                   className="!mt-2 !px-4 !py-2 bg-[#5800FF] text-white rounded hover:bg-[#E900FF] disabled:opacity-50 transition-colors"
                 >
-                  {submitting ? 'Posting...' : 'Post Comment'}
+                  {submitting ? "Posting..." : "Post Comment"}
                 </button>
               </form>
             ) : (
-              <p className="text-sm opacity-70 italic">
-                <Link href={route('login')} className="underline text-[#5800FF] hover:text-[#E900FF]">
-                  Sign in to write a comment
-                </Link>
+              <p className="text-sm !mt-4">
+                <Link href="/login" className="text-[#5800FF] hover:underline">
+                  Sign in
+                </Link>{" "}
+                to leave a comment.
               </p>
             )}
           </div>

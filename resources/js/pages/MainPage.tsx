@@ -7,6 +7,7 @@ import '../../css/app.css';
 import { Navbar } from '@/components/Navbar';
 import SearchComponent from '@/components/SearchComponent';
 import YearFilterComponent from '@/components/YearFilterComponent';
+import ArchivesComponent from '@/components/ArchiveComponent';
 import { useTheme } from '../context/ThemeContext';
 
 interface BlogPostType {
@@ -122,6 +123,7 @@ export default function MainPage() {
                 <div className="rounded-lg bg-[#5800FF]/10 !p-4">
                 <SearchComponent posts={allPosts.data} />
                 <YearFilterComponent posts={allPosts.data} />
+                <ArchivesComponent />
               </div>
               </div>
   

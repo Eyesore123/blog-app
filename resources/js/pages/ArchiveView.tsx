@@ -14,18 +14,21 @@ interface BlogPostType {
   title: string;
   content: string;
   topic: string;
-  author: string;
+  author?: string;
   created_at: string;
-}
-
-interface PaginatedPosts {
-  current_page: number;
-  data: BlogPostType[];
+  image_url?: string | null;
+  slug?: string;
+  [key: string]: any; // Allow for quoted property names
 }
 
 interface PageProps {
-  posts: BlogPostType[];
-  allPosts: PaginatedPosts;
+  posts: {
+    data: BlogPostType[];
+    current_page: number;
+    last_page: number;
+    total: number;
+  };
+  allPosts: BlogPostType[];
   topics: string[];
   currentTopic: string | null;
   currentPage: number;
@@ -46,22 +49,20 @@ export default function ArchiveView() {
   const { props } = usePage<PageProps>();
   const { theme } = useTheme();
   const { posts, allPosts, topics, currentTopic, currentPage, hasMore, total, archiveYear } = props;
-
+  
   const isAdmin = props.auth?.user?.is_admin ?? false;
 
   const handlePageChange = (page: number) => {
     const params = new URLSearchParams();
-    params.append('year', archiveYear.toString());
     if (currentTopic) params.append('topic', currentTopic);
     params.append('page', (page + 1).toString());
-    router.get('/archive', Object.fromEntries(params));
+    router.get(`/archives/${archiveYear}`, Object.fromEntries(params));
   };
 
   const handleTopicChange = (topic: string | null) => {
     const params = new URLSearchParams();
-    params.append('year', archiveYear.toString());
     if (topic) params.append('topic', topic);
-    router.get('/archive', Object.fromEntries(params));
+    router.get(`/archives/${archiveYear}`, Object.fromEntries(params));
   };
 
   const handleDeletePost = (postId: number) => {
@@ -74,6 +75,10 @@ export default function ArchiveView() {
     }
   };
 
+  // Debug the raw data structure
+  console.log('Raw posts data:', JSON.stringify(posts));
+  console.log('All posts in ArchiveView:', posts.data);
+
   return (
     <div className={`min-h-screen ${theme}`}>
       <div className="min-h-screen bg-[var(--bg-primary)] text-[var(--text-primary)]">
@@ -83,7 +88,7 @@ export default function ArchiveView() {
           <div className="w-full !mx-auto flex md:!gap-10 xl:!gap-18">
             {/* Sidebar */}
             <aside className="!w-80 lg:!w-120 lg:!ml-50">
-              <div className="sticky top-24 !space-y-6 !w-60 md:!w-80 !-ml-0  !xl:ml-0 lg:!w-100 xl:!w-120">
+              <div className="sticky top-24 !space-y-6 !w-60 md:!w-80 !-ml-0 !xl:ml-0 lg:!w-100 xl:!w-120">
                 <div className="rounded-lg bg-[#5800FF]/10 !p-4">
                   <h3 className="font-semibold !mb-2">About</h3>
                   <p className="opacity-80">
@@ -124,35 +129,72 @@ export default function ArchiveView() {
                 </div>
 
                 <div className="rounded-lg bg-[#5800FF]/10 !p-4">
-                  <SearchComponent posts={allPosts.data} />
-                  <YearFilterComponent posts={allPosts.data} />
+                  <SearchComponent 
+                    posts={allPosts}
+                  />
+                  <YearFilterComponent 
+                    posts={allPosts}
+                  />
                 </div>
               </div>
             </aside>
 
             {/* Main content */}
             <div className="flex-1 justify-center items-center flex flex-col max-w-500">
-              <h2 className="text-2xl font-bold mb-4 text-center">
+            <h2 className="text-2xl font-bold !mb-10 !p-6 flex justify-start w-full">
                 Archive — Posts from {archiveYear}
               </h2>
               <div className="!space-y-8">
-                {posts.length === 0 ? (
+                {posts.data.length === 0 ? (
                   <div className="text-center opacity-70 !mt-30">No blog posts found for {archiveYear}.</div>
                 ) : (
                   <>
-                    {posts.map((post) => (
-                      <div key={post.id} className="relative">
-                        <BlogPost post={{ ...post, _id: post.id.toString() }} />
+                    
+                    {posts.data.map((post) => {
+                    // Log the raw post object to see its structure
+                    console.log('Raw post object:', post);
+                    
+
+                    const imageUrlKey = 'image_url';
+                    const slugKey = 'slug';
+                    const authorKey = 'author';
+                    
+                    console.log('Found keys:', { imageUrlKey, slugKey, authorKey });
+                    
+                    // Get the values using the found keys
+                    const imageUrl = imageUrlKey && post[imageUrlKey] !== 'image_url' ? post[imageUrlKey] : null;
+                    const slug = slugKey && post[slugKey] !== 'slug' ? post[slugKey] : undefined;
+                    const author = authorKey && post[authorKey] !== 'author' ? post[authorKey] : 'Unknown';
+                    
+                    console.log('Extracted values:', { imageUrl, slug, author });
+                    
+                    return (
+                        <div key={post.id} className="relative">
+                        <BlogPost 
+                        post={{
+                            title: post.title,
+                            content: post.content,
+                            topic: post.topic,
+                            id: post.id,
+                            _id: post.id.toString(),
+                            image_url: imageUrl,
+                            slug: slug,
+                            author: author,
+                        }}
+                    />
                         {isAdmin && (
-                          <button
+                            <button
                             onClick={() => handleDeletePost(post.id)}
                             className="absolute top-10 right-30 !px-3 !py-1 bg-red-600 text-white rounded hover:bg-red-800 transition-colors"
-                          >
+                            >
                             Delete
-                          </button>
+                            </button>
                         )}
-                      </div>
-                    ))}
+                        </div>
+                    );
+                    })}
+
+
                     <div className="flex justify-center items-center gap-10 !mt-18">
                       <button
                         onClick={() => handlePageChange(currentPage - 1)}
