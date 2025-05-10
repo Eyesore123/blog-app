@@ -143,7 +143,7 @@ export default function ArchiveView() {
 
             {/* Main content */}
             <div className="flex-1 justify-center items-center flex flex-col max-w-500">
-            <h2 className="text-2xl font-bold !mb-10 !p-6 flex justify-start w-full">
+            <h2 className="text-2xl font-bold w-260 !mb-10 !p-6 flex justify-start">
                 Archive — Posts from {archiveYear}
               </h2>
               <div className="!space-y-8">

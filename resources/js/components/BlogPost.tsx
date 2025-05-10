@@ -229,28 +229,32 @@ export function BlogPost({ post }: { post: Post }) {
 
   // Render a comment and its replies
   const renderComment = (comment: Comment, level = 0) => {
-    const maxNestingLevel = 10;
-    const isReplying = replyingTo === comment._id;
-    const replies = getReplies(comment._id);
-    const isDeleted = comment.deleted;
-    
+  const maxNestingLevel = 10;
+  const isReplying = replyingTo === comment._id;
+  const replies = getReplies(comment._id);
+  const isDeleted = comment.deleted;
+  
+  // Limit nesting on mobile
+  const effectiveLevel = window.innerWidth < 768 ? Math.min(level, 3) : level;
+  const indentClass = effectiveLevel > 0 ? `!ml-${Math.min(effectiveLevel * 4, 12)}` : '';
+  
     return (
-      <div key={comment._id} className={`bg-[#5800FF]/${10 - level * 2} rounded !p-3 ${level > 0 ? `!ml-${level * 4}` : ''}`}>
-        <p className="font-medium text-sm">{comment.authorName}</p>
+      <div key={comment._id} className={`bg-[#5800FF]/${10 - Math.min(level, 5) * 2} rounded !p-2 md:!p-3 ${indentClass}`}>
+        <p className="font-medium text-xs md:text-sm">{comment.authorName}</p>
         
         {isDeleted ? (
-          <p className="opacity-60 italic text-sm">[Message removed by moderator]</p>
+          <p className="opacity-60 italic text-xs md:text-sm">[Message removed by moderator]</p>
         ) : (
-          <p className="opacity-80 break-words !max-w-240 overflow-wrap-anywhere h-auto">{comment.content}</p>
+          <p className="opacity-80 break-words !max-w-full md:!max-w-240 overflow-wrap-anywhere h-auto text-xs md:text-sm">{comment.content}</p>
         )}
         
-        <p className="text-xs opacity-60 italic">{new Date(comment.createdAt).toLocaleString()}</p>
+        <p className="text-[10px] md:text-xs opacity-60 italic">{new Date(comment.createdAt).toLocaleString()}</p>
         
-        <div className="flex gap-2 !mt-2">
+        <div className="flex gap-2 !mt-1 md:!mt-2">
           {!isDeleted && level < maxNestingLevel && isSignedIn && (
             <button
               onClick={() => setReplyingTo(comment._id)}
-              className="text-xs text-[#E900FF] hover:underline"
+              className="text-[10px] md:text-xs text-[#E900FF] hover:underline"
             >
               Reply
             </button>
@@ -259,7 +263,7 @@ export function BlogPost({ post }: { post: Post }) {
           {!isDeleted && Boolean(user?.is_admin) && (
             <button
               onClick={() => handleDeleteComment(comment._id)}
-              className="text-red-500 text-xs hover:underline"
+              className="text-red-500 text-[10px] md:text-xs hover:underline"
             >
               Delete
             </button>
@@ -267,11 +271,11 @@ export function BlogPost({ post }: { post: Post }) {
         </div>
         
         {isReplying && (
-          <form onSubmit={(e) => handleSubmitReply(e, comment._id)} className="!mt-3">
+          <form onSubmit={(e) => handleSubmitReply(e, comment._id)} className="!mt-2 md:!mt-3">
             <textarea
               ref={replyInputRef}
               placeholder={`Reply to ${comment.authorName}...`}
-              className="w-full !p-2 rounded border border-[#5800FF]/20 focus:border-[#5800FF] focus:ring-1 focus:ring-[#5800FF] outline-none"
+              className="w-full !p-2 rounded border border-[#5800FF]/20 focus:border-[#5800FF] focus:ring-1 focus:ring-[#5800FF] outline-none text-xs md:text-sm"
               rows={2}
               defaultValue=""
             />
@@ -279,14 +283,14 @@ export function BlogPost({ post }: { post: Post }) {
               <button
                 type="submit"
                 disabled={submitting}
-                className="!px-3 !py-1 bg-[#5800FF] text-white rounded hover:bg-[#E900FF] disabled:opacity-50 transition-colors text-sm"
+                className="!px-2 !py-1 md:!px-3 md:!py-1 bg-[#5800FF] text-white rounded hover:bg-[#E900FF] disabled:opacity-50 transition-colors text-[10px] md:text-sm"
               >
                 {submitting ? "Posting..." : "Post Reply"}
               </button>
               <button
                 type="button"
                 onClick={() => setReplyingTo(null)}
-                className="!px-3 !py-1 border border-[#5800FF]/20 rounded hover:bg-[#5800FF]/10 text-sm"
+                className="!px-2 !py-1 md:!px-3 md:!py-1 border border-[#5800FF]/20 rounded hover:bg-[#5800FF]/10 text-[10px] md:text-sm"
               >
                 Cancel
               </button>
@@ -295,38 +299,39 @@ export function BlogPost({ post }: { post: Post }) {
         )}
         
         {replies.length > 0 && (
-          <div className="!mt-3 !space-y-3">
+          <div className="!mt-2 md:!mt-3 !space-y-2 md:!space-y-3">
             {replies.map(reply => renderComment(reply, level + 1))}
           </div>
         )}
       </div>
     );
   };
+
   
   return (
-    <>
+  <>
     <Head>
-        <link
-          rel="alternate"
-          type="application/rss+xml"
-          title="RSS Feed for Joni's Blog"
-          href="/feed"
-        />
-      </Head>
-    <article className="rounded-lg bg-[#5800FF]/5 !p-6 md:!w-260 md:!max-w-260 xl:!w-320 xl:!max-w-320 !mb-10">
+      <link
+        rel="alternate"
+        type="application/rss+xml"
+        title="RSS Feed for Joni's Blog"
+        href="/feed"
+      />
+    </Head>
+    <article className="rounded-lg bg-[#5800FF]/5 !p-4 w-full md:!w-260 xl:w-500 !mb-6 md:!mb-10">
       <h2
-        className="text-2xl font-bold flex justify-start !mb-10 cursor-pointer hover:underline"
+        className="text-xl md:text-2xl font-bold flex justify-start !mb-4 md:!mb-10 cursor-pointer hover:underline"
         onClick={goToPostPage}
       >
         {post.title}
       </h2>
       
       {hasValidImageUrl && (
-        <div className="!mb-20 !mt-40">
+        <div className="w-full !mb-6 md:!mb-20 !mt-4 md:!mt-40">
           <img
             src={post.image_url}
             alt={post.title}
-            className="w-100 lg:w-200 h-auto rounded-lg cursor-pointer hover:opacity-80"
+            className="w-full md:w-100 lg:w-200 h-auto rounded-lg cursor-pointer hover:opacity-80"
             onClick={goToPostPage}
             onError={(e) => {
               console.error('Image failed to load:', post.image_url);
@@ -336,8 +341,8 @@ export function BlogPost({ post }: { post: Post }) {
         </div>
       )}
       
-      <div className="prose max-w-none opacity-90 !mb-10">{post.content}</div>
-      <div className="text-sm text-gray-500 !mt-3 !pt-6 !space-y-1 border-t border-[#5800FF]/20">
+      <div className="prose max-w-none opacity-90 !mb-6 md:!mb-10 text-sm md:text-base">{post.content}</div>
+      <div className="text-xs md:text-sm text-gray-500 !mt-3 !pt-4 md:!pt-6 !space-y-1 border-t border-[#5800FF]/20">
         {post.created_at && (
           <div>
             Created: {new Date(post.created_at).toLocaleString()}
@@ -350,35 +355,35 @@ export function BlogPost({ post }: { post: Post }) {
         )}
       </div>
       
-      <div className="!mt-6 !pt-6 border-t border-[#5800FF]/20">
+      <div className="!mt-4 md:!mt-6 !pt-4 md:!pt-6 border-t border-[#5800FF]/20">
         <button
           onClick={() => setShowComments(!showComments)}
-          className="text-sm opacity-70 hover:opacity-100 transition-opacity"
+          className="text-xs md:text-sm opacity-70 hover:opacity-100 transition-opacity"
         >
           {showComments ? "Hide Comments" : `Show Comments (${comments.length})`}
         </button>
         
         {showComments && (
-          <div className="!mt-4 !space-y-4">
+          <div className="!mt-3 md:!mt-4 !space-y-3 md:!space-y-4">
             {comments.length > 0 ? (
               getTopLevelComments().map(comment => renderComment(comment))
             ) : (
-              <p className="text-sm opacity-60 italic">No comments yet. Be the first!</p>
+              <p className="text-xs md:text-sm opacity-60 italic">No comments yet. Be the first!</p>
             )}
             
             {isSignedIn && replyingTo === null && (
-              <form onSubmit={handleSubmitComment} className="!mt-6">
+              <form onSubmit={handleSubmitComment} className="!mt-4 md:!mt-6">
                 <textarea
                   ref={mainCommentRef}
                   placeholder="Write a comment..."
-                  className="w-full !p-2 rounded border border-[#5800FF]/20 focus:border-[#5800FF] focus:ring-1 focus:ring-[#5800FF] outline-none"
+                  className="w-full !p-2 rounded border border-[#5800FF]/20 focus:border-[#5800FF] focus:ring-1 focus:ring-[#5800FF] outline-none text-sm md:text-base"
                   rows={3}
                   defaultValue=""
                 />
                 <button
                   type="submit"
                   disabled={submitting}
-                  className="!mt-2 !px-4 !py-2 bg-[#5800FF] text-white rounded hover:bg-[#E900FF] disabled:opacity-50 transition-colors"
+                  className="!mt-2 !px-3 !py-1 md:!px-4 md:!py-2 bg-[#5800FF] text-white rounded hover:bg-[#E900FF] disabled:opacity-50 transition-colors text-sm md:text-base"
                 >
                   {submitting ? "Posting..." : "Post Comment"}
                 </button>
@@ -386,7 +391,7 @@ export function BlogPost({ post }: { post: Post }) {
             )}
             
             {!isSignedIn && (
-              <p className="text-sm !mt-4">
+              <p className="text-xs md:text-sm !mt-2 md:!mt-4">
                 <Link href="/login" className="text-[#5800FF] hover:underline">
                   Sign in
                 </Link>{" "}
@@ -397,6 +402,7 @@ export function BlogPost({ post }: { post: Post }) {
         )}
       </div>
     </article>
-    </>
-  );
+  </>
+);
+
 }

@@ -8,6 +8,7 @@ import { Navbar } from '@/components/Navbar';
 import SearchComponent from '@/components/SearchComponent';
 import YearFilterComponent from '@/components/YearFilterComponent';
 import ArchivesComponent from '@/components/ArchiveComponent';
+import RecentActivityFeed from '@/components/RecentActivityFeed';
 import { RssSubscribeLink } from '@/components/RssSubscribeLink';
 import { useTheme } from '../context/ThemeContext';
 
@@ -78,16 +79,17 @@ export default function MainPage() {
     }
   };
 
-  return (
+    return (
     <div className={`min-h-screen ${theme}`}>
       <div className="min-h-screen bg-[var(--bg-primary)] text-[var(--text-primary)]">
         <Navbar />
         <Header />
-        <main className="!p-8">
-          <div className="w-full !mx-auto flex md:!gap-10 xl:!gap-1">
-            {/* Sidebar */}
-            <aside className="!w-80 lg:!w-120 lg:!ml-20">
-              <div className="sticky top-24 !space-y-6 !w-60 md:!w-80 !-ml-0  !xl:ml-0 lg:!w-100 xl:!w-120">
+        <main className="!p-4 md:!p-8">
+          {/* Change to flex-col on mobile, row on larger screens */}
+          <div className="w-full !mx-auto flex flex-col lg:flex-row md:!gap-6">
+            {/* Sidebar - full width on mobile, fixed width on desktop */}
+            <aside className="w-full lg:w-120 !mb-8 lg:!mb-0 xl:!ml-50 xxl:!ml-60 overflow-y-auto xl:!-mt-24">
+              <div className="lg:sticky lg:top-24 !space-y-4 md:!space-y-6 w-full lg:!w-80 xl:!w-120">
                 <div className="rounded-lg bg-[#5800FF]/10 !p-4">
                   <h3 className="font-semibold !mb-2">About</h3>
                   <p className="opacity-80">
@@ -127,50 +129,50 @@ export default function MainPage() {
                   </ul>
                 </div>
                 <div className="rounded-lg bg-[#5800FF]/10 !p-4">
-                <SearchComponent posts={allPosts.data} />
-                <YearFilterComponent posts={allPosts.data} />
-                <ArchivesComponent />
-                <RssSubscribeLink />
+                  <SearchComponent posts={allPosts.data} />
+                  <YearFilterComponent posts={allPosts.data} />
+                  <ArchivesComponent />
+                  <RssSubscribeLink />
+                  <RecentActivityFeed />
+                </div>
               </div>
-              </div>
-  
             </aside>
 
-            {/* Main content */}
-            <div className="flex-1 justify-center items-center flex flex-col max-w-500">
-              <div className="!space-y-8">
+            {/* Main content - full width on mobile, flex-1 on desktop */}
+            <div className="w-full lg:flex-1 flex flex-col items-center">
+              <div className="w-full !space-y-6 md:!space-y-8">
                 {posts.length === 0 ? (
-                  <div className="text-center opacity-70 !mt-30">No blog posts yet.</div>
+                  <div className="text-center opacity-70 !mt-8 md:!mt-30">No blog posts yet.</div>
                 ) : (
                   <>
                     {posts.map((post) => (
-                      <div key={post.id} className="relative">
+                      <div key={post.id} className="flex-1 justify-center items-center flex flex-col w-full">
                         <BlogPost post={{ ...post, _id: post.id.toString() }} />
                         {isAdmin && (
                           <button
                             onClick={() => handleDeletePost(post.id)}
-                            className="absolute top-10 right-30 !px-3 !py-1 bg-red-600 text-white rounded hover:bg-red-800 transition-colors"
+                            className="absolute top-4 right-4 md:top-10 md:right-30 !px-3 !py-1 bg-red-600 text-white rounded hover:bg-red-800 transition-colors"
                           >
                             Delete
                           </button>
                         )}
                       </div>
                     ))}
-                    <div className="flex justify-center items-center gap-10 !mt-18">
+                    <div className="flex justify-center items-center !gap-4 md:!gap-10 !mt-8 md:!mt-18">
                       <button
                         onClick={() => handlePageChange(currentPage - 1)}
                         disabled={currentPage === 0}
-                        className="!px-4 !py-2 bg-[#5800FF] text-white rounded hover:bg-[#E900FF] disabled:opacity-50 transition-colors"
+                        className="!px-3 !py-1 md:!px-4 md:!py-2 bg-[#5800FF] text-white rounded hover:bg-[#E900FF] disabled:opacity-50 transition-colors text-sm md:text-base"
                       >
                         Previous
                       </button>
-                      <span>
+                      <span className="text-sm md:text-base">
                         Page {currentPage + 1} of {Math.ceil(total / 6)}
                       </span>
                       <button
                         onClick={() => handlePageChange(currentPage + 1)}
                         disabled={!hasMore}
-                        className="!px-4 !py-2 bg-[#5800FF] text-white rounded hover:bg-[#E900FF] disabled:opacity-50 transition-colors"
+                        className="!px-3 !py-1 md:!px-4 md:!py-2 bg-[#5800FF] text-white rounded hover:bg-[#E900FF] disabled:opacity-50 transition-colors text-sm md:text-base"
                       >
                         Next
                       </button>
@@ -185,4 +187,5 @@ export default function MainPage() {
       </div>
     </div>
   );
+
 }

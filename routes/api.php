@@ -6,6 +6,8 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\CommentController;
 use App\Models\User;
 use App\Http\Controllers\PostController;
+use App\Http\Controllers\LatestPostController;
+use App\Http\Controllers\RecentActivityController;
 
 Route::post('login', function (Request $request) {
     $request->validate([
@@ -32,3 +34,10 @@ Route::middleware('auth:sanctum')->group(function () {
 });
 Route::get('/archives/years', [ArchiveController::class, 'getYears']);
 
+// Latest post routes
+
+Route::get('/latest-post', [LatestPostController::class, 'show']);
+
+// Routes for recent activity feed
+
+Route::get('/recent-activity', [RecentActivityController::class, 'index']);

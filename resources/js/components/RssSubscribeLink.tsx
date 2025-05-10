@@ -28,7 +28,7 @@ export function RssSubscribeLink() {
 
             <button
                 onClick={copyToClipboard}
-                className="flex items-center !px-3 !py-1 border border-[#5800FF] text-[#5800FF] rounded hover:bg-[#5800FF]/10 transition"
+                className="flex items-center !w-50 md:!w-70 !px-3 !py-1 border border-[#5800FF] text-[#5800FF] hover:text-[#E900FF] transition-colors rounded hover:bg-[#5800FF]/10"
             >
              Copy RSS Link
             </button>

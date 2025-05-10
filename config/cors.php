@@ -9,3 +9,8 @@ return [
     'max_age' => 0,
     'hosts' => [],
 ];
+
+// For production, restrict access, allowed origins: 
+//'allowed_origins' => ['https://jonis-portfolio.netlify.app'],
+// 'supports_credentials' => false,
+// 'paths' => ['api/*', 'sanctum/csrf-cookie'],

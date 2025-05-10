@@ -6,6 +6,9 @@ import Header from '../components/Header';
 import SearchComponent from '@/components/SearchComponent';
 import '../../css/app.css';
 import YearFilterComponent from '@/components/YearFilterComponent';
+import ArchivesComponent from '@/components/ArchiveComponent';
+import RecentActivityFeed from '@/components/RecentActivityFeed';
+import { RssSubscribeLink } from '@/components/RssSubscribeLink';
 import { Navbar } from '@/components/Navbar';
 import { useTheme } from '../context/ThemeContext';
 import axiosInstance from "../components/axiosInstance";
@@ -145,9 +148,9 @@ const PostPage: React.FC<PostPageProps> = ({ post }) => {
         <Navbar />
         <Header />
         <main className="!p-8">
-          <div className="w-full !mx-auto flex md:!gap-10 xl:!gap-18">
+          <div className="w-full !mx-auto flex md:!gap-10">
             {/* Sidebar */}
-            <aside className="!w-80 lg:!w-120 lg:!ml-50">
+            <aside className="!w-80 lg:!w-120 xl:!ml-50 xxl:!ml-60 overflow-y-auto xl:!-mt-24">
               <div className="sticky top-24 !space-y-6 !w-60 md:!w-80 !-ml-0 !xl:ml-0 lg:!w-100 xl:!w-120">
                 <div className="rounded-lg bg-[#5800FF]/10 !p-4">
                   <h3 className="font-semibold !mb-2">About This Post</h3>
@@ -186,17 +189,20 @@ const PostPage: React.FC<PostPageProps> = ({ post }) => {
                 <YearFilterComponent posts={Array.isArray(allPosts) ? allPosts :
                         (allPosts && allPosts.data ? allPosts.data : [])}
                 />
+                <ArchivesComponent />
+                <RecentActivityFeed />
+                <RssSubscribeLink />
               </div>
               </div>
             </aside>
             
             {/* Main content */}
-            <div className="flex-1 justify-center items-center flex flex-col max-w-500">
-              <article className="rounded-lg bg-[#5800FF]/5 !p-6 md:!w-260 !max-w-260 xl:!w-320 xl:!max-w-320 !mb-10">
+            <div className="flex-1 justify-center items-center flex flex-col w-full">
+              <article className="rounded-lg bg-[#5800FF]/5 !p-4 w-full md:!w-260 xl:w-500 !mb-6 md:!mb-10">
                 <h2 className="text-3xl font-bold !mb-10">{post.title}</h2>
                 {/* Image */}
                 {post.image_url && (
-                  <div className="!mb-6">
+                  <div className="!mb-6 w-full">
                     <img
                       src={post.image_url.startsWith('/') ? post.image_url : `/${post.image_url}`}
                       alt={post.title}
