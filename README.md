@@ -17,7 +17,7 @@ Blog still needs some work, though, including:
 1. Spam filter (reCAPTCHA/honeypot) and rate limiter by IP address
 2. Edit and delete comments (own comments only)
 3. Setup SEO meta tags
-4. An API which is connected to portfolio site (portfolio fetches the latest blog post)
+4. User settings page where users can change their password and email, delete their account and sub to newsletters
 5. Installation of AI translation package (Google/DeepL)
 6. Auto-translate on post save + store in DB
 7. Language toggle to navbar
