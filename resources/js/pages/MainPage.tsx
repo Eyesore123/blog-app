@@ -54,7 +54,7 @@ export default function MainPage() {
   const { theme } = useTheme();
   const { posts, allPosts, topics, currentTopic, currentPage, hasMore, total } = props;
 
-  const isAdmin = props.auth?.user?.is_admin ?? false;
+  const isAdmin = Boolean(props.auth?.user?.is_admin);
 
   const handlePageChange = (page: number) => {
     const params = new URLSearchParams();
@@ -67,16 +67,6 @@ export default function MainPage() {
     const params = new URLSearchParams();
     if (topic) params.append('topic', topic);
     router.get('/', Object.fromEntries(params));
-  };
-
-  const handleDeletePost = (postId: number) => {
-    if (confirm('Are you sure you want to delete this post?')) {
-      router.delete(`/posts/${postId}`, {
-        onSuccess: () => {
-          console.log(`Post ${postId} deleted`);
-        },
-      });
-    }
   };
 
     return (
@@ -148,14 +138,6 @@ export default function MainPage() {
                     {posts.map((post) => (
                       <div key={post.id} className="flex-1 justify-center items-center flex flex-col w-full">
                         <BlogPost post={{ ...post, _id: post.id.toString() }} />
-                        {isAdmin && (
-                          <button
-                            onClick={() => handleDeletePost(post.id)}
-                            className="absolute top-4 right-4 md:top-10 md:right-30 !px-3 !py-1 bg-red-600 text-white rounded hover:bg-red-800 transition-colors"
-                          >
-                            Delete
-                          </button>
-                        )}
                       </div>
                     ))}
                     <div className="flex justify-center items-center !gap-4 md:!gap-10 !mt-8 md:!mt-18">

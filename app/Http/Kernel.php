@@ -17,6 +17,7 @@ class Kernel extends HttpKernel
             \Illuminate\View\Middleware\ShareErrorsFromSession::class,
             HandleInertiaRequests::class,  // ← **You need this**
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
+            \App\Http\Middleware\AssignAnonId::class,
         ],
 
         'api' => [

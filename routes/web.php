@@ -10,22 +10,26 @@ use App\Http\Controllers\ArchiveController;
 use App\Http\Controllers\MainPageController;
 use App\Http\Controllers\RssFeedController;
 use Inertia\Inertia;
+use Illuminate\Support\Str;
+use App\Models\User;
 
-Route::get('api/archives/years', [ArchiveController::class, 'getYears']);
-Route::get('/', [PostController::class, 'index'])->name('home');
-Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
-Route::post('/login', [AuthController::class, 'login']);
 Route::post('/anonymous-login', function () {
-    $user = \App\Models\User::create([
-        'name' => 'Anonymous',
+    $user = User::create([
+        'name' => 'Anonymous' . Str::random(14), // now generates AnonymousXXXX...
         'email' => uniqid() . '@anon.local',
-        'password' => bcrypt(str()->random(16)),
+        'password' => bcrypt(Str::random(16)),
+        'anonymous_id' => Str::uuid(), // now creates the anonymous_id properly
     ]);
 
     Auth::login($user);
 
     return redirect('/');
 });
+
+Route::get('api/archives/years', [ArchiveController::class, 'getYears']);
+Route::get('/', [PostController::class, 'index'])->name('home');
+Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
+Route::post('/login', [AuthController::class, 'login']);
 Route::post('/posts', [PostController::class, 'store'])
 ->middleware(['auth']);
 Route::middleware('auth')->post('/logout', [AuthController::class, 'logout'])->name('logout');

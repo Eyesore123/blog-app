@@ -5,11 +5,12 @@ import { useTheme } from '../context/ThemeContext';
 interface PagePropsWithAuth {
   auth: {
     user: {
-      is_admin: boolean;
+      is_admin: number | boolean; // Accept either number or boolean
       name: string;
     } | null;
   };
 }
+
 export function Navbar() {
   const props = usePage().props;
   const { theme, toggleTheme } = useTheme();
@@ -21,28 +22,33 @@ export function Navbar() {
   const renderLinks = () => {
     if (hasAuthProp(props)) {
       const user = props.auth?.user;
-
+      const isAdmin = user ? Boolean(user.is_admin) : false;
+      
       return (
         <>
           <div className="flex items-center gap-4">
-            {user?.name && (
-              <span className="text-[#FFC600]">Welcome, {user.name}!</span>
+            {user && (
+              <span className="text-[#FFC600] font-semibold">
+                Welcome, {user.name}!
+              </span>
             )}
-            {Boolean(user?.is_admin) && (
-            <Link href="/admin" className="hover:text-purple-400">
-              Admin Dashboard
-            </Link>
-          )}
-          {Boolean(user?.is_admin) && (
-            <Link href="/" className="hover:text-purple-400">
-              Main Page
-            </Link>
-          )}
 
-
+            {isAdmin && (
+              <>
+                <Link href="/admin" className="hover:text-purple-400">
+                  Admin Dashboard
+                </Link>
+                <Link href="/" className="hover:text-purple-400">
+                  Main Page
+                </Link>
+              </>
+            )}
           </div>
           <div className="flex items-center gap-14">
-            <button onClick={toggleTheme} className="p-2 hover:text-[#FFC600] transition-colors">
+            <button
+              onClick={toggleTheme}
+              className="p-2 hover:text-[#FFC600] transition-colors"
+            >
               {theme === 'dark' ? '🌞' : '🌙'}
             </button>
             {user ? (
@@ -59,7 +65,6 @@ export function Navbar() {
         </>
       );
     }
-
     // fallback (no auth prop at all — rare)
     return (
       <>
@@ -69,7 +74,10 @@ export function Navbar() {
           </Link>
         </div>
         <div className="flex items-center gap-14">
-          <button onClick={toggleTheme} className="p-2 hover:text-[#FFC600] transition-colors">
+          <button
+            onClick={toggleTheme}
+            className="p-2 hover:text-[#FFC600] transition-colors"
+          >
             {theme === 'dark' ? '🌞' : '🌙'}
           </button>
           <Link

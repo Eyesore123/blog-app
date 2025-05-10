@@ -2,9 +2,7 @@
 
 ![Capture2](https://github.com/user-attachments/assets/d7b27022-45c0-47f7-b1b8-70adfe710f4f)
 
-
 # Made with: Laravel + React + Tailwind CSS + Inertia
-
 
 ## Introduction
 
@@ -18,13 +16,12 @@ Blog still needs some work, though, including:
 
 1. Spam filter (reCAPTCHA/honeypot) and rate limiter by IP address
 2. Edit and delete comments (own comments only)
-3. Anonymous users features (indidual anon numberID:s) and issues (like visible 0 on the UI)
-4. Setup SEO meta tags
-5. User settings page where users can change their password and email, delete their account and sub to newsletters
-6. Installation of AI translation package (Google/DeepL)
-7. Auto-translate on post save + store in DB
-8. Language toggle to navbar
-9. Toggle loads correct language
-10. Small style fixes for responsive design
+3. Setup SEO meta tags
+4. User settings page where users can change their password and email, delete their account and sub to newsletters
+5. Installation of AI translation package (Google/DeepL)
+6. Auto-translate on post save + store in DB
+7. Language toggle to navbar
+8. Toggle loads correct language
+9. Small style fixes for responsive design
 
 ![blog3](https://github.com/user-attachments/assets/9b47ad5c-13f9-4858-9291-1eb1d2397d96)

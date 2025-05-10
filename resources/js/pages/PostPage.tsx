@@ -18,7 +18,7 @@ interface User {
   id: number;
   name: string;
   role: string;
-  is_admin?: boolean;
+  is_admin?: boolean | number;
 }
 
 interface Comment {
@@ -28,6 +28,7 @@ interface Comment {
   parent_id?: string | null;
   createdAt: string;
   image?: string;
+  deleted?: boolean;
 }
 
 interface Post {
@@ -42,7 +43,7 @@ interface Post {
 interface AuthUser {
   name: string;
   token: string | null;
-  is_admin: boolean;
+  is_admin: boolean | number;
 }
 
 interface PostPageProps {
@@ -54,14 +55,18 @@ interface PostPageProps {
     user: AuthUser | null;
   };
   allPosts?: any[];
+  topics?: string[];
+  currentTopic?: string | null;
 }
 
 const PostPage: React.FC<PostPageProps> = ({ post }) => {
   const { props } = usePage<PostPageProps>();
   const { theme } = useTheme();
-  const { auth, allPosts } = props;
+  const { auth, allPosts, topics, currentTopic } = props;
   const user = auth?.user;
-  const isAdmin = user?.is_admin ?? false;
+  
+  // Convert is_admin to boolean explicitly
+  const isAdmin = user ? Boolean(user.is_admin) : false;
   const isSignedIn = Boolean(user);
   
   const [newComment, setNewComment] = useState("");
@@ -107,6 +112,12 @@ const PostPage: React.FC<PostPageProps> = ({ post }) => {
       setSubmitting(false);
     }
   }
+
+  const handleTopicChange = (topic: string | null) => {
+    const params = new URLSearchParams();
+    if (topic) params.append('topic', topic);
+    router.get('/', Object.fromEntries(params));
+  };
 
   const handleDeleteComment = (commentId: string) => {
     if (confirm('Are you sure you want to delete this comment?')) {
@@ -182,17 +193,46 @@ const PostPage: React.FC<PostPageProps> = ({ post }) => {
                   </ul>
                 </div>
                 <div className="rounded-lg bg-[#5800FF]/10 !p-4">
-                <SearchComponent 
-                  posts={Array.isArray(allPosts) ? allPosts : 
-                        (allPosts && allPosts.data ? allPosts.data : [])} 
-                />
-                <YearFilterComponent posts={Array.isArray(allPosts) ? allPosts :
-                        (allPosts && allPosts.data ? allPosts.data : [])}
-                />
-                <ArchivesComponent />
-                <RecentActivityFeed />
-                <RssSubscribeLink />
-              </div>
+                  {topics && (
+                    <div className="!mb-4">
+                      <h3 className="font-semibold !mb-2">Topics</h3>
+                      <ul className="!space-y-1">
+                        <li>
+                          <button
+                            onClick={() => handleTopicChange(null)}
+                            className={`w-full text-left !px-2 !py-1 rounded ${
+                              currentTopic === null ? 'bg-[#5800FF] text-white' : 'hover:bg-[#5800FF]/20'
+                            }`}
+                          >
+                            All Topics
+                          </button>
+                        </li>
+                        {topics.map((topic) => (
+                          <li key={topic}>
+                            <button
+                              onClick={() => handleTopicChange(topic)}
+                              className={`w-full text-left !px-2 !py-1 rounded ${
+                                currentTopic === topic ? 'bg-[#5800FF] text-white' : 'hover:bg-[#5800FF]/20'
+                              }`}
+                            >
+                              {topic}
+                            </button>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+                  <SearchComponent 
+                    posts={Array.isArray(allPosts) ? allPosts : 
+                          (allPosts && allPosts.data ? allPosts.data : [])} 
+                  />
+                  <YearFilterComponent posts={Array.isArray(allPosts) ? allPosts :
+                          (allPosts && allPosts.data ? allPosts.data : [])}
+                  />
+                  <ArchivesComponent />
+                  <RecentActivityFeed />
+                  <RssSubscribeLink />
+                </div>
               </div>
             </aside>
             
@@ -202,11 +242,11 @@ const PostPage: React.FC<PostPageProps> = ({ post }) => {
                 <h2 className="text-3xl font-bold !mb-10">{post.title}</h2>
                 {/* Image */}
                 {post.image_url && (
-                  <div className="!mb-6 w-full">
+                  <div className="!mb-6 !pt-24 w-full">
                     <img
                       src={post.image_url.startsWith('/') ? post.image_url : `/${post.image_url}`}
                       alt={post.title}
-                      className="w-100 lg:w-200 h-auto rounded-lg"
+                      className="w-100 md:w-100 lg:w-200 h-auto rounded-lg"
                       onError={(e) => {
                         console.error('Image failed to load:', post.image_url);
                         e.currentTarget.style.display = 'none';
@@ -215,7 +255,7 @@ const PostPage: React.FC<PostPageProps> = ({ post }) => {
                   </div>
                 )}
 
-                <div className="prose max-w-none opacity-90 !mb-8">{post.content}</div>
+                <div className="prose max-w-none opacity-90 !mb-6 md:!mb-10 text-sm md:text-base !pt-12">{post.content}</div>
                 
                 <div className="!mt-10 !pt-6 border-t border-[#5800FF]/20">
                   <h3 className="text-xl font-semibold !mb-4">Comments ({comments.length})</h3>
@@ -225,10 +265,14 @@ const PostPage: React.FC<PostPageProps> = ({ post }) => {
                       comments.map((comment) => (
                         <div key={comment._id} className="bg-[#5800FF]/10 rounded !p-3">
                           <p className="font-medium text-sm">{comment.authorName}</p>
-                          <p className="opacity-80">{comment.content}</p>
+                          {comment.deleted ? (
+                            <p className="opacity-60 italic text-sm">[Message removed by moderator]</p>
+                          ) : (
+                            <p className="opacity-80">{comment.content}</p>
+                          )}
                           <p className="text-xs opacity-60 italic">{new Date(comment.createdAt).toLocaleString()}</p>
                           
-                          {isAdmin && (
+                          {!comment.deleted && isAdmin && (
                             <button
                               onClick={() => handleDeleteComment(comment._id)}
                               className="text-red-500 text-xs hover:underline"

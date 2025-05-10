@@ -1,7 +1,5 @@
 <?php
-
 namespace App\Http\Controllers;
-
 use Inertia\Inertia;
 
 abstract class Controller
@@ -15,9 +13,14 @@ abstract class Controller
     {
         return [
             'auth' => [
-                'user' => auth()->user(),
+                'user' => auth()->check() ? [
+                    'id' => auth()->user()->id,
+                    'name' => auth()->user()->name ?? '', // Add the name property
+                    'email' => auth()->user()->email,
+                    'anonymous_id' => auth()->user()->anonymous_id,
+                    'is_admin' => auth()->user()->is_admin ?? false, // Add is_admin property
+                ] : null,
             ],
-            // Example of adding flash messages globally
             'flash' => [
                 'success' => session('success'),
                 'error' => session('error'),

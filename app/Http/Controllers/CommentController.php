@@ -19,7 +19,7 @@ class CommentController extends Controller
             ->map(function ($comment) {
                 return [
                     '_id' => $comment->id,
-                    'authorName' => $comment->user->name ?? 'Anonymous',
+                    'authorName' => $comment->user->name ?? $comment->guest_name ?? 'Anonymous',
                     'content' => $comment->content,
                     'createdAt' => $comment->created_at->toDateTimeString(),
                     'parent_id' => $comment->parent_id,
@@ -42,6 +42,7 @@ class CommentController extends Controller
         $comment = Comment::create([
             'post_id' => $request->post_id,
             'user_id' => Auth::id(),
+            'guest_name' => Auth::check() ? null : session('anonId'),
             'content' => $request->content,
             'parent_id' => $request->parent_id,
             'deleted' => false,
@@ -49,7 +50,7 @@ class CommentController extends Controller
 
         return response()->json([
             '_id' => $comment->id,
-            'authorName' => Auth::user()->name ?? 'Anonymous',
+            'authorName' => Auth::check() ? Auth::user()->name : session('anonId'),
             'content' => $comment->content,
             'createdAt' => $comment->created_at->toDateTimeString(),
             'parent_id' => $comment->parent_id,

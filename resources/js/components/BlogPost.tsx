@@ -32,7 +32,7 @@ interface Comment {
 interface AuthUser {
   name: string;
   token: string | null;
-  is_admin: boolean;
+  is_admin: number | boolean;
 }
 
 export function BlogPost({ post }: { post: Post }) {
@@ -40,6 +40,8 @@ export function BlogPost({ post }: { post: Post }) {
   const user = auth?.user;
   const isSignedIn = Boolean(user);
   const token = user?.token;
+  // Convert is_admin to boolean explicitly
+  const isAdmin = user ? Boolean(user.is_admin) : false;
   const [showComments, setShowComments] = useState(false);
   const [replyingTo, setReplyingTo] = useState<string | null>(null);
   const [newComment, setNewComment] = useState("");
@@ -65,6 +67,16 @@ export function BlogPost({ post }: { post: Post }) {
     }
     fetchComments();
   }, [post.id]);
+
+    const handleDeletePost = (postId: number) => {
+      if (confirm('Are you sure you want to delete this post?')) {
+        router.delete(`/posts/${postId}`, {
+          onSuccess: () => {
+            console.log(`Post ${postId} deleted`);
+          },
+        });
+      }
+    };
 
   async function handleSubmitComment(e: React.FormEvent) {
     e.preventDefault();
@@ -260,7 +272,7 @@ export function BlogPost({ post }: { post: Post }) {
             </button>
           )}
           
-          {!isDeleted && Boolean(user?.is_admin) && (
+          {!isDeleted && isAdmin && (
             <button
               onClick={() => handleDeleteComment(comment._id)}
               className="text-red-500 text-[10px] md:text-xs hover:underline"
@@ -352,6 +364,15 @@ export function BlogPost({ post }: { post: Post }) {
           <div className="italic">
             Updated: {new Date(post.updated_at).toLocaleString()}
           </div>
+        )}
+
+        {isAdmin && (
+          <button
+            onClick={() => handleDeletePost(post.id)}
+            className="right-4 md:top-10 md:right-30 !px-3 !py-1 bg-red-600 text-white rounded hover:bg-red-800 transition-colors !mt-4"
+          >
+            Delete
+          </button>
         )}
       </div>
       
