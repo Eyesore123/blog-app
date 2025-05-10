@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { usePage, Link } from "@inertiajs/react";
+import { Head } from '@inertiajs/react';
 import { router } from '@inertiajs/react';
 import axiosInstance from "./axiosInstance";
 import { getCsrfToken } from "../components/auth";
@@ -152,7 +153,7 @@ export function BlogPost({ post }: { post: Post }) {
       const replies = commentsList.filter(c => c.parent_id === parentId);
       replies.forEach(reply => {
         result.push(reply);
-        addReplies(reply._id); // Recursively add replies to this reply
+        addReplies(reply._id);
       });
     };
     
@@ -169,7 +170,6 @@ export function BlogPost({ post }: { post: Post }) {
       
       console.log(`Comment ${commentId} deleted`, response.data);
       
-      // First, mark the comment as deleted
       const updatedComments = comments.map(c => 
         c._id === commentId 
           ? { ...c, deleted: true, content: "[Message removed by moderator]" } 
@@ -212,14 +212,12 @@ export function BlogPost({ post }: { post: Post }) {
     }
   }
   
-  // Determine if we have a valid image URL
   const hasValidImageUrl = Boolean(
     post.image_url &&
     post.image_url !== 'null' &&
     post.image_url !== 'undefined'
   );
 
-  // Get replies for a comment
   const getReplies = (commentId: string) => {
     return comments.filter(comment => comment.parent_id === commentId);
   };
@@ -306,6 +304,15 @@ export function BlogPost({ post }: { post: Post }) {
   };
   
   return (
+    <>
+    <Head>
+        <link
+          rel="alternate"
+          type="application/rss+xml"
+          title="RSS Feed for Joni's Blog"
+          href="/feed"
+        />
+      </Head>
     <article className="rounded-lg bg-[#5800FF]/5 !p-6 md:!w-260 md:!max-w-260 xl:!w-320 xl:!max-w-320 !mb-10">
       <h2
         className="text-2xl font-bold flex justify-start !mb-10 cursor-pointer hover:underline"
@@ -390,5 +397,6 @@ export function BlogPost({ post }: { post: Post }) {
         )}
       </div>
     </article>
+    </>
   );
 }

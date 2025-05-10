@@ -26,7 +26,7 @@ const SearchComponent: React.FC<SearchComponentProps> = ({ posts = [] }) => {
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder="Search by title or topic"
-            className="w-50 md:w-112 !p-2 !mb-2 rounded border border-[#5800FF]/30 focus:outline-none focus:ring-2 focus:ring-[#5800FF]/50"
+            className="w-50 md:w-112 !p-2 rounded border border-[#5800FF]/30 focus:outline-none focus:ring-2 focus:ring-[#5800FF]/50"
           />
           {query.length > 0 && (
             <ul className="!space-y-1 max-h-48 overflow-y-auto">

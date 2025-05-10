@@ -8,6 +8,7 @@ import { Navbar } from '@/components/Navbar';
 import SearchComponent from '@/components/SearchComponent';
 import YearFilterComponent from '@/components/YearFilterComponent';
 import ArchivesComponent from '@/components/ArchiveComponent';
+import { RssSubscribeLink } from '@/components/RssSubscribeLink';
 import { useTheme } from '../context/ThemeContext';
 
 interface BlogPostType {
@@ -83,9 +84,9 @@ export default function MainPage() {
         <Navbar />
         <Header />
         <main className="!p-8">
-          <div className="w-full !mx-auto flex md:!gap-10 xl:!gap-18">
+          <div className="w-full !mx-auto flex md:!gap-10 xl:!gap-1">
             {/* Sidebar */}
-            <aside className="!w-80 lg:!w-120 lg:!ml-50">
+            <aside className="!w-80 lg:!w-120 lg:!ml-20">
               <div className="sticky top-24 !space-y-6 !w-60 md:!w-80 !-ml-0  !xl:ml-0 lg:!w-100 xl:!w-120">
                 <div className="rounded-lg bg-[#5800FF]/10 !p-4">
                   <h3 className="font-semibold !mb-2">About</h3>
@@ -129,6 +130,7 @@ export default function MainPage() {
                 <SearchComponent posts={allPosts.data} />
                 <YearFilterComponent posts={allPosts.data} />
                 <ArchivesComponent />
+                <RssSubscribeLink />
               </div>
               </div>
   

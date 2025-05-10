@@ -8,6 +8,7 @@ use App\Http\Controllers\AdminController;
 use App\Http\Controllers\CommentController;
 use App\Http\Controllers\ArchiveController;
 use App\Http\Controllers\MainPageController;
+use App\Http\Controllers\RssFeedController;
 use Inertia\Inertia;
 
 Route::get('api/archives/years', [ArchiveController::class, 'getYears']);
@@ -95,6 +96,9 @@ Route::fallback(function () {
     ]);
 });
 
+// Rss feed
+
+Route::get('feed', [RssFeedController::class, 'index']);
 
 require __DIR__.'/settings.php';
 require __DIR__.'/auth.php';
