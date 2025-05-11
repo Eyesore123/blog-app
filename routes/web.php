@@ -37,7 +37,21 @@ Route::get('/admin', [AdminController::class, 'index']);
 Route::get('api/comments/{post_id}', [CommentController::class, 'index']);
 Route::get('/post/{identifier}', [PostController::class, 'show'])->name('post.show');
 Route::get('/post/{id}/edit', [AdminController::class, 'edit'])->name('admin.edit');
-Route::post('api/comments', [CommentController::class, 'store']);
+
+
+// Route::post('/comments', 'CommentController@store')->middleware('comment-post');
+
+// In your web.php file, change this:
+// Route::middleware(['auth', 'throttle:comment-post'])
+//     ->post('/api/comments', [CommentController::class, 'store']);
+Route::middleware(['auth', 'throttle:10,1'])
+    ->post('/api/comments', [CommentController::class, 'store']);
+
+// Route::middleware(['auth', 'custom-throttle:5,1'])
+//     ->post('/api/comments', [CommentController::class, 'store']);
+
+// Route::get('api/comments/remaining', [CommentController::class, 'getRemaining']);
+
 // Update this route to use auth middleware
 Route::delete('api/comments/{comment_id}', [CommentController::class, 'destroy'])
     ->middleware('auth')

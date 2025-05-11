@@ -13,6 +13,7 @@ import { Navbar } from '@/components/Navbar';
 import { useTheme } from '../context/ThemeContext';
 import axiosInstance from "../components/axiosInstance";
 import { getCsrfToken } from "../components/auth";
+import { useAlert } from '@/context/AlertContext';
 
 interface User {
   id: number;
@@ -72,6 +73,7 @@ const PostPage: React.FC<PostPageProps> = ({ post }) => {
   const [newComment, setNewComment] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [comments, setComments] = useState<Comment[]>([]);
+  const { showAlert } = useAlert();
 
   useEffect(() => {
     async function fetchComments() {
@@ -107,7 +109,6 @@ const PostPage: React.FC<PostPageProps> = ({ post }) => {
       setNewComment("");
     } catch (error) {
       console.error('Failed to post comment', error);
-      alert('Error posting comment');
     } finally {
       setSubmitting(false);
     }
@@ -145,7 +146,7 @@ const PostPage: React.FC<PostPageProps> = ({ post }) => {
         },
         onError: (errors) => {
           console.error('Failed to delete comment', errors);
-          alert('Error deleting comment. Please try again.');
+          showAlert('Error deleting comment. Please try again.', 'error');
         }
       });
     }

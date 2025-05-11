@@ -14,7 +14,7 @@ Admin can add new posts, edit posts and delete comments.
 
 Blog still needs some work, though, including:
 
-1. Spam filter (reCAPTCHA/honeypot) and rate limiter by IP address
+1. Rate limiter for comments by IP address. I'm working on this feature right now.
 2. Edit and delete comments (own comments only)
 3. Setup SEO meta tags
 4. User settings page where users can change their password and email, delete their account and sub to newsletters

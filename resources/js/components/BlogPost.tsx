@@ -5,6 +5,8 @@ import { router } from '@inertiajs/react';
 import axiosInstance from "./axiosInstance";
 import { getCsrfToken } from "../components/auth";
 import '../../css/app.css';
+import { useAlert } from "../context/AlertContext";
+import { useConfirm } from "@/context/ConfirmationContext";
 
 interface Post {
   title: string;
@@ -44,9 +46,14 @@ export function BlogPost({ post }: { post: Post }) {
   const isAdmin = user ? Boolean(user.is_admin) : false;
   const [showComments, setShowComments] = useState(false);
   const [replyingTo, setReplyingTo] = useState<string | null>(null);
+   const [message, setMessage] = useState(""); // To store the message from backend
   const [newComment, setNewComment] = useState("");
   const [submitting, setSubmitting] = useState(false);
+  const { showAlert } = useAlert();
+  const { confirm } = useConfirm();
   const [comments, setComments] = useState<Comment[]>([]);
+  // const [remainingComments, setRemainingComments] = useState<number | null>(null);
+
   
   // Refs for uncontrolled inputs
   const replyInputRef = useRef<HTMLTextAreaElement>(null);
@@ -68,40 +75,84 @@ export function BlogPost({ post }: { post: Post }) {
     fetchComments();
   }, [post.id]);
 
-    const handleDeletePost = (postId: number) => {
-      if (confirm('Are you sure you want to delete this post?')) {
-        router.delete(`/posts/${postId}`, {
-          onSuccess: () => {
-            console.log(`Post ${postId} deleted`);
-          },
-        });
+    const handleDeletePost = async (postId: number) => {
+  // Use the custom confirm dialog
+  const confirmed = await confirm({
+    title: 'Delete Post',
+    message: 'Are you sure you want to delete this post? This action cannot be undone.',
+    confirmText: 'Delete',
+    cancelText: 'Cancel',
+    type: 'danger'
+  });
+  
+  if (confirmed) {
+    router.delete(`/posts/${postId}`, {
+      onSuccess: () => {
+        console.log(`Post ${postId} deleted`);
+        showAlert('Post deleted successfully', 'success');
+      },
+      onError: () => {
+        showAlert('Failed to delete post', 'error');
       }
-    };
+    });
+  }
+};
+
+//     useEffect(() => {
+//   async function fetchRemainingComments() {
+//     try {
+//       const response = await axiosInstance.get('/api/comments/remaining');
+//       setRemainingComments(response.data.remaining);
+//     } catch (error) {
+//       console.error('Failed to fetch remaining comments count', error);
+//     }
+//   }
+
+//   if (isSignedIn) {
+//     fetchRemainingComments();
+//   }
+// }, [isSignedIn]);
+
 
   async function handleSubmitComment(e: React.FormEvent) {
-    e.preventDefault();
-    if (!mainCommentRef.current || !mainCommentRef.current.value.trim()) return;
-    
-    const commentContent = mainCommentRef.current.value;
-    const newCommentData = {
-      post_id: post.id,
-      content: commentContent,
-    };
-    
-    setSubmitting(true);
-    await getCsrfToken();
-    
-    try {
+      e.preventDefault();
+      if (!mainCommentRef.current || !mainCommentRef.current.value.trim()) return;
+      if (!post?.id) {
+        showAlert('Post ID missing', 'error');
+        return;
+      }
+
+      const commentContent = mainCommentRef.current.value;
+      const newCommentData = {
+        post_id: post.id,
+        content: commentContent,
+      };
+
+      setSubmitting(true);
+      await getCsrfToken(); // Ensure you handle CSRF token correctly
+
+      try {
       const response = await axiosInstance.post('/api/comments', newCommentData);
-      setComments([...comments, response.data]);
+      setComments(prev => [...prev, response.data]);
+      setMessage(response.data.message || "Comment posted successfully"); // Set message from backend
       mainCommentRef.current.value = "";
+
+      setTimeout(() => {
+        setMessage("");
+      }, 5000);
     } catch (error) {
       console.error('Failed to post comment', error);
-      alert('Error posting comment');
+      setMessage("Error posting comment. We apologize for the inconvenience. If you hit the limit of 10 messages per day, please try again tomorrow.");
+
+      setTimeout(() => {
+        setMessage("");
+      }, 5000);
     } finally {
       setSubmitting(false);
     }
   }
+
+
 
   async function handleSubmitReply(e: React.FormEvent, parentId: string) {
     e.preventDefault();
@@ -123,9 +174,10 @@ export function BlogPost({ post }: { post: Post }) {
       setReplyingTo(null);
     } catch (error) {
       console.error('Failed to post reply', error);
-      alert('Error posting reply');
+      showAlert('Error posting reply', 'error');
     } finally {
       setSubmitting(false);
+      // setRemainingComments(prev => prev !== null ? Math.max(prev - 1, 0) : prev);
     }
   }
 
@@ -174,11 +226,18 @@ export function BlogPost({ post }: { post: Post }) {
   };
 
   const handleDeleteComment = async (commentId: string) => {
-    if (!confirm('Are you sure you want to delete this comment?')) return;
-    
-    try {
-      // Use axios directly for API requests instead of Inertia router
-      const response = await axiosInstance.delete(`/api/comments/${commentId}`);
+  const confirmed = await confirm({
+    title: 'Delete Comment',
+    message: 'Are you sure you want to delete this comment?',
+    confirmText: 'Delete',
+    cancelText: 'Cancel',
+    type: 'danger'
+  });
+  
+  if (!confirmed) return;
+  
+  try {
+    const response = await axiosInstance.delete(`/api/comments/${commentId}`)
       
       console.log(`Comment ${commentId} deleted`, response.data);
       
@@ -206,10 +265,10 @@ export function BlogPost({ post }: { post: Post }) {
       console.error('Failed to delete comment', error);
       
       if (error.response && error.response.status === 401) {
-        alert('You need to be logged in to delete comments');
+        showAlert('You need to be logged in to delete comments', 'error');
         window.location.href = '/login';
       } else {
-        alert('Error deleting comment. Please try again.');
+        showAlert('Error deleting comment. Please try again.', 'error');
       }
     }
   };
@@ -409,6 +468,24 @@ export function BlogPost({ post }: { post: Post }) {
                   {submitting ? "Posting..." : "Post Comment"}
                 </button>
               </form>
+            )}
+
+            {/* {isSignedIn && remainingComments !== null && (
+              <p className="text-xs text-gray-500 !mt-6">
+                You can post {remainingComments} more comment{remainingComments !== 1 ? 's' : ''} today.
+              </p>
+            )} */}
+
+            {/* Display the message from backend */}
+                {message && (
+              <div
+                className={`message ${message.includes("Error") ? "error" : "success"} !p-2 rounded-md !mt-2 w-auto`}
+                style={{
+                  transition: "opacity 0.5s ease-in-out",
+                }}
+              >
+                {message}
+              </div>
             )}
             
             {!isSignedIn && (

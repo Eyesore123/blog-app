@@ -31,5 +31,7 @@ class Kernel extends HttpKernel
 
     protected $routeMiddleware = [
         'admin' => AdminMiddleware::class,
+    'throttle' => \App\Http\Middleware\CustomThrottleRequests::class,
+    'comment-post' => \App\Http\Middleware\CommentPostRateLimiter::class,
     ];
 }

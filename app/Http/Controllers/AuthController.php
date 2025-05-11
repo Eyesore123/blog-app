@@ -59,7 +59,7 @@ class AuthController extends Controller
     ]);
 
     // Check if this is an anonymous registration
-    $isAnonymous = $request->has('anonymous'); // You can pass a flag for anonymous registration
+    $isAnonymous = $request->has('anonymous');
 
     $user = User::create([
         'email' => $request->email,

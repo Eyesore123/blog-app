@@ -115,3 +115,37 @@ small {
     font-size: var(--fs-small);
     font-weight: 600;
 }
+
+/* Message styles */
+
+.message {
+    font-size: 14px;
+    text-align: center;
+}
+
+.success {
+    background-color: #28a745;
+    color: white;
+}
+
+.error {
+    background-color: #dc3545;
+    color: white;
+}
+
+/* Alert styles */
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.animate-fade-in {
+    animation: fadeIn 0.3s ease-out forwards;
+}

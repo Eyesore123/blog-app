@@ -28,10 +28,11 @@ Route::post('login', function (Request $request) {
 
 Route::get('/comments/{postId}', [CommentController::class, 'index']);
 Route::get('/comments/{id}', [CommentController::class, 'show']);;
-Route::middleware('auth:sanctum')->group(function () {
+Route::middleware(['auth:sanctum', 'throttle:comment-post'])->group(function () {
     Route::post('/comments', [CommentController::class, 'store']);
     Route::put('/posts/{post}', [PostController::class, 'update']);
 });
+
 Route::get('/archives/years', [ArchiveController::class, 'getYears']);
 
 // Latest post routes

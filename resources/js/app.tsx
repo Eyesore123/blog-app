@@ -7,6 +7,8 @@ import '../css/app.css';
 import { createRoot } from 'react-dom/client';
 import { createInertiaApp } from '@inertiajs/react';
 import { ThemeProvider } from './context/ThemeContext';
+import { AlertProvider } from './context/AlertContext';
+import { ConfirmProvider } from './context/ConfirmationContext';
 // import { ErrorBoundary } from './pages/errors/ErrorBoundary';
 import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
 import  { router } from '@inertiajs/react';
@@ -24,9 +26,13 @@ createInertiaApp({
     const root = createRoot(el);
     root.render(
       <ThemeProvider>
+        <AlertProvider>
+          <ConfirmProvider>
         {/* <ErrorBoundary> */}
           <App {...props} />
         {/* </ErrorBoundary> */}
+        </ConfirmProvider>
+        </AlertProvider>
       </ThemeProvider>
     );
   },

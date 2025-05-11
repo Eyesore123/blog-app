@@ -4,18 +4,22 @@ namespace App\Providers;
 
 use Illuminate\Support\Facades\Route;
 use Illuminate\Foundation\Support\Providers\RouteServiceProvider as ServiceProvider;
+use Illuminate\Support\Facades\RateLimiter;
+use Illuminate\Cache\RateLimiting\Limit;
+use Illuminate\Http\Request;
 
 class RouteServiceProvider extends ServiceProvider
 {
-    public function boot(): void
+    public function boot()
     {
-        $this->routes(function () {
-            Route::middleware('api')
-                ->prefix('api')
-                ->group(base_path('routes/api.php'));
+        parent::boot();
 
-            Route::middleware('web')
-                ->group(base_path('routes/web.php'));
+        // Custom rate limiter for 10 comments per day
+        RateLimiter::for('comment-post', function (Request $request) {
+            return Limit::perDay(10)->by($request->user()?->id ?: $request->ip());
         });
     }
+
+    // The configureRateLimiting method is no longer necessary for the comment-post limiter.
+    // If you want to add more custom rate limiters, you can do so here.
 }

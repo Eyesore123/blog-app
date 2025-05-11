@@ -5,11 +5,6 @@ namespace App\Exceptions;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Inertia\Inertia;
 use Throwable;
-use Symfony\Component\HttpKernel\Exception\HttpException;
-
-// Note: This component is currently not actively used in the error handling flow,
-// but is kept for potential future implementation of client-side error catching.
-
 
 class Handler extends ExceptionHandler
 {
@@ -41,27 +36,20 @@ class Handler extends ExceptionHandler
      * @param  \Throwable  $e
      * @return \Symfony\Component\HttpFoundation\Response
      */
-    /**
- * Render an exception into an HTTP response.
- *
- * @param  \Illuminate\Http\Request  $request
- * @param  \Throwable  $e
- * @return \Symfony\Component\HttpFoundation\Response
- */
-/**
- * Render an exception into an HTTP response.
- *
- * @param  \Illuminate\Http\Request  $request
- * @param  \Throwable  $e
- * @return \Symfony\Component\HttpFoundation\Response
- */
     public function render($request, Throwable $e)
     {
         $response = parent::render($request, $e);
-        
+
+        // Handle custom rate limit message
+        if ($e instanceof \Illuminate\Http\Exceptions\ThrottleRequestsException) {
+            return back()->withErrors([
+                'comment' => 'You have reached the maximum of 10 comments today. Please try again tomorrow.',
+            ]);
+        }
+
         // Get the status code
         $statusCode = $response->getStatusCode();
-        
+
         // Only handle these specific error codes
         if (in_array($statusCode, [403, 404, 500, 503])) {
             // Make sure we're not handling API requests
@@ -72,7 +60,7 @@ class Handler extends ExceptionHandler
                     'message' => $e->getMessage(),
                     'using_inertia' => true
                 ]);
-                
+
                 // Render the Inertia error component
                 return Inertia::render('errors/Error', [
                     'status' => $statusCode,
@@ -82,9 +70,7 @@ class Handler extends ExceptionHandler
                 ->setStatusCode($statusCode);
             }
         }
-        
+
         return $response;
     }
 }
-
-    
