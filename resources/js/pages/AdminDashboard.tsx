@@ -11,6 +11,7 @@ export default function AdminDashboard() {
       <Head title="Admin Dashboard" />
       <div className="!pt-20 !px-4 flex flex-col items-center justify-center bg-[var(--bg-primary)] text-[var(--text-primary)]">
         <h1 className="text-3xl text-amber-300 font-bold">Admin Dashboard</h1>
+        <p className="text-lg text-gray-500 !mt-4 !mb-18">Welcome to the admin dashboard.</p>
         <CreatePost />
       </div>
     </>

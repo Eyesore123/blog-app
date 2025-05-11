@@ -14,6 +14,7 @@ import { useTheme } from '../context/ThemeContext';
 import axiosInstance from "../components/axiosInstance";
 import { getCsrfToken } from "../components/auth";
 import { useAlert } from '@/context/AlertContext';
+import { useConfirm } from '@/context/ConfirmationContext';
 
 interface User {
   id: number;
@@ -120,39 +121,55 @@ const PostPage: React.FC<PostPageProps> = ({ post }) => {
     router.get('/', Object.fromEntries(params));
   };
 
-  const handleDeleteComment = (commentId: string) => {
-    if (confirm('Are you sure you want to delete this comment?')) {
-      // Use the URL format that matches your web.php route
-      router.delete(`/api/comments/${commentId}`, {
-        onSuccess: () => {
-          console.log(`Comment ${commentId} deleted`);
-          
-          // Update the UI based on the comment's position in the thread
-          const comment = comments.find(c => c._id === commentId);
-          const hasReplies = comments.some(c => c.parent_id === commentId);
-          const isReply = comment?.parent_id;
-          
-          if (hasReplies || isReply) {
-            // If it's part of a conversation, mark as deleted but keep in the list
-            setComments(comments.map(c => 
-              c._id === commentId 
-                ? { ...c, deleted: true, content: "[Message removed by moderator]" } 
-                : c
-            ));
-          } else {
-            // If it's a standalone comment, remove it completely
-            setComments(comments.filter(c => c._id !== commentId));
-          }
-        },
-        onError: (errors) => {
-          console.error('Failed to delete comment', errors);
-          showAlert('Error deleting comment. Please try again.', 'error');
-        }
-      });
+  const handleDeleteComment = async (commentId: string) => {
+    const { confirm } = useConfirm();
+  const confirmed = await confirm({
+    title: 'Delete Comment',
+    message: 'Are you sure you want to delete this comment?',
+    confirmText: 'Delete',
+    cancelText: 'Cancel',
+    type: 'danger'
+  });
+  
+  if (!confirmed) return;
+  
+  // Use the URL format that matches your web.php route
+  router.delete(`/api/comments/${commentId}`, {
+    onSuccess: () => {
+      console.log(`Comment ${commentId} deleted`);
+      
+      // Update the UI based on the comment's position in the thread
+      const comment = comments.find(c => c._id === commentId);
+      const hasReplies = comments.some(c => c.parent_id === commentId);
+      const isReply = comment?.parent_id;
+      
+      if (hasReplies || isReply) {
+        // If it's part of a conversation, mark as deleted but keep in the list
+        setComments(comments.map(c =>
+          c._id === commentId
+            ? { ...c, deleted: true, content: "[Message removed by moderator]" }
+            : c
+        ));
+        
+        // Show success message
+        showAlert('Comment has been removed', 'success');
+      } else {
+        // If it's a standalone comment, remove it completely
+        setComments(comments.filter(c => c._id !== commentId));
+        
+        // Show success message
+        showAlert('Comment has been deleted', 'success');
+      }
+    },
+    onError: (errors) => {
+      console.error('Failed to delete comment', errors);
+      showAlert('Error deleting comment. Please try again.', 'error');
     }
-  };
+  });
+};
 
-  console.log('BlogPost image path:', post.image_url);
+
+  // console.log('BlogPost image path:', post.image_url);
 
   return (
     <div className={`min-h-screen ${theme}`}>

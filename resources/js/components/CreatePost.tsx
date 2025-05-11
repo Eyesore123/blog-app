@@ -32,7 +32,9 @@ export function CreatePost() {
   }
 
   return (
-    <form onSubmit={handleSubmit} encType="multipart/form-data" className="!space-y-4 min-h-240 w-200 flex justify-center items-center flex-col">
+    <>
+    <h3>Create New Post:</h3>
+    <form onSubmit={handleSubmit} encType="multipart/form-data" className="!space-y-4 min-h-180 w-200 flex justify-center items-center flex-col">
       <input
         type="text"
         placeholder="Post title"
@@ -67,5 +69,6 @@ export function CreatePost() {
         {processing ? "Creating..." : "Create Post"}
       </button>
     </form>
+    </>
   );
 }

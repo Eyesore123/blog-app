@@ -8,6 +8,8 @@ import { Navbar } from '@/components/Navbar';
 import SearchComponent from '@/components/SearchComponent';
 import YearFilterComponent from '@/components/YearFilterComponent';
 import { useTheme } from '../context/ThemeContext';
+import { useAlert } from '@/context/AlertContext';
+import { useConfirm } from '@/context/ConfirmationContext';
 
 interface BlogPostType {
   id: number;
@@ -51,7 +53,6 @@ export default function ArchiveView() {
   const { props } = usePage<PageProps>();
   const { theme } = useTheme();
   const { posts, allPosts, topics, currentTopic, currentPage, hasMore, total, archiveYear } = props;
-  
   const isAdmin = props.auth?.user?.is_admin ?? false;
 
   const handlePageChange = (page: number) => {
@@ -67,19 +68,36 @@ export default function ArchiveView() {
     router.get(`/archives/${archiveYear}`, Object.fromEntries(params));
   };
 
-  const handleDeletePost = (postId: number) => {
-    if (confirm('Are you sure you want to delete this post?')) {
-      router.delete(`/posts/${postId}`, {
-        onSuccess: () => {
-          console.log(`Post ${postId} deleted`);
-        },
-      });
+  const handleDeletePost = async (postId: number) => {
+  // Use the custom confirm dialog instead of the browser's native confirm
+    const { confirm } = useConfirm();
+    const showAlert = useAlert().showAlert;
+  const confirmed = await confirm({
+    title: 'Delete Post',
+    message: 'Are you sure you want to delete this post? This action cannot be undone.',
+    confirmText: 'Delete',
+    cancelText: 'Cancel',
+    type: 'danger'
+  });
+  
+  if (!confirmed) return;
+  
+  router.delete(`/posts/${postId}`, {
+    onSuccess: () => {
+      console.log(`Post ${postId} deleted`);
+      showAlert('Post deleted successfully', 'success');
+    },
+    onError: (error) => {
+      console.error('Failed to delete post', error);
+      showAlert('Error deleting post. Please try again.', 'error');
     }
-  };
+  });
+};
+
 
   // Debug the raw data structure
-  console.log('Raw posts data:', JSON.stringify(posts));
-  console.log('All posts in ArchiveView:', posts.data);
+  // console.log('Raw posts data:', JSON.stringify(posts));
+  // console.log('All posts in ArchiveView:', posts.data);
 
   return (
     <div className={`min-h-screen ${theme}`}>
@@ -186,18 +204,21 @@ export default function ArchiveView() {
                             updated_at: post.updated_at || post.created_at
                         }}
                     />
-                        {isAdmin && (
+                    
+                        {/* This is commented out because delete button is moved to blogpost component */}
+                        {/* {isAdmin && (
                             <button
                             onClick={() => handleDeletePost(post.id)}
                             className="absolute top-10 right-30 !px-3 !py-1 bg-red-600 text-white rounded hover:bg-red-800 transition-colors"
                             >
                             Delete
                             </button>
-                        )}
+                        )} */}
+
+
                         </div>
                     );
                     })}
-
 
                     <div className="flex justify-center items-center gap-10 !mt-18">
                       <button
