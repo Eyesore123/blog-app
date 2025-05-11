@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { router, usePage } from '@inertiajs/react';
+import { router } from '@inertiajs/react';
 import { Toaster, toast } from 'sonner';
 import Header from '../components/Header';
 import { Navbar } from '@/components/Navbar';
@@ -45,40 +45,53 @@ const EditPostPage: React.FC<EditPostPageProps> = ({ post }) => {
   }, [imageFile]);
 
   async function handleSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    setSubmitting(true);
-    await getCsrfToken();
-  
-    try {
-      const data = {
-        title,
-        content,
-        topic,
-      };
-  
-      // console.log('Sending data:', data);
-  
-      const response = await axiosInstance.put(`/api/posts/${post.id}`, data, {
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
-  
-      toast.success('Post updated successfully');
-      router.visit(`/post/${post.id}`);
-    } catch (error) {
-      if (error.response) {
-        console.error('Validation Errors:', error.response.data.errors);
-        toast.error(`Error updating post: ${error.response.data.message}`);
-      } else {
-        console.error('Failed to update post', error);
-        toast.error('Error updating post');
-      }
-    } finally {
-      setSubmitting(false);
+  e.preventDefault();
+  setSubmitting(true);
+
+  await getCsrfToken();
+
+  try {
+    const formData = new FormData();
+    formData.append('title', title);
+    formData.append('content', content);
+    formData.append('topic', topic);
+    formData.append('_method', 'PUT'); // <-- Add this
+
+    if (imageFile) {
+      console.log('Appending image file:', imageFile);
+      formData.append('image', imageFile);
+    } else {
+      console.log('No image file selected');
     }
+
+    // Optional debug
+    formData.forEach((value, key) => {
+      console.log(key, value);
+    });
+
+    // Send as POST, not PUT
+    const response = await axiosInstance.post(`/api/posts/${post.id}`, formData);
+
+    toast.success('Post updated successfully');
+    router.visit(`/post/${post.id}`);
+  } catch (error: any) {
+    if (error.response) {
+      console.error('Validation Errors:', error.response.data.errors);
+      toast.error(
+        error.response.data.message
+          ? `Error updating post: ${error.response.data.message}`
+          : 'Validation error — check your fields'
+      );
+    } else {
+      console.error('Failed to update post', error);
+      toast.error('Error updating post');
+    }
+  } finally {
+    setSubmitting(false);
   }
-  
+}
+
+
   return (
     <div className={`min-h-screen ${theme}`}>
       <div className="min-h-screen bg-[var(--bg-primary)] text-[var(--text-primary)]">
@@ -88,7 +101,7 @@ const EditPostPage: React.FC<EditPostPageProps> = ({ post }) => {
           <main className="!p-8 mx-auto flex flex-col min-w-200 justify-center gap-8">
             <h1 className="text-3xl font-bold !mb-6">Edit Post</h1>
 
-            <form onSubmit={handleSubmit} className="!space-y-4">
+            <form onSubmit={handleSubmit} encType="multipart/form-data" className="!space-y-4">
               <div>
                 <label className="block !mb-1 font-medium">Title</label>
                 <input
@@ -117,7 +130,13 @@ const EditPostPage: React.FC<EditPostPageProps> = ({ post }) => {
                   onChange={(e) => {
                     const file = e.target.files?.[0];
                     if (file) {
-                      setImageFile(file);
+                      // Validate file type before setting it
+                      const allowedTypes = ['image/jpeg', 'image/png', 'image/jpg', 'image/gif', 'image/webp', 'image/svg+xml'];
+                      if (allowedTypes.includes(file.type)) {
+                        setImageFile(file);
+                      } else {
+                        toast.error('Please upload a valid image file (jpeg, png, jpg, gif, webp, svg)');
+                      }
                     } else {
                       setImageFile(null);
                     }

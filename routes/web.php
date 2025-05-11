@@ -125,6 +125,10 @@ Route::get('/posts/{post}', [PostController::class, 'show'])->name('posts.show')
 
 // Update routes
 
+// Add this route for updating posts
+Route::middleware('auth')->match(['put', 'post'], '/api/posts/{post}', [PostController::class, 'update'])->name('posts.update');
+
+
 // Update a comment (for comment owners)
 Route::middleware(['auth'])->put('/api/comments/{id}', [CommentController::class, 'update']);
 

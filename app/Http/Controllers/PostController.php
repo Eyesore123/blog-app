@@ -4,8 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Models\Post;
 use Inertia\Inertia;
-use Inertia\Response;
-use Inertia\ResponseFactory;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -14,128 +12,128 @@ use Illuminate\Support\Facades\Log;
 class PostController extends Controller
 {
     /**
-     * Display a listing of posts
+     * Helper method to transform post with image URL
+     */
+    private function transformPost($post)
+    {
+        return [
+            'id' => $post->id,
+            'title' => $post->title,
+            'content' => $post->content,
+            'topic' => $post->topic,
+            'slug' => $post->slug,
+            'created_at' => $post->created_at,
+            'updated_at' => $post->updated_at,
+            'image_url' => $post->image_path
+                ? (strpos($post->image_path, 'uploads/') === 0
+                    ? '/' . $post->image_path
+                    : '/storage/' . $post->image_path)
+                : null,
+        ];
+    }
+
+    /**
+     * Helper method to get authenticated user info (optional)
+     */
+    private function getUserInfo()
+    {
+        $user = Auth::user();
+        return $user ? [
+            'name' => $user->name,
+            'is_admin' => $user->is_admin ?? false,
+        ] : null;
+    }
+
+    /**
+     * Render MainPage with optional data
      */
     public function index(Request $request)
     {
         $topicFilter = $request->query('topic');
-        
-        // Get all unique topics from existing posts
-        $topics = Post::distinct()->pluck('topic')->filter()->values();
-        
-        // Prepare query (with optional topic filtering)
-        $query = Post::query();
-        if ($topicFilter) {
-            $query->where('topic', $topicFilter);
+        $includePosts = $request->query('includePosts', true);
+        $includeTopics = $request->query('includeTopics', true);
+        $includeUser = $request->query('includeUser', true);
+
+        $props = [];
+
+        if ($includePosts) {
+            $query = Post::query();
+            if ($topicFilter) {
+                $query->where('topic', $topicFilter);
+            }
+
+            $posts = $query->latest()->paginate(6);
+
+            $props['posts'] = collect($posts->items())->map(fn($post) => $this->transformPost($post));
+            $props['currentPage'] = $posts->currentPage() - 1;
+            $props['hasMore'] = $posts->hasMorePages();
+            $props['total'] = $posts->total();
+            $props['allPosts'] = $posts; // raw pagination data for search or other use
+            $props['currentTopic'] = $topicFilter;
         }
-        
-        $posts = $query->latest()->paginate(6);
-        
-        // Transform posts to include image URLs
-        $transformedPosts = collect($posts->items())->map(function ($post) {
-            return [
-                'id' => $post->id,
-                'title' => $post->title,
-                'content' => $post->content,
-                'topic' => $post->topic,
-                'created_at' => $post->created_at,
-                'updated_at' => $post->updated_at,
-                // Handle both storage and direct upload paths
-                'image_url' => $post->image_path 
-                    ? (strpos($post->image_path, 'uploads/') === 0 
-                        ? '/' . $post->image_path 
-                        : '/storage/' . $post->image_path)
-                    : null,
-            ];
-        });
-        
-        return Inertia::render('MainPage', [
-            'posts' => $transformedPosts,
-            'currentPage' => $posts->currentPage() - 1,
-            'hasMore' => $posts->hasMorePages(),
-            'total' => $posts->total(),
-            'topics' => $topics,
-            'currentTopic' => $topicFilter,
-            'user' => Auth::user() ? [
-                'name' => Auth::user()->name,
-                'is_admin' => Auth::user()->is_admin ?? false
-            ] : null,
-            'allPosts' => $posts, // For search functionality
-        ]);
+
+        if ($includeTopics) {
+            $props['topics'] = Post::distinct()->pluck('topic')->filter()->values();
+        }
+
+        if ($includeUser) {
+            $props['user'] = $this->getUserInfo();
+        }
+
+        return Inertia::render('MainPage', $props);
     }
 
     /**
      * Store a newly created post
      */
     public function store(Request $request)
-    {
-        Log::info('Post creation request received', [
-            'has_file' => $request->hasFile('image'),
-            'all_files' => $request->allFiles(),
-            'all_inputs' => $request->all()
-        ]);
-        
-        // Check if user is authenticated
-        if (!Auth::check()) {
-            return redirect()->route('login')->with('error', 'You must be logged in to create a post.');
-        }
-        
-        // Validate incoming request
-        $validated = $request->validate([
-            'title' => 'required|string',
-            'content' => 'required|string',
-            'published' => 'boolean',
-            'topic' => 'required|string',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp,svg|max:2048',
-        ]);
-        
-        // Handle image upload - SIMPLER APPROACH
-        $imagePath = null;
-        if ($request->hasFile('image')) {
-            try {
-                // Define $file here before using it
-                $file = $request->file('image');
-                $filename = time() . '_' . $file->getClientOriginalName();
-                
-                // Create uploads directory if it doesn't exist
-                if (!file_exists(public_path('uploads'))) {
-                    mkdir(public_path('uploads'), 0777, true);
-                }
-                
-                // Store directly in public/uploads
-                $file->move(public_path('uploads'), $filename);
-                $imagePath = 'uploads/' . $filename;
-                
-                Log::info('Image saved using direct approach at: ' . $imagePath, [
-                    'original_name' => $file->getClientOriginalName(),
-                    'destination_path' => public_path('uploads'),
-                    'full_path' => public_path('uploads') . '/' . $filename,
-                    'stored_path' => $imagePath,
-                    'public_url' => '/' . $imagePath,
-                ]);
-            } catch (\Exception $e) {
-                Log::error('Image upload failed with direct approach: ' . $e->getMessage());
-            }
-        } else {
-            Log::info('No image uploaded with post');
-        }
-        
-        // Create the post
-        $post = Post::create([
-            'title' => $validated['title'],
-            'content' => $validated['content'],
-            'topic' => $validated['topic'],
-            'published' => $validated['published'] ?? true,
-            'image_path' => $imagePath,
-            'user_id' => Auth::id() ?? 1, // Provide a default if Auth::id() is null
-        ]);
-        
-        Log::info('Post created with ID: ' . $post->id, [
-            'post_data' => $post->toArray()
-        ]);
-        
-        return redirect()->back()->with('success', 'Post created successfully.');
+{
+    Log::info('Post creation request received', [
+        'has_file' => $request->hasFile('image'),
+        'all_files' => $request->allFiles(),
+        'all_inputs' => $request->all()
+    ]);
+
+    if (!Auth::check()) {
+        return redirect()->route('login')->with('error', 'You must be logged in to create a post.');
     }
+
+    $validated = $request->validate([
+        'title' => 'required|string',
+        'content' => 'required|string',
+        'published' => 'boolean',
+        'topic' => 'required|string',
+        'image' => 'sometimes|nullable|image|mimes:jpeg,png,jpg,gif,webp,svg|max:2048',
+    ]);
+
+    $imagePath = null;
+    if ($request->hasFile('image')) {
+        try {
+            $file = $request->file('image');
+            $imagePath = $file->store('uploads', 'public');  // Store the image using the public disk
+
+            Log::info('Image saved at: ' . $imagePath);
+        } catch (\Exception $e) {
+            Log::error('Image upload failed: ' . $e->getMessage());
+        }
+    }
+
+    $post = Post::create([
+        'title' => $validated['title'],
+        'content' => $validated['content'],
+        'topic' => $validated['topic'],
+        'published' => $validated['published'] ?? true,
+        'image_path' => $imagePath,
+        'user_id' => Auth::id() ?? 1,
+    ]);
+
+    Log::info('Post created with ID: ' . $post->id, [
+        'post_data' => $post->toArray()
+    ]);
+
+    return redirect()->back()->with('success', 'Post created successfully.');
+}
+
 
     /**
      * Delete a post
@@ -143,94 +141,97 @@ class PostController extends Controller
     public function destroy($post_id)
     {
         $post = Post::findOrFail($post_id);
-        
-        // Check if user is admin
+
         if (auth()->user() && auth()->user()->is_admin) {
-            // Delete the post image if it exists
             if ($post->image_path) {
                 try {
                     if (strpos($post->image_path, 'uploads/') === 0) {
-                        // Direct file upload
                         if (file_exists(public_path($post->image_path))) {
                             unlink(public_path($post->image_path));
-                            Log::info('Deleted post image from uploads: ' . $post->image_path);
+                            Log::info('Deleted image from uploads: ' . $post->image_path);
                         }
                     } else {
-                        // Storage approach
                         Storage::disk('public')->delete($post->image_path);
-                        Log::info('Deleted post image from storage: ' . $post->image_path);
+                        Log::info('Deleted image from storage: ' . $post->image_path);
                     }
                 } catch (\Exception $e) {
-                    Log::error('Failed to delete post image: ' . $e->getMessage());
+                    Log::error('Failed to delete image: ' . $e->getMessage());
                 }
             }
-            
-            // Delete associated comments
+
             $post->comments()->delete();
-            
-            // Delete the post
             $post->delete();
-            
+
             return redirect()->back()->with('success', 'Post deleted successfully.');
         }
-        
+
         abort(403, 'Unauthorized action.');
     }
 
+    /**
+     * Show single post page
+     */
     public function show($identifier)
     {
-        // Check if the identifier is numeric (ID) or a string (slug)
         if (is_numeric($identifier)) {
             $post = Post::with(['comments.user'])->findOrFail($identifier);
         } else {
             $post = Post::with(['comments.user'])->where('slug', $identifier)->firstOrFail();
         }
-        // Get all posts for the sidebar
+
         $allPosts = Post::all();
-        
-        // Image URL transformation logic
-        $imageUrl = $post->image_path
-            ? (strpos($post->image_path, 'uploads/') === 0
-                ? '/' . $post->image_path
-                : '/storage/' . $post->image_path)
-            : null;
-        
-        // In the show method, modify the post array
+
         return Inertia::render('PostPage', [
-            'post' => [
-                'id' => $post->id,
-                'title' => $post->title,
-                'content' => $post->content,
-                'topic' => $post->topic,
-                'image_url' => $imageUrl,
-                'slug' => $post->slug,
-                'created_at' => $post->created_at,
-                'updated_at' => $post->updated_at, // Add this line
-            ],
+            'post' => $this->transformPost($post),
             'comments' => $post->comments,
             'allPosts' => $allPosts,
-            'user' => auth()->user(),
+            'user' => $this->getUserInfo(),
         ]);
+    }
 
-    }
-    
-    public function update(Request $request, Post $post)
-    {
-        $validated = $request->validate([
-            'title' => 'required|string|max:255',
-            'content' => 'required|string',
-            'topic' => 'required|string|max:255',
-            'image' => 'nullable|image|max:2048',
-        ]);
-    
-        if ($request->hasFile('image')) {
-            $imagePath = $request->file('image')->store('uploads', 'public');
-            $validated['image_url'] = '/storage/' . $imagePath;
+    /**
+     * Update a post
+     */
+    public function update(Request $request, $id)
+{
+    // Validate the incoming request
+    $validated = $request->validate([
+        'title' => 'required|string|max:255',
+        'content' => 'required|string',
+        'topic' => 'required|string|max:255',
+        'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp,svg|max:2048',  // Ensure it's an image and size limit
+    ]);
+
+    $post = Post::findOrFail($id);
+
+    // Update title, content, and topic
+    $post->title = $request->title;
+    $post->content = $request->content;
+    $post->topic = $request->topic;
+
+    // Handle image upload if there's a new one
+    if ($request->hasFile('image')) {
+        // Delete the old image if it exists
+        if ($post->image_path && Storage::disk('public')->exists($post->image_path)) {
+            Storage::disk('public')->delete($post->image_path);
         }
-    
-        $post->update($validated);
-    
-        return response()->json(['message' => 'Post updated successfully']);
+
+        // Store the new image and get its path
+        $imagePath = $request->file('image')->store('uploads', 'public');
+        $post->image_path = $imagePath;
     }
-    
+
+    // Save the post with the new data
+    $post->save();
+
+    return response()->json([
+        'message' => 'Post updated successfully!',
+        'post' => $post,
+    ]);
+}
+
+
+
+
+
 }

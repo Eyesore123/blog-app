@@ -44,7 +44,7 @@ export function Navbar() {
               </>
             )}
           </div>
-          <div className="flex items-center gap-14">
+          <div className="flex items-center md:gap-14">
             <button
               onClick={toggleTheme}
               className="p-2 hover:text-[#FFC600] transition-colors"
