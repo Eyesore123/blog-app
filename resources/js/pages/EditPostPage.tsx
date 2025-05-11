@@ -6,6 +6,7 @@ import { Navbar } from '@/components/Navbar';
 import { useTheme } from '../context/ThemeContext';
 import axiosInstance from '../components/axiosInstance';
 import { getCsrfToken } from '../components/auth';
+import { useForm } from "@inertiajs/react";
 
 interface Post {
   id: number;
@@ -28,12 +29,19 @@ const EditPostPage: React.FC<EditPostPageProps> = ({ post }) => {
   const [topic, setTopic] = useState(post.topic || '');
   const [submitting, setSubmitting] = useState(false);
 
-  const [imageFile, setImageFile] = useState<File | null>(null);
+  const [imageFile, setImageFile] = useState<string | File | null>("");
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+
+  const { data, setData } = useForm({
+  title: "",
+  content: "",
+  topic: "",
+  image: null as File | null,
+});
 
   // Show preview of selected image
   useEffect(() => {
-    if (imageFile) {
+    if (imageFile && imageFile instanceof File) {
       const reader = new FileReader();
       reader.onloadend = () => {
         setPreviewUrl(reader.result as string);
@@ -66,8 +74,9 @@ const EditPostPage: React.FC<EditPostPageProps> = ({ post }) => {
 
     // Optional debug
     formData.forEach((value, key) => {
-      console.log(key, value);
-    });
+  console.log(`${key}:`, value);
+});
+
 
     // Send as POST, not PUT
     const response = await axiosInstance.post(`/api/posts/${post.id}`, formData);
@@ -134,6 +143,7 @@ const EditPostPage: React.FC<EditPostPageProps> = ({ post }) => {
                       const allowedTypes = ['image/jpeg', 'image/png', 'image/jpg', 'image/gif', 'image/webp', 'image/svg+xml'];
                       if (allowedTypes.includes(file.type)) {
                         setImageFile(file);
+                        setData("image", file as File | null); // <--- Add this line
                       } else {
                         toast.error('Please upload a valid image file (jpeg, png, jpg, gif, webp, svg)');
                       }
@@ -152,7 +162,7 @@ const EditPostPage: React.FC<EditPostPageProps> = ({ post }) => {
                 ) : post.image_url ? (
                   <div className="!mt-2">
                     <p className="text-sm mb-1">Current Image:</p>
-                    <a href={post.image_url} target="_blank" rel="noopener noreferrer">
+                    <a href={`/storage/${post.image_url.replace(/^uploads\//, '')}`} target="_blank" rel="noopener noreferrer">
                       <img src={post.image_url} alt="Current" className="max-w-xs rounded shadow" />
                     </a>
                   </div>

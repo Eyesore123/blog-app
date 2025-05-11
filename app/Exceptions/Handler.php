@@ -5,6 +5,7 @@ namespace App\Exceptions;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Inertia\Inertia;
 use Throwable;
+use Illuminate\Support\Facades\Log;
 
 class Handler extends ExceptionHandler
 {
@@ -55,7 +56,7 @@ class Handler extends ExceptionHandler
             // Make sure we're not handling API requests
             if (!$request->expectsJson()) {
                 // Debug information
-                \Log::debug('Rendering error page', [
+                Log::debug('Rendering error page', [
                     'status' => $statusCode,
                     'message' => $e->getMessage(),
                     'using_inertia' => true

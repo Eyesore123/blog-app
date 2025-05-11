@@ -510,8 +510,6 @@ const renderComment = (comment: Comment, level = 0) => {
   );
 };
 
-
-  
   return (
   <>
     <Head>
@@ -530,20 +528,21 @@ const renderComment = (comment: Comment, level = 0) => {
         {post.title}
       </h2>
       
-      {hasValidImageUrl && (
-        <div className="w-full !mb-6 md:!mb-20 !mt-4 md:!mt-40">
-          <img
-            src={post.image_url}
-            alt={post.title}
-            className="w-full md:w-100 lg:w-200 h-auto rounded-lg cursor-pointer hover:opacity-80"
-            onClick={goToPostPage}
-            onError={(e) => {
-              console.error('Image failed to load:', post.image_url);
-              e.currentTarget.style.display = 'none';
-            }}
-          />
-        </div>
-      )}
+     {hasValidImageUrl && post.image_url && (
+  <div className="w-full !mb-6 md:!mb-20 !mt-4 md:!mt-40">
+    <img
+      src={post.image_url}
+      alt={post.title}
+      className="w-full md:w-100 lg:w-200 h-auto rounded-lg cursor-pointer hover:opacity-80"
+      onClick={goToPostPage}
+      onError={(e) => {
+      console.error('Image failed to load:', post.image_url);
+      console.log('Error details:', e);
+      e.currentTarget.style.display = 'none';
+    }}
+    />
+  </div>
+)}
       
       <div className="prose max-w-none opacity-90 !mb-6 md:!mb-10 text-sm md:text-base">{post.content}</div>
       <div className="text-xs md:text-sm text-gray-500 !mt-3 !pt-4 md:!pt-6 !space-y-1 border-t border-[#5800FF]/20">

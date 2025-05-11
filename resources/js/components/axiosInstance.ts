@@ -2,11 +2,12 @@
 import axios from 'axios';
 
 const axiosInstance = axios.create({
-  baseURL: process.env.NODE_ENV === 'production' ? 'https://your-production-api-url' : 'http://127.0.0.1:8000', // Dynamically set the base URL depending on environment
+  baseURL: process.env.NODE_ENV === 'production'
+    ? 'https://your-production-api-url'
+    : 'http://127.0.0.1:8000',
   headers: {
     'X-Requested-With': 'XMLHttpRequest',
-    'Content-Type': 'application/json',
-    'Accept': 'application/json'
+    'Accept': 'application/json'   // Keep Accept, but REMOVE Content-Type
   },
   withCredentials: true
 });
@@ -22,12 +23,10 @@ axiosInstance.interceptors.request.use(function (config) {
   return Promise.reject(error);
 });
 
-
 axiosInstance.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response && error.response.status === 401) {
-
       console.error('Unauthorized - Redirecting to login...');
     }
     return Promise.reject(error);

@@ -15,22 +15,18 @@ class PostController extends Controller
      * Helper method to transform post with image URL
      */
     private function transformPost($post)
-    {
-        return [
-            'id' => $post->id,
-            'title' => $post->title,
-            'content' => $post->content,
-            'topic' => $post->topic,
-            'slug' => $post->slug,
-            'created_at' => $post->created_at,
-            'updated_at' => $post->updated_at,
-            'image_url' => $post->image_path
-                ? (strpos($post->image_path, 'uploads/') === 0
-                    ? '/' . $post->image_path
-                    : '/storage/' . $post->image_path)
-                : null,
-        ];
-    }
+{
+    return [
+        'id' => $post->id,
+        'title' => $post->title,
+        'content' => $post->content,
+        'topic' => $post->topic,
+        'slug' => $post->slug,
+        'created_at' => $post->created_at,
+        'updated_at' => $post->updated_at,
+        'image_url' => $post->image_path ? Storage::url($post->image_path) : null,
+    ];
+}
 
     /**
      * Helper method to get authenticated user info (optional)
@@ -103,7 +99,7 @@ class PostController extends Controller
         'content' => 'required|string',
         'published' => 'boolean',
         'topic' => 'required|string',
-        'image' => 'sometimes|nullable|image|mimes:jpeg,png,jpg,gif,webp,svg|max:2048',
+        'image' => 'nullable|image|max:10000',
     ]);
 
     $imagePath = null;
@@ -195,19 +191,19 @@ class PostController extends Controller
     public function update(Request $request, $id)
 {
     // Validate the incoming request
-    $validated = $request->validate([
-        'title' => 'required|string|max:255',
-        'content' => 'required|string',
-        'topic' => 'required|string|max:255',
-        'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp,svg|max:2048',  // Ensure it's an image and size limit
-    ]);
+   $validated = $request->validate([
+    'title' => 'required|string|max:255',
+    'content' => 'required|string',
+    'topic' => 'required|string|max:255',
+    'image' => 'nullable|image|max:10000',  // Ensure it's an image and size limit
+]);
 
     $post = Post::findOrFail($id);
 
-    // Update title, content, and topic
-    $post->title = $request->title;
-    $post->content = $request->content;
-    $post->topic = $request->topic;
+    // Update title, content, and topic using the validated data
+    $post->title = $validated['title'];
+    $post->content = $validated['content'];
+    $post->topic = $validated['topic'];
 
     // Handle image upload if there's a new one
     if ($request->hasFile('image')) {
