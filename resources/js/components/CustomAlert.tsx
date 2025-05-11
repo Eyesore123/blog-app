@@ -8,11 +8,11 @@ interface AlertProps {
   onClose?: () => void;
 }
 
-const CustomAlert: React.FC<AlertProps> = ({ 
-  message, 
-  type, 
-  duration = 5000, 
-  onClose 
+const CustomAlert: React.FC<AlertProps> = ({
+  message,
+  type,
+  duration = 5000,
+  onClose
 }) => {
   const [isVisible, setIsVisible] = useState(true);
   const [progress, setProgress] = useState(100);
@@ -22,7 +22,7 @@ const CustomAlert: React.FC<AlertProps> = ({
     success: {
       bg: 'bg-[#5800FF]/10',
       border: 'border-[#5800FF]',
-      text: 'text-[#5800FF]',
+      text: 'text-green-600',
       icon: '✓'
     },
     error: {
@@ -70,21 +70,23 @@ const CustomAlert: React.FC<AlertProps> = ({
   const color = colors[type];
   
   return createPortal(
-    <div className={`fixed top-6 right-6 z-50 max-w-md animate-fade-in`}>
+    <div className={`fixed bottom-6 right-6 z-50 max-w-md animate-slide-up`}>
       <div className={`rounded-lg ${color.bg} border ${color.border} shadow-lg !p-4 flex items-start`}>
         <div className={`${color.text} font-bold !mr-3 text-xl`}>
           {color.icon}
         </div>
         <div className="flex-1">
-          <p className={`${color.text} font-medium`}>{message}</p>
+          <p className="fon-medium text-white">{message}</p>
           <div className="w-full h-1 bg-gray-200 rounded-full !mt-2 overflow-hidden">
-            <div 
+            <div
               className={`h-full ${type === 'error' || type === 'warning' ? 'bg-[#E900FF]' : 'bg-[#5800FF]'}`}
               style={{ width: `${progress}%`, transition: 'width 100ms linear' }}
             />
           </div>
         </div>
-        <button 
+
+        {/* Close button, in case  you want to use it */}
+        {/* <button
           onClick={() => {
             setIsVisible(false);
             if (onClose) onClose();
@@ -92,7 +94,7 @@ const CustomAlert: React.FC<AlertProps> = ({
           className={`!ml-3 ${color.text} hover:opacity-70 transition-opacity`}
         >
           ✕
-        </button>
+        </button> */}
       </div>
     </div>,
     document.body

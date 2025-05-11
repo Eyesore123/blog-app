@@ -31,6 +31,8 @@ class CommentController extends Controller
                     'content' => $comment->content,
                     'createdAt' => $comment->created_at->toDateTimeString(),
                     'parent_id' => $comment->parent_id,
+                    'user_id' => $comment->user_id,
+                    'edited' => $comment->edited,
                     'deleted' => $comment->deleted ?? false,
                 ];
             });
@@ -153,4 +155,62 @@ class CommentController extends Controller
             'is_admin' => false,
         ]);
     }
+
+    /**
+ * Update a comment (for comment owners)
+ */
+public function update(Request $request, $id)
+{
+    $request->validate([
+        'content' => 'required|string|max:1000',
+    ]);
+
+    $user = Auth::user();
+    $comment = Comment::find($id);
+    
+    if (!$comment) {
+        return response()->json(['message' => 'Comment not found'], 404);
+    }
+    
+    // Check if the user is the comment owner
+    if ($comment->user_id !== $user->id) {
+        return response()->json(['message' => 'Unauthorized'], 403);
+    }
+    
+    $comment->content = $request->content;
+    $comment->edited = true;
+    $comment->save();
+    
+    return response()->json($comment);
+}
+
+/**
+ * Delete a comment (for comment owners)
+ */
+public function userDelete($id)
+{
+    $user = Auth::user();
+    $comment = Comment::find($id);
+    
+    if (!$comment) {
+        return response()->json(['message' => 'Comment not found'], 404);
+    }
+    
+    // Check if the user is the comment owner
+    if ($comment->user_id !== $user->id) {
+        return response()->json(['message' => 'Unauthorized'], 403);
+    }
+    
+    // Check if the comment has replies
+    $hasReplies = Comment::where('parent_id', $id)->exists();
+    
+    if ($hasReplies) {
+        return response()->json(['message' => 'Cannot delete a comment with replies'], 400);
+    }
+    
+    $comment->delete();
+    
+    return response()->json(['message' => 'Comment deleted successfully']);
+}
+
 }

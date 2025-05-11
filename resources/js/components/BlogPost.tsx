@@ -29,12 +29,15 @@ interface Comment {
   image?: string;
   parent_id?: string | null;
   deleted?: boolean;
+  user_id: number;
+  edited?: boolean;
 }
 
 interface AuthUser {
   name: string;
   token: string | null;
   is_admin: number | boolean;
+  id: number;
 }
 
 export function BlogPost({ post }: { post: Post }) {
@@ -53,7 +56,8 @@ export function BlogPost({ post }: { post: Post }) {
   const { confirm } = useConfirm();
   const [comments, setComments] = useState<Comment[]>([]);
   // const [remainingComments, setRemainingComments] = useState<number | null>(null);
-
+  const [editingCommentId, setEditingCommentId] = useState<string | null>(null);
+const editCommentRef = useRef<HTMLTextAreaElement>(null);
   
   // Refs for uncontrolled inputs
   const replyInputRef = useRef<HTMLTextAreaElement>(null);
@@ -299,84 +303,213 @@ export function BlogPost({ post }: { post: Post }) {
   };
 
   // Render a comment and its replies
-  const renderComment = (comment: Comment, level = 0) => {
+const renderComment = (comment: Comment, level = 0) => {
   const maxNestingLevel = 10;
   const isReplying = replyingTo === comment._id;
+  const isEditing = editingCommentId === comment._id;
   const replies = getReplies(comment._id);
   const isDeleted = comment.deleted;
+  const isCommentOwner = Boolean(user && comment.user_id && user.id === comment.user_id);
+  const hasReplies = comments.some(c => c.parent_id === comment._id);
   
   // Limit nesting on mobile
   const effectiveLevel = window.innerWidth < 768 ? Math.min(level, 3) : level;
   const indentClass = effectiveLevel > 0 ? `!ml-${Math.min(effectiveLevel * 4, 12)}` : '';
   
-    return (
-      <div key={comment._id} className={`bg-[#5800FF]/${10 - Math.min(level, 5) * 2} rounded !p-2 md:!p-3 ${indentClass}`}>
-        <p className="font-medium text-xs md:text-sm">{comment.authorName}</p>
-        
-        {isDeleted ? (
-          <p className="opacity-60 italic text-xs md:text-sm">[Message removed by moderator]</p>
-        ) : (
-          <p className="opacity-80 break-words !max-w-full md:!max-w-240 overflow-wrap-anywhere h-auto text-xs md:text-sm">{comment.content}</p>
-        )}
-        
-        <p className="text-[10px] md:text-xs opacity-60 italic">{new Date(comment.createdAt).toLocaleString()}</p>
-        
-        <div className="flex gap-2 !mt-1 md:!mt-2">
-          {!isDeleted && level < maxNestingLevel && isSignedIn && (
+  async function handleEditComment(commentId: string) {
+    if (!editCommentRef.current || !editCommentRef.current.value.trim()) return;
+    
+    const updatedContent = editCommentRef.current.value;
+    
+    setSubmitting(true);
+    await getCsrfToken();
+    
+    try {
+      const response = await axiosInstance.put(`/api/comments/${commentId}`, {
+        content: updatedContent
+      });
+      
+      // Update the comment in the local state
+      setComments(comments.map(comment =>
+        comment._id === commentId
+          ? { ...comment, content: updatedContent, edited: true }
+          : comment
+      ));
+      
+      setEditingCommentId(null);
+      showAlert('Comment updated successfully', 'success');
+    } catch (error) {
+      console.error('Failed to update comment', error);
+      showAlert('Error updating comment. Please try again.', 'error');
+    } finally {
+      setSubmitting(false);
+    }
+  }
+  
+  // Add this function to handle user comment deletion
+  async function handleUserDeleteComment(commentId: string) {
+    // Check if the comment has replies
+    const hasReplies = comments.some(c => c.parent_id === commentId);
+    
+    if (hasReplies) {
+      showAlert('Cannot delete a comment with replies', 'warning');
+      return;
+    }
+    
+    const confirmed = await confirm({
+      title: 'Delete Comment',
+      message: 'Are you sure you want to delete your comment?',
+      confirmText: 'Delete',
+      cancelText: 'Cancel',
+      type: 'warning'
+    });
+    
+    if (!confirmed) return;
+    
+    try {
+      await axiosInstance.delete(`/api/comments/${commentId}`);
+      
+      // Remove the comment from the UI
+      setComments(comments.filter(c => c._id !== commentId));
+      showAlert('Your comment has been deleted', 'success');
+    } catch (error) {
+      console.error('Failed to delete comment', error);
+      showAlert('Error deleting comment. Please try again.', 'error');
+    }
+  }
+  
+  return (
+    <div key={comment._id} className={`bg-[#5800FF]/${10 - Math.min(level, 5) * 2} rounded !p-2 md:!p-3 ${indentClass}`}>
+      <p className="font-medium text-xs md:text-sm">{comment.authorName}</p>
+      
+      {isDeleted ? (
+        <p className="opacity-60 italic text-xs md:text-sm">[Message removed by moderator]</p>
+      ) : isEditing ? (
+        <form onSubmit={(e) => { e.preventDefault(); handleEditComment(comment._id); }} className="!mt-2">
+          <textarea
+            ref={editCommentRef}
+            className="w-full !p-2 h-20 rounded border border-[#5800FF]/20 focus:border-[#5800FF] focus:ring-1 focus:ring-[#5800FF] outline-none text-xs md:text-sm"
+            rows={3}
+            defaultValue={comment.content}
+          />
+          <div className="flex gap-2 !mt-1">
             <button
-              onClick={() => setReplyingTo(comment._id)}
-              className="text-[10px] md:text-xs text-[#E900FF] hover:underline"
+              type="submit"
+              disabled={submitting}
+              className="!px-2 !py-1 md:!px-3 md:!py-1 bg-[#5800FF] text-white rounded hover:bg-[#E900FF] disabled:opacity-50 transition-colors text-[10px] md:text-sm"
             >
-              Reply
+              {submitting ? "Saving..." : "Save Changes"}
             </button>
-          )}
-          
-          {!isDeleted && isAdmin && (
             <button
-              onClick={() => handleDeleteComment(comment._id)}
-              className="text-red-500 text-[10px] md:text-xs hover:underline"
+              type="button"
+              onClick={() => setEditingCommentId(null)}
+              className="!px-2 !py-1 md:!px-3 md:!py-1 border border-[#5800FF]/20 rounded hover:bg-[#5800FF]/10 text-[10px] md:text-sm"
             >
-              Delete
+              Cancel
             </button>
+          </div>
+        </form>
+      ) : (
+        <div>
+          <p className="opacity-80 break-words !max-w-full md:!max-w-240 overflow-wrap-anywhere h-auto text-xs md:text-sm">
+            {comment.content}
+          </p>
+          {comment.edited && (
+            <p className="text-[10px] opacity-60 italic">(edited)</p>
           )}
         </div>
-        
-        {isReplying && (
-          <form onSubmit={(e) => handleSubmitReply(e, comment._id)} className="!mt-2 md:!mt-3">
-            <textarea
-              ref={replyInputRef}
-              placeholder={`Reply to ${comment.authorName}...`}
-              className="w-full !p-2 rounded border border-[#5800FF]/20 focus:border-[#5800FF] focus:ring-1 focus:ring-[#5800FF] outline-none text-xs md:text-sm"
-              rows={2}
-              defaultValue=""
-            />
-            <div className="flex gap-2 !mt-1">
-              <button
-                type="submit"
-                disabled={submitting}
-                className="!px-2 !py-1 md:!px-3 md:!py-1 bg-[#5800FF] text-white rounded hover:bg-[#E900FF] disabled:opacity-50 transition-colors text-[10px] md:text-sm"
-              >
-                {submitting ? "Posting..." : "Post Reply"}
-              </button>
-              <button
-                type="button"
-                onClick={() => setReplyingTo(null)}
-                className="!px-2 !py-1 md:!px-3 md:!py-1 border border-[#5800FF]/20 rounded hover:bg-[#5800FF]/10 text-[10px] md:text-sm"
-              >
-                Cancel
-              </button>
-            </div>
-          </form>
+      )}
+      
+      {/* Only show timestamp when not editing */}
+      {!isEditing && (
+        <p className="text-[10px] md:text-xs opacity-60 italic">{new Date(comment.createdAt).toLocaleString()}</p>
+      )}
+      
+      <div className="flex gap-2 !mt-1 md:!mt-2">
+        {/* Reply button - show for non-deleted comments if user is signed in */}
+        {!isDeleted && level < maxNestingLevel && isSignedIn && (
+          <button
+            onClick={() => {
+              setReplyingTo(comment._id);
+              setEditingCommentId(null); // Reset editingCommentId when entering reply mode
+            }}
+              className="text-[10px] md:text-xs text-[#E900FF] hover:underline"
+          >
+            Reply
+          </button>
         )}
         
-        {replies.length > 0 && (
-          <div className="!mt-2 md:!mt-3 !space-y-2 md:!space-y-3">
-            {replies.map(reply => renderComment(reply, level + 1))}
-          </div>
+        {/* Edit button - show for comment owner if not deleted */}
+        {!isDeleted && isCommentOwner && !isEditing && (
+          <button
+            onClick={() => {
+              setEditingCommentId(comment._id);
+              setReplyingTo(null);
+            }}
+            className="text-[10px] text-[#FFC600] md:text-xs hover:underline"
+          >
+            Edit
+          </button>
+        )}
+        
+        {/* Delete button - show for comment owner if no replies */}
+        {!isDeleted && isCommentOwner && !hasReplies && (
+          <button
+            onClick={() => handleUserDeleteComment(comment._id)}
+            className="text-red-500 text-[10px] md:text-xs hover:underline"
+          >
+            Delete
+          </button>
+        )}
+        
+        {/* Admin delete button */}
+        {!isDeleted && isAdmin && (
+          <button
+            onClick={() => handleDeleteComment(comment._id)}
+            className="text-red-500 text-[10px] md:text-xs hover:underline"
+          >
+            Delete (Admin)
+          </button>
         )}
       </div>
-    );
-  };
+      
+      {isReplying && (
+        <form onSubmit={(e) => handleSubmitReply(e, comment._id)} className="!mt-2 md:!mt-3">
+          <textarea
+            ref={replyInputRef}
+            placeholder={`Reply to ${comment.authorName}...`}
+            className="w-full !p-2 rounded border border-[#5800FF]/20 focus:border-[#5800FF] focus:ring-1 focus:ring-[#5800FF] outline-none text-xs md:text-sm"
+            rows={2}
+            defaultValue=""
+          />
+          <div className="flex gap-2 !mt-1">
+            <button
+              type="submit"
+              disabled={submitting}
+              className="!px-2 !py-1 md:!px-3 md:!py-1 bg-[#5800FF] text-white rounded hover:bg-[#E900FF] disabled:opacity-50 transition-colors text-[10px] md:text-sm"
+            >
+              {submitting ? "Posting..." : "Post Reply"}
+            </button>
+            <button
+              type="button"
+              onClick={() => setReplyingTo(null)}
+              className="!px-2 !py-1 md:!px-3 md:!py-1 border border-[#5800FF]/20 rounded hover:bg-[#5800FF]/10 text-[10px] md:text-sm"
+            >
+              Cancel
+            </button>
+          </div>
+        </form>
+      )}
+      
+      {replies.length > 0 && (
+        <div className="!mt-2 md:!mt-3 !space-y-2 md:!space-y-3">
+          {replies.map(reply => renderComment(reply, level + 1))}
+        </div>
+      )}
+    </div>
+  );
+};
+
 
   
   return (
@@ -414,7 +547,7 @@ export function BlogPost({ post }: { post: Post }) {
       
       <div className="prose max-w-none opacity-90 !mb-6 md:!mb-10 text-sm md:text-base">{post.content}</div>
       <div className="text-xs md:text-sm text-gray-500 !mt-3 !pt-4 md:!pt-6 !space-y-1 border-t border-[#5800FF]/20">
-        {post.created_at && (
+        {post.created_at &&  (
           <div>
             Created: {new Date(post.created_at).toLocaleString()}
           </div>

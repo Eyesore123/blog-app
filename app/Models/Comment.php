@@ -15,10 +15,13 @@ class Comment extends Model
         'user_id',
         'parent_id',
         'deleted',
+        'authorName',
+        'edited',
     ];
 
     protected $casts = [
         'deleted' => 'boolean',
+        'edited' => 'boolean',
     ];
 
     public function replies()

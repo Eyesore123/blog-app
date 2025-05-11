@@ -40,15 +40,19 @@ export const AlertProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   return (
     <AlertContext.Provider value={{ alerts, showAlert, hideAlert }}>
       {children}
-      {alerts.map((alert) => (
-        <CustomAlert
-          key={alert.id}
-          message={alert.message}
-          type={alert.type}
-          duration={alert.duration}
-          onClose={() => hideAlert(alert.id)}
-        />
-      ))}
+      
+      {/* Alert container positioned at the bottom */}
+      <div className="fixed bottom-4 right-4 z-50 flex flex-col gap-2">
+        {alerts.map((alert) => (
+          <CustomAlert
+            key={alert.id}
+            message={alert.message}
+            type={alert.type}
+            duration={alert.duration}
+            onClose={() => hideAlert(alert.id)}
+          />
+        ))}
+      </div>
     </AlertContext.Provider>
   );
 };

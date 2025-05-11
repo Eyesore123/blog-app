@@ -122,3 +122,11 @@ require __DIR__.'/settings.php';
 require __DIR__.'/auth.php';
 
 Route::get('/posts/{post}', [PostController::class, 'show'])->name('posts.show');
+
+// Update routes
+
+// Update a comment (for comment owners)
+Route::middleware(['auth'])->put('/api/comments/{id}', [CommentController::class, 'update']);
+
+// Delete a comment (for comment owners)
+Route::middleware(['auth'])->delete('/api/comments/user/{id}', [CommentController::class, 'userDelete']);
