@@ -43,7 +43,7 @@ const SearchComponent: React.FC<SearchComponentProps> = ({ posts = [] }) => {
                   </li>
                 ))
               ) : (
-                <li className="text-sm opacity-60 italic">No matches found</li>
+                <li className="text-sm opacity-60 italic !mt-4 !ml-2">No matches found</li>
               )}
             </ul>
           )}
