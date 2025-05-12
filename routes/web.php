@@ -5,6 +5,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\PostController;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\AccountController;
 use App\Http\Controllers\CommentController;
 use App\Http\Controllers\ArchiveController;
 use App\Http\Controllers\MainPageController;
@@ -144,3 +145,15 @@ Route::post('/admin/users/{user}/toggle', [AdminController::class, 'toggleUserSt
 // Delete user
 Route::delete('/admin/users/{user}', [AdminController::class, 'deleteUser']);
 
+// Account page routes
+
+Route::middleware(['auth'])->group(function () {
+    Route::get('/account', [AccountController::class, 'show'])->name('account');
+
+    Route::get('/account/settings', [AccountController::class, 'show'])->name('account.settings');
+    Route::post('/account/update-email', [AccountController::class, 'updateEmail']);
+    Route::post('/account/update-password', [AccountController::class, 'updatePassword']);
+    Route::post('/account/delete', [AccountController::class, 'deleteAccount']);
+    Route::post('/account/subscribe-newsletter', [AccountController::class, 'subscribeNewsletter']);
+    Route::post('/account/unsubscribe-newsletter', [AccountController::class, 'unsubscribeNewsletter']);
+});

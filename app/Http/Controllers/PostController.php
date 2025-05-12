@@ -28,6 +28,7 @@ class PostController extends Controller
     ];
 }
 
+
     /**
      * Helper method to get authenticated user info (optional)
      */
@@ -135,34 +136,46 @@ class PostController extends Controller
      * Delete a post
      */
     public function destroy($post_id)
-    {
-        $post = Post::findOrFail($post_id);
+{
+    $post = Post::findOrFail($post_id);
 
-        if (auth()->user() && auth()->user()->is_admin) {
-            if ($post->image_path) {
-                try {
-                    if (strpos($post->image_path, 'uploads/') === 0) {
-                        if (file_exists(public_path($post->image_path))) {
-                            unlink(public_path($post->image_path));
-                            Log::info('Deleted image from uploads: ' . $post->image_path);
-                        }
-                    } else {
-                        Storage::disk('public')->delete($post->image_path);
-                        Log::info('Deleted image from storage: ' . $post->image_path);
+    // Check if the user is an admin
+    if (auth()->user() && auth()->user()->is_admin) {
+        // Check if the post has an image and delete it
+        if ($post->image_path) {
+            try {
+                // If the image is in the 'uploads/' folder, delete it from the public path
+                if (strpos($post->image_path, 'uploads/') === 0) {
+                    $imagePath = public_path($post->image_path);
+                    if (file_exists($imagePath)) {
+                        unlink($imagePath);
+                        Log::info('Deleted image from uploads: ' . $post->image_path);
                     }
-                } catch (\Exception $e) {
-                    Log::error('Failed to delete image: ' . $e->getMessage());
+                } else {
+                    // If the image is stored in the 'public' disk, delete it from there
+                    Storage::disk('public')->delete($post->image_path);
+                    Log::info('Deleted image from storage: ' . $post->image_path);
                 }
+
+            } catch (\Exception $e) {
+                // Log any error encountered while deleting the image
+                Log::error('Failed to delete image: ' . $e->getMessage());
             }
-
-            $post->comments()->delete();
-            $post->delete();
-
-            return redirect()->back()->with('success', 'Post deleted successfully.');
         }
 
-        abort(403, 'Unauthorized action.');
+        // Delete all comments associated with the post
+        $post->comments()->delete();
+
+        // Delete the post itself
+        $post->delete();
+
+        // Redirect with a success message
+        return redirect()->back()->with('success', 'Post deleted successfully.');
     }
+
+    // Abort if the user is not authorized
+    abort(403, 'Unauthorized action.');
+}
 
     /**
      * Show single post page
@@ -207,15 +220,16 @@ class PostController extends Controller
 
     // Handle image upload if there's a new one
     if ($request->hasFile('image')) {
-        // Delete the old image if it exists
-        if ($post->image_path && Storage::disk('public')->exists($post->image_path)) {
-            Storage::disk('public')->delete($post->image_path);
+    // Delete the old image if it exists
+        if ($post->image_path && file_exists(public_path($post->image_path))) {
+            unlink(public_path($post->image_path));
         }
 
-        // Store the new image and get its path
-        $imagePath = $request->file('image')->store('uploads', 'public');
-        $post->image_path = $imagePath;
-    }
+    // Store the new image and get its path
+    $imagePath = $request->file('image')->store('uploads', 'public');
+    $post->image_path = $imagePath;
+}
+
 
     // Save the post with the new data
     $post->save();

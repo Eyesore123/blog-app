@@ -5,8 +5,9 @@ import { useTheme } from '../context/ThemeContext';
 interface PagePropsWithAuth {
   auth: {
     user: {
-      is_admin: number | boolean; // Accept either number or boolean
+      is_admin: number | boolean;
       name: string;
+      is_anonymous?: boolean;
     } | null;
   };
 }
@@ -23,7 +24,7 @@ export function Navbar() {
     if (hasAuthProp(props)) {
       const user = props.auth?.user;
       const isAdmin = user ? Boolean(user.is_admin) : false;
-      
+
       return (
         <>
           <div className="flex items-center gap-4">
@@ -44,15 +45,31 @@ export function Navbar() {
               </>
             )}
           </div>
-          <div className="flex items-center md:gap-14">
+
+          <div className="flex items-center md:gap-6">
             <button
               onClick={toggleTheme}
               className="p-2 hover:text-[#FFC600] transition-colors"
             >
               {theme === 'dark' ? '🌞' : '🌙'}
             </button>
+
             {user ? (
-              <SignOutButton />
+              <>
+                {!user.is_anonymous ? (
+                  <>
+                    <Link
+                      href="/account"
+                      className="!px-4 !py-2 rounded bg-[#5800FF] text-white hover:bg-[#E900FF] transition-colors"
+                    >
+                      My Account
+                    </Link>
+                  </>
+                ) : (
+                  <span className="text-gray-500">Anonymous User</span>
+                )}
+                <SignOutButton />
+              </>
             ) : (
               <Link
                 href={route('login')}
@@ -65,7 +82,8 @@ export function Navbar() {
         </>
       );
     }
-    // fallback (no auth prop at all — rare)
+
+    // Fallback (no auth prop at all — rare)
     return (
       <>
         <div className="flex items-center gap-4">

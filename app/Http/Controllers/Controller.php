@@ -15,10 +15,11 @@ abstract class Controller
             'auth' => [
                 'user' => auth()->check() ? [
                     'id' => auth()->user()->id,
-                    'name' => auth()->user()->name ?? '', // Add the name property
+                    'name' => auth()->user()->name ?? '',
                     'email' => auth()->user()->email,
                     'anonymous_id' => auth()->user()->anonymous_id,
-                    'is_admin' => auth()->user()->is_admin ?? false, // Add is_admin property
+                    'is_admin' => auth()->user()->is_admin ?? false,
+                    'is_anonymous' => !empty(auth()->user()->anonymous_id),
                 ] : null,
             ],
             'flash' => [

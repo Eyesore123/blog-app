@@ -262,12 +262,12 @@ const PostPage: React.FC<PostPageProps> = ({ post }) => {
                 {post.image_url && (
                   <div className="!mb-6 !pt-24 w-full">
                     <img
-                      src={post.image_url.startsWith('/') ? post.image_url : `/${post.image_url}`}
+                      src={post.image_url} // Use the URL as is
                       alt={post.title}
                       className="w-100 md:w-100 lg:w-200 h-auto rounded-lg"
                       onError={(e) => {
                         console.error('Image failed to load:', post.image_url);
-                        e.currentTarget.style.display = 'none';
+                        e.currentTarget.style.display = 'none'; // Hide image if it fails to load
                       }}
                     />
                   </div>
