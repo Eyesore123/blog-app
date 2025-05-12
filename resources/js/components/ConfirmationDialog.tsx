@@ -44,7 +44,7 @@ const ConfirmDialog: React.FC<ConfirmDialogProps> = ({
 
   return createPortal(
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 animate-fade-in">
-      <div className="bg-[var(--bg-primary)] rounded-lg shadow-xl max-w-md w-full mx-4 overflow-hidden">
+      <div className="bg-[var(--bg-primary)] rounded-lg shadow-sm shadow-[#5800FF] border border-[#5800FF] shadow-top max-w-md w-full mx-4 overflow-hidden">
         <div className="!p-5 border-b border-[#5800FF]/20">
           <div className="flex items-center">
             <span className="text-2xl !mr-3">{colorScheme.icon}</span>
@@ -59,7 +59,7 @@ const ConfirmDialog: React.FC<ConfirmDialogProps> = ({
         <div className="!p-4 bg-[#5800FF]/5 flex justify-end !space-x-3">
           <button
             onClick={onCancel}
-            className="!px-4 !py-2 border border-[#5800FF]/20 rounded text-[var(--text-primary)] hover:bg-[#5800FF]/10 transition-colors"
+            className="!px-4 !py-2 border border-[#5800FF]/20 rounded text-[var(--text-primary)] hover:bg-[#5800FF] hover:opacity-80"
           >
             {cancelText}
           </button>

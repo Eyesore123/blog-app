@@ -377,6 +377,14 @@ const renderComment = (comment: Comment, level = 0) => {
       showAlert('Error deleting comment. Please try again.', 'error');
     }
   }
+
+  // Helper function for meta description, use in production:
+
+  // const plainTextContent = post.content.replace(/<[^>]+>/g, '');
+  // const description = plainTextContent.length > 150
+  // ? plainTextContent.slice(0, 147) + '...'
+  // : plainTextContent;
+
   
   return (
     <div key={comment._id} className={`bg-[#5800FF]/${10 - Math.min(level, 5) * 2} rounded !p-2 md:!p-3 ${indentClass}`}>
@@ -518,8 +526,21 @@ const renderComment = (comment: Comment, level = 0) => {
         type="application/rss+xml"
         title="RSS Feed for Joni's Blog"
         href="/feed"
-      />
-    </Head>
+        />
+{/* 
+         <title>{post.title} | Blog</title>
+        <meta name="description" content={description} />
+        <meta property="og:title" content={post.title} />
+        <meta property="og:description" content={description} />
+        <meta property="og:image" content={post.image_url || '/default-image.jpg'} />
+        <meta property="og:url" content={window.location.href} />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content={post.title} />
+        <meta name="twitter:description" content={description} />
+        <meta name="twitter:image" content={post.image_url || '/default-image.jpg'} /> */}
+  </Head>
+
+
     <article className="rounded-lg bg-[#5800FF]/5 !p-4 w-full md:!w-260 xl:w-500 !mb-6 md:!mb-10">
       <h2
         className="text-xl md:text-2xl font-bold flex justify-start !mb-4 md:!mb-10 cursor-pointer hover:underline"

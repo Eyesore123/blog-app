@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Inertia\Inertia;
 use App\Models\Post;
+use App\Models\User;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -13,9 +14,13 @@ use Illuminate\Support\Facades\Storage;
 class AdminController extends Controller
 {
     public function index()
-    {
-        return Inertia::render('AdminDashboard');
-    }
+{
+    $users = User::select(['id','name','email','is_active'])->get();
+
+    return Inertia::render('AdminDashboard', [
+        'users' => $users,
+    ]);
+}
 
     public function edit($id)
     {
@@ -39,5 +44,21 @@ class AdminController extends Controller
                 'published' => $post->published,
             ],
         ]);
+    }
+
+        public function toggleUserStatus(User $user)
+{
+    $user->is_active = !$user->is_active;
+    $user->save();
+
+    return back()->with('success', 'User status updated.');
+}
+
+
+    public function deleteUser(User $user)
+    {
+        $user->delete();
+
+        return redirect()->back()->with('success', 'User deleted.');
     }
 }

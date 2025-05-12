@@ -134,3 +134,13 @@ Route::middleware(['auth'])->put('/api/comments/{id}', [CommentController::class
 
 // Delete a comment (for comment owners)
 Route::middleware(['auth'])->delete('/api/comments/user/{id}', [CommentController::class, 'userDelete']);
+
+// Deactive or delete a user
+
+// Deactivate/activate user
+Route::post('/admin/users/{user}/toggle', [AdminController::class, 'toggleUserStatus']);
+
+
+// Delete user
+Route::delete('/admin/users/{user}', [AdminController::class, 'deleteUser']);
+

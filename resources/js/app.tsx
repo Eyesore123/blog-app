@@ -12,6 +12,7 @@ import { ConfirmProvider } from './context/ConfirmationContext';
 // import { ErrorBoundary } from './pages/errors/ErrorBoundary';
 import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
 import  { router } from '@inertiajs/react';
+import { Head } from '@inertiajs/react';
 
 router.on('error', (error) => {
   console.error('Inertia Error:', error);

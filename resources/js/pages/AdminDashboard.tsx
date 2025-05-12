@@ -2,8 +2,17 @@ import { Head } from '@inertiajs/react';
 import { CreatePost } from '../components/CreatePost';
 import { Navbar } from '../components/Navbar';
 import Header from '@/components/Header';
+import AdminUserManagement from '@/components/AdminUserManagement';
 
-export default function AdminDashboard() {
+export interface User {
+  id: number;
+  name: string;
+  email: string;
+  is_active: boolean;
+}
+
+export default function AdminDashboard({ users }: { users: User[] }) {
+  console.log('users prop:', users);
   return (
     <>
         <Navbar />
@@ -13,6 +22,7 @@ export default function AdminDashboard() {
         <h1 className="text-3xl text-amber-300 font-bold">Admin Dashboard</h1>
         <p className="text-lg text-gray-500 !mt-4 !mb-18">Welcome to the admin dashboard.</p>
         <CreatePost />
+        <AdminUserManagement users={users} />
       </div>
     </>
   );

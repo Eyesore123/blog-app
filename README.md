@@ -23,5 +23,9 @@ Blog still needs some work, though, including:
 5. Language toggle to navbar
 6. Toggle loads correct language
 7. Small style fixes for responsive design
+8. Forgot password section to login page
+9. Share buttons for social media (Facebook and X) - add ShareButtons component to PostPage
+10. Advanced features for admin. Now admin can delete deactivate and - as an ultimate solution - delete accounts
+
 
 ![blog3](https://github.com/user-attachments/assets/9b47ad5c-13f9-4858-9291-1eb1d2397d96)
