@@ -8,8 +8,6 @@ import { Navbar } from '@/components/Navbar';
 import SearchComponent from '@/components/SearchComponent';
 import YearFilterComponent from '@/components/YearFilterComponent';
 import { useTheme } from '../context/ThemeContext';
-import { useAlert } from '@/context/AlertContext';
-import { useConfirm } from '@/context/ConfirmationContext';
 
 interface BlogPostType {
   id: number;
@@ -22,7 +20,7 @@ interface BlogPostType {
     updated_at?: string;
     _id?: string;
   slug?: string;
-  [key: string]: any; // Allow for quoted property names
+  [key: string]: any;
 }
 
 interface PageProps {
@@ -68,31 +66,31 @@ export default function ArchiveView() {
     router.get(`/archives/${archiveYear}`, Object.fromEntries(params));
   };
 
-  const handleDeletePost = async (postId: number) => {
-  // Use the custom confirm dialog instead of the browser's native confirm
-    const { confirm } = useConfirm();
-    const showAlert = useAlert().showAlert;
-  const confirmed = await confirm({
-    title: 'Delete Post',
-    message: 'Are you sure you want to delete this post? This action cannot be undone.',
-    confirmText: 'Delete',
-    cancelText: 'Cancel',
-    type: 'danger'
-  });
+  // const handleDeletePost = async (postId: number) => {
+  // // Use the custom confirm dialog instead of the browser's native confirm
+  //   const { confirm } = useConfirm();
+  //   const showAlert = useAlert().showAlert;
+  // const confirmed = await confirm({
+  //   title: 'Delete Post',
+  //   message: 'Are you sure you want to delete this post? This action cannot be undone.',
+  //   confirmText: 'Delete',
+  //   cancelText: 'Cancel',
+  //   type: 'danger'
+  // });
   
-  if (!confirmed) return;
+//   if (!confirmed) return;
   
-  router.delete(`/posts/${postId}`, {
-    onSuccess: () => {
-      console.log(`Post ${postId} deleted`);
-      showAlert('Post deleted successfully', 'success');
-    },
-    onError: (error) => {
-      console.error('Failed to delete post', error);
-      showAlert('Error deleting post. Please try again.', 'error');
-    }
-  });
-};
+//   router.delete(`/posts/${postId}`, {
+//     onSuccess: () => {
+//       console.log(`Post ${postId} deleted`);
+//       showAlert('Post deleted successfully', 'success');
+//     },
+//     onError: (error) => {
+//       console.error('Failed to delete post', error);
+//       showAlert('Error deleting post. Please try again.', 'error');
+//     }
+//   });
+// };
 
 
   // Debug the raw data structure
@@ -182,7 +180,7 @@ export default function ArchiveView() {
                     console.log('Found keys:', { imageUrlKey, slugKey, authorKey });
                     
                     // Get the values using the found keys
-                    const imageUrl = imageUrlKey && post[imageUrlKey] !== 'image_url' ? post[imageUrlKey] : null;
+                    const imageUrl = post[imageUrlKey] ? `${window.location.origin}/${post[imageUrlKey]}` : null;
                     const slug = slugKey && post[slugKey] !== 'slug' ? post[slugKey] : undefined;
                     const author = authorKey && post[authorKey] !== 'author' ? post[authorKey] : 'Unknown';
                     

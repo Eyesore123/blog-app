@@ -1,6 +1,6 @@
 import { router } from '@inertiajs/react';
 import { usePage } from '@inertiajs/react';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useAlert } from '@/context/AlertContext';
 import { useConfirm } from '@/context/ConfirmationContext';
 import { Navbar } from '@/components/Navbar';
@@ -62,7 +62,6 @@ interface PostPageProps {
   [key: string]: any;
 }
 
-
 export default function AccountPage({ user }: AccountPageProps) {
   const { props } = usePage<PostPageProps>();
 
@@ -78,12 +77,14 @@ export default function AccountPage({ user }: AccountPageProps) {
 
   const allPostsData = props?.allPosts?.data || [];
 
-  const [newEmail, setNewEmail] = useState(user.email);
-  const [newPassword, setNewPassword] = useState('');
-  const [currentPassword, setCurrentPassword] = useState('');
-const [confirmPassword, setConfirmPassword] = useState('');
-  const [isSubscribed, setIsSubscribed] = useState(user.is_subscribed);
+const pageUser = usePage().props.user as User;
+  const [newEmail, setNewEmail] = useState(pageUser.email);
+  const [isSubscribed, setIsSubscribed] = useState(pageUser.is_subscribed);
   const [loading, setLoading] = useState(false);
+
+  const currentPasswordRef = useRef<HTMLInputElement>(null);
+  const newPasswordRef = useRef<HTMLInputElement>(null);
+  const confirmPasswordRef = useRef<HTMLInputElement>(null);
 
   const { showAlert } = useAlert();
   const { confirm } = useConfirm();
@@ -103,35 +104,39 @@ const [confirmPassword, setConfirmPassword] = useState('');
   };
 
   const handleUpdatePassword = () => {
-  if (newPassword.length < 8) {
-    showAlert('Password must be at least 8 characters long', 'error');
-    return;
-  }
+    const currentPassword = currentPasswordRef.current!.value ?? '';
+    const newPassword = newPasswordRef.current!.value ?? '';
+    const confirmPassword = confirmPasswordRef.current!.value ?? '';
 
-  if (newPassword !== confirmPassword) {
-    showAlert('Passwords do not match', 'error');
-    return;
-  }
+    if (newPassword.length < 8) {
+      showAlert('Password must be at least 8 characters long', 'error');
+      return;
+    }
 
-  setLoading(true);
-  router.post('/update-password', {
-    current_password: currentPassword,
-    password: newPassword,
-    password_confirmation: confirmPassword,
-  }, {
-    onSuccess: () => {
-      showAlert('Password updated successfully!', 'success');
-      setLoading(false);
-      setCurrentPassword('');
-      setNewPassword('');
-      setConfirmPassword('');
-    },
-    onError: () => {
-      showAlert('Failed to update password', 'error');
-      setLoading(false);
-    },
-  });
-};
+    if (newPassword !== confirmPassword) {
+      showAlert('Passwords do not match', 'error');
+      return;
+    }
+
+    setLoading(true);
+    router.post('/update-password', {
+      current_password: currentPassword,
+      password: newPassword,
+      password_confirmation: confirmPassword,
+    }, {
+      onSuccess: () => {
+        showAlert('Password updated successfully!', 'success');
+        setLoading(false);
+        if (currentPasswordRef.current) currentPasswordRef.current.value = '';
+        if (newPasswordRef.current) newPasswordRef.current.value = '';
+        if (confirmPasswordRef.current) confirmPasswordRef.current.value = '';
+      },
+      onError: () => {
+        showAlert('Failed to update password', 'error');
+        setLoading(false);
+      },
+    });
+  };
 
   const handleSubscriptionChange = () => {
     setLoading(true);
@@ -173,133 +178,114 @@ const [confirmPassword, setConfirmPassword] = useState('');
     });
   };
 
-  console.log(props);
-
   return (
     <>
       <Navbar />
       <Header />
-       <div className="min-h-screen bg-[var(--bg-primary)] text-[var(--text-primary)]">
-      <main className="!p-4 md:!p-8">
-        <div className="w-full !mx-auto flex flex-col lg:flex-row md:!gap-6">
-          <aside className="w-full lg:w-120 lg:!mb-0 xl:!ml-50 xxl:!ml-60 overflow-y-auto xl:!mt-0">
-            <div className="lg:sticky lg:top-24 !space-y-4 md:!space-y-6 w-full lg:!w-80 xl:!w-120">
-              <div className="rounded-lg !p-4">
-                <h3 className="font-semibold !mb-2">Account</h3>
-                <p className="opacity-80">
-                 Here you can manage your account settings. You can update your email, password and subscription status. If you don't need your account anymore, you can delete it.
-                </p>
+      <div className="min-h-screen bg-[var(--bg-primary)] text-[var(--text-primary)]">
+        <main className="!p-4 md:!p-8">
+          <div className="w-full !mx-auto flex flex-col lg:flex-row md:!gap-6">
+            <aside className="w-full lg:w-120 lg:!mb-0 xl:!ml-50 xxl:!ml-60 overflow-y-auto xl:!mt-0">
+              <div className="lg:sticky lg:top-24 !space-y-4 md:!space-y-6 w-full lg:!w-80 xl:!w-120">
+                <div className="rounded-lg !p-4">
+                  <h3 className="font-semibold !mb-2">Account</h3>
+                  <p className="opacity-80">
+                    Here you can manage your account settings. You can update your email, password and subscription status. If you don't need your account anymore, you can delete it.
+                  </p>
+                </div>
+
+                <div className="rounded-lg bg-[#5800FF]/10 !p-4">
+                  <SearchComponent posts={allPostsData} />
+                  <YearFilterComponent posts={allPostsData} />
+                  <ArchivesComponent />
+                  <RssSubscribeLink />
+                  <RecentActivityFeed />
+                </div>
               </div>
-              
-              <div className="rounded-lg bg-[#5800FF]/10 !p-4">
-                <SearchComponent posts={allPostsData} />
-                <YearFilterComponent posts={allPostsData} />
-                <ArchivesComponent />
-                <RssSubscribeLink />
-                <RecentActivityFeed />
-              </div>
-            </div>
-          </aside>
-          <div className={`w-1/2 mx-auto flex justify-center items-center flex-col h-300 bg-[var(--bg-primary)] text-[var(--text-primary)]`}>
-            <h1 className="text-3xl font-bold md:!mb-30 !-mt-50">My Account</h1>
+            </aside>
 
-            <div className="bg-white rounded-lg border-2 border-[#5800FF] shadow-md shadow-[#5800FF] !p-6 !space-y-4 w-full max-w-md">
-              <div>
-                <p className="text-gray-600 !pb-2">Name:</p>
-                <p className="text-lg font-semibold !pb-2 text-black">{user.name}</p>
-              </div>
+            <div className={`w-1/2 mx-auto flex justify-center items-center flex-col h-300 bg-[var(--bg-primary)] text-[var(--text-primary)]`}>
+              <h1 className="text-3xl font-bold md:!mb-30 !mt-0">My Account</h1>
 
-              <div>
-                <p className="text-gray-600">Email:</p>
-                <input
-                  type="email"
-                  value={newEmail}
-                  onChange={(e) => setNewEmail(e.target.value)}
-                  className="!mt-1 !p-4 border rounded w-full text-black"
-                />
-                <button
-                  onClick={handleUpdateEmail}
-                  disabled={loading}
-                  className="!mt-2 bg-[#5800FF] hover:bg-[#E900FF] text-white font-bold !py-2 !px-4 rounded w-full"
-                >
-                  {loading ? 'Updating...' : 'Update Email'}
-                </button>
-              </div>
+              <div className="bg-white rounded-lg border-2 border-[#5800FF] shadow-md shadow-[#5800FF] !p-6 !space-y-4 w-full max-w-md">
+                <div>
+                  <p className="text-gray-600 !pb-2">Name:</p>
+                  <p className="text-lg font-semibold !pb-2 text-black">{user.name}</p>
+                </div>
 
-              <div>
-  <p className="text-gray-600">Email:</p>
-  <input
-    type="email"
-    value={newEmail}
-    onChange={(e) => setNewEmail(e.target.value)}
-    className="!mt-1 !p-4 border rounded w-full text-black"
-  />
-  <button
-    onClick={handleUpdateEmail}
-    disabled={loading}
-    className="!mt-2 bg-[#5800FF] hover:bg-[#E900FF] text-white font-bold !py-2 !px-4 rounded w-full"
-  >
-    {loading ? 'Updating...' : 'Update Email'}
-  </button>
-</div>
+                <div>
+                  <p className="text-gray-600">Email:</p>
+                  <input
+                    type="email"
+                    value={newEmail}
+                    onChange={(e) => setNewEmail(e.target.value)}
+                    className="!mt-1 !p-4 border rounded w-full text-black"
+                  />
+                  <button
+                    onClick={handleUpdateEmail}
+                    disabled={loading}
+                    className="!mt-2 bg-[#5800FF] hover:bg-[#E900FF] text-white font-bold !py-2 !px-4 rounded w-full"
+                  >
+                    {loading ? 'Updating...' : 'Update Email'}
+                  </button>
+                </div>
 
-            <div>
-              <p className="text-gray-600">Current Password:</p>
-              <input
-                type="password"
-                value={currentPassword}
-                onChange={(e) => setCurrentPassword(e.target.value)}
-                className="!mt-1 !p-2 border rounded border-gray-900 w-full"
-              />
+                <div>
+                  <p className="text-gray-600">Current Password:</p>
+                  <input
+                    type="password"
+                    ref={currentPasswordRef}
+                    className="!mt-1 !p-2 border rounded border-gray-900 w-full text-black"
+                  />
 
-              <p className="text-gray-600 mt-4">New Password:</p>
-              <input
-                type="password"
-                value={newPassword}
-                onChange={(e) => setNewPassword(e.target.value)}
-                className="!mt-1 !p-2 border rounded border-gray-900 w-full"
-              />
+                  <p className="text-gray-600 mt-4">New Password:</p>
+                  <input
+                    type="password"
+                    ref={newPasswordRef}
+                    className="!mt-1 !p-2 border rounded border-gray-900 w-full text-black"
+                  />
 
-              <p className="text-gray-600 mt-4">Confirm New Password:</p>
-              <input
-                type="password"
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
-                className="!mt-1 !p-2 border rounded border-gray-900 w-full"
-              />
+                  <p className="text-gray-600 mt-4">Confirm New Password:</p>
+                  <input
+                    type="password"
+                    ref={confirmPasswordRef}
+                    className="!mt-1 !p-2 border rounded border-gray-900 w-full text-black"
+                  />
 
-              <button
-                onClick={handleUpdatePassword}
-                disabled={loading}
-                className="!mt-2 bg-[#5800FF] hover:bg-[#E900FF] text-white font-bold !py-2 !px-4 rounded w-full"
-              >
-                {loading ? 'Updating...' : 'Update Password'}
-              </button>
-            </div>
-              <div>
-                <p className="text-gray-600">Newsletter Subscription:</p>
-                <button
-                  onClick={handleSubscriptionChange}
-                  disabled={loading}
-                  className={`!mt-2 ${isSubscribed ? 'bg-red-500' : 'bg-green-500'} hover:opacity-80 text-white font-bold !py-2 !px-4 rounded w-full`}
-                >
-                  {isSubscribed ? 'Unsubscribe' : 'Subscribe to Newsletters'}
-                </button>
-              </div>
+                  <button
+                    onClick={handleUpdatePassword}
+                    disabled={loading}
+                    className="!mt-2 bg-[#5800FF] hover:bg-[#E900FF] text-white font-bold !py-2 !px-4 rounded w-full"
+                  >
+                    {loading ? 'Updating...' : 'Update Password'}
+                  </button>
+                </div>
 
-              <div>
-                <button
-                  onClick={handleDeleteAccount}
-                  disabled={loading}
-                  className="!mt-6 bg-red-500 hover:bg-red-600 text-white font-bold !py-2 !px-4 rounded w-full"
-                >
-                  {loading ? 'Deleting...' : 'Delete Account'}
-                </button>
+                <div>
+                  <p className="text-gray-600">Newsletter Subscription:</p>
+                  <button
+                    onClick={handleSubscriptionChange}
+                    disabled={loading}
+                    className={`!mt-2 ${isSubscribed ? 'bg-red-500' : 'bg-green-500'} hover:opacity-80 text-white font-bold !py-2 !px-4 rounded w-full`}
+                  >
+                    {isSubscribed ? 'Unsubscribe' : 'Subscribe to Newsletters'}
+                  </button>
+                </div>
+
+                <div>
+                  <button
+                    onClick={handleDeleteAccount}
+                    disabled={loading}
+                    className="!mt-6 bg-red-500 hover:bg-red-600 text-white font-bold !py-2 !px-4 rounded w-full"
+                  >
+                    {loading ? 'Deleting...' : 'Delete Account'}
+                  </button>
+                </div>
+
               </div>
             </div>
           </div>
-        </div>
-      </main>
+        </main>
       </div>
     </>
   );

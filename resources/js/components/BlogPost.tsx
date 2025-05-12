@@ -552,7 +552,7 @@ const renderComment = (comment: Comment, level = 0) => {
      {hasValidImageUrl && post.image_url && (
   <div className="w-full !mb-6 md:!mb-20 !mt-4 md:!mt-40">
     <img
-      src={post.image_url}
+      src={post.image_url.replace('http://127.0.0.1:8000/', '')}
       alt={post.title}
       className="w-full md:w-100 lg:w-200 h-auto rounded-lg cursor-pointer hover:opacity-80"
       onClick={goToPostPage}
