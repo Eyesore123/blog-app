@@ -76,9 +76,9 @@ export default function MainPage() {
         <Header />
         <main className="!p-4 md:!p-8">
           {/* Change to flex-col on mobile, row on larger screens */}
-          <div className="w-full !mx-auto flex flex-col lg:flex-row md:!gap-6">
+          <div className="w-full !mx-auto flex flex-col lg:flex-row md:!gap-0">
             {/* Sidebar - full width on mobile, fixed width on desktop */}
-            <aside className="w-full lg:w-120 !mb-8 lg:!mb-0 xl:!ml-50 xxl:!ml-60 overflow-y-auto xl:!-mt-24">
+            <aside className="w-full lg:w-120 !mb-8 lg:!mb-0 xl:!ml-10 2xl:!ml-60 overflow-y-auto xl:!-mt-24">
               <div className="lg:sticky lg:top-24 !space-y-4 md:!space-y-6 w-full lg:!w-80 xl:!w-120">
                 <div className="rounded-lg bg-[#5800FF]/10 !p-4">
                   <h3 className="font-semibold !mb-2">About</h3>
@@ -129,8 +129,8 @@ export default function MainPage() {
             </aside>
 
             {/* Main content - full width on mobile, flex-1 on desktop */}
-            <div className="w-full lg:flex-1 flex flex-col items-center">
-              <div className="w-full !space-y-6 md:!space-y-8">
+            <div className="lg:flex-1 flex flex-col items-center">
+              <div className="!space-y-6 md:!space-y-8">
                 {posts.length === 0 ? (
                   <div className="text-center opacity-70 !mt-8 md:!mt-30">No blog posts yet.</div>
                 ) : (

@@ -10,6 +10,7 @@ import YearFilterComponent from '@/components/YearFilterComponent';
 import ArchivesComponent from '../components/ArchiveComponent';
 import { RssSubscribeLink } from '../components/RssSubscribeLink';
 import RecentActivityFeed from '../components/RecentActivityFeed';
+import Comments from '@/components/Comments';
 import '../../css/app.css';
 
 interface User {
@@ -183,110 +184,118 @@ const pageUser = usePage().props.user as User;
       <Navbar />
       <Header />
       <div className="min-h-screen bg-[var(--bg-primary)] text-[var(--text-primary)]">
-        <main className="!p-4 md:!p-8">
-          <div className="w-full !mx-auto flex flex-col lg:flex-row md:!gap-6">
-            <aside className="w-full lg:w-120 lg:!mb-0 xl:!ml-50 xxl:!ml-60 overflow-y-auto xl:!mt-0">
-              <div className="lg:sticky lg:top-24 !space-y-4 md:!space-y-6 w-full lg:!w-80 xl:!w-120">
-                <div className="rounded-lg !p-4">
-                  <h3 className="font-semibold !mb-2">Account</h3>
-                  <p className="opacity-80">
-                    Here you can manage your account settings. You can update your email, password and subscription status. If you don't need your account anymore, you can delete it.
-                  </p>
-                </div>
+  <main className="!p-4 md:!p-8">
+    <div className="w-full !mx-auto flex flex-col lg:flex-row lg:items-start md:!gap-12">
+      <aside className="w-full lg:w-120 lg:!mb-0 xl:!ml-30 2xl:!ml-60 overflow-y-auto xl:!mt-0">
+        <div className="lg:sticky lg:top-24 !space-y-4 md:!space-y-6 w-full lg:!w-80 xl:!w-100">
+          <div className="rounded-lg !p-4">
+            <h3 className="font-semibold !mb-2">Account</h3>
+            <p className="opacity-80">
+              Here you can manage your account settings. You can update your email, password, and subscription status. If you don't need your account anymore, you can delete it.
+            </p>
+          </div>
 
-                <div className="rounded-lg bg-[#5800FF]/10 !p-4">
-                  <SearchComponent posts={allPostsData} />
-                  <YearFilterComponent posts={allPostsData} />
-                  <ArchivesComponent />
-                  <RssSubscribeLink />
-                  <RecentActivityFeed />
-                </div>
-              </div>
-            </aside>
+          <div className="rounded-lg bg-[#5800FF]/10 !p-4">
+            <SearchComponent posts={allPostsData} />
+            <YearFilterComponent posts={allPostsData} />
+            <ArchivesComponent />
+            <RssSubscribeLink />
+            <RecentActivityFeed />
+          </div>
+        </div>
+      </aside>
 
-            <div className={`w-1/2 mx-auto flex justify-center items-center flex-col h-300 bg-[var(--bg-primary)] text-[var(--text-primary)]`}>
-              <h1 className="text-3xl font-bold md:!mb-30 !mt-0">My Account</h1>
+      {/* Main content container */}
+      <div className="flex flex-col lg:flex-row lg:gap-0 w-2/3">
+        {/* My Account Section */}
+        <div className="flex flex-col items-center justify-start w-full lg:w-1/2 bg-[var(--bg-primary)] text-[var(--text-primary)]">
+          <h2 className="text-3xl font-bold md:!mb-10 !mt-10">My Account</h2>
 
-              <div className="bg-white rounded-lg border-2 border-[#5800FF] shadow-md shadow-[#5800FF] !p-6 !space-y-4 w-full max-w-md">
-                <div>
-                  <p className="text-gray-600 !pb-2">Name:</p>
-                  <p className="text-lg font-semibold !pb-2 text-black">{user.name}</p>
-                </div>
+          <div className="bg-white rounded-lg border-2 border-[#5800FF] shadow-md shadow-[#5800FF] !p-6 !space-y-4 w-full max-w-md">
+            <div>
+              <p className="text-gray-600 !pb-2">Name:</p>
+              <p className="text-lg font-semibold !pb-2 text-black">{user.name}</p>
+            </div>
 
-                <div>
-                  <p className="text-gray-600">Email:</p>
-                  <input
-                    type="email"
-                    value={newEmail}
-                    onChange={(e) => setNewEmail(e.target.value)}
-                    className="!mt-1 !p-4 border rounded w-full text-black"
-                  />
-                  <button
-                    onClick={handleUpdateEmail}
-                    disabled={loading}
-                    className="!mt-2 bg-[#5800FF] hover:bg-[#E900FF] text-white font-bold !py-2 !px-4 rounded w-full"
-                  >
-                    {loading ? 'Updating...' : 'Update Email'}
-                  </button>
-                </div>
+            <div>
+              <p className="text-gray-600">Email:</p>
+              <input
+                type="email"
+                value={newEmail}
+                onChange={(e) => setNewEmail(e.target.value)}
+                className="!mt-1 !p-4 border rounded w-full text-black"
+              />
+              <button
+                onClick={handleUpdateEmail}
+                disabled={loading}
+                className="!mt-2 bg-[#5800FF] hover:bg-[#E900FF] text-white font-bold !py-2 !px-4 rounded w-full"
+              >
+                {loading ? 'Updating...' : 'Update Email'}
+              </button>
+            </div>
 
-                <div>
-                  <p className="text-gray-600">Current Password:</p>
-                  <input
-                    type="password"
-                    ref={currentPasswordRef}
-                    className="!mt-1 !p-2 border rounded border-gray-900 w-full text-black"
-                  />
+            <div>
+              <p className="text-gray-600">Current Password:</p>
+              <input
+                type="password"
+                ref={currentPasswordRef}
+                className="!mt-1 !p-2 border rounded border-gray-900 w-full text-black"
+              />
 
-                  <p className="text-gray-600 mt-4">New Password:</p>
-                  <input
-                    type="password"
-                    ref={newPasswordRef}
-                    className="!mt-1 !p-2 border rounded border-gray-900 w-full text-black"
-                  />
+              <p className="text-gray-600 mt-4">New Password:</p>
+              <input
+                type="password"
+                ref={newPasswordRef}
+                className="!mt-1 !p-2 border rounded border-gray-900 w-full text-black"
+              />
 
-                  <p className="text-gray-600 mt-4">Confirm New Password:</p>
-                  <input
-                    type="password"
-                    ref={confirmPasswordRef}
-                    className="!mt-1 !p-2 border rounded border-gray-900 w-full text-black"
-                  />
+              <p className="text-gray-600 mt-4">Confirm New Password:</p>
+              <input
+                type="password"
+                ref={confirmPasswordRef}
+                className="!mt-1 !p-2 border rounded border-gray-900 w-full text-black"
+              />
 
-                  <button
-                    onClick={handleUpdatePassword}
-                    disabled={loading}
-                    className="!mt-2 bg-[#5800FF] hover:bg-[#E900FF] text-white font-bold !py-2 !px-4 rounded w-full"
-                  >
-                    {loading ? 'Updating...' : 'Update Password'}
-                  </button>
-                </div>
+              <button
+                onClick={handleUpdatePassword}
+                disabled={loading}
+                className="!mt-2 bg-[#5800FF] hover:bg-[#E900FF] text-white font-bold !py-2 !px-4 rounded w-full"
+              >
+                {loading ? 'Updating...' : 'Update Password'}
+              </button>
+            </div>
 
-                <div>
-                  <p className="text-gray-600">Newsletter Subscription:</p>
-                  <button
-                    onClick={handleSubscriptionChange}
-                    disabled={loading}
-                    className={`!mt-2 ${isSubscribed ? 'bg-red-500' : 'bg-green-500'} hover:opacity-80 text-white font-bold !py-2 !px-4 rounded w-full`}
-                  >
-                    {isSubscribed ? 'Unsubscribe' : 'Subscribe to Newsletters'}
-                  </button>
-                </div>
+            <div>
+              <p className="text-gray-600">Newsletter Subscription:</p>
+              <button
+                onClick={handleSubscriptionChange}
+                disabled={loading}
+                className={`!mt-2 ${isSubscribed ? 'bg-red-500' : 'bg-green-500'} hover:opacity-80 text-white font-bold !py-2 !px-4 rounded w-full`}
+              >
+                {isSubscribed ? 'Unsubscribe' : 'Subscribe to Newsletters'}
+              </button>
+            </div>
 
-                <div>
-                  <button
-                    onClick={handleDeleteAccount}
-                    disabled={loading}
-                    className="!mt-6 bg-red-500 hover:bg-red-600 text-white font-bold !py-2 !px-4 rounded w-full"
-                  >
-                    {loading ? 'Deleting...' : 'Delete Account'}
-                  </button>
-                </div>
-
-              </div>
+            <div>
+              <button
+                onClick={handleDeleteAccount}
+                disabled={loading}
+                className="!mt-6 bg-red-500 hover:bg-red-600 text-white font-bold !py-2 !px-4 rounded w-full"
+              >
+                {loading ? 'Deleting...' : 'Delete Account'}
+              </button>
             </div>
           </div>
-        </main>
+        </div>
+
+        {/* Comments Section */}
+        <div className="w-full lg:w-1/2 flex flex-col items-center justify-start">
+          <Comments userId={user.id} />
+        </div>
       </div>
+    </div>
+  </main>
+</div>
     </>
   );
 }

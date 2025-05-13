@@ -40,9 +40,13 @@ interface AuthUser {
   id: number;
 }
 
+interface PagePropsWithAuth {
+  auth: { user: AuthUser | null };
+}
+
 export function BlogPost({ post }: { post: Post }) {
-  const { auth } = usePage().props as { auth: { user: AuthUser | null } };
-  const user = auth?.user;
+  const { auth } = usePage().props as unknown as PagePropsWithAuth;
+  const user = auth.user;
   const isSignedIn = Boolean(user);
   const token = user?.token;
   // Convert is_admin to boolean explicitly
@@ -265,7 +269,7 @@ const editCommentRef = useRef<HTMLTextAreaElement>(null);
         // Just update the single comment
         setComments(updatedComments);
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error('Failed to delete comment', error);
       
       if (error.response && error.response.status === 401) {
@@ -541,7 +545,7 @@ const renderComment = (comment: Comment, level = 0) => {
   </Head>
 
 
-    <article className="rounded-lg bg-[#5800FF]/5 !p-4 w-full md:!w-260 xl:w-500 !mb-6 md:!mb-10">
+    <article className="flex flex-col justify-center items-center lg:items-start lg:justify-start rounded-lg bg-[#5800FF]/5 !p-4 w-full md:!w-150 xl:!w-170 2xl:!w-220 !mb-6 md:!mb-10 xl:!ml-0">
       <h2
         className="text-xl md:text-2xl font-bold flex justify-start !mb-4 md:!mb-10 cursor-pointer hover:underline"
         onClick={goToPostPage}
@@ -550,11 +554,11 @@ const renderComment = (comment: Comment, level = 0) => {
       </h2>
       
      {hasValidImageUrl && post.image_url && (
-  <div className="w-full !mb-6 md:!mb-20 !mt-4 md:!mt-40">
+  <div className="w-full flex flex-row justify-center items-center lg:justify-start lg:items-start !mb-6 md:!mb-20 !mt-4 md:!mt-40">
     <img
       src={post.image_url.replace('http://127.0.0.1:8000/', '')}
       alt={post.title}
-      className="w-full md:w-100 lg:w-200 h-auto rounded-lg cursor-pointer hover:opacity-80"
+      className="w-full md:w-100 lg:w-150 h-auto rounded-lg cursor-pointer hover:opacity-80"
       onClick={goToPostPage}
       onError={(e) => {
       console.error('Image failed to load:', post.image_url);
@@ -588,21 +592,21 @@ const renderComment = (comment: Comment, level = 0) => {
         )}
       </div>
       
-      <div className="!mt-4 md:!mt-6 !pt-4 md:!pt-6 border-t border-[#5800FF]/20">
-        <button
-          onClick={() => setShowComments(!showComments)}
-          className="text-xs md:text-sm opacity-70 hover:opacity-100 transition-opacity"
-        >
-          {showComments ? "Hide Comments" : `Show Comments (${comments.length})`}
-        </button>
-        
-        {showComments && (
-          <div className="!mt-3 md:!mt-4 !space-y-3 md:!space-y-4">
-            {comments.length > 0 ? (
-              getTopLevelComments().map(comment => renderComment(comment))
-            ) : (
-              <p className="text-xs md:text-sm opacity-60 italic">No comments yet. Be the first!</p>
-            )}
+      <div className="!mt-4 md:!mt-6 !pt-4 md:!pt-6 border-t border-[#5800FF]/20 w-full">
+  <button
+    onClick={() => setShowComments(!showComments)}
+    className="text-xs md:text-sm opacity-70 hover:opacity-100 transition-opacity"
+  >
+    {showComments ? "Hide Comments" : `Show Comments (${comments.length})`}
+  </button>
+
+  {showComments && (
+    <div className="!mt-3 md:!mt-4 !space-y-3 md:!space-y-4 w-full">
+      {comments.length > 0 ? (
+        getTopLevelComments().map(comment => renderComment(comment))
+      ) : (
+        <p className="text-xs md:text-sm opacity-60 italic">No comments yet. Be the first!</p>
+      )}
             
             {isSignedIn && replyingTo === null && (
               <form onSubmit={handleSubmitComment} className="!mt-4 md:!mt-6">

@@ -2,11 +2,24 @@
 
 namespace App\Models;
 
+use Illuminate\Support\Str;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Comment;
 
 class Post extends Model
 {
-    protected $fillable = ['title', 'content', 'published', 'topic', 'image_path', 'user_id,', 'slug', 'created_at', 'updated_at'];
+    protected $fillable = ['title', 'content', 'published', 'topic', 'image_path', 'user_id', 'slug', 'created_at', 'updated_at'];
+
+    public static function boot()
+    {
+        parent::boot();
+
+        static::saving(function ($post) {
+            if (empty($post->slug)) {
+                $post->slug = Str::slug($post->title);
+            }
+        });
+    }
 
     public function comments()
     {

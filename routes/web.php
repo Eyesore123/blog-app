@@ -14,12 +14,13 @@ use Inertia\Inertia;
 use Illuminate\Support\Str;
 use App\Models\User;
 
-Route::post('/anonymous-login', function () {
+// Anonymous login route, prevents brute force attacks
+Route::middleware('throttle:5,1')->post('/anonymous-login', function () {
     $user = User::create([
-        'name' => 'Anonymous' . Str::random(14), // now generates AnonymousXXXX...
+        'name' => 'Anonymous' . Str::random(14),
         'email' => uniqid() . '@anon.local',
         'password' => bcrypt(Str::random(16)),
-        'anonymous_id' => Str::uuid(), // now creates the anonymous_id properly
+        'anonymous_id' => Str::uuid(),
     ]);
 
     Auth::login($user);
@@ -35,7 +36,7 @@ Route::post('/posts', [PostController::class, 'store'])
 ->middleware(['auth']);
 Route::middleware('auth')->post('/logout', [AuthController::class, 'logout'])->name('logout');
 Route::get('/admin', [AdminController::class, 'index']);
-Route::get('api/comments/{post_id}', [CommentController::class, 'index']);
+Route::get('api/comments/post/{post_id}', [CommentController::class, 'comments.index']);
 Route::get('/post/{identifier}', [PostController::class, 'show'])->name('post.show');
 Route::get('/post/{id}/edit', [AdminController::class, 'edit'])->name('admin.edit');
 
@@ -57,8 +58,10 @@ Route::middleware(['auth', 'throttle:10,1'])
 Route::delete('api/comments/{comment_id}', [CommentController::class, 'destroy'])
     ->middleware('auth')
     ->name('comments.destroy');
-Route::delete('/posts/{post_id}', [PostController::class, 'destroy'])->middleware('auth')->name('posts.destroy');
-Route::get('/', [PostController::class, 'index']);
+
+    // Not needed anymore because of identifier:
+    
+// Route::delete('/posts/{post_id}', [PostController::class, 'destroy'])->middleware('auth')->name('posts.destroy');
 
 Route::get('/archives', function() {
     return redirect()->route('archives.show', ['year' => date('Y')]);
@@ -117,10 +120,12 @@ Route::fallback(function () {
 
 // Rss feed
 
-Route::get('feed', [RssFeedController::class, 'index']);
+Route::get('feed', [RssFeedController::class, 'index'])->name('rss.feed');
 
 require __DIR__.'/settings.php';
 require __DIR__.'/auth.php';
+
+// Show single post
 
 Route::get('/posts/{post}', [PostController::class, 'show'])->name('posts.show');
 
@@ -136,7 +141,13 @@ Route::middleware(['auth'])->put('/api/comments/{id}', [CommentController::class
 // Delete a comment (for comment owners)
 Route::middleware(['auth'])->delete('/api/comments/user/{id}', [CommentController::class, 'userDelete']);
 
-// Deactive or delete a user
+// Delete a post:
+
+Route::delete('/posts/{post}', [PostController::class, 'destroy'])->name('posts.destroy');
+
+// Show comments by user
+
+Route::get('api/comments/user/{user}', [CommentController::class, 'userComments'])->name('comments.userComments');
 
 // Deactivate/activate user
 Route::post('/admin/users/{user}/toggle', [AdminController::class, 'toggleUserStatus']);

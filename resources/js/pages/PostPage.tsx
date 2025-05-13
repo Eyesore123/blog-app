@@ -42,6 +42,10 @@ interface Post {
   topic: string;
 }
 
+interface AllPosts {
+  data?: Post[];
+}
+
 interface AuthUser {
   name: string;
   token: string | null;
@@ -56,7 +60,7 @@ interface PostPageProps {
   auth?: {
     user: AuthUser | null;
   };
-  allPosts?: any[];
+  allPosts: Post[] | AllPosts;
   topics?: string[];
   currentTopic?: string | null;
 }
@@ -64,7 +68,8 @@ interface PostPageProps {
 const PostPage: React.FC<PostPageProps> = ({ post }) => {
   const { props } = usePage<PostPageProps>();
   const { theme } = useTheme();
-  const { auth, allPosts, topics, currentTopic } = props;
+  const allPosts: Post[] | AllPosts = props.allPosts ?? {};
+  const { auth, topics, currentTopic } = props;
   const user = auth?.user;
   
   // Convert is_admin to boolean explicitly
@@ -75,6 +80,9 @@ const PostPage: React.FC<PostPageProps> = ({ post }) => {
   const [submitting, setSubmitting] = useState(false);
   const [comments, setComments] = useState<Comment[]>([]);
   const { showAlert } = useAlert();
+  const normalizedPosts = Array.isArray(allPosts)
+  ? allPosts
+  : allPosts?.data || [];
 
   useEffect(() => {
     async function fetchComments() {
@@ -179,7 +187,7 @@ const PostPage: React.FC<PostPageProps> = ({ post }) => {
         <main className="!p-8">
           <div className="w-full !mx-auto flex md:!gap-10">
             {/* Sidebar */}
-            <aside className="!w-80 lg:!w-120 xl:!ml-50 xxl:!ml-60 overflow-y-auto xl:!-mt-24">
+            <aside className="!w-80 lg:!w-120 xl:!ml-30 2xl:!ml-60 overflow-y-auto xl:!-mt-24">
               <div className="sticky top-24 !space-y-6 !w-60 md:!w-80 !-ml-0 !xl:ml-0 lg:!w-100 xl:!w-120">
                 <div className="rounded-lg bg-[#5800FF]/10 !p-4">
                   <h3 className="font-semibold !mb-2">About This Post</h3>
@@ -241,12 +249,9 @@ const PostPage: React.FC<PostPageProps> = ({ post }) => {
                     </div>
                   )}
                   <SearchComponent 
-                    posts={Array.isArray(allPosts) ? allPosts : 
-                          (allPosts && allPosts.data ? allPosts.data : [])} 
-                  />
-                  <YearFilterComponent posts={Array.isArray(allPosts) ? allPosts :
-                          (allPosts && allPosts.data ? allPosts.data : [])}
-                  />
+                    posts={normalizedPosts}
+                    />
+                  <YearFilterComponent posts={normalizedPosts} />
                   <ArchivesComponent />
                   <RecentActivityFeed />
                   <RssSubscribeLink />
@@ -255,16 +260,17 @@ const PostPage: React.FC<PostPageProps> = ({ post }) => {
             </aside>
             
             {/* Main content */}
-            <div className="flex-1 justify-center items-center flex flex-col w-full">
-              <article className="rounded-lg bg-[#5800FF]/5 !p-4 w-full md:!w-260 xl:w-500 !mb-6 md:!mb-10">
-                <h2 className="text-3xl font-bold !mb-10">{post.title}</h2>
+            <div className="flex-1 flex flex-col items-center w-full">
+              <article className="rounded-lg bg-[#5800FF]/5 !p-6 md:!p-8 lg:!p-10 w-full md:w-[400px] lg:w-[600px] xl:w-[650px] 2xl:w-[870px] 2xl:!mr-30 !mb-8">
+                <h2 className="text-3xl font-bold !mb-8 text-center lg:text-left">{post.title}</h2>
+                
                 {/* Image */}
                 {post.image_url && (
-                  <div className="!mb-6 !pt-24 w-full">
+                  <div className="w-full flex flex-row justify-center items-center lg:justify-start lg:items-start !mb-6 md:!mb-20 !mt-4 md:!mt-40">
                     <img
-                      src={post.image_url} // Use the URL as is
+                      src={post.image_url}
                       alt={post.title}
-                      className="w-100 md:w-100 lg:w-200 h-auto rounded-lg"
+                      className="w-full md:w-100 lg:w-150 h-auto rounded-lg cursor-pointer hover:opacity-80"
                       onError={(e) => {
                         console.error('Image failed to load:', post.image_url);
                         e.currentTarget.style.display = 'none'; // Hide image if it fails to load
@@ -273,27 +279,31 @@ const PostPage: React.FC<PostPageProps> = ({ post }) => {
                   </div>
                 )}
 
-                <div className="prose max-w-none opacity-90 !mb-6 md:!mb-10 text-sm md:text-base !pt-12">{post.content}</div>
+                {/* Post Content */}
+                <div className="prose max-w-none opacity-90 !mb-8 text-sm md:text-base">
+                  {post.content}
+                </div>
                 
+                {/* Comments Section */}
                 <div className="!mt-10 !pt-6 border-t border-[#5800FF]/20">
                   <h3 className="text-xl font-semibold !mb-4">Comments ({comments.length})</h3>
                   
                   <div className="!mt-4 !space-y-4">
                     {comments.length > 0 ? (
                       comments.map((comment) => (
-                        <div key={comment._id} className="bg-[#5800FF]/10 rounded !p-3">
+                        <div key={comment._id} className="bg-[#5800FF]/10 rounded-lg !p-4 shadow-sm">
                           <p className="font-medium text-sm">{comment.authorName}</p>
                           {comment.deleted ? (
                             <p className="opacity-60 italic text-sm">[Message removed by moderator]</p>
                           ) : (
-                            <p className="opacity-80">{comment.content}</p>
+                            <p className="opacity-80 text-sm">{comment.content}</p>
                           )}
                           <p className="text-xs opacity-60 italic">{new Date(comment.createdAt).toLocaleString()}</p>
                           
                           {!comment.deleted && isAdmin && (
                             <button
                               onClick={() => handleDeleteComment(comment._id)}
-                              className="text-red-500 text-xs hover:underline"
+                              className="text-red-500 text-xs hover:underline mt-2"
                             >
                               Delete
                             </button>
@@ -304,18 +314,19 @@ const PostPage: React.FC<PostPageProps> = ({ post }) => {
                       <p className="text-sm opacity-60 italic">No comments yet. Be the first!</p>
                     )}
                     
+                    {/* Comment Form */}
                     {isSignedIn ? (
                       <form onSubmit={handleSubmitComment} className="!mt-6">
                         <textarea
                           placeholder="Write a comment..."
                           value={newComment}
                           onChange={(e) => setNewComment(e.target.value)}
-                          className="w-full !p-2 rounded border border-[#5800FF]/20 bg-[var(--bg-primary)]"
+                          className="w-full !p-3 rounded-lg border border-[#5800FF]/20 bg-[var(--bg-primary)] focus:outline-none focus:ring-2 focus:ring-[#5800FF]"
                         />
                         <button
                           type="submit"
                           disabled={!newComment || submitting}
-                          className="!mt-2 !px-4 !py-2 bg-[#5800FF] text-white rounded hover:bg-[#E900FF] disabled:opacity-50 transition-colors"
+                          className="!mt-4 !px-6 !py-2 bg-[#5800FF] text-white rounded-lg hover:bg-[#E900FF] disabled:opacity-50 transition-colors"
                         >
                           {submitting ? 'Posting...' : 'Post Comment'}
                         </button>

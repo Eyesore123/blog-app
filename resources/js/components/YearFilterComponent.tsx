@@ -12,7 +12,7 @@ interface YearFilterComponentProps {
     posts: Post[];
 }
 
-const YearFilterComponent: React.FC<YearFilterComponentProps> = ({ posts }) => {
+const YearFilterComponent: React.FC<YearFilterComponentProps> = ({ posts = [] }) => {
     const [selectedYear, setSelectedYear] = useState<string | null>(null);
 
     // Group posts by year

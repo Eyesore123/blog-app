@@ -49,7 +49,7 @@ export function Navbar() {
           <div className="flex items-center md:gap-6">
             <button
               onClick={toggleTheme}
-              className="p-2 hover:text-[#FFC600] transition-colors"
+              className="p-2 hover:text-[#FFC600] transition-colors !mr-4"
             >
               {theme === 'dark' ? '🌞' : '🌙'}
             </button>

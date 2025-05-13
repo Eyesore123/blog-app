@@ -7,6 +7,7 @@ use App\Models\Comment;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use App\Services\RateLimitService;
+use App\Models\User;
 
 class CommentController extends Controller
 {
@@ -17,7 +18,6 @@ class CommentController extends Controller
         $this->rateLimiter = $rateLimiter;
     }
 
-    // GET /api/comments/{post_id}
     public function index($post_id)
     {
         $comments = Comment::where('post_id', $post_id)
@@ -83,7 +83,6 @@ class CommentController extends Controller
 
     }
 
-    // DELETE /api/comments/{id}
     public function destroy($id)
     {
         try {
@@ -212,5 +211,41 @@ public function userDelete($id)
     
     return response()->json(['message' => 'Comment deleted successfully']);
 }
+
+public function userComments(User $user)
+{
+    try {
+        // Fetch comments with related post data
+        $comments = $user->comments()
+            ->with('post:id,slug,title') // Eager load post data
+            ->latest()
+            ->get()
+            ->map(function ($comment) {
+                return [
+                    'id' => $comment->id,
+                    'content' => $comment->content,
+                    'post_title' => $comment->post->title ?? 'Unknown Post',
+                    'post_slug' => $comment->post->slug ?? '#',
+                    'created_at' => $comment->created_at,
+                ];
+            });
+
+        // Log the number of comments fetched
+        \Log::info("Fetched " . $comments->count() . " comments for user ID: {$user->id}");
+
+        return response()->json($comments);
+    } catch (\Exception $e) {
+        // Log the error for debugging
+        \Log::error("Error fetching comments for user ID: {$user->id}", [
+            'error' => $e->getMessage(),
+            'trace' => $e->getTraceAsString(),
+        ]);
+
+        return response()->json([
+            'error' => 'Failed to fetch comments. Please try again later.',
+        ], 500);
+    }
+}
+
 
 }
