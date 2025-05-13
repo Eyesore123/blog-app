@@ -12,7 +12,7 @@ So currently it shows posts and comments. Posts can be searched by title and top
 
 Admin can add new posts, edit posts and delete comments. Now admin can also deactivate and - as an ultimate solution - delete accounts. Logged in users can add comments, edit their comments and delete comments when there are no replies. Comments are rate limited by IP address (10 comments per day), and there are no Captchas because IP address guarantees that the limiter applies to many users from the same IP address.
 
-Logged in users have a My Account page where they can change their password, delete their account and subscrine to a newsletter.
+Logged in users have a My Account page where they can change their password, delete their account and subscribe to a newsletter.
 
 Providers are used for themes, alerts and confirmations.
 
@@ -26,7 +26,7 @@ Blog still needs some work, though, including:
 6. Small style fixes for responsive design: login page
 7. Forgot password section to login page
 8. Share buttons for social media (Facebook and X) - add ShareButtons component to PostPage
-9. Advanced features for admin
+9. Advanced features for admin (preview for the post, image size adjustments? etc.)
 10. Tag filtering
 11. Markdown editor
 12. Email subscription (latest blog post in newsletter) backend and admin panel
