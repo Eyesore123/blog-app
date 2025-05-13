@@ -118,7 +118,7 @@ export function Navbar() {
 
       {/* Menu Button for Mobile */}
       <button
-        className="md:hidden !p-2 text-[#FFC600] hover:text-[#E900FF] transition-colors scale-150"
+        className="md:hidden !p-2 text-[#FFC600] hover:text-[#E900FF] transition-colors scale-160"
         onClick={() => setIsMenuOpen(!isMenuOpen)}
       >
         {isMenuOpen ? '✖' : '☰'}

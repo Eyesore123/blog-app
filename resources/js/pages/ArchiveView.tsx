@@ -79,125 +79,126 @@ export default function ArchiveView() {
   };
 
   return (
-    <div className={`min-h-screen ${theme}`}>
-      <div className="min-h-screen bg-[var(--bg-primary)] text-[var(--text-primary)]">
-        <Navbar />
-        <Header />
-        <main className="!p-8">
-          <div className="w-full !mx-auto flex md:!gap-10 xl:!gap-18">
-            {/* Sidebar */}
-            <aside className="!w-80 lg:!w-120 lg:!ml-50">
-              <div className="sticky top-24 !space-y-6 !w-60 md:!w-80 !-ml-0 !xl:ml-0 lg:!w-100 xl:!w-120">
-                <div className="rounded-lg bg-[#5800FF]/10 !p-4">
-                  <h3 className="font-semibold !mb-2">About</h3>
-                  <p className="opacity-80">
-                    Viewing posts from <strong>{archiveYear}</strong>. Browse other years or topics to explore more.
-                  </p>
-                </div>
-
-                <div className="rounded-lg bg-[#5800FF]/10 !p-4">
-                  <h3 className="font-semibold !mb-2">Topics</h3>
-                  <ul className="!space-y-1">
-                    <li>
-                      <button
-                        onClick={() => handleTopicChange(null)}
-                        className={`w-full text-left !px-2 !py-1 rounded ${
-                          currentTopic === null ? 'bg-[#5800FF] text-white' : 'hover:bg-[#5800FF]/20'
-                        }`}
-                      >
-                        All Topics
-                      </button>
-                    </li>
-                    {topics && topics.length > 0 ? (
-                      topics.map((topic) => (
-                        <li key={topic}>
-                          <button
-                            onClick={() => handleTopicChange(topic)}
-                            className={`w-full text-left !px-2 !py-1 rounded ${
-                              currentTopic === topic ? 'bg-[#5800FF] text-white' : 'hover:bg-[#5800FF]/20'
-                            }`}
-                          >
-                            {topic}
-                          </button>
-                        </li>
-                      ))
-                    ) : (
-                      <li className="!ml-2">No topics available</li>
-                    )}
-                  </ul>
-                </div>
-
-                <div className="rounded-lg bg-[#5800FF]/10 !p-4">
-                  <SearchComponent posts={allPosts} />
-                  <YearFilterComponent posts={allPosts} />
-                </div>
+  <div className={`min-h-screen ${theme}`}>
+    <div className="min-h-screen bg-[var(--bg-primary)] text-[var(--text-primary)]">
+      <Navbar />
+      <Header />
+      <main className="!p-4 md:!p-8">
+        {/* Change to flex-col on mobile, row on larger screens */}
+        <div className="w-full !mx-auto flex flex-col lg:flex-row md:!gap-10 xl:!gap-18">
+          {/* Sidebar - full width on mobile, fixed width on desktop */}
+          <aside className="w-full lg:!w-120 lg:!ml-50 !mb-8 lg:!mb-0">
+            <div className="lg:sticky lg:top-24 !space-y-4 md:!space-y-6 w-full lg:!w-80 xl:!w-120">
+              <div className="rounded-lg bg-[#5800FF]/10 !p-4">
+                <h3 className="font-semibold !mb-2">About</h3>
+                <p className="opacity-80">
+                  Viewing posts from <strong>{archiveYear}</strong>. Browse other years or topics to explore more.
+                </p>
               </div>
-            </aside>
 
-            {/* Main content */}
-            <div className="flex-1 justify-center items-left flex flex-col max-w-500">
-              <h2 className="text-2xl font-bold w-150 !mb-10 !p-6 flex justify-start !ml-4 !pl-0">
-                Archive — Posts from {archiveYear}
-              </h2>
-              <div className="!space-y-8">
-                {posts.data.length === 0 ? (
-                  <div className="text-center opacity-70 !mt-30">
-                    No blog posts found for {archiveYear}.
-                  </div>
-                ) : (
-                  <>
-                    {posts.data.map((post) => {
-                      const imageUrl = post.image_url ? `${window.location.origin}/${post.image_url}` : null;
-                      const slug = post.slug && post.slug !== 'slug' ? post.slug : undefined;
-                      const author = post.author && post.author !== 'author' ? post.author : 'Unknown';
+              <div className="rounded-lg bg-[#5800FF]/10 !p-4">
+                <h3 className="font-semibold !mb-2">Topics</h3>
+                <ul className="!space-y-1">
+                  <li>
+                    <button
+                      onClick={() => handleTopicChange(null)}
+                      className={`w-full text-left !px-2 !py-1 rounded ${
+                        currentTopic === null ? 'bg-[#5800FF] text-white' : 'hover:bg-[#5800FF]/20'
+                      }`}
+                    >
+                      All Topics
+                    </button>
+                  </li>
+                  {topics && topics.length > 0 ? (
+                    topics.map((topic) => (
+                      <li key={topic}>
+                        <button
+                          onClick={() => handleTopicChange(topic)}
+                          className={`w-full text-left !px-2 !py-1 rounded ${
+                            currentTopic === topic ? 'bg-[#5800FF] text-white' : 'hover:bg-[#5800FF]/20'
+                          }`}
+                        >
+                          {topic}
+                        </button>
+                      </li>
+                    ))
+                  ) : (
+                    <li className="!ml-2">No topics available</li>
+                  )}
+                </ul>
+              </div>
 
-                      return (
-                        <div key={post.id} className="relative">
-                          <BlogPost
-                            post={{
-                              title: post.title,
-                              content: post.content,
-                              topic: post.topic,
-                              id: post.id,
-                              _id: post.id.toString(),
-                              image_url: imageUrl,
-                              slug,
-                              author,
-                              created_at: post.created_at,
-                              updated_at: post.updated_at || post.created_at,
-                            }}
-                          />
-                        </div>
-                      );
-                    })}
-
-                    <div className="flex justify-center items-center gap-10 !mt-18">
-                      <button
-                        onClick={() => handlePageChange(currentPage - 1)}
-                        disabled={currentPage === 0}
-                        className="!px-4 !py-2 bg-[#5800FF] text-white rounded hover:bg-[#E900FF] disabled:opacity-50 transition-colors"
-                      >
-                        Previous
-                      </button>
-                      <span>
-                        Page {currentPage + 1} of {Math.ceil(total / 6)}
-                      </span>
-                      <button
-                        onClick={() => handlePageChange(currentPage + 1)}
-                        disabled={!hasMore}
-                        className="!px-4 !py-2 bg-[#5800FF] text-white rounded hover:bg-[#E900FF] disabled:opacity-50 transition-colors"
-                      >
-                        Next
-                      </button>
-                    </div>
-                  </>
-                )}
+              <div className="rounded-lg bg-[#5800FF]/10 !p-4">
+                <SearchComponent posts={allPosts} />
+                <YearFilterComponent posts={allPosts} />
               </div>
             </div>
+          </aside>
+
+          {/* Main content - full width on mobile, flex-1 on desktop */}
+          <div className="flex-1 flex flex-col items-center w-full">
+            <h2 className="text-2xl font-bold w-full !mb-10 text-center lg:text-left">
+              Archive — Posts from {archiveYear}
+            </h2>
+            <div className="!space-y-8">
+              {posts.data.length === 0 ? (
+                <div className="text-center opacity-70 !mt-30">
+                  No blog posts found for {archiveYear}.
+                </div>
+              ) : (
+                <>
+                  {posts.data.map((post) => {
+                    const imageUrl = post.image_url ? `${window.location.origin}/${post.image_url}` : null;
+                    const slug = post.slug && post.slug !== 'slug' ? post.slug : undefined;
+                    const author = post.author && post.author !== 'author' ? post.author : 'Unknown';
+
+                    return (
+                      <div key={post.id} className="relative">
+                        <BlogPost
+                          post={{
+                            title: post.title,
+                            content: post.content,
+                            topic: post.topic,
+                            id: post.id,
+                            _id: post.id.toString(),
+                            image_url: imageUrl,
+                            slug,
+                            author,
+                            created_at: post.created_at,
+                            updated_at: post.updated_at || post.created_at,
+                          }}
+                        />
+                      </div>
+                    );
+                  })}
+
+                  <div className="flex justify-center items-center gap-10 !mt-18">
+                    <button
+                      onClick={() => handlePageChange(currentPage - 1)}
+                      disabled={currentPage === 0}
+                      className="!px-4 !py-2 bg-[#5800FF] text-white rounded hover:bg-[#E900FF] disabled:opacity-50 transition-colors"
+                    >
+                      Previous
+                    </button>
+                    <span>
+                      Page {currentPage + 1} of {Math.ceil(total / 6)}
+                    </span>
+                    <button
+                      onClick={() => handlePageChange(currentPage + 1)}
+                      disabled={!hasMore}
+                      className="!px-4 !py-2 bg-[#5800FF] text-white rounded hover:bg-[#E900FF] disabled:opacity-50 transition-colors"
+                    >
+                      Next
+                    </button>
+                  </div>
+                </>
+              )}
+            </div>
           </div>
-        </main>
-        <Toaster />
-      </div>
+        </div>
+      </main>
+      <Toaster />
     </div>
-  );
+  </div>
+);
 }

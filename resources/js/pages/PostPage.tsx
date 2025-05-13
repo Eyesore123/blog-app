@@ -181,174 +181,200 @@ const PostPage: React.FC<PostPageProps> = ({ post }) => {
   // console.log('BlogPost image path:', post.image_url);
 
   return (
-    <div className={`min-h-screen ${theme}`}>
-      <div className="min-h-screen bg-[var(--bg-primary)] text-[var(--text-primary)]">
-        <Navbar />
-        <Header />
-        <main className="!p-8">
-          <div className="w-full !mx-auto flex md:!gap-10">
-            {/* Sidebar */}
-            <aside className="!w-80 lg:!w-120 xl:!ml-30 2xl:!ml-40 overflow-y-auto xl:!-mt-24">
-              <div className="sticky top-24 !space-y-6 !w-60 md:!w-80 !-ml-0 !xl:ml-0 lg:!w-100 xl:!w-120">
-                <div className="rounded-lg bg-[#5800FF]/10 !p-4">
-                  <h3 className="font-semibold !mb-2">About This Post</h3>
-                  <p className="opacity-80">
-                    This is a blog post about {post.topic || 'various topics'}.
-                  </p>
-                </div>
-                <div className="rounded-lg bg-[#5800FF]/10 !p-4">
-                  <h3 className="font-semibold !mb-2">Actions</h3>
-                  <ul className="!space-y-1">
+  <div className={`min-h-screen ${theme}`}>
+    <div className="min-h-screen bg-[var(--bg-primary)] text-[var(--text-primary)]">
+      <Navbar />
+      <Header />
+      <main className="!p-4 md:!p-8">
+        {/* Change to flex-col on mobile, row on larger screens */}
+        <div className="w-full !mx-auto flex flex-col lg:flex-row md:!gap-10">
+          {/* Sidebar - full width on mobile, fixed width on desktop */}
+          <aside className="w-full lg:w-120 !mb-8 lg:!mb-0 xl:!ml-10 2xl:!ml-40 overflow-y-auto xl:!-mt-24">
+            <div className="lg:sticky lg:top-24 !space-y-4 md:!space-y-6 w-full lg:!w-80 xl:!w-120">
+              <div className="rounded-lg bg-[#5800FF]/10 !p-4">
+                <h3 className="font-semibold !mb-2">About This Post</h3>
+                <p className="opacity-80">
+                  This is a blog post about {post.topic || 'various topics'}.
+                </p>
+              </div>
+
+              <div className="rounded-lg bg-[#5800FF]/10 !p-4">
+                <h3 className="font-semibold !mb-2">Actions</h3>
+                <ul className="!space-y-1">
+                  <li>
+                    <button
+                      onClick={() => router.visit('/')}
+                      className="w-full text-left !px-2 !py-1 rounded hover:bg-[#5800FF]/20"
+                    >
+                      Back to All Posts
+                    </button>
+                  </li>
+                  {isAdmin && (
                     <li>
                       <button
-                        onClick={() => router.visit('/')}
+                        onClick={() => router.visit(`/post/${post.id}/edit`)}
                         className="w-full text-left !px-2 !py-1 rounded hover:bg-[#5800FF]/20"
                       >
-                        Back to All Posts
+                        Edit Post
                       </button>
                     </li>
-                    {isAdmin && (
+                  )}
+                </ul>
+              </div>
+
+              <div className="rounded-lg bg-[#5800FF]/10 !p-4">
+                {topics && (
+                  <div className="!mb-4">
+                    <h3 className="font-semibold !mb-2">Topics</h3>
+                    <ul className="!space-y-1">
                       <li>
                         <button
-                          onClick={() => router.visit(`/post/${post.id}/edit`)}
-                          className="w-full text-left !px-2 !py-1 rounded hover:bg-[#5800FF]/20"
+                          onClick={() => handleTopicChange(null)}
+                          className={`w-full text-left !px-2 !py-1 rounded ${
+                            currentTopic === null
+                              ? 'bg-[#5800FF] text-white'
+                              : 'hover:bg-[#5800FF]/20'
+                          }`}
                         >
-                          Edit Post
+                          All Topics
                         </button>
                       </li>
-                    )}
-                  </ul>
-                </div>
-                <div className="rounded-lg bg-[#5800FF]/10 !p-4">
-                  {topics && (
-                    <div className="!mb-4">
-                      <h3 className="font-semibold !mb-2">Topics</h3>
-                      <ul className="!space-y-1">
-                        <li>
+                      {topics.map((topic) => (
+                        <li key={topic}>
                           <button
-                            onClick={() => handleTopicChange(null)}
+                            onClick={() => handleTopicChange(topic)}
                             className={`w-full text-left !px-2 !py-1 rounded ${
-                              currentTopic === null ? 'bg-[#5800FF] text-white' : 'hover:bg-[#5800FF]/20'
+                              currentTopic === topic
+                                ? 'bg-[#5800FF] text-white'
+                                : 'hover:bg-[#5800FF]/20'
                             }`}
                           >
-                            All Topics
+                            {topic}
                           </button>
                         </li>
-                        {topics.map((topic) => (
-                          <li key={topic}>
-                            <button
-                              onClick={() => handleTopicChange(topic)}
-                              className={`w-full text-left !px-2 !py-1 rounded ${
-                                currentTopic === topic ? 'bg-[#5800FF] text-white' : 'hover:bg-[#5800FF]/20'
-                              }`}
-                            >
-                              {topic}
-                            </button>
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                  )}
-                  <SearchComponent 
-                    posts={normalizedPosts}
-                    />
-                  <YearFilterComponent posts={normalizedPosts} />
-                  <ArchivesComponent />
-                  <RecentActivityFeed />
-                  <RssSubscribeLink />
-                </div>
-              </div>
-            </aside>
-            
-            {/* Main content */}
-            <div className="flex-1 flex flex-col items-center w-full">
-              <article className="rounded-lg bg-[#5800FF]/5 !p-6 md:!p-8 lg:!p-10 w-full md:w-[400px] lg:w-[600px] xl:w-[650px] 2xl:w-[830px] 2xl:!mr-30 !mb-8">
-                <h2 className="text-3xl font-bold !mb-8 text-center lg:text-left">{post.title}</h2>
-                
-                {/* Image */}
-                {post.image_url && (
-                  <div className="w-full flex flex-row justify-center items-center lg:justify-start lg:items-start !mb-6 md:!mb-20 !mt-4 md:!mt-40">
-                    <img
-                      src={post.image_url}
-                      alt={post.title}
-                      className="w-full md:w-100 lg:w-150 h-auto rounded-lg cursor-pointer hover:opacity-80"
-                      onError={(e) => {
-                        console.error('Image failed to load:', post.image_url);
-                        e.currentTarget.style.display = 'none'; // Hide image if it fails to load
-                      }}
-                    />
+                      ))}
+                    </ul>
                   </div>
                 )}
-
-                {/* Post Content */}
-                <div className="prose max-w-none opacity-90 !mb-8 text-sm md:text-base">
-                  {post.content}
-                </div>
-                
-                {/* Comments Section */}
-                <div className="!mt-10 !pt-6 border-t border-[#5800FF]/20">
-                  <h3 className="text-xl font-semibold !mb-4">Comments ({comments.length})</h3>
-                  
-                  <div className="!mt-4 !space-y-4">
-                    {comments.length > 0 ? (
-                      comments.map((comment) => (
-                        <div key={comment._id} className="bg-[#5800FF]/10 rounded-lg !p-4 shadow-sm">
-                          <p className="font-medium text-sm">{comment.authorName}</p>
-                          {comment.deleted ? (
-                            <p className="opacity-60 italic text-sm">[Message removed by moderator]</p>
-                          ) : (
-                            <p className="opacity-80 text-sm">{comment.content}</p>
-                          )}
-                          <p className="text-xs opacity-60 italic">{new Date(comment.createdAt).toLocaleString()}</p>
-                          
-                          {!comment.deleted && isAdmin && (
-                            <button
-                              onClick={() => handleDeleteComment(comment._id)}
-                              className="text-red-500 text-xs hover:underline mt-2"
-                            >
-                              Delete
-                            </button>
-                          )}
-                        </div>
-                      ))
-                    ) : (
-                      <p className="text-sm opacity-60 italic">No comments yet. Be the first!</p>
-                    )}
-                    
-                    {/* Comment Form */}
-                    {isSignedIn ? (
-                      <form onSubmit={handleSubmitComment} className="!mt-6">
-                        <textarea
-                          placeholder="Write a comment..."
-                          value={newComment}
-                          onChange={(e) => setNewComment(e.target.value)}
-                          className="w-full !p-3 rounded-lg border border-[#5800FF]/20 bg-[var(--bg-primary)] focus:outline-none focus:ring-2 focus:ring-[#5800FF]"
-                        />
-                        <button
-                          type="submit"
-                          disabled={!newComment || submitting}
-                          className="!mt-4 !px-6 !py-2 bg-[#5800FF] text-white rounded-lg hover:bg-[#E900FF] disabled:opacity-50 transition-colors"
-                        >
-                          {submitting ? 'Posting...' : 'Post Comment'}
-                        </button>
-                      </form>
-                    ) : (
-                      <p className="text-sm opacity-70 italic">
-                        <a href="/login" className="underline text-[#5800FF] hover:text-[#E900FF]">
-                          Sign in to write a comment
-                        </a>
-                      </p>
-                    )}
-                  </div>
-                </div>
-              </article>
+                <SearchComponent posts={normalizedPosts} />
+                <YearFilterComponent posts={normalizedPosts} />
+                <ArchivesComponent />
+                <RecentActivityFeed />
+                <RssSubscribeLink />
+              </div>
             </div>
+          </aside>
+
+          {/* Main content - full width on mobile, flex-1 on desktop */}
+          <div className="flex-1 flex flex-col items-center w-full">
+            <article className="rounded-lg bg-[#5800FF]/5 !p-6 md:!p-8 lg:!p-10 w-full md:w-[400px] lg:w-[600px] xl:w-[650px] 2xl:w-[830px] 2xl:!mr-30 !mb-8">
+              <h2 className="text-3xl font-bold !mb-8 text-center lg:text-left">
+                {post.title}
+              </h2>
+
+              {/* Image */}
+              {post.image_url && (
+                <div className="w-full flex flex-row justify-center items-center lg:justify-start lg:items-start !mb-6 md:!mb-20 !mt-4 md:!mt-40">
+                  <img
+                    src={post.image_url}
+                    alt={post.title}
+                    className="w-full md:w-100 lg:w-150 h-auto rounded-lg cursor-pointer hover:opacity-80"
+                    onError={(e) => {
+                      console.error('Image failed to load:', post.image_url);
+                      e.currentTarget.style.display = 'none'; // Hide image if it fails to load
+                    }}
+                  />
+                </div>
+              )}
+
+              {/* Post Content */}
+              <div className="prose max-w-none opacity-90 !mb-8 text-sm md:text-base">
+                {post.content}
+              </div>
+
+              {/* Comments Section */}
+              <div className="!mt-10 !pt-6 border-t border-[#5800FF]/20">
+                <h3 className="text-xl font-semibold !mb-4">
+                  Comments ({comments.length})
+                </h3>
+
+                <div className="!mt-4 !space-y-4">
+                  {comments.length > 0 ? (
+                    comments.map((comment) => (
+                      <div
+                        key={comment._id}
+                        className="bg-[#5800FF]/10 rounded-lg !p-4 shadow-sm"
+                      >
+                        <p className="font-medium text-sm">
+                          {comment.authorName}
+                        </p>
+                        {comment.deleted ? (
+                          <p className="opacity-60 italic text-sm">
+                            [Message removed by moderator]
+                          </p>
+                        ) : (
+                          <p className="opacity-80 text-sm">
+                            {comment.content}
+                          </p>
+                        )}
+                        <p className="text-xs opacity-60 italic">
+                          {new Date(comment.createdAt).toLocaleString()}
+                        </p>
+
+                        {!comment.deleted && isAdmin && (
+                          <button
+                            onClick={() => handleDeleteComment(comment._id)}
+                            className="text-red-500 text-xs hover:underline mt-2"
+                          >
+                            Delete
+                          </button>
+                        )}
+                      </div>
+                    ))
+                  ) : (
+                    <p className="text-sm opacity-60 italic">
+                      No comments yet. Be the first!
+                    </p>
+                  )}
+
+                  {/* Comment Form */}
+                  {isSignedIn ? (
+                    <form onSubmit={handleSubmitComment} className="!mt-6">
+                      <textarea
+                        placeholder="Write a comment..."
+                        value={newComment}
+                        onChange={(e) => setNewComment(e.target.value)}
+                        className="w-full !p-3 rounded-lg border border-[#5800FF]/20 bg-[var(--bg-primary)] focus:outline-none focus:ring-2 focus:ring-[#5800FF]"
+                      />
+                      <button
+                        type="submit"
+                        disabled={!newComment || submitting}
+                        className="!mt-4 !px-6 !py-2 bg-[#5800FF] text-white rounded-lg hover:bg-[#E900FF] disabled:opacity-50 transition-colors"
+                      >
+                        {submitting ? 'Posting...' : 'Post Comment'}
+                      </button>
+                    </form>
+                  ) : (
+                    <p className="text-sm opacity-70 italic">
+                      <a
+                        href="/login"
+                        className="underline text-[#5800FF] hover:text-[#E900FF]"
+                      >
+                        Sign in to write a comment
+                      </a>
+                    </p>
+                  )}
+                </div>
+              </div>
+            </article>
           </div>
-        </main>
-        <Toaster />
-      </div>
+        </div>
+      </main>
+      <Toaster />
     </div>
-  );
+  </div>
+);
+  
 };
 
 export default PostPage;
