@@ -185,7 +185,7 @@ const pageUser = usePage().props.user as User;
       <Header />
       <div className="min-h-screen bg-[var(--bg-primary)] text-[var(--text-primary)]">
   <main className="!p-4 md:!p-8">
-    <div className="w-full !mx-auto flex flex-col lg:flex-row lg:items-start md:!gap-12">
+    <div className="w-full flex flex-col items-center justify-center lg:flex-row lg:items-start md:!gap-12">
       <aside className="w-full lg:w-120 lg:!mb-0 xl:!ml-30 2xl:!ml-40 overflow-y-auto xl:!mt-0">
         <div className="lg:sticky lg:top-24 !space-y-4 md:!space-y-6 w-full lg:!w-80 xl:!w-100">
           <div className="rounded-lg !p-4">
@@ -206,12 +206,12 @@ const pageUser = usePage().props.user as User;
       </aside>
 
       {/* Main content container */}
-      <div className="flex flex-col lg:flex-row lg:gap-0 w-2/3">
+      <div className="flex flex-col items-center justify-center lg:flex-row lg:gap-0 w-full lg:w-2/3">
         {/* My Account Section */}
-        <div className="flex flex-col items-center justify-start w-full lg:w-1/2 bg-[var(--bg-primary)] text-[var(--text-primary)]">
-          <h2 className="text-3xl font-bold md:!mb-10 !mt-10">My Account</h2>
+        <div className="flex flex-col items-center w-4/5 lg:!w-1/2 bg-[var(--bg-primary)] text-[var(--text-primary)]">
+          <h2 className="text-3xl font-bold !mb-4 md:!mb-10 !mt-10 text-center">My Account</h2>
 
-          <div className="bg-white rounded-lg border-2 border-[#5800FF] shadow-md shadow-[#5800FF] !p-6 !space-y-4 w-full max-w-md">
+          <div className="bg-white rounded-lg border-2 border-[#5800FF] shadow-md shadow-[#5800FF] !p-6 !space-y-4 w-full max-w-md mx-auto">
             <div>
               <p className="text-gray-600 !pb-2">Name:</p>
               <p className="text-lg font-semibold !pb-2 text-black">{user.name}</p>

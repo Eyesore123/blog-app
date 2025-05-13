@@ -23,10 +23,10 @@ Blog still needs some work, though, including:
 3. Auto-translate on post save + store in DB
 4. Language toggle to navbar
 5. Toggle button in navbar loads correct language
-6. Small style fixes for responsive design
+6. Small style fixes for responsive design: archives page, mobile styles, my account -page, postpage
 7. Forgot password section to login page
 8. Share buttons for social media (Facebook and X) - add ShareButtons component to PostPage
-9. Advanced features for admin.
+9. Advanced features for admin
 10. Tag filtering
 11. Markdown editor
 12. Email subscription (latest blog post in newsletter) backend and admin panel
