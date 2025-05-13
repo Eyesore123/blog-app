@@ -1,12 +1,13 @@
+import React from 'react';
 import { usePage } from '@inertiajs/react';
 import { router } from '@inertiajs/react';
 import { Toaster } from 'sonner';
 import { BlogPost } from '../components/BlogPost';
 import Header from '../components/Header';
-import '../../css/app.css';
-import { Navbar } from '@/components/Navbar';
 import SearchComponent from '@/components/SearchComponent';
 import YearFilterComponent from '@/components/YearFilterComponent';
+import { Navbar } from '@/components/Navbar';
+import '../../css/app.css';
 import { useTheme } from '../context/ThemeContext';
 
 interface BlogPostType {
@@ -17,8 +18,8 @@ interface BlogPostType {
   author?: string;
   created_at: string;
   image_url?: string | null;
-    updated_at?: string;
-    _id?: string;
+  updated_at?: string;
+  _id?: string;
   slug?: string;
   [key: string]: any;
 }
@@ -50,8 +51,19 @@ interface PageProps {
 export default function ArchiveView() {
   const { props } = usePage<PageProps>();
   const { theme } = useTheme();
-  const { posts, allPosts, topics, currentTopic, currentPage, hasMore, total, archiveYear } = props;
-  const isAdmin = props.auth?.user?.is_admin ?? false;
+  const {
+    posts,
+    allPosts,
+    topics,
+    currentTopic,
+    currentPage,
+    hasMore,
+    total,
+    archiveYear,
+    auth,
+  } = props;
+
+  const isAdmin = auth?.user?.is_admin ?? false;
 
   const handlePageChange = (page: number) => {
     const params = new URLSearchParams();
@@ -65,37 +77,6 @@ export default function ArchiveView() {
     if (topic) params.append('topic', topic);
     router.get(`/archives/${archiveYear}`, Object.fromEntries(params));
   };
-
-  // const handleDeletePost = async (postId: number) => {
-  // // Use the custom confirm dialog instead of the browser's native confirm
-  //   const { confirm } = useConfirm();
-  //   const showAlert = useAlert().showAlert;
-  // const confirmed = await confirm({
-  //   title: 'Delete Post',
-  //   message: 'Are you sure you want to delete this post? This action cannot be undone.',
-  //   confirmText: 'Delete',
-  //   cancelText: 'Cancel',
-  //   type: 'danger'
-  // });
-  
-//   if (!confirmed) return;
-  
-//   router.delete(`/posts/${postId}`, {
-//     onSuccess: () => {
-//       console.log(`Post ${postId} deleted`);
-//       showAlert('Post deleted successfully', 'success');
-//     },
-//     onError: (error) => {
-//       console.error('Failed to delete post', error);
-//       showAlert('Error deleting post. Please try again.', 'error');
-//     }
-//   });
-// };
-
-
-  // Debug the raw data structure
-  // console.log('Raw posts data:', JSON.stringify(posts));
-  // console.log('All posts in ArchiveView:', posts.data);
 
   return (
     <div className={`min-h-screen ${theme}`}>
@@ -147,75 +128,47 @@ export default function ArchiveView() {
                 </div>
 
                 <div className="rounded-lg bg-[#5800FF]/10 !p-4">
-                  <SearchComponent 
-                    posts={allPosts}
-                  />
-                  <YearFilterComponent 
-                    posts={allPosts}
-                  />
+                  <SearchComponent posts={allPosts} />
+                  <YearFilterComponent posts={allPosts} />
                 </div>
               </div>
             </aside>
 
             {/* Main content */}
-            <div className="flex-1 justify-center items-center flex flex-col max-w-500">
-            <h2 className="text-2xl font-bold w-260 !mb-10 !p-6 flex justify-start">
+            <div className="flex-1 justify-center items-left flex flex-col max-w-500">
+              <h2 className="text-2xl font-bold w-150 !mb-10 !p-6 flex justify-start !ml-4 !pl-0">
                 Archive — Posts from {archiveYear}
               </h2>
               <div className="!space-y-8">
                 {posts.data.length === 0 ? (
-                  <div className="text-center opacity-70 !mt-30">No blog posts found for {archiveYear}.</div>
+                  <div className="text-center opacity-70 !mt-30">
+                    No blog posts found for {archiveYear}.
+                  </div>
                 ) : (
                   <>
-                    
                     {posts.data.map((post) => {
-                    // Log the raw post object to see its structure
-                    console.log('Raw post object:', post);
-                    
+                      const imageUrl = post.image_url ? `${window.location.origin}/${post.image_url}` : null;
+                      const slug = post.slug && post.slug !== 'slug' ? post.slug : undefined;
+                      const author = post.author && post.author !== 'author' ? post.author : 'Unknown';
 
-                    const imageUrlKey = 'image_url';
-                    const slugKey = 'slug';
-                    const authorKey = 'author';
-                    
-                    console.log('Found keys:', { imageUrlKey, slugKey, authorKey });
-                    
-                    // Get the values using the found keys
-                    const imageUrl = post[imageUrlKey] ? `${window.location.origin}/${post[imageUrlKey]}` : null;
-                    const slug = slugKey && post[slugKey] !== 'slug' ? post[slugKey] : undefined;
-                    const author = authorKey && post[authorKey] !== 'author' ? post[authorKey] : 'Unknown';
-                    
-                    console.log('Extracted values:', { imageUrl, slug, author });
-                    
-                    return (
+                      return (
                         <div key={post.id} className="relative">
-                        <BlogPost 
-                        post={{
-                            title: post.title,
-                            content: post.content,
-                            topic: post.topic,
-                            id: post.id,
-                            _id: post.id.toString(),
-                            image_url: imageUrl,
-                            slug: slug,
-                            author: author,
-                            created_at: post.created_at,
-                            updated_at: post.updated_at || post.created_at
-                        }}
-                    />
-                    
-                        {/* This is commented out because delete button is moved to blogpost component */}
-                        {/* {isAdmin && (
-                            <button
-                            onClick={() => handleDeletePost(post.id)}
-                            className="absolute top-10 right-30 !px-3 !py-1 bg-red-600 text-white rounded hover:bg-red-800 transition-colors"
-                            >
-                            Delete
-                            </button>
-                        )} */}
-
-
+                          <BlogPost
+                            post={{
+                              title: post.title,
+                              content: post.content,
+                              topic: post.topic,
+                              id: post.id,
+                              _id: post.id.toString(),
+                              image_url: imageUrl,
+                              slug,
+                              author,
+                              created_at: post.created_at,
+                              updated_at: post.updated_at || post.created_at,
+                            }}
+                          />
                         </div>
-                    );
+                      );
                     })}
 
                     <div className="flex justify-center items-center gap-10 !mt-18">

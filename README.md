@@ -18,7 +18,7 @@ Providers are used for themes, alerts and confirmations.
 
 Blog still needs some work, though, including:
 
-1. Setup SEO meta tags
+1. Setup SEO meta tags (using spartie or laravel seo?)
 2. Installation of AI translation package (Google/DeepL)?
 3. Auto-translate on post save + store in DB
 4. Language toggle to navbar
@@ -30,5 +30,6 @@ Blog still needs some work, though, including:
 10. Tag filtering
 11. Markdown editor
 12. Email subscription (latest blog post in newsletter) backend and admin panel
+13. Blog posts get automatically uploaded to LinkedIn
 
 ![blog3](https://github.com/user-attachments/assets/9b47ad5c-13f9-4858-9291-1eb1d2397d96)

@@ -40,6 +40,7 @@ interface Post {
   content: string;
   image_url: string | null;
   topic: string;
+  created_at: string;
 }
 
 interface AllPosts {
@@ -187,7 +188,7 @@ const PostPage: React.FC<PostPageProps> = ({ post }) => {
         <main className="!p-8">
           <div className="w-full !mx-auto flex md:!gap-10">
             {/* Sidebar */}
-            <aside className="!w-80 lg:!w-120 xl:!ml-30 2xl:!ml-60 overflow-y-auto xl:!-mt-24">
+            <aside className="!w-80 lg:!w-120 xl:!ml-30 2xl:!ml-40 overflow-y-auto xl:!-mt-24">
               <div className="sticky top-24 !space-y-6 !w-60 md:!w-80 !-ml-0 !xl:ml-0 lg:!w-100 xl:!w-120">
                 <div className="rounded-lg bg-[#5800FF]/10 !p-4">
                   <h3 className="font-semibold !mb-2">About This Post</h3>
@@ -261,7 +262,7 @@ const PostPage: React.FC<PostPageProps> = ({ post }) => {
             
             {/* Main content */}
             <div className="flex-1 flex flex-col items-center w-full">
-              <article className="rounded-lg bg-[#5800FF]/5 !p-6 md:!p-8 lg:!p-10 w-full md:w-[400px] lg:w-[600px] xl:w-[650px] 2xl:w-[870px] 2xl:!mr-30 !mb-8">
+              <article className="rounded-lg bg-[#5800FF]/5 !p-6 md:!p-8 lg:!p-10 w-full md:w-[400px] lg:w-[600px] xl:w-[650px] 2xl:w-[830px] 2xl:!mr-30 !mb-8">
                 <h2 className="text-3xl font-bold !mb-8 text-center lg:text-left">{post.title}</h2>
                 
                 {/* Image */}
