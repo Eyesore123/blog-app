@@ -23,13 +23,11 @@ Blog still needs some work, though, including:
 3. Auto-translate on post save + store in DB
 4. Language toggle to navbar
 5. Toggle button in navbar loads correct language
-6. Small style fixes for responsive design: login page
-7. Forgot password section to login page
-8. Share buttons for social media (Facebook and X) - add ShareButtons component to PostPage
-9. Advanced features for admin (preview for the post, image size adjustments? etc.)
-10. Tag filtering
-11. Markdown editor
-12. Email subscription (latest blog post in newsletter) backend and admin panel
-13. Blog posts get automatically uploaded to LinkedIn
+6. Forgot password section to login page
+7. Advanced features for admin (preview for the post, image size adjustments? etc.)
+8. Tag filtering
+9. Markdown editor
+10. Email subscription (latest blog post in newsletter) backend and admin panel
+11. Blog posts get automatically uploaded to LinkedIn
 
 ![blog3](https://github.com/user-attachments/assets/9b47ad5c-13f9-4858-9291-1eb1d2397d96)

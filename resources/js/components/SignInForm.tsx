@@ -69,9 +69,9 @@ export default function SignInForm({ flow, setFlow }: SignInFormProps) {
   
   return (
     <div className="w-full !mt-10 !mb-10">
-      <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
+      <form className="flex flex-col gap-4 justify-center items-center" onSubmit={handleSubmit}>
         <input
-          className="input-field border border-white !p-2 w-80"
+          className="input-field border border-white !p-2 !w-60 !md:w-80"
           style={{borderColor: theme === 'dark' ? '#fff' : '#000'}}
           type="email"
           name="email"
@@ -83,7 +83,7 @@ export default function SignInForm({ flow, setFlow }: SignInFormProps) {
         {flow === "signUp" && (
           <div className="input-container">
             <input
-              className="input-field border border-white !p-2 w-80"
+              className="input-field border border-white !p-2 !w-60 !md:w-80"
               style={{borderColor: theme === 'dark' ? '#fff' : '#000'}}
               type="text"
               name="name"
@@ -96,7 +96,7 @@ export default function SignInForm({ flow, setFlow }: SignInFormProps) {
 
         <div className="input-container">
           <input
-            className="input-field border border-white !p-2 w-80"
+            className="input-field border border-white !p-2 !w-60 !md:w-80"
             style={{borderColor: theme === 'dark' ? '#fff' : '#000'}}
             type="password"
             name="password"
@@ -109,7 +109,7 @@ export default function SignInForm({ flow, setFlow }: SignInFormProps) {
         {flow === "signUp" && (
           <div className="input-container">
             <input
-              className="input-field border border-white !p-2 w-80"
+              className="input-field border border-white !p-2 !w-60 !md:!w-60 !md:w-80"
               style={{borderColor: theme === 'dark' ? '#fff' : '#000'}}
               type="password"
               name="password_confirmation"

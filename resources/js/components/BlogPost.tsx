@@ -7,6 +7,7 @@ import { getCsrfToken } from "../components/auth";
 import '../../css/app.css';
 import { useAlert } from "../context/AlertContext";
 import { useConfirm } from "@/context/ConfirmationContext";
+import ShareButtons from "./ShareButtons";
 
 interface Post {
   title: string;
@@ -19,6 +20,7 @@ interface Post {
   author?: string;
   created_at: string;
   updated_at?: string;
+  postUrl: string;
 }
 
 interface Comment {
@@ -522,6 +524,8 @@ const renderComment = (comment: Comment, level = 0) => {
   );
 };
 
+const postUrl = `/posts/${post.id}`;
+
   return (
   <>
     <Head>
@@ -570,7 +574,7 @@ const renderComment = (comment: Comment, level = 0) => {
 )}
       
       <div className="prose max-w-none opacity-90 !mb-6 md:!mb-10 text-sm md:text-base">{post.content}</div>
-      <div className="text-xs md:text-sm text-gray-500 !mt-3 !pt-4 md:!pt-6 !space-y-1 border-t border-[#5800FF]/20">
+      <div className="text-xs md:text-sm flex flex-col justify-center items-center  md:justify-start md:items-start text-gray-500 !mt-3 !pt-4 md:!pt-6 !space-y-1 border-t border-[#5800FF]/20">
         {post.created_at &&  (
           <div>
             Created: {new Date(post.created_at).toLocaleString()}
@@ -582,6 +586,7 @@ const renderComment = (comment: Comment, level = 0) => {
           </div>
         )}
 
+        <ShareButtons postUrl={postUrl} postTitle={post.title} />
         {isAdmin && (
           <button
             onClick={() => handleDeletePost(post.id)}

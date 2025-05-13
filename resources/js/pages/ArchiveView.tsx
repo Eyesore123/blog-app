@@ -83,7 +83,7 @@ export default function ArchiveView() {
     <div className="min-h-screen bg-[var(--bg-primary)] text-[var(--text-primary)]">
       <Navbar />
       <Header />
-      <main className="!p-4 md:!p-8">
+      <main className="!p-4 md:!p-8 !gap-1">
         {/* Change to flex-col on mobile, row on larger screens */}
         <div className="w-full !mx-auto flex flex-col lg:flex-row md:!gap-10 xl:!gap-18">
           {/* Sidebar - full width on mobile, fixed width on desktop */}
