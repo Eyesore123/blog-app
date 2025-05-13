@@ -110,30 +110,35 @@ export function Navbar() {
   };
 
   return (
-    <nav className="sticky top-0 z-10 bg-[var(--nav-bg)] text-[var(--nav-text)] !p-4 flex justify-end items-end">
-      {/* Left Links */}
-      <div className="hidden md:flex flex-1 justify-start">
-        {renderLeftLinks()}
-      </div>
+  <nav className="sticky top-0 z-10 bg-[var(--nav-bg)] text-[var(--nav-text)] !p-4 flex items-center">
+    {/* Left Links */}
+    <div className="hidden md:flex flex-1 justify-start items-center">
+      {renderLeftLinks()}
+    </div>
 
-      {/* Menu Button for Mobile */}
+    {/* Center Spacer */}
+    <div className="flex-1"></div>
+
+    {/* Menu Button for Mobile */}
+    <div className="flex items-center">
       <button
         className="md:hidden !p-2 text-[#FFC600] hover:text-[#E900FF] transition-colors scale-160"
         onClick={() => setIsMenuOpen(!isMenuOpen)}
       >
         {isMenuOpen ? '✖' : '☰'}
       </button>
+    </div>
 
-      {/* Links Container */}
-      <div
-        className={`${
-          isMenuOpen ? 'block' : 'hidden'
-        } md:flex flex-col md:flex-row items-center gap-4 md:gap-6 absolute md:static top-16 left-0 w-full md:w-auto bg-[var(--nav-bg)] md:bg-transparent! !p-4 md:!p-0 shadow-sm shadow-black md:shadow-none`}
-      >
-        {/* Render all links for mobile */}
-        <div className="md:hidden">{renderLeftLinks()}</div>
-        {renderRightLinks()}
-      </div>
-    </nav>
-  );
+    {/* Links Container */}
+    <div
+      className={`${
+        isMenuOpen ? 'block' : 'hidden'
+      } md:flex flex-col md:flex-row items-center gap-4 md:gap-6 absolute md:static top-16 left-0 w-full md:w-auto bg-[var(--nav-bg)] md:bg-transparent! !p-4 md:!p-0 shadow-sm shadow-black md:shadow-none`}
+    >
+      {/* Render all links for mobile */}
+      <div className="md:hidden">{renderLeftLinks()}</div>
+      {renderRightLinks()}
+    </div>
+  </nav>
+);
 }
