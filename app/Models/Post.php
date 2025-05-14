@@ -8,7 +8,7 @@ use App\Models\Comment;
 
 class Post extends Model
 {
-    protected $fillable = ['title', 'content', 'published', 'topic', 'image_path', 'user_id', 'slug', 'created_at', 'updated_at'];
+    protected $fillable = ['title', 'content', 'published', 'topic', 'image_path', 'user_id', 'slug', 'created_at', 'updated_at', 'postUrl'];
 
     public static function boot()
     {

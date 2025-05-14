@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import ReactMarkdown from 'react-markdown';
 
 export interface Post {
   id?: number;
@@ -11,7 +12,7 @@ export interface Post {
 
 interface AdminPostPreviewProps {
   posts?: Post[];
-  previewPost?: Post; // optional single preview
+  previewPost?: Post | null; // Optional single preview
   onDeletePost?: (id: number) => void;
 }
 
@@ -20,6 +21,13 @@ export default function AdminPostPreview({
   previewPost,
   onDeletePost,
 }: AdminPostPreviewProps) {
+  const [currentPreview, setCurrentPreview] = useState(previewPost);
+
+  // Update local state whenever previewPost changes
+  useEffect(() => {
+    setCurrentPreview(previewPost || null); // Ensure null fallback
+  }, [previewPost]);
+
   const renderPost = (post: Post) => (
     <article
       key={post.id || 'preview'}
@@ -29,16 +37,18 @@ export default function AdminPostPreview({
 
       {post.image_url && (
         <img
-            src={post.image_url}
-            alt={post.title}
-            className="w-full max-w-md rounded !mb-10 !mt-10"
-            onError={(e) => {
+          src={post.image_url}
+          alt={post.title}
+          className="w-full max-w-md rounded !mb-10 !mt-10"
+          onError={(e) => {
             e.currentTarget.style.display = 'none';
-            }}
+          }}
         />
-        )}
+      )}
 
-      <div className="text-sm opacity-80 !mb-4 whitespace-pre-wrap">{post.content || '(No content)'}</div>
+      <div className="text-sm opacity-80 !mb-4 whitespace-pre-wrap">
+        <ReactMarkdown>{post.content || '(No content)'}</ReactMarkdown>
+      </div>
 
       {onDeletePost && post.id !== undefined && (
         <button
@@ -54,11 +64,11 @@ export default function AdminPostPreview({
   return (
     <div className="w-full flex flex-col justify-center items-center max-w-screen-lg !mt-12">
       <h2 className="text-2xl font-bold !mb-20 text-amber-300">
-        {previewPost ? 'Live Preview' : 'Post Previews'}
+        {currentPreview ? 'Live Preview' : 'Post Previews'}
       </h2>
 
-      {previewPost
-        ? renderPost(previewPost)
+      {currentPreview
+        ? renderPost(currentPreview)
         : posts.length === 0
         ? <p className="text-gray-500">No posts available.</p>
         : posts.map(renderPost)}

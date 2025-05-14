@@ -10,11 +10,11 @@
 
 So currently it shows posts and comments. Posts can be searched by title and topic. Posts also can be searched using the dropdown menu, showing the posts for each year. There are archive pages which show all the posts for each year (paginated). RSS Feed component is also included. I added custom API endpoint for recent activity, which is used in recent activity component in landing page. I also created "the latest post" endpoint which can be used to fetch the latest post. It's an alternative to rss feed (I plan to use it for my portfolio site).
 
-Admin can add new posts, edit posts and delete comments. Now admin can also deactivate and - as an ultimate solution - delete accounts. Logged in users can add comments, edit their comments and delete comments when there are no replies. Comments are rate limited by IP address (10 comments per day), and there are no Captchas because IP address guarantees that the limiter applies to many users from the same IP address. Rate limiter is done using custom RateLimitService class. Likewise SEO is done using a custom SEO class and then provided for the app using react-helmet-async package (it was the easiest solution considering I'm not using blade directives).
+Admin can add new posts, edit posts and delete comments. Admin can also deactivate and - as an ultimate solution - delete accounts. Logged in users can add comments, edit their comments and delete comments when there are no replies. Comments are rate limited by IP address (10 comments per day), and there are no Captchas because IP address guarantees that the limiter applies to many users from the same IP address. Rate limiter is done using custom RateLimitService class. Likewise SEO is done using a custom SEO class and then provided for the app using react-helmet-async package (it was the easiest solution considering I'm not using blade directives).
 
 Logged in users have a My Account page where they can change their password, delete their account and subscribe to a newsletter.
 
-Providers are used for themes, alerts and confirmations.
+Providers are used for themes, alerts and confirmations. I added a markdown editor for posts. Perhaps I could add one for comments, but it was quite bothersome to get it work without errors for posts so I'm not sure if I'll add new editors.
 
 Blog still needs some work, though, including:
 
@@ -23,11 +23,14 @@ Blog still needs some work, though, including:
 3. Language toggle to navbar
 4. Toggle button in navbar loads correct language
 5. Forgot password section to login page
-6. Advanced features for admin (preview for the post, image size adjustments? etc.)
+6. Advanced features for admin (image size adjustments? etc.)
 7. Tag filtering
-8. Markdown editor
-9. Email subscription (latest blog post in newsletter) backend and admin panel
-10. Blog posts get automatically uploaded to LinkedIn
-11. Loading spinners for images
+8. Email subscription (latest blog post in newsletter) backend and admin panel
+9. Blog posts get automatically uploaded to LinkedIn
+10. Loading spinners for images
 
 ![blog3](https://github.com/user-attachments/assets/9b47ad5c-13f9-4858-9291-1eb1d2397d96)
+
+## What I've learned during this project
+
+- How to use Laravel Inertia. It's a great way to use React with Laravel. Inertia renders React components on the server and sends them to the client.

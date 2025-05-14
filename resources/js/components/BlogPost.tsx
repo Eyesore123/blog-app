@@ -9,6 +9,7 @@ import { useAlert } from "../context/AlertContext";
 import { useConfirm } from "@/context/ConfirmationContext";
 import ShareButtons from "./ShareButtons";
 import { Helmet } from "react-helmet-async";
+import ReactMarkdown from 'react-markdown';
 
 interface Post {
   title: string;
@@ -21,7 +22,7 @@ interface Post {
   author?: string;
   created_at: string;
   updated_at?: string;
-  postUrl: string;
+  postUrl?: string;
 }
 
 interface Comment {
@@ -44,7 +45,7 @@ interface AuthUser {
 }
 
 interface PageProps {
-  [key: string]: any;
+  [key: string]: any
   auth: {
     user: AuthUser | null;
   };
@@ -57,7 +58,13 @@ interface PageProps {
   };
 }
 
-export function BlogPost({ post }: { post: Post }) {
+interface BlogPostProps {
+  post: Post;
+  isPostPage?: boolean;
+}
+
+
+export function BlogPost({ post, isPostPage = false }: BlogPostProps) {
   const { auth, seo } = usePage<PageProps>().props;
   const seoProps = { ...seo };
   const user = auth.user;
@@ -76,7 +83,7 @@ export function BlogPost({ post }: { post: Post }) {
   // const [remainingComments, setRemainingComments] = useState<number | null>(null);
   const [editingCommentId, setEditingCommentId] = useState<string | null>(null);
 const editCommentRef = useRef<HTMLTextAreaElement>(null);
-  
+
   // Refs for uncontrolled inputs
   const replyInputRef = useRef<HTMLTextAreaElement>(null);
   const mainCommentRef = useRef<HTMLTextAreaElement>(null);
@@ -174,7 +181,20 @@ const editCommentRef = useRef<HTMLTextAreaElement>(null);
     }
   }
 
-
+const handleImageClick = (e: React.MouseEvent<HTMLImageElement>) => {
+  if (isPostPage) {
+    // If on PostPage, toggle fullscreen
+    const image = e.currentTarget;
+    if (document.fullscreenElement === image) {
+      document.exitFullscreen();
+    } else {
+      image.requestFullscreen();
+    }
+  } else {
+    // Otherwise, navigate to the post page
+    goToPostPage();
+  }
+};
 
   async function handleSubmitReply(e: React.FormEvent, parentId: string) {
     e.preventDefault();
@@ -402,6 +422,14 @@ const renderComment = (comment: Comment, level = 0) => {
   // const description = plainTextContent.length > 150
   // ? plainTextContent.slice(0, 147) + '...'
   // : plainTextContent;
+
+//   console.log('isDeleted:', isDeleted);
+// console.log('level:', level);
+// console.log('maxNestingLevel:', maxNestingLevel);
+// console.log('isSignedIn:', isSignedIn);
+// console.log('isCommentOwner:', isCommentOwner);
+// console.log('isEditing:', isEditing);
+// console.log('isAdmin:', isAdmin);
   
   return (
     <div key={comment._id} className={`bg-[#5800FF]/${10 - Math.min(level, 5) * 2} rounded !p-2 md:!p-3 ${indentClass}`}>
@@ -536,7 +564,6 @@ const renderComment = (comment: Comment, level = 0) => {
 };
 
 const postUrl = `/posts/${post.id}`;
-
   return (
   <>
     <Head>
@@ -557,7 +584,7 @@ const postUrl = `/posts/${post.id}`;
         <meta property="og:url" content={seoProps.url} />
       </Helmet>
 
-    <article className="flex flex-col justify-center items-center lg:items-start lg:justify-start rounded-lg bg-[#5800FF]/5 !p-4 w-full md:!w-150 xl:!w-170 2xl:!w-220 !mb-6 md:!mb-10 xl:!ml-0">
+    <article className="flex flex-col justify-center items-center lg:items-start lg:justify-start rounded-lg bg-[#5800FF]/5 !p-4 md:!pl-10 w-full md:!w-150 xl:!w-170 2xl:!w-220 !mb-6 md:!mb-10 xl:!ml-0">
       <h2
         className="text-xl md:text-2xl font-bold flex justify-start !mb-4 md:!mb-10 cursor-pointer hover:underline"
         onClick={goToPostPage}
@@ -566,12 +593,12 @@ const postUrl = `/posts/${post.id}`;
       </h2>
       
      {hasValidImageUrl && post.image_url && (
-  <div className="w-full flex flex-row justify-center items-center lg:justify-start lg:items-start !mb-6 md:!mb-20 !mt-4 md:!mt-20">
+  <div className="w-full flex flex-row justify-center items-center lg:justify-start lg:items-start !mb-6 md:!mb-20 !mt-4">
     <img
       src={post.image_url.replace('http://127.0.0.1:8000/', '')}
       alt={post.title}
       className="w-full md:w-100 lg:w-150 h-auto cursor-pointer hover:opacity-80"
-      onClick={goToPostPage}
+      onClick={handleImageClick}
       onError={(e) => {
       console.error('Image failed to load:', post.image_url);
       console.log('Error details:', e);
@@ -581,7 +608,30 @@ const postUrl = `/posts/${post.id}`;
   </div>
 )}
       
-      <div className="prose max-w-none opacity-90 !mb-6 md:!mb-10 text-sm md:text-base">{post.content}</div>
+      <ReactMarkdown
+  children={(post.content || '(No content)').replace(/\n/g, '\n\n')}
+  components={{
+    p: ({ node, ...props }) => <p className="mb-4" {...props} />,
+    ul: ({ node, ...props }) => <ul className="list-disc ml-6 mb-4" {...props} />,
+    ol: ({ node, ...props }) => <ol className="list-decimal ml-6 mb-4" {...props} />,
+    li: ({ node, ...props }) => <li className="mb-2" {...props} />,
+    strong: ({ node, ...props }) => <strong className="font-bold" {...props} />,
+    em: ({ node, ...props }) => <em className="italic" {...props} />,
+    blockquote: ({ node, ...props }) => (
+      <blockquote className="border-l-4 border-gray-300 pl-4 italic text-gray-600 mb-4" {...props} />
+    ),
+    code: ({ inline, ...props }) =>
+      inline ? (
+        <code className="bg-gray-100 text-red-500 px-1 rounded" {...props} />
+      ) : (
+        <pre className="bg-gray-100 p-2 rounded overflow-x-auto">
+          <code {...props} />
+        </pre>
+      ),
+  }}
+  skipHtml={false}
+/>
+      
       <div className="text-xs md:text-sm flex flex-col justify-center items-center  md:justify-start md:items-start text-gray-500 !mt-3 !pt-4 md:!pt-6 !space-y-1 border-t border-[#5800FF]/20">
         {post.created_at &&  (
           <div>
