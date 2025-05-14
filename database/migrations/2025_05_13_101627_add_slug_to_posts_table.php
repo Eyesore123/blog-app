@@ -12,7 +12,7 @@ return new class extends Migration
 public function up()
 {
     Schema::table('posts', function (Blueprint $table) {
-        $table->string('slug')->after('title'); // Add the column without UNIQUE!!! Otherise slug won't migrate
+        $table->string('slug')->nullable()->default(null)->after('title');
     });
 
     // Add the UNIQUE constraint separately

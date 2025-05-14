@@ -137,7 +137,7 @@ export default function MainPage() {
                   <>
                     {posts.map((post) => (
                       <div key={post.id} className="flex-1 justify-center items-center flex flex-col w-full">
-                        <BlogPost post={{ ...post, _id: post.id.toString() }} />
+                        <BlogPost post={{ ...post, _id: post.id.toString(), postUrl: '/posts/' + post.slug }} />
                       </div>
                     ))}
                     <div className="flex justify-center items-center !gap-4 md:!gap-10 !mt-8 md:!mt-18">

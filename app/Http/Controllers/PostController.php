@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Log;
+use App\Services\SeoService;
 
 class PostController extends Controller
 {
@@ -188,6 +189,8 @@ class PostController extends Controller
             $post = Post::with(['comments.user'])->where('slug', $identifier)->firstOrFail();
         }
 
+        $seo = SeoService::forPost($post);
+
         $allPosts = Post::all();
 
         return Inertia::render('PostPage', [
@@ -195,6 +198,7 @@ class PostController extends Controller
             'comments' => $post->comments,
             'allPosts' => $allPosts,
             'user' => $this->getUserInfo(),
+            'seo' => $seo,
         ]);
     }
 

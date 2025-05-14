@@ -9,6 +9,7 @@ import { createInertiaApp } from '@inertiajs/react';
 import { ThemeProvider } from './context/ThemeContext';
 import { AlertProvider } from './context/AlertContext';
 import { ConfirmProvider } from './context/ConfirmationContext';
+import { HelmetProvider } from 'react-helmet-async';
 // import { ErrorBoundary } from './pages/errors/ErrorBoundary';
 import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
 import  { router } from '@inertiajs/react';
@@ -19,13 +20,14 @@ router.on('error', (error) => {
 });
 
 createInertiaApp({
-  title: (title) => `${title} - My App`,
+  title: (title) => `${title} Joni's Blog`,
   resolve: (name) =>
     resolvePageComponent(`./pages/${name}.tsx`, import.meta.glob('./pages/**/*.tsx')),
 
   setup({ el, App, props }) {
     const root = createRoot(el);
     root.render(
+      <HelmetProvider>
       <ThemeProvider>
         <AlertProvider>
           <ConfirmProvider>
@@ -35,6 +37,7 @@ createInertiaApp({
         </ConfirmProvider>
         </AlertProvider>
       </ThemeProvider>
+      </HelmetProvider>
     );
   },
 

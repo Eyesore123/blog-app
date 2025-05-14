@@ -8,6 +8,7 @@ import '../../css/app.css';
 import { useAlert } from "../context/AlertContext";
 import { useConfirm } from "@/context/ConfirmationContext";
 import ShareButtons from "./ShareButtons";
+import { Helmet } from "react-helmet-async";
 
 interface Post {
   title: string;
@@ -42,12 +43,23 @@ interface AuthUser {
   id: number;
 }
 
-interface PagePropsWithAuth {
-  auth: { user: AuthUser | null };
+interface PageProps {
+  [key: string]: any;
+  auth: {
+    user: AuthUser | null;
+  };
+  seo: {
+    title: string;
+    description: string;
+    keywords?: string;
+    image?: string;
+    url: string;
+  };
 }
 
 export function BlogPost({ post }: { post: Post }) {
-  const { auth } = usePage().props as unknown as PagePropsWithAuth;
+  const { auth, seo } = usePage<PageProps>().props;
+  const seoProps = { ...seo };
   const user = auth.user;
   const isSignedIn = Boolean(user);
   const token = user?.token;
@@ -390,7 +402,6 @@ const renderComment = (comment: Comment, level = 0) => {
   // const description = plainTextContent.length > 150
   // ? plainTextContent.slice(0, 147) + '...'
   // : plainTextContent;
-
   
   return (
     <div key={comment._id} className={`bg-[#5800FF]/${10 - Math.min(level, 5) * 2} rounded !p-2 md:!p-3 ${indentClass}`}>
@@ -535,19 +546,16 @@ const postUrl = `/posts/${post.id}`;
         title="RSS Feed for Joni's Blog"
         href="/feed"
         />
-{/* 
-         <title>{post.title} | Blog</title>
-        <meta name="description" content={description} />
-        <meta property="og:title" content={post.title} />
-        <meta property="og:description" content={description} />
-        <meta property="og:image" content={post.image_url || '/default-image.jpg'} />
-        <meta property="og:url" content={window.location.href} />
-        <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content={post.title} />
-        <meta name="twitter:description" content={description} />
-        <meta name="twitter:image" content={post.image_url || '/default-image.jpg'} /> */}
   </Head>
-
+    <Helmet>
+        <title>{seoProps.title}</title>
+        <meta name="description" content={seoProps.description} />
+        <meta name="keywords" content={seoProps.keywords || 'blog, post'} />
+        <meta property="og:title" content={seoProps.title} />
+        <meta property="og:description" content={seoProps.description} />
+        <meta property="og:image" content={seoProps.image || '/default-image.jpg'} />
+        <meta property="og:url" content={seoProps.url} />
+      </Helmet>
 
     <article className="flex flex-col justify-center items-center lg:items-start lg:justify-start rounded-lg bg-[#5800FF]/5 !p-4 w-full md:!w-150 xl:!w-170 2xl:!w-220 !mb-6 md:!mb-10 xl:!ml-0">
       <h2
@@ -558,11 +566,11 @@ const postUrl = `/posts/${post.id}`;
       </h2>
       
      {hasValidImageUrl && post.image_url && (
-  <div className="w-full flex flex-row justify-center items-center lg:justify-start lg:items-start !mb-6 md:!mb-20 !mt-4 md:!mt-40">
+  <div className="w-full flex flex-row justify-center items-center lg:justify-start lg:items-start !mb-6 md:!mb-20 !mt-4 md:!mt-20">
     <img
       src={post.image_url.replace('http://127.0.0.1:8000/', '')}
       alt={post.title}
-      className="w-full md:w-100 lg:w-150 h-auto rounded-lg cursor-pointer hover:opacity-80"
+      className="w-full md:w-100 lg:w-150 h-auto cursor-pointer hover:opacity-80"
       onClick={goToPostPage}
       onError={(e) => {
       console.error('Image failed to load:', post.image_url);

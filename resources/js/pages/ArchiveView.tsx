@@ -166,6 +166,7 @@ export default function ArchiveView() {
                             author,
                             created_at: post.created_at,
                             updated_at: post.updated_at || post.created_at,
+                            postUrl: slug ? `/post/${slug}` : `/post/${post.id}`,
                           }}
                         />
                       </div>
