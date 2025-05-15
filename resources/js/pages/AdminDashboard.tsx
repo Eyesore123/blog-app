@@ -44,7 +44,7 @@ export default function AdminDashboard({ users }: { users: User[] }) {
         <p className="text-lg text-gray-500 !mt-4 !mb-18">Welcome to the admin dashboard.</p>
 
         {/* Post creation form */}
-       <CreatePost onPreviewChange={(preview) => setPreviewPost(preview)} />
+       <CreatePost onPreviewChange={setPreviewPost} />
 
         {/* Live preview */}
         {(previewPost.title || previewPost.content || previewPost.image_url) && (

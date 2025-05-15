@@ -25,7 +25,11 @@ export default function AdminPostPreview({
 
   // Update local state whenever previewPost changes
   useEffect(() => {
-    setCurrentPreview(previewPost || null); // Ensure null fallback
+    if (previewPost) {
+      setCurrentPreview(previewPost);
+    } else {
+      setCurrentPreview(null); // Explicitly set to null if no previewPost
+    }
   }, [previewPost]);
 
   const renderPost = (post: Post) => (
@@ -35,15 +39,18 @@ export default function AdminPostPreview({
     >
       <h3 className="text-xl font-semibold mb-2">{post.title || '(No title)'}</h3>
 
-      {post.image_url && (
+      {post.image_url ? (
         <img
           src={post.image_url}
-          alt={post.title}
+          alt={post.title || 'Post image'}
           className="w-full max-w-md rounded !mb-10 !mt-10"
           onError={(e) => {
-            e.currentTarget.style.display = 'none';
+            console.error(`Failed to load image: ${post.image_url}`); // Log error for debugging
+            e.currentTarget.style.display = 'none'; // Hide the image if it fails to load
           }}
         />
+      ) : (
+        <p className="text-gray-500 italic !mb-10">No image available.</p> // Fallback for missing images
       )}
 
       <div className="text-sm opacity-80 !mb-4 whitespace-pre-wrap">

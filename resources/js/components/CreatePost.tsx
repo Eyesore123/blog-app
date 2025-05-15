@@ -35,7 +35,7 @@ export function CreatePost({ onPreviewChange }: CreatePostProps) {
 
   function handleEditorChange(value: string) {
     setEditorContent(value);
-    setData("content", value);
+    setData('content', value);
     onPreviewChange?.({
       title: data.title,
       content: value,
@@ -45,21 +45,35 @@ export function CreatePost({ onPreviewChange }: CreatePostProps) {
 
   useEffect(() => {
     if (data.image) {
-      const url = URL.createObjectURL(data.image);
-      setImageUrl(url);
-      return () => URL.revokeObjectURL(url);
+      const reader = new FileReader();
+      reader.onload = () => {
+        const result = reader.result as string;
+        setImageUrl(result); // Set the data URL
+        onPreviewChange?.({
+          title: data.title,
+          content: editorContent,
+          image_url: result, // Trigger preview update immediately
+        });
+      };
+      reader.readAsDataURL(data.image); // Read the file as a data URL
+    } else {
+      setImageUrl('');
+      onPreviewChange?.({
+        title: data.title,
+        content: editorContent,
+        image_url: '', // Clear the preview image
+      });
     }
-    setImageUrl("");
   }, [data.image]);
 
   function handleImageChange(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
-    if (!file) return setData("image", null);
-    if (!file.type.startsWith("image/")) {
-      console.error("Selected file is not an image");
+    if (!file) return setData('image', null);
+    if (!file.type.startsWith('image/')) {
+      console.error('Selected file is not an image');
       return;
     }
-    setData("image", file);
+    setData('image', file);
   }
 
   function handleAddTag() {

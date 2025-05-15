@@ -1,6 +1,10 @@
 <?php
 
+namespace App\Http\Middleware;
+
 use Illuminate\Cache\RateLimiter;
+use Illuminate\Http\Request;
+use Illuminate\Routing\Middleware\ThrottleRequests as BaseThrottleRequests;
 
 class CustomThrottleRequests extends BaseThrottleRequests
 {

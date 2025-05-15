@@ -9,7 +9,7 @@ use App\Models\Tag;
 
 class Post extends Model
 {
-    protected $fillable = ['title', 'content', 'published', 'topic', 'image_path', 'user_id', 'slug', 'created_at', 'updated_at', 'postUrl'];
+    protected $fillable = ['title', 'content', 'published', 'topic', 'image_path', 'user_id', 'slug', 'created_at', 'updated_at', 'postUrl', 'sent_at'];
 
     public static function boot()
     {

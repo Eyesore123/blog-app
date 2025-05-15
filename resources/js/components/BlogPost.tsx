@@ -603,7 +603,7 @@ const postUrl = `/posts/${post.id}`;
     <img
       src={post.image_url.replace('http://127.0.0.1:8000/', '')}
       alt={post.title}
-      className="w-full md:w-100 lg:w-150 h-auto cursor-pointer hover:opacity-80"
+      className="w-full md:w-100 lg:w-150 h-auto cursor-pointer"
       onClick={handleImageClick}
       onError={(e) => {
       console.error('Image failed to load:', post.image_url);

@@ -139,20 +139,25 @@ const pageUser = usePage().props.user as User;
     });
   };
 
-  const handleSubscriptionChange = () => {
-    setLoading(true);
-    router.post('/update-subscription', { is_subscribed: !isSubscribed }, {
-      onSuccess: () => {
-        setIsSubscribed((prev) => !prev);
-        showAlert('Subscription updated successfully!', 'success');
-        setLoading(false);
-      },
-      onError: () => {
-        showAlert('Failed to update subscription', 'error');
-        setLoading(false);
-      },
-    });
-  };
+const handleSubscriptionChange = () => {
+  setLoading(true);
+
+  const route = isSubscribed
+    ? '/account/unsubscribe-newsletter' // Unsubscribe route
+    : '/account/subscribe-newsletter'; // Subscribe route
+
+  router.post(route, {}, {
+    onSuccess: () => {
+      setIsSubscribed((prev) => !prev);
+      showAlert(isSubscribed ? 'Unsubscribed successfully!' : 'Subscribed successfully!', 'success');
+      setLoading(false);
+    },
+    onError: () => {
+      showAlert('Failed to update subscription', 'error');
+      setLoading(false);
+    },
+  });
+};
 
   const handleDeleteAccount = async () => {
     const confirmed = await confirm({

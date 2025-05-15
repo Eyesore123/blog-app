@@ -8,7 +8,7 @@ use App\Http\Controllers\AdminController;
 use App\Http\Controllers\AccountController;
 use App\Http\Controllers\CommentController;
 use App\Http\Controllers\ArchiveController;
-use App\Http\Controllers\MainPageController;
+use App\Http\Controllers\SubscriptionController;
 use App\Http\Controllers\RssFeedController;
 use Inertia\Inertia;
 use Illuminate\Support\Str;
@@ -167,8 +167,8 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/account/update-email', [AccountController::class, 'updateEmail']);
     Route::post('/account/update-password', [AccountController::class, 'updatePassword']);
     Route::post('/account/delete', [AccountController::class, 'deleteAccount']);
-    Route::post('/account/subscribe-newsletter', [AccountController::class, 'subscribeNewsletter']);
-    Route::post('/account/unsubscribe-newsletter', [AccountController::class, 'unsubscribeNewsletter']);
+    Route::post('/account/subscribe-newsletter', [SubscriptionController::class, 'subscribe'])->name('account.subscribe');
+    Route::post('/account/unsubscribe-newsletter', [SubscriptionController::class, 'unsubscribe'])->name('account.unsubscribe');
 });
 
 // Tag filter
@@ -198,3 +198,10 @@ Route::get('/reset-password/{token}', [NewPasswordController::class, 'create'])
 Route::post('/reset-password', [NewPasswordController::class, 'store'])
     ->middleware('guest')
     ->name('password.update');
+
+// Middleware (csp):
+
+// Route::middleware(['csp'])->group(function () {
+//     Route::get('/', [AdminController::class, 'index']);
+//     Route::get('/posts', [PostController::class, 'index']);
+// });

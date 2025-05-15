@@ -38,3 +38,7 @@ Blog still needs some work, though, including:
 - How to use models, controllers, routes and views in Laravel (views that are rendered with Inertia).
 - How to add and use a markdown editor.
 - How to use Mailtrap for testing emails in a sandbox, and also use it for testing backend routes. Previously I've used SendGrid for sending emails (in my Next.js web shop), but Mailtrap seems to be very easy to use for testing purposes.
+
+## Issues
+
+- Markdown editor needs some work.

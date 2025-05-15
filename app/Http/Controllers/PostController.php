@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Post;
 use App\Models\Tag;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
@@ -12,6 +13,8 @@ use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 use App\Services\SeoService;
 use Illuminate\Support\Str;
+use App\Mail\NewPostNotification;
+use Illuminate\Support\Facades\Mail;
 
 class PostController extends Controller
 {
@@ -149,6 +152,12 @@ class PostController extends Controller
 
             DB::commit();
             Log::info("Post created with ID: {$post->id}", ['post_data' => $post->toArray()]);
+
+            $subscribers = User::where('is_subscribed', 1)->get();
+
+            foreach ($subscribers as $subscriber) {
+                Mail::to($subscriber->email)->queue(new NewPostNotification($post));
+            }
 
             return redirect()->back()->with('success', 'Post created successfully.');
         } catch (\Throwable $e) {
