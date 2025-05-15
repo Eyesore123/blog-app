@@ -37,9 +37,10 @@ Blog still needs some work, though, including:
 - How to add custom API endpoints to Laravel.
 - How to use models, controllers, routes and views in Laravel (views that are rendered with Inertia).
 - How to add and use a markdown editor.
-- How to use Mailtrap for testing emails in a sandbox, and also use it for testing backend routes. Previously I've used SendGrid for sending emails (in my Next.js web shop), but Mailtrap seems to be very easy to use for testing purposes.
+- How to use Mailtrap for email testing in a sandbox, and also use it for testing backend routes. Previously I've used SendGrid for sending emails (in my Next.js web shop), but Mailtrap seems to be very easy to use for testing purposes.
+- How to set up rate limiters
+- How to add a queue for sending emails and set up the database queue table and worker + how to use the database driver.
 
 ## Issues
 
 - Markdown editor needs some work.
-- Need to set up a queue for sending emails + add a queue worker + a jobs table.
