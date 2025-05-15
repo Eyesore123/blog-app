@@ -14,7 +14,7 @@ RSS Feed component is also included. I added custom API endpoint for recent acti
 
 Admin can add new posts, edit posts and delete comments. Admin can also deactivate and - as an ultimate solution - delete accounts. Logged in users can add comments, edit their comments and delete comments when there are no replies. Comments are rate limited by IP address (10 comments per day), and there are no Captchas because IP address guarantees that the limiter applies to many users from the same IP address. Rate limiter is done using custom RateLimitService class. Likewise SEO is done using a custom SEO class and then provided for the app using react-helmet-async package (it was the easiest solution considering I'm not using blade views).
 
-Logged in users have a My Account page where they can change their password, delete their account and subscribe to a newsletter.
+Logged in users have a My Account page where they can change their password, delete their account and subscribe to a newsletter. Login view has a "forgot password" section so user can reset their password using email.
 
 Providers are used for themes, alerts and confirmations. I added a markdown editor for posts. Perhaps I could add one for comments, but it was quite bothersome to get it work without errors for posts so I'm not sure if I'll add new editors.
 
@@ -24,11 +24,10 @@ Blog still needs some work, though, including:
 2. Auto-translate on post save + store in DB
 3. Language toggle to navbar
 4. Toggle button in navbar loads correct language
-5. Forgot password section to login page
-6. Advanced features for admin (image size adjustments? etc.)
-7. Email subscription (latest blog post in newsletter) backend and admin panel
-8. Blog posts get automatically uploaded to LinkedIn
-9. Loading spinners for images with uniform style
+5. Advanced features for admin (image size adjustments? etc.)
+6. Email subscription (latest blog post in newsletter) backend and admin panel
+7. Blog posts get automatically uploaded to LinkedIn
+8. Loading spinners for images with uniform style (also for login?)
 
 ![blog3](https://github.com/user-attachments/assets/9b47ad5c-13f9-4858-9291-1eb1d2397d96)
 

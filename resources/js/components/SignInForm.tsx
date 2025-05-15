@@ -109,7 +109,7 @@ export default function SignInForm({ flow, setFlow }: SignInFormProps) {
         {flow === "signUp" && (
           <div className="input-container">
             <input
-              className="input-field border border-white !p-2 !w-60 md:!w80 md:w-80"
+              className="input-field border border-white !p-2 !w-60 md:!w-80 "
               style={{borderColor: theme === 'dark' ? '#fff' : '#000'}}
               type="password"
               name="password_confirmation"
@@ -120,11 +120,25 @@ export default function SignInForm({ flow, setFlow }: SignInFormProps) {
           </div>
         )}
 
-        <button className="auth-button" type="submit" disabled={submitting}>
+        <div className="text-sm text-center !mb-4">
+          {flow === "signIn" && <a
+            href="/forgot-password"
+            className="text-blue-600 font-semibold hover:underline"
+          >
+            Forgot your password?
+          </a>}
+        </div>
+
+        {/* Submit button */}
+        <button
+          className="bg-[#5800FF] hover:bg-[#4600cc] text-white font-semibold !py-2 !px-6 rounded transition disabled:opacity-50"
+          type="submit"
+          disabled={submitting}
+        >
           {flow === "signIn" ? "Sign in" : "Sign up"}
         </button>
 
-        <div className="text-center text-slate-600">
+        <div className="text-center text-slate-600 !mt-4">
           <span>
             {flow === "signIn"
               ? "Don't have an account? "
@@ -141,14 +155,20 @@ export default function SignInForm({ flow, setFlow }: SignInFormProps) {
       </form>
 
       <div className="flex items-center justify-center !my-3">
-        <hr className="!my-4 grow" />
+        <hr className="!my-8 grow" />
         <span className="!mx-4 text-slate-400">or</span>
-        <hr className="!my-4 grow" />
+        <hr className="!my-8 grow" />
       </div>
 
       <div className="button-container flex w-full items-center justify-center">
-        <button className="auth-button" onClick={handleAnonymousSignIn} disabled={submitting}>
-          Sign in anonymously
+        {/* Anonymous sign-in */}
+        <button
+          className="bg-[#5800FF] hover:bg-[#4600cc] text-white font-semibold !py-2 !px-6 rounded transition disabled:opacity-50"
+          type="submit"
+          onClick={handleAnonymousSignIn}
+          disabled={submitting}
+        >
+          Continue without account
         </button>
       </div>
     </div>

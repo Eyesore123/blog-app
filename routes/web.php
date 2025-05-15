@@ -13,6 +13,8 @@ use App\Http\Controllers\RssFeedController;
 use Inertia\Inertia;
 use Illuminate\Support\Str;
 use App\Models\User;
+use App\Http\Controllers\Auth\PasswordResetLinkController;
+use App\Http\Controllers\Auth\NewPasswordController;
 
 // Anonymous login route, prevents brute force attacks
 Route::middleware('throttle:5,1')->post('/anonymous-login', function () {
@@ -169,8 +171,30 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/account/unsubscribe-newsletter', [AccountController::class, 'unsubscribeNewsletter']);
 });
 
-// Tag filter, experimental
+// Tag filter
 
 Route::get('/posts/tag/{tag}', [PostController::class, 'filterByTag'])->name('posts.byTag');
 Route::get('/posts/tag/{tag}', [PostController::class, 'filterByTag'])
      ->name('posts.byTag');
+
+// Routes for forgot password and reset password
+
+// Show form to request reset link
+Route::get('/forgot-password', [PasswordResetLinkController::class, 'create'])
+    ->middleware('guest')
+    ->name('password.request');
+
+// Handle sending email
+Route::post('/forgot-password', [PasswordResetLinkController::class, 'store'])
+    ->middleware('guest')
+    ->name('password.email');
+
+// Show reset form
+Route::get('/reset-password/{token}', [NewPasswordController::class, 'create'])
+    ->middleware('guest')
+    ->name('password.reset');
+
+// Handle actual reset
+Route::post('/reset-password', [NewPasswordController::class, 'store'])
+    ->middleware('guest')
+    ->name('password.update');
