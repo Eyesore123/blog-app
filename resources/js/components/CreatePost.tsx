@@ -18,12 +18,13 @@ export function CreatePost({ onPreviewChange }: CreatePostProps) {
     topic: "",
     published: true,
     image: null as File | null,
+    tags: [] as string[],
   });
 
   const [imageUrl, setImageUrl] = useState<string>("");
-  const [editorContent, setEditorContent] = useState(data.content); // Use state for editor content
+  const [editorContent, setEditorContent] = useState(data.content);
+  const [tagInput, setTagInput] = useState(""); // Individual tag being typed
 
-  // Memoize SimpleMDE options to prevent reinitialization
   const editorOptions = useMemo(
     () => ({
       spellChecker: false,
@@ -33,95 +34,72 @@ export function CreatePost({ onPreviewChange }: CreatePostProps) {
   );
 
   function handleEditorChange(value: string) {
-    setEditorContent(value); // Update state
-    setData("content", value); // Sync with form data
-
-    if (onPreviewChange) {
-      onPreviewChange({
-        title: data.title,
-        content: value,
-        image_url: imageUrl,
-      });
-    }
+    setEditorContent(value);
+    setData("content", value);
+    onPreviewChange?.({
+      title: data.title,
+      content: value,
+      image_url: imageUrl,
+    });
   }
 
-  // Only update imageUrl if the image changes
   useEffect(() => {
     if (data.image) {
-      const newUrl = URL.createObjectURL(data.image);
-      setImageUrl(newUrl);
-
-      return () => {
-        URL.revokeObjectURL(newUrl);
-      };
-    } else {
-      setImageUrl("");
+      const url = URL.createObjectURL(data.image);
+      setImageUrl(url);
+      return () => URL.revokeObjectURL(url);
     }
+    setImageUrl("");
   }, [data.image]);
 
-  const prevPreview = useRef<{ title: string; content: string; image_url: string }>({
-    title: "",
-    content: "",
-    image_url: "",
-  });
-
-  useEffect(() => {
-    if (!onPreviewChange) return;
-
-    const nextPreview = {
-      title: data.title,
-      content: editorContent,
-      image_url: imageUrl,
-    };
-
-    const hasChanged =
-      nextPreview.title !== prevPreview.current.title ||
-      nextPreview.content !== prevPreview.current.content ||
-      nextPreview.image_url !== prevPreview.current.image_url;
-
-    if (hasChanged) {
-      prevPreview.current = nextPreview;
-      onPreviewChange(nextPreview);
-    }
-  }, [data.title, editorContent, imageUrl, onPreviewChange]);
-
   function handleImageChange(e: React.ChangeEvent<HTMLInputElement>) {
-    if (e.target.files?.[0]) {
-      const file = e.target.files[0];
+    const file = e.target.files?.[0];
+    if (!file) return setData("image", null);
+    if (!file.type.startsWith("image/")) {
+      console.error("Selected file is not an image");
+      return;
+    }
+    setData("image", file);
+  }
 
-      // Validate that the file is an image
-      if (!file.type.startsWith("image/")) {
-        console.error("The selected file is not an image.");
-        return;
-      }
+  function handleAddTag() {
+    const name = tagInput.trim();
+    if (name && !data.tags.includes(name)) {
+      setData("tags", [...data.tags, name]);
+    }
+    setTagInput("");
+  }
 
-      setData("image", file);
-      setImageUrl(URL.createObjectURL(file));
+  function handleRemoveTag(tag: string) {
+    setData("tags", data.tags.filter((t) => t !== tag));
+  }
+
+  function handleTagKeyDown(e: React.KeyboardEvent<HTMLInputElement>) {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      handleAddTag();
     }
   }
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-
-    // Sync the editor content to the form data
     setData("content", editorContent);
 
-    // Validate the input data
     if (!data.title || !editorContent || !data.topic) {
-      console.error("Validation failed: Missing required fields.");
+      console.error("Missing required fields");
       return;
     }
-
     if (data.image && !data.image.type.startsWith("image/")) {
-      console.error("Validation failed: Image field must be an image.");
+      console.error("Image must be an image file");
       return;
     }
 
-    // Send the request to the server
     post("/posts", {
       onSuccess: () => {
-        reset("title", "content", "topic", "image");
-        setEditorContent(""); // Reset the editor content
+        reset("title", "content", "topic", "image", "tags");
+        setEditorContent("");
+        setTagInput("");
+        setImageUrl("");
       },
       onError: (error: any) => {
         console.error("Error creating post:", error.response?.data || error);
@@ -131,42 +109,106 @@ export function CreatePost({ onPreviewChange }: CreatePostProps) {
 
   return (
     <>
-      <h3>Create New Post:</h3>
+      <h3 className="!mb-6">Create New Post:</h3>
       <form
         onSubmit={handleSubmit}
         encType="multipart/form-data"
-        className="!space-y-4 min-h-180 w-200 flex justify-center items-center flex-col"
+        className="!space-y-4 !w-full !max-w-lg !mx-auto !flex !flex-col"
       >
+        {/* Title */}
         <input
           type="text"
           placeholder="Post title"
           value={data.title}
           onChange={(e) => setData("title", e.target.value)}
-          className="w-full !p-2 rounded border border-[#5800FF] bg-[var(--bg-primary)]"
+          className="!w-full !p-2 !rounded !border !border-[#5800FF] !bg-[var(--bg-primary)]"
         />
+        {errors.title && (
+          <p className="!text-red-600 !text-sm">{errors.title}</p>
+        )}
+
+        {/* Topic */}
         <input
           type="text"
-          placeholder="Topic (e.g., Web Development, Design, Programming)"
+          placeholder="Topic (e.g., Web Development)"
           value={data.topic}
           onChange={(e) => setData("topic", e.target.value)}
-          className="w-full !p-2 rounded border border-[#5800FF] bg-[var(--bg-primary)]"
+          className="!w-full !p-2 !rounded !border !border-[#5800FF] !bg-[var(--bg-primary)]"
         />
+        {errors.topic && (
+          <p className="!text-red-600 !text-sm">{errors.topic}</p>
+        )}
+
+        {/* Content */}
         <SimpleMDE
-          value={editorContent} // Use state for value
-          onChange={handleEditorChange} // Update state and form data on change
-          options={editorOptions} // Memoized options
-          className="w-full !p-2 rounded border border-[#5800FF] bg-[var(--bg-primary)]"
+          value={editorContent}
+          onChange={handleEditorChange}
+          options={editorOptions}
+          className="!w-full !p-2 !rounded !border !border-[#5800FF] !bg-[var(--bg-primary)]"
         />
+        {errors.content && (
+          <p className="!text-red-600 !text-sm">{errors.content}</p>
+        )}
+
+        {/* Image Upload */}
         <input
           type="file"
           accept="image/*"
           onChange={handleImageChange}
-          className="w-full !p-2 rounded border border-[#5800FF] bg-[var(--bg-primary)]"
+          className="!w-full !p-2 !rounded !border !border-[#5800FF] !bg-[var(--bg-primary)]"
         />
+        {errors.image && (
+          <p className="!text-red-600 !text-sm">{errors.image}</p>
+        )}
+
+        {/* Tags */}
+        <div className="!w-full">
+          <label className="!block !mb-1 !font-medium">Tags</label>
+          <div className="!flex !gap-2">
+            <input
+              type="text"
+              placeholder="Add a tag and press Enter"
+              value={tagInput}
+              onChange={(e) => setTagInput(e.target.value)}
+              onKeyDown={handleTagKeyDown}
+              className="!flex-grow !p-2 !rounded !border !border-[#5800FF] !bg-[var(--bg-primary)]"
+            />
+            <button
+              type="button"
+              onClick={handleAddTag}
+              className="!px-4 !py-2 !bg-[#5800FF] !text-white !rounded !hover:bg-[#E900FF] !transition-colors"
+            >
+              Add
+            </button>
+          </div>
+          {errors.tags && (
+            <p className="!text-red-600 !text-sm">{errors.tags}</p>
+          )}
+          <div className="!mt-2 !flex !flex-wrap !gap-2">
+            {data.tags.map((tag) => (
+              <div
+                key={tag}
+                className="!flex !items-center !bg-[#5800FF] !text-white !rounded !px-3 !py-1 !text-sm"
+              >
+                {tag}
+                <button
+                  type="button"
+                  onClick={() => handleRemoveTag(tag)}
+                  className="!ml-2 !font-bold !hover:text-gray-300"
+                  aria-label={`Remove ${tag}`}
+                >
+                  ×
+                </button>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Submit */}
         <button
           type="submit"
           disabled={!data.title || !editorContent || !data.topic || processing}
-          className="!px-4 !py-2 bg-[#5800FF] text-white rounded hover:bg-[#E900FF] disabled:opacity-50 transition-colors"
+          className="!w-full !px-4 !py-2 !bg-[#5800FF] !text-white !rounded !hover:bg-[#E900FF] !disabled:opacity-50"
         >
           {processing ? "Creating..." : "Create Post"}
         </button>

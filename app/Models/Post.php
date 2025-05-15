@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Support\Str;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Comment;
+use App\Models\Tag;
 
 class Post extends Model
 {
@@ -30,4 +31,10 @@ class Post extends Model
     {
         return route('posts.show', $this->id);
     }
+
+    public function tags()
+{
+    return $this->belongsToMany(Tag::class);
+}
+
 }

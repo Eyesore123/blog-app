@@ -1,12 +1,16 @@
 import React, { useState, useEffect } from 'react';
-import { router } from '@inertiajs/react';
+import { router, useForm } from '@inertiajs/react';
 import { Toaster, toast } from 'sonner';
 import Header from '../components/Header';
 import { Navbar } from '@/components/Navbar';
 import { useTheme } from '../context/ThemeContext';
 import axiosInstance from '../components/axiosInstance';
 import { getCsrfToken } from '../components/auth';
-import { useForm } from "@inertiajs/react";
+
+interface Tag {
+  id: number;
+  name: string;
+}
 
 interface Post {
   id: number;
@@ -15,6 +19,7 @@ interface Post {
   content: string;
   image_url: string | null;
   topic: string;
+  tags?: Tag[];
 }
 
 interface EditPostPageProps {
@@ -24,82 +29,94 @@ interface EditPostPageProps {
 const EditPostPage: React.FC<EditPostPageProps> = ({ post }) => {
   const { theme } = useTheme();
 
-  const [title, setTitle] = useState(post.title || '');
-  const [content, setContent] = useState(post.content || '');
-  const [topic, setTopic] = useState(post.topic || '');
+  // Local state
+  const [title, setTitle] = useState(post.title);
+  const [content, setContent] = useState(post.content);
+  const [topic, setTopic] = useState(post.topic);
+  const [tags, setTags] = useState<string[]>([]);
+  const [tagInput, setTagInput] = useState('');
   const [submitting, setSubmitting] = useState(false);
-
-  const [imageFile, setImageFile] = useState<string | File | null>("");
+  const [imageFile, setImageFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
 
-  const { data, setData } = useForm({
-  title: "",
-  content: "",
-  topic: "",
-  image: null as File | null,
-});
+  // Inertia form (we only use it for image & tags sync)
+  const { setData } = useForm({
+    title: '',
+    content: '',
+    topic: '',
+    image: null as File | null,
+    tags: [] as string[],
+  });
 
-  // Show preview of selected image
+  // On mount, initialize tags array (just the names) and formData.tags
   useEffect(() => {
-    if (imageFile && imageFile instanceof File) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setPreviewUrl(reader.result as string);
-      };
-      reader.readAsDataURL(imageFile);
-    } else {
-      setPreviewUrl(null);
+    const initialTagNames = post.tags?.map((t) => t.name) || [];
+    setTags(initialTagNames);
+    setData('tags', initialTagNames);
+  }, [post.tags, setData]);
+
+  // Preview image when imageFile changes
+  useEffect(() => {
+    if (imageFile) {
+      const url = URL.createObjectURL(imageFile);
+      setPreviewUrl(url);
+      return () => URL.revokeObjectURL(url);
     }
+    setPreviewUrl(null);
   }, [imageFile]);
 
-  async function handleSubmit(e: React.FormEvent) {
-  e.preventDefault();
-  setSubmitting(true);
-
-  await getCsrfToken();
-
-  try {
-    const formData = new FormData();
-    formData.append('title', title);
-    formData.append('content', content);
-    formData.append('topic', topic);
-    formData.append('_method', 'PUT'); // <-- Add this
-
-    if (imageFile) {
-      console.log('Appending image file:', imageFile);
-      formData.append('image', imageFile);
-    } else {
-      console.log('No image file selected');
+  const handleAddTag = () => {
+    const trimmed = tagInput.trim();
+    if (trimmed && !tags.includes(trimmed)) {
+      const next = [...tags, trimmed];
+      setTags(next);
+      setData('tags', next);
     }
+    setTagInput('');
+  };
 
-    // Optional debug
-    formData.forEach((value, key) => {
-  console.log(`${key}:`, value);
-});
+  const handleRemoveTag = (tag: string) => {
+    const next = tags.filter((t) => t !== tag);
+    setTags(next);
+    setData('tags', next);
+  };
 
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setSubmitting(true);
 
-    // Send as POST, not PUT
-    const response = await axiosInstance.post(`/api/posts/${post.id}`, formData);
+    await getCsrfToken();
 
-    toast.success('Post updated successfully');
-    router.visit(`/post/${post.id}`);
-  } catch (error: any) {
-    if (error.response) {
-      console.error('Validation Errors:', error.response.data.errors);
-      toast.error(
-        error.response.data.message
-          ? `Error updating post: ${error.response.data.message}`
-          : 'Validation error — check your fields'
-      );
-    } else {
-      console.error('Failed to update post', error);
-      toast.error('Error updating post');
+    try {
+      const formData = new FormData();
+      formData.append('title', title);
+      formData.append('content', content);
+      formData.append('topic', topic);
+      formData.append('_method', 'PUT');
+
+      // tags[]
+      tags.forEach((tag) => formData.append('tags[]', tag));
+
+      if (imageFile) {
+        formData.append('image', imageFile);
+      }
+
+      await axiosInstance.post(`/api/posts/${post.id}`, formData);
+
+      toast.success('Post updated successfully');
+      router.visit(`/post/${post.id}`);
+    } catch (error: any) {
+      if (error.response?.data?.errors) {
+        console.error('Validation Errors:', error.response.data.errors);
+        toast.error('Validation error — check your fields');
+      } else {
+        console.error('Error updating post', error);
+        toast.error('Error updating post');
+      }
+    } finally {
+      setSubmitting(false);
     }
-  } finally {
-    setSubmitting(false);
-  }
-}
-
+  };
 
   return (
     <div className={`min-h-screen ${theme}`}>
@@ -111,58 +128,55 @@ const EditPostPage: React.FC<EditPostPageProps> = ({ post }) => {
             <h1 className="text-3xl font-bold !mb-6">Edit Post</h1>
 
             <form onSubmit={handleSubmit} encType="multipart/form-data" className="!space-y-4">
+              {/* Title */}
               <div>
-                <label className="block !mb-1 font-medium">Title</label>
+                <label className="block !mb-3 font-medium">Title</label>
                 <input
                   type="text"
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
-                  className="w-full !p-2 rounded border border-[#5800FF]/20 bg-[var(--bg-primary)]"
+                  className="w-full !p-2 rounded border border-[#5800FF] bg-[var(--bg-primary)]"
                 />
               </div>
 
+              {/* Content */}
               <div>
-                <label className="block !mb-1 font-medium">Content</label>
+                <label className="block !mb-3 font-medium">Content</label>
                 <textarea
                   value={content}
                   onChange={(e) => setContent(e.target.value)}
-                  className="w-full !p-2 rounded border border-[#5800FF]/20 bg-[var(--bg-primary)]"
+                  className="w-full !p-2 rounded border border-[#5800FF] bg-[var(--bg-primary)]"
                   rows={8}
                 />
               </div>
 
+              {/* Image Upload */}
               <div>
-                <label className="block !mb-1 font-medium">Image Upload</label>
+                <label className="block !mb-3 font-medium">Image Upload</label>
                 <input
                   type="file"
                   accept="image/*"
                   onChange={(e) => {
-                    const file = e.target.files?.[0];
-                    if (file) {
-                      // Validate file type before setting it
-                      const allowedTypes = ['image/jpeg', 'image/png', 'image/jpg', 'image/gif', 'image/webp', 'image/svg+xml'];
-                      if (allowedTypes.includes(file.type)) {
-                        setImageFile(file);
-                        setData("image", file as File | null); // <--- Add this line
-                      } else {
-                        toast.error('Please upload a valid image file (jpeg, png, jpg, gif, webp, svg)');
-                      }
-                    } else {
-                      setImageFile(null);
-                    }
+                    const file = e.target.files?.[0] || null;
+                    setImageFile(file);
+                    setData('image', file);
                   }}
-                  className="w-full !p-2 rounded border border-[#5800FF]/20 bg-[var(--bg-primary)]"
+                  className="w-full !p-2 rounded border border-[#5800FF] bg-[var(--bg-primary)]"
                 />
 
                 {previewUrl ? (
                   <div className="!mt-2">
-                    <p className="text-sm !mb-1">New Image Preview:</p>
+                    <p className="text-sm !mb-3">New Image Preview:</p>
                     <img src={previewUrl} alt="Preview" className="max-w-xs rounded shadow" />
                   </div>
                 ) : post.image_url ? (
                   <div className="!mt-2">
-                    <p className="text-sm mb-1">Current Image:</p>
-                    <a href={`/storage/${post.image_url.replace(/^uploads\//, '')}`} target="_blank" rel="noopener noreferrer">
+                    <p className="text-sm !mb-3">Current Image:</p>
+                    <a
+                      href={`/storage/${post.image_url.replace(/^uploads\//, '')}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
                       <img src={post.image_url} alt="Current" className="max-w-xs rounded shadow" />
                     </a>
                   </div>
@@ -171,16 +185,64 @@ const EditPostPage: React.FC<EditPostPageProps> = ({ post }) => {
                 )}
               </div>
 
+              {/* TAGS */}
               <div>
-                <label className="block !mb-1 font-medium">Topic</label>
+                <label className="block !mb-3 font-medium">Tags</label>
+                <div className="flex gap-4 !mb-2">
+                  <input
+                    type="text"
+                    value={tagInput}
+                    onChange={(e) => setTagInput(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter') {
+                        e.preventDefault();
+                        handleAddTag();
+                      }
+                    }}
+                    placeholder="Add tag and press Enter"
+                    className="flex-grow !p-2 rounded border border-[#5800FF] bg-[var(--bg-primary)]"
+                  />
+                  <button
+                    type="button"
+                    onClick={handleAddTag}
+                    className="bg-[#5800FF] text-white !px-3 !py-1 rounded hover:bg-[#E900FF] transition"
+                  >
+                    Add
+                  </button>
+                </div>
+
+                <div className="!mt-2 flex flex-wrap gap-4">
+                  {tags.map((tag) => (
+                    <div
+                      key={tag}
+                      className="flex items-center bg-[#5800FF] text-white rounded !px-3 !py-1 text-sm cursor-default select-none"
+                    >
+                      {tag}
+                      <button
+                        type="button"
+                        onClick={() => handleRemoveTag(tag)}
+                        className="!ml-2 text-white hover:text-gray-300 font-bold"
+                        aria-label={`Remove tag ${tag}`}
+                      >
+                        ×
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Topic */}
+              <div>
+                <label className="block !mb-3 font-medium">Topic</label>
                 <input
                   type="text"
                   value={topic}
                   onChange={(e) => setTopic(e.target.value)}
-                  className="w-full !p-2 rounded border border-[#5800FF]/20 bg-[var(--bg-primary)]"
+                  className="w-full !p-2 rounded border border-[#5800FF] bg-[var(--bg-primary)]"
                 />
               </div>
 
+              {/* Save */}
               <button
                 type="submit"
                 disabled={submitting}

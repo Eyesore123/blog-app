@@ -23,6 +23,12 @@ interface Post {
   created_at: string;
   updated_at?: string;
   postUrl?: string;
+  tags?: string[];
+}
+
+interface Tag {
+  id: string;
+  name: string;
 }
 
 interface Comment {
@@ -643,6 +649,24 @@ const postUrl = `/posts/${post.id}`;
             Updated: {new Date(post.updated_at).toLocaleString()}
           </div>
         )}
+
+        {post.tags && post.tags.length > 0 && (
+        <div className="mt-4 flex flex-wrap gap-2">
+          {post.tags.map((tag: any) => (
+            <span
+              key={tag.id}
+              className="bg-[#5800FF]/20 text-[#5800FF] text-xs md:text-sm px-2 py-1 rounded cursor-pointer hover:bg-[#5800FF]/40"
+              onClick={() => {
+                router.get(`/posts/tag/${encodeURIComponent(tag.name)}`);
+              }}
+            >
+              #{tag.name}
+            </span>
+          ))}
+        </div>
+      )}
+
+
 
         <ShareButtons postUrl={postUrl} postTitle={post.title} />
         {isAdmin && (

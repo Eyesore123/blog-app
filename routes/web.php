@@ -168,3 +168,9 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/account/subscribe-newsletter', [AccountController::class, 'subscribeNewsletter']);
     Route::post('/account/unsubscribe-newsletter', [AccountController::class, 'unsubscribeNewsletter']);
 });
+
+// Tag filter, experimental
+
+Route::get('/posts/tag/{tag}', [PostController::class, 'filterByTag'])->name('posts.byTag');
+Route::get('/posts/tag/{tag}', [PostController::class, 'filterByTag'])
+     ->name('posts.byTag');

@@ -1,16 +1,16 @@
-import { usePage } from '@inertiajs/react';
-import { router } from '@inertiajs/react';
+import React from 'react';
+import { usePage, router } from '@inertiajs/react';
 import { Toaster } from 'sonner';
-import { BlogPost } from '../components/BlogPost';
-import Header from '../components/Header';
-import '../../css/app.css';
+import { BlogPost } from '@/components/BlogPost';
+import Header from '@/components/Header';
+import '../../../css/app.css';
 import { Navbar } from '@/components/Navbar';
 import SearchComponent from '@/components/SearchComponent';
 import YearFilterComponent from '@/components/YearFilterComponent';
 import ArchivesComponent from '@/components/ArchiveComponent';
 import RecentActivityFeed from '@/components/RecentActivityFeed';
 import { RssSubscribeLink } from '@/components/RssSubscribeLink';
-import { useTheme } from '../context/ThemeContext';
+import { useTheme } from '@/context/ThemeContext';
 
 interface BlogPostType {
   id: number;
@@ -21,47 +21,40 @@ interface BlogPostType {
   created_at: string;
   image_url?: string | null;
   updated_at?: string;
-  _id?: string;
   slug?: string;
-  [key: string]: any;
-}
-
-interface PaginatedPosts {
-  current_page: number;
-  data: BlogPostType[];
+  tags?: { id: number; name: string }[];
 }
 
 interface PageProps {
   posts: BlogPostType[];
-  allPosts: PaginatedPosts;
-  topics: string[];
-  currentTopic: string | null;
-  currentPage: number;
-  hasMore: boolean;
-  total: number;
-  user: { name: string } | null;
-  auth?: {
-    user: {
-      is_admin: boolean;
-      name: string;
-    } | null;
-  };
+  activeTag?: string;
+  topics?: string[];
+  currentTopic?: string | null;
+  allPosts?: any;
+  currentPage?: number;
+  hasMore?: boolean;
+  total?: number;
+  auth?: { user: { is_admin: boolean } | null };
   [key: string]: any;
 }
 
-export default function MainPage() {
+export default function PostsIndex() {
   const { props } = usePage<PageProps>();
   const { theme } = useTheme();
-  const { posts, allPosts, topics, currentTopic, currentPage, hasMore, total } = props;
 
-  const isAdmin = Boolean(props.auth?.user?.is_admin);
+  const {
+    posts = [],
+    activeTag = null,
+    topics = [],
+    currentTopic = null,
+    allPosts,
+    currentPage,
+    hasMore,
+    total,
+    auth,
+  } = props;
 
-  const handlePageChange = (page: number) => {
-    const params = new URLSearchParams();
-    if (currentTopic) params.append('topic', currentTopic);
-    params.append('page', (page + 1).toString());
-    router.get('/', Object.fromEntries(params));
-  };
+  const isAdmin = Boolean(auth?.user?.is_admin);
 
   const handleTopicChange = (topic: string | null) => {
     const params = new URLSearchParams();
@@ -69,17 +62,17 @@ export default function MainPage() {
     router.get('/', Object.fromEntries(params));
   };
 
-    return (
+  return (
     <div className={`min-h-screen ${theme}`}>
       <div className="min-h-screen bg-[var(--bg-primary)] text-[var(--text-primary)]">
         <Navbar />
         <Header />
+
         <main className="!p-4 md:!p-8 !gap-1">
-          {/* Change to flex-col on mobile, row on larger screens */}
           <div className="w-full !mx-auto flex flex-col lg:flex-row md:!gap-0">
-            {/* Sidebar - full width on mobile, fixed width on desktop */}
+            {/* Sidebar */}
             <aside className="w-full lg:!w-120 lg:!ml-30 !mb-8 lg:!mb-0">
-              <div className="lg:top-24 !space-y-4 md:!space-y-6 w-full lg:!w-80 xl:!w-120">
+              <div className="lg:sticky lg:top-24 !space-y-4 md:!space-y-6 w-full lg:!w-80 xl:!w-120">
                 <div className="rounded-lg bg-[#5800FF]/10 !p-4">
                   <h3 className="font-semibold !mb-2">About</h3>
                   <p className="opacity-80">
@@ -100,7 +93,7 @@ export default function MainPage() {
                         All Topics
                       </button>
                     </li>
-                    {topics && topics.length > 0 ? (
+                    {topics.length > 0 ? (
                       topics.map((topic) => (
                         <li key={topic}>
                           <button
@@ -118,9 +111,10 @@ export default function MainPage() {
                     )}
                   </ul>
                 </div>
+
                 <div className="rounded-lg bg-[#5800FF]/10 !p-4">
-                  <SearchComponent posts={allPosts.data} />
-                  <YearFilterComponent posts={allPosts.data} />
+                  <SearchComponent posts={allPosts?.data || posts} />
+                  <YearFilterComponent posts={allPosts?.data || posts} />
                   <ArchivesComponent />
                   <RssSubscribeLink />
                   <RecentActivityFeed />
@@ -128,46 +122,64 @@ export default function MainPage() {
               </div>
             </aside>
 
-            {/* Main content - full width on mobile, flex-1 on desktop */}
+            {/* Main content */}
             <div className="lg:flex-1 flex flex-col items-center">
-              <div className="!space-y-6 md:!space-y-8">
+              <div className="!space-y-6 md:!space-y-8 w-full max-w-2xl">
+                {/* Tag header */}
+                {activeTag && (
+                  <h2 className="text-2xl font-bold !mb-8 xl:!ml-10">
+                    Posts tagged <span className="text-[#5800FF]">#{activeTag}:</span>
+                  </h2>
+                )}
+
+                {/* Posts list */}
                 {posts.length === 0 ? (
-                  <div className="text-center opacity-70 !mt-8 md:!mt-30">No blog posts yet.</div>
+                  <div className="text-center opacity-70 !mt-8">
+                    No posts found{activeTag ? ` for #${activeTag}` : ''}.
+                  </div>
                 ) : (
-                  <>
-                    {posts.map((post) => (
-                      <div key={post.id} className="flex-1 justify-center items-center flex flex-col w-full">
-                        <BlogPost post={{ ...post, _id: post.id.toString(), postUrl: '/posts/' + post.slug }} />
-                      </div>
-                    ))}
-                    <div className="flex justify-center items-center !gap-4 md:!gap-10 !mt-8 md:!mt-18">
-                      <button
-                        onClick={() => handlePageChange(currentPage - 1)}
-                        disabled={currentPage === 0}
-                        className="!px-3 !py-1 md:!px-4 md:!py-2 bg-[#5800FF] text-white rounded hover:bg-[#E900FF] disabled:opacity-50 transition-colors text-sm md:text-base"
-                      >
-                        Previous
-                      </button>
-                      <span className="text-sm md:text-base">
-                        Page {currentPage + 1} of {Math.ceil(total / 6)}
-                      </span>
-                      <button
-                        onClick={() => handlePageChange(currentPage + 1)}
-                        disabled={!hasMore}
-                        className="!px-3 !py-1 md:!px-4 md:!py-2 bg-[#5800FF] text-white rounded hover:bg-[#E900FF] disabled:opacity-50 transition-colors text-sm md:text-base"
-                      >
-                        Next
-                      </button>
+                  posts.map((post) => (
+                    <div key={post.id} className="flex flex-col w-full">
+                      <BlogPost
+                        post={{
+                          ...post,
+                          _id: post.id.toString(),
+                          postUrl: `/posts/${post.slug}`,
+                        }}
+                      />
                     </div>
-                  </>
+                  ))
+                )}
+
+                {/* Optional pagination if you want */}
+                {allPosts && (
+                  <div className="flex justify-center items-center !gap-4 md:!gap-10 !mt-8 md:!mt-18">
+                    <button
+                      onClick={() => router.get('/', { page: (currentPage || 0) })}
+                      disabled={(currentPage || 0) === 0}
+                      className="!px-3 !py-1 md:!px-4 md:!py-2 bg-[#5800FF] text-white rounded hover:bg-[#E900FF] disabled:opacity-50 transition-colors text-sm md:text-base"
+                    >
+                      Previous
+                    </button>
+                    <span className="text-sm md:text-base">
+                      Page {(currentPage || 0) + 1} of {Math.ceil((total || posts.length) / 6)}
+                    </span>
+                    <button
+                      onClick={() => router.get('/', { page: (currentPage || 0) + 2 })}
+                      disabled={!hasMore}
+                      className="!px-3 !py-1 md:!px-4 md:!py-2 bg-[#5800FF] text-white rounded hover:bg-[#E900FF] disabled:opacity-50 transition-colors text-sm md:text-base"
+                    >
+                      Next
+                    </button>
+                  </div>
                 )}
               </div>
             </div>
           </div>
         </main>
+
         <Toaster />
       </div>
     </div>
   );
-
 }

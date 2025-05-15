@@ -57,11 +57,11 @@ class ArchiveController extends Controller
                     ->pluck('year');
             }
     
-            \Log::info('Years fetched successfully:', $years->toArray());
+            Log::info('Years fetched successfully:', $years->toArray());
     
             return response()->json(['years' => $years]);
         } catch (\Exception $e) {
-            \Log::error('Error fetching years:', ['error' => $e->getMessage()]);
+            Log::error('Error fetching years:', ['error' => $e->getMessage()]);
             return response()->json(['error' => 'Failed to fetch years'], 500);
         }
     }
