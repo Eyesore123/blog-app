@@ -26,8 +26,7 @@ Blog still needs some work, though, including:
 4. Toggle button in navbar loads correct language
 5. Advanced features for admin (image size adjustments? etc.)
 6. Email subscription options in admin panel
-7. Blog posts get automatically uploaded to LinkedIn
-8. Loading spinners for images with uniform style (also for login?)
+7. Loading spinners for login? (spinner is already used in images)
 
 ![blog3](https://github.com/user-attachments/assets/9b47ad5c-13f9-4858-9291-1eb1d2397d96)
 
@@ -40,6 +39,7 @@ Blog still needs some work, though, including:
 - How to use Mailtrap for email testing in a sandbox, and also use it for testing backend routes. Previously I've used SendGrid for sending emails (in my Next.js web shop), but Mailtrap seems to be very easy to use for testing purposes.
 - How to set up rate limiters
 - How to add a queue for sending emails and set up the database queue table and worker + how to use the database driver.
+- I was thinking of sending my blog posts automatically to LinkedIn, but because LinkedIn has become so heavy-handed and frustrating with its unnecessary security measures, I will not support it. Blog users can still share posts on LinkedIn but I won't be adding mine there.
 
 ## Issues
 

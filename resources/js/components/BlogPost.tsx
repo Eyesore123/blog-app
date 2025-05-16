@@ -10,6 +10,7 @@ import { useConfirm } from "@/context/ConfirmationContext";
 import ShareButtons from "./ShareButtons";
 import { Helmet } from "react-helmet-async";
 import ReactMarkdown from 'react-markdown';
+import Spinner from "./Spinner4";
 
 interface Post {
   title: string;
@@ -89,6 +90,7 @@ export function BlogPost({ post, isPostPage = false }: BlogPostProps) {
   // const [remainingComments, setRemainingComments] = useState<number | null>(null);
   const [editingCommentId, setEditingCommentId] = useState<string | null>(null);
 const editCommentRef = useRef<HTMLTextAreaElement>(null);
+const [imageLoading, setImageLoading] = useState(true);
 
   // Refs for uncontrolled inputs
   const replyInputRef = useRef<HTMLTextAreaElement>(null);
@@ -599,17 +601,26 @@ const postUrl = `/posts/${post.id}`;
       </h2>
       
      {hasValidImageUrl && post.image_url && (
-  <div className="w-full flex flex-row justify-center items-center lg:justify-start lg:items-start !mb-6 md:!mb-20 !mt-4">
+  <div className="relative w-full flex flex-row justify-center items-center lg:justify-start lg:items-start !mb-6 md:!mb-20 !mt-4"
+  style={{ width: '100%', maxWidth: '40rem', minHeight: '16rem' }}>
+    {imageLoading && (
+      <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-10">
+        <Spinner size={64} />
+      </div>
+    )}
+
     <img
       src={post.image_url.replace('http://127.0.0.1:8000/', '')}
       alt={post.title}
       className="w-full md:w-100 lg:w-150 h-auto cursor-pointer"
+      style={{ display: imageLoading ? 'none' : 'block' }}
       onClick={handleImageClick}
+      onLoad={() => setImageLoading(false)}
       onError={(e) => {
-      console.error('Image failed to load:', post.image_url);
-      console.log('Error details:', e);
-      e.currentTarget.style.display = 'none';
-    }}
+        setImageLoading(false);
+        console.error('Image failed to load:', post.image_url);
+        e.currentTarget.style.display = 'none';
+      }}
     />
   </div>
 )}
