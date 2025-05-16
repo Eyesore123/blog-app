@@ -25,7 +25,7 @@ Blog still needs some work, though, including:
 3. Language toggle to navbar
 4. Toggle button in navbar loads correct language
 5. Advanced features for admin (image size adjustments? etc.)
-6. Email subscription options in admin panel
+6. Email subscription options in admin panel + an improved template for blog post email
 7. Loading spinners for login? (spinner is already used in images)
 
 ![blog3](https://github.com/user-attachments/assets/9b47ad5c-13f9-4858-9291-1eb1d2397d96)

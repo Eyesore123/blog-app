@@ -662,11 +662,11 @@ const postUrl = `/posts/${post.id}`;
         )}
 
         {post.tags && post.tags.length > 0 && (
-        <div className="mt-4 flex flex-wrap gap-2">
+        <div className="!mt-4 flex flex-wrap gap-2">
           {post.tags.map((tag: any) => (
             <span
               key={tag.id}
-              className="bg-[#5800FF]/20 text-[#5800FF] text-xs md:text-sm px-2 py-1 rounded cursor-pointer hover:bg-[#5800FF]/40"
+              className="bg-[#5800FF]/20 text-[#5800FF] text-xs md:text-sm !px-2 !py-1 rounded cursor-pointer hover:bg-[#5800FF]/40"
               onClick={() => {
                 router.get(`/posts/tag/${encodeURIComponent(tag.name)}`);
               }}
