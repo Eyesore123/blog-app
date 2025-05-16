@@ -188,7 +188,7 @@ const handleSubscriptionChange = () => {
     <>
       <Navbar />
       <Header />
-      <div className="min-h-screen bg-[var(--bg-primary)] text-[var(--text-primary)]">
+      <div className="min-h-160 bg-[var(--bg-primary)] text-[var(--text-primary)]">
   <main className="!p-4 md:!p-8">
     <div className="w-full flex flex-col items-center justify-center lg:flex-row lg:items-start md:!gap-12">
       <aside className="w-full lg:w-120 lg:!mb-0 xl:!ml-30 2xl:!ml-40 overflow-y-auto xl:!mt-0">

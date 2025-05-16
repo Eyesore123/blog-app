@@ -31,7 +31,7 @@ export default function ResetPasswordPage({ token, email }: { token: string; ema
     <>
       <Navbar />
       <Header />
-      <div className="min-h-screen flex items-center justify-center bg-[var(--bg-primary)] text-[var(--text-primary)]">
+      <div className="min-h-160 flex items-center justify-center bg-[var(--bg-primary)] text-[var(--text-primary)]">
         <div className="w-full max-w-md !p-8">
           <h3 className="text-2xl font-bold !mb-8 text-center">
             Choose a New Password

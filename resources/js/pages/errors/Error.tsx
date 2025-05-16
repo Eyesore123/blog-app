@@ -21,8 +21,8 @@ export default function Error({ status, message }: ErrorProps) {
   const errorMessage = message || defaultMessages[status] || "An error occurred.";
 
   return (
-    <div className={`min-h-screen ${theme}`}>
-      <div className="min-h-screen bg-[var(--bg-primary)] text-[var(--text-primary)]">
+    <div className={`min-h-160 ${theme}`}>
+      <div className="min-h-160 bg-[var(--bg-primary)] text-[var(--text-primary)]">
         <Navbar />
         <div className="flex flex-col items-center justify-center !px-4 !py-16 !md:py-32 min-h-220">
           <h1 className="text-6xl font-bold text-[#5800FF] !mb-4">{status}</h1>

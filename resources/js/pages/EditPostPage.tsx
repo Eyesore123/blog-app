@@ -119,8 +119,8 @@ const EditPostPage: React.FC<EditPostPageProps> = ({ post }) => {
   };
 
   return (
-    <div className={`min-h-screen ${theme}`}>
-      <div className="min-h-screen bg-[var(--bg-primary)] text-[var(--text-primary)]">
+    <div className={`min-h-160 ${theme}`}>
+      <div className="min-h-160 bg-[var(--bg-primary)] text-[var(--text-primary)]">
         <Navbar />
         <Header />
         <div className="w-full mx-auto flex justify-center items-center gap-4 md:gap-10 xl:gap-18 !mt-20">

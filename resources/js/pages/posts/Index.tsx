@@ -63,8 +63,8 @@ export default function PostsIndex() {
   };
 
   return (
-    <div className={`min-h-screen ${theme}`}>
-      <div className="min-h-screen bg-[var(--bg-primary)] text-[var(--text-primary)]">
+    <div className={`min-h-160 ${theme}`}>
+      <div className="min-h-160 bg-[var(--bg-primary)] text-[var(--text-primary)]">
         <Navbar />
         <Header />
 

@@ -182,8 +182,8 @@ const PostPage: React.FC<PostPageProps> = ({ post }) => {
   // console.log('BlogPost image path:', post.image_url);
 
   return (
-  <div className={`min-h-screen ${theme}`}>
-    <div className="min-h-screen bg-[var(--bg-primary)] text-[var(--text-primary)]">
+  <div className={`min-h-160 ${theme}`}>
+    <div className="min-h-160 bg-[var(--bg-primary)] text-[var(--text-primary)]">
       <Navbar />
       <Header />
       <main className="!p-4 md:!p-8 !gap-1">

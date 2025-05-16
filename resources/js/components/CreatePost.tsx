@@ -2,6 +2,8 @@ import { useRef, useEffect, useState, useMemo } from "react";
 import { useForm } from "@inertiajs/react";
 import SimpleMDE from "react-simplemde-editor";
 import "easymde/dist/easymde.min.css";
+// import { router } from '@inertiajs/react';
+import { useAlert } from '../context/AlertContext';
 
 type CreatePostProps = {
   onPreviewChange?: (preview: {
@@ -24,6 +26,7 @@ export function CreatePost({ onPreviewChange }: CreatePostProps) {
   const [imageUrl, setImageUrl] = useState<string>("");
   const [editorContent, setEditorContent] = useState(data.content);
   const [tagInput, setTagInput] = useState(""); // Individual tag being typed
+const { showAlert } = useAlert();
 
   const editorOptions = useMemo(
     () => ({
@@ -114,6 +117,8 @@ export function CreatePost({ onPreviewChange }: CreatePostProps) {
         setEditorContent("");
         setTagInput("");
         setImageUrl("");
+        // router.visit('/'), { replace : true };
+        showAlert("Post created successfully!", "success");
       },
       onError: (error: any) => {
         console.error("Error creating post:", error.response?.data || error);

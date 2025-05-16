@@ -11,7 +11,7 @@ interface AlertProps {
 const CustomAlert: React.FC<AlertProps> = ({
   message,
   type,
-  duration = 5000,
+  duration = 4000,
   onClose
 }) => {
   const [isVisible, setIsVisible] = useState(true);

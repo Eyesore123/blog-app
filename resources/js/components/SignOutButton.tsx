@@ -1,19 +1,26 @@
-import { router } from "@inertiajs/react";
-import '../../css/app.css';
+import React from 'react';
+import { usePage, router } from '@inertiajs/react';
+import { getCsrfToken } from '../components/auth'; // Adjust path if needed
+import { useAlert } from '../context/AlertContext';
 
-export default function SignOutButton() {
-  function handleSignOut() {
-    router.post("/logout", {}, {
+const SignOutButton = () => {
+  const { showAlert } = useAlert();
+
+  const handleLogout = async () => {
+    await getCsrfToken();
+    router.post('/logout', {}, {
+      onFinish: () => console.log('Logged out'),
       onSuccess: () => {
-        // Optionally show snackbar or UI feedback
-        console.log("Signed out");
+        showAlert('You have signed out!', 'success');
       },
     });
-  }
+  };
 
   return (
-    <button onClick={handleSignOut}>
-      Sign out
+    <button onClick={handleLogout}>
+      Sign Out
     </button>
   );
-}
+};
+
+export default SignOutButton;
