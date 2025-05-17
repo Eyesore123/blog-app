@@ -46,4 +46,9 @@ class Comment extends Model
     {
         return $this->belongsTo(Post::class);
     }
+    // For retrieving all comments by user, used in account deletion:
+    public function scopeByUserId($query, $user_id)
+    {
+        return $query->where('user_id', $user_id);
+    }
 }

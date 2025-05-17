@@ -159,30 +159,75 @@ const handleSubscriptionChange = () => {
   });
 };
 
-  const handleDeleteAccount = async () => {
-    const confirmed = await confirm({
-      title: 'Delete Account',
-      message: 'Are you sure you want to delete your account? This action cannot be undone.',
-      confirmText: 'Delete',
-      cancelText: 'Cancel',
-      type: 'danger',
-    });
+  // const handleDeleteAccount = async () => {
+  //   const confirmed = await confirm({
+  //     title: 'Delete Account',
+  //     message: 'Are you sure you want to delete your account? This action cannot be undone.',
+  //     confirmText: 'Delete',
+  //     cancelText: 'Cancel',
+  //     type: 'danger',
+  //   });
 
-    if (!confirmed) return;
+  //   if (!confirmed) return;
 
-    setLoading(true);
-    router.post('/delete-account', { user_id: user.id }, {
-      onSuccess: () => {
-        showAlert('Account deleted successfully!', 'success');
-        setLoading(false);
-        router.get('/');
-      },
-      onError: () => {
-        showAlert('Failed to delete account', 'error');
-        setLoading(false);
-      },
-    });
-  };
+  //   setLoading(true);
+  //   router.post('/delete-account', { user_id: user.id }, {
+  //     onSuccess: () => {
+  //       showAlert('Account deleted successfully!', 'success');
+  //       setLoading(false);
+  //       router.get('/');
+  //     },
+  //     onError: () => {
+  //       showAlert('Failed to delete account', 'error');
+  //       setLoading(false);
+  //     },
+  //   });
+  // };
+
+const handleDeleteAccount = async () => {
+  console.log('handleDeleteAccount started');
+
+  const confirmed = await confirm({
+    title: 'Delete Account',
+    message: 'Are you sure you want to delete your account? This action cannot be undone.',
+    confirmText: 'Delete',
+    cancelText: 'Cancel',
+    type: 'danger',
+  });
+
+  console.log('Delete account confirmed:', confirmed);
+
+  if (!confirmed) return;
+
+  const removeCommentsConfirmed = await confirm({
+    title: 'Remove Comments?',
+    message: 'Do you want to remove all your comments?',
+    confirmText: 'Yes, remove comments',
+    cancelText: 'No, keep comments',
+    type: 'warning',
+  });
+
+  console.log('Remove comments confirmed:', removeCommentsConfirmed);
+
+  setLoading(true);
+  console.log('Sending request to delete account with remove_comments:', removeCommentsConfirmed ? 'yes' : 'no');
+  router.post('/account/delete', {
+    user_id: user.id,
+    remove_comments: removeCommentsConfirmed ? 'yes' : 'no',
+  }, {
+    onSuccess: () => {
+      console.log('Account deleted successfully!');
+      showAlert('Account deleted successfully!', 'success');
+      setLoading(false);
+      router.get('/');
+    },
+    onError: () => {
+      console.log('Failed to delete account');
+      showAlert('Failed to delete account', 'error');
+      setLoading(false);
+    },
+  });
+};
 
   return (
     <>

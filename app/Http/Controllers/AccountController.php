@@ -9,9 +9,19 @@ use App\Models\User;
 use App\Models\Subscription;
 use Inertia\Inertia;
 use App\Models\Post;
+use App\Models\Comment;
+use App\Http\Controllers\CommentController;
+use Illuminate\Support\Facades\Log;
+use App\Services\RateLimitService;
 
 class AccountController extends Controller
 {
+     private $rateLimiter;
+
+    public function __construct(RateLimitService $rateLimiter)
+    {
+        $this->rateLimiter = $rateLimiter;
+    }
 
 public function show(Request $request)
 {
@@ -76,13 +86,30 @@ public function updatePassword(Request $request)
 }
 
     // Delete account
-    public function deleteAccount()
+   public function deleteAccount(Request $request, RateLimitService $rateLimiter)
     {
         $user = Auth::user();
+        if ($request->input('remove_comments') === 'yes') {
+            Log::info('Remove comments input: ' . $request->input('remove_comments'));
+            $commentController = new CommentController($rateLimiter);
+            $commentController->removeCommentsForUser($user->id);
+        } else {
+            // Do not delete comments
+        }
         $user->delete();
 
         return redirect()->route('home')->with('success', 'Account deleted successfully');
     }
+
+    // Test account deletion:
+//     public function deleteAccount(Request $request)
+// {
+//     $user = Auth::user();
+//     $user->detach();
+//     $user->delete();
+
+//     return redirect()->route('home')->with('success', 'Account deleted successfully');
+// }
 
     // Toggle newsletter status
 

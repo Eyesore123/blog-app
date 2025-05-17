@@ -83,51 +83,115 @@ class CommentController extends Controller
 
     }
 
+    // Old function:
+
+    // public function destroy($id)
+    // {
+    //     try {
+    //         Log::info("Attempting to delete comment with ID: {$id}");
+            
+    //         $comment = Comment::findOrFail($id);
+    //         Log::info("Comment found: " . json_encode($comment));
+            
+    //         if (!Auth::check()) {
+    //             Log::warning("User not authenticated");
+    //             return response()->json(['message' => 'Unauthenticated'], 401);
+    //         }
+            
+    //         if (!Auth::user()->is_admin && Auth::id() !== $comment->user_id) {
+    //             Log::warning("Unauthorized attempt to delete comment {$id} by user " . Auth::id());
+    //             return response()->json(['message' => 'Unauthorized'], 403);
+    //         }
+            
+    //         $hasReplies = Comment::where('parent_id', $id)->exists();
+    //         $isReply = $comment->parent_id !== null;
+            
+    //         Log::info("Comment {$id} - Has replies: " . ($hasReplies ? 'Yes' : 'No') . ", Is reply: " . ($isReply ? 'Yes' : 'No'));
+            
+    //         if ($hasReplies || $isReply) {
+    //             $comment->update([
+    //                 'deleted' => true,
+    //                 'content' => '[Message removed by moderator]'
+    //             ]);
+                
+    //             Log::info("Comment {$id} soft-deleted successfully");
+    //             return response()->json([
+    //                 'message' => 'Comment soft-deleted successfully',
+    //                 'softDeleted' => true
+    //             ]);
+    //         } else {
+    //             $comment->delete();
+                
+    //             Log::info("Comment {$id} hard-deleted successfully");
+    //             return response()->json([
+    //                 'message' => 'Comment deleted successfully',
+    //                 'softDeleted' => false
+    //             ]);
+    //         }
+    //     } catch (\Exception $e) {
+    //         Log::error("Error deleting comment {$id}: " . $e->getMessage());
+    //         Log::error($e->getTraceAsString());
+    //         return response()->json(['message' => 'Error deleting comment: ' . $e->getMessage()], 500);
+    //     }
+    // }
+
     public function destroy($id)
     {
         try {
             Log::info("Attempting to delete comment with ID: {$id}");
-            
+
             $comment = Comment::findOrFail($id);
             Log::info("Comment found: " . json_encode($comment));
-            
+
             // Check if user is authorized to delete this comment
             if (!Auth::check()) {
                 Log::warning("User not authenticated");
                 return response()->json(['message' => 'Unauthenticated'], 401);
             }
-            
+
             if (!Auth::user()->is_admin && Auth::id() !== $comment->user_id) {
                 Log::warning("Unauthorized attempt to delete comment {$id} by user " . Auth::id());
                 return response()->json(['message' => 'Unauthorized'], 403);
             }
-            
+
             // Check if this comment has replies or is a reply itself
             $hasReplies = Comment::where('parent_id', $id)->exists();
             $isReply = $comment->parent_id !== null;
-            
+
             Log::info("Comment {$id} - Has replies: " . ($hasReplies ? 'Yes' : 'No') . ", Is reply: " . ($isReply ? 'Yes' : 'No'));
-            
+
+            // Check if user wants to remove comments when deleting their account
+            $removeComments = request()->has('remove_comments') && request()->input('remove_comments') === 'yes';
+
+            if ($removeComments) {
+                // Update comment content to indicate it was removed by user
+                $comment->update([
+                    'content' => 'Deleted by user',
+                ]);
+                Log::info("Remove comments parameter: " . request()->input('remove_comments'));
+                Log::info("Comment {$id} updated successfully");
+            }
+
             if ($hasReplies || $isReply) {
                 // Soft delete - mark as deleted but keep in database
                 $comment->update([
                     'deleted' => true,
-                    'content' => '[Message removed by moderator]'
+                    'content' => '[Message removed by moderator]',
                 ]);
-                
+
                 Log::info("Comment {$id} soft-deleted successfully");
                 return response()->json([
                     'message' => 'Comment soft-deleted successfully',
-                    'softDeleted' => true
+                    'softDeleted' => true,
                 ]);
             } else {
                 // Hard delete - remove from database
                 $comment->delete();
-                
+
                 Log::info("Comment {$id} hard-deleted successfully");
                 return response()->json([
                     'message' => 'Comment deleted successfully',
-                    'softDeleted' => false
+                    'softDeleted' => false,
                 ]);
             }
         } catch (\Exception $e) {
@@ -212,40 +276,46 @@ public function userDelete($id)
     return response()->json(['message' => 'Comment deleted successfully']);
 }
 
-public function userComments(User $user)
-{
-    try {
-        // Fetch comments with related post data
-        $comments = $user->comments()
-            ->with('post:id,slug,title') // Eager load post data
-            ->latest()
-            ->get()
-            ->map(function ($comment) {
-                return [
-                    'id' => $comment->id,
-                    'content' => $comment->content,
-                    'post_title' => $comment->post->title ?? 'Unknown Post',
-                    'post_slug' => $comment->post->slug ?? '#',
-                    'created_at' => $comment->created_at,
-                ];
-            });
+    public function userComments(User $user)
+    {
+        try {
+            // Fetch comments with related post data
+            $comments = $user->comments()
+                ->with('post:id,slug,title') // Eager load post data
+                ->latest()
+                ->get()
+                ->map(function ($comment) {
+                    return [
+                        'id' => $comment->id,
+                        'content' => $comment->content,
+                        'post_title' => $comment->post->title ?? 'Unknown Post',
+                        'post_slug' => $comment->post->slug ?? '#',
+                        'created_at' => $comment->created_at,
+                    ];
+                });
 
-        // Log the number of comments fetched
-        \Log::info("Fetched " . $comments->count() . " comments for user ID: {$user->id}");
+            // Log the number of comments fetched
+            Log::info("Fetched " . $comments->count() . " comments for user ID: {$user->id}");
 
-        return response()->json($comments);
-    } catch (\Exception $e) {
-        // Log the error for debugging
-        \Log::error("Error fetching comments for user ID: {$user->id}", [
-            'error' => $e->getMessage(),
-            'trace' => $e->getTraceAsString(),
-        ]);
+            return response()->json($comments);
+        } catch (\Exception $e) {
+            // Log the error for debugging
+            Log::error("Error fetching comments for user ID: {$user->id}", [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+            ]);
 
-        return response()->json([
-            'error' => 'Failed to fetch comments. Please try again later.',
-        ], 500);
+            return response()->json([
+                'error' => 'Failed to fetch comments. Please try again later.',
+            ], 500);
+        }
     }
-}
+
+    public function removeCommentsForUser($userId)
+    {
+        // Remove all comments for the given user
+        Comment::where('user_id', $userId)->delete();
+    }
 
 
-}
+    }
