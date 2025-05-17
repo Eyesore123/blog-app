@@ -15,6 +15,7 @@ use Illuminate\Support\Str;
 use App\Models\User;
 use App\Http\Controllers\Auth\PasswordResetLinkController;
 use App\Http\Controllers\Auth\NewPasswordController;
+use App\Http\Controllers\TranslationController;
 
 // Anonymous login route, prevents brute force attacks
 Route::middleware('throttle:5,1')->post('/anonymous-login', function () {
@@ -205,3 +206,9 @@ Route::post('/reset-password', [NewPasswordController::class, 'store'])
 //     Route::get('/', [AdminController::class, 'index']);
 //     Route::get('/posts', [PostController::class, 'index']);
 // });
+
+// Translation routes
+
+Route::post('/translate', [TranslationController::class, 'translate'])
+    ->name('translate')
+    ->middleware('auth');  // Optional: protect route for authenticated users/admins only

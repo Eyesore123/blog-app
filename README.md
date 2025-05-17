@@ -14,7 +14,7 @@ RSS Feed component is also included. I added custom API endpoint for recent acti
 
 Admin can add new posts, edit posts and delete comments. Admin can also deactivate and - as an ultimate solution - delete accounts. Logged in users can add comments, edit their comments and delete comments when there are no replies. Comments are rate limited by IP address (10 comments per day), and there are no Captchas because IP address guarantees that the limiter applies to many users from the same IP address. Rate limiter is done using custom RateLimitService class. Likewise SEO is done using a custom SEO class and then provided for the app using react-helmet-async package (it was the easiest solution considering I'm not using blade views).
 
-Logged in users have a My Account page where they can change their password, delete their account and subscribe to a newsletter. Subscribed users get the latest blogpost sent to them automatically. Login view has a "forgot password" section so user can reset their password using email. When a user deletes account, user can decide to keep the comments or delete them from blog posts. If the user chooses to keep comments, comments are kept but name is changed to "anonymous", because deleted users can't be identified and is no longer attached to the comment.
+Logged in users have a My Account page where they can change their password, delete their account and subscribe to a newsletter. Subscribed users get the latest blogpost sent to them automatically. Login view has a "forgot password" section so user can reset their password using email. When a user deletes account, user can decide to keep the comments or delete them from blog posts. If user chooses to keep comments, comments are kept but name is changed to "anonymous", because deleted users can't be identified and is no longer attached to any comment. I think it's nice to offer the option to either keep or delete comments.
 
 Providers are used for themes, alerts and confirmations. I added a markdown editor for posts. Perhaps I could add one for comments, but it was quite bothersome to get it work without errors for posts so I'm not sure if I'll add new editors.
 
@@ -47,3 +47,4 @@ Blog still needs some work, though, including:
 
 - Markdown editor needs some work.
 - Deletion in postpage returns notfound error.
+- Remove extra code from postpage.

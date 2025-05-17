@@ -17,8 +17,11 @@ class AdminController extends Controller
 {
     $users = User::select(['id','name','email','is_active'])->get();
 
+    $posts = Post::all();
+
     return Inertia::render('AdminDashboard', [
         'users' => $users,
+        'posts' => $posts,
     ]);
 }
 
