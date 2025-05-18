@@ -172,7 +172,7 @@ const PostPanel = ({ allPosts }: PostPanelProps) => {
             {translation ? (
               <>
                 <textarea
-                  className="w-full h-48 !p-2 rounded border resize-none mb-2"
+                  className="w-full h-48 !p-2 rounded border text-black resize-none mb-2"
                   value={translation}
                   onChange={(e) => setTranslation(e.target.value)}
                 />

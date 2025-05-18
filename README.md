@@ -18,16 +18,16 @@ Logged in users have a My Account page where they can change their password, del
 
 Providers are used for themes, alerts and confirmations. I added a markdown editor for posts. Perhaps I could add one for comments, but it was quite bothersome to get it work without errors for posts so I'm not sure if I'll add new editors.
 
-Loading spinners are used for images and log-in. Custom alerts pop up to notify user of successful logout. Login doesn't include popup, because it would feel a bit intrusive towards regular users. Admin gets a pop up notification when a new post is added. Custom dialogue window in used for verifying important actions (like deleting a post or a user account).
+Loading spinners are used for images and log-in. Custom alerts pop up to notify user of successful logout. Login doesn't include popup, because it would feel a bit intrusive towards regular users. Admin gets a pop up notification when a new post is added. Custom dialogue window in used for verifying important actions (like deleting a post or a user account). Admin can use Google Cloud Tranlation AP to translate posts to other languages.
+
+Errors are mostly handled with custom error pages.
 
 Blog still needs some work, though, including:
 
-1. Installation of AI translation package (Google/DeepL or LibreTranslate)?
-2. Auto-translate on post save + store in DB or save manually?
-3. Language toggle to navbar
-4. Toggle button in navbar loads correct language
-5. Advanced features for admin (image size adjustments? etc.)
-6. Email subscription options in admin panel + an improved template for blog post email
+1. Post translation save to database and fetch for translated posts
+2. Language toggle to navbar (global translations and post translations)
+3. Advanced features for admin (image size adjustments? etc.)
+4. Email subscription options in admin panel + an improved template for blog post email
 
 ![blog3](https://github.com/user-attachments/assets/9b47ad5c-13f9-4858-9291-1eb1d2397d96)
 

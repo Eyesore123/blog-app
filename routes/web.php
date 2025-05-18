@@ -16,6 +16,7 @@ use App\Models\User;
 use App\Http\Controllers\Auth\PasswordResetLinkController;
 use App\Http\Controllers\Auth\NewPasswordController;
 use App\Http\Controllers\TranslationController;
+use App\Http\Middleware\AdminMiddleware;
 
 // Anonymous login route, prevents brute force attacks
 Route::middleware('throttle:5,1')->post('/anonymous-login', function () {
@@ -38,7 +39,8 @@ Route::post('/login', [AuthController::class, 'login']);
 Route::post('/posts', [PostController::class, 'store'])
 ->middleware(['auth']);
 Route::middleware('auth')->post('/logout', [AuthController::class, 'logout'])->name('logout');
-Route::get('/admin', [AdminController::class, 'index']);
+Route::get('/admin', [AdminController::class, 'index'])
+    ->middleware(['auth', AdminMiddleware::class]);
 Route::get('api/comments/post/{post_id}', [CommentController::class, 'comments.index']);
 Route::get('/post/{identifier}', [PostController::class, 'show'])->name('post.show');
 Route::get('/post/{id}/edit', [AdminController::class, 'edit'])->name('admin.edit');

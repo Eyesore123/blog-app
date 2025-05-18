@@ -6,7 +6,6 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use App\Models\Subscription;
 use App\Models\Comment;
 
 class User extends Authenticatable
@@ -50,5 +49,11 @@ class User extends Authenticatable
     public function comments()
     {
         return $this->hasMany(Comment::class);
+    }
+
+     public function isAdmin()
+    {
+        // Check if the user has an admin role or permission
+        return $this->role === 'admin' || $this->hasPermission('admin');
     }
 }
