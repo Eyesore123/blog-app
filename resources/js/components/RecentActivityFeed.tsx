@@ -77,7 +77,7 @@ const RecentActivityFeed: React.FC = () => {
                   className="block w-full text-left !px-2 !py-1 rounded hover:bg-[#5800FF]/20"
                 >
                   <span className="font-medium">
-                    💬 New comment to: {activity.postTitle && `(${activity.postTitle})`}
+                    💬 New comment to: {activity.postTitle && `${activity.postTitle}`}
                   </span>
                   <span className="text-xs opacity-60 block">{activity.createdAt}</span>
                 </a>

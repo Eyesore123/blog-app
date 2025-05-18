@@ -70,6 +70,7 @@ class CommentController extends Controller
             'content' => $request->content,
             'parent_id' => $request->parent_id,
             'deleted' => false,
+            'edited' => false,
         ]);
 
         return response()->json([
@@ -79,6 +80,7 @@ class CommentController extends Controller
             'createdAt' => $comment->created_at->toDateTimeString(),
             'parent_id' => $comment->parent_id,
             'deleted' => false,
+            'edited' => false,
         ]);
 
     }

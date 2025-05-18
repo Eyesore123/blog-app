@@ -46,5 +46,3 @@ Blog still needs some work, though, including:
 ## Issues
 
 - Markdown editor needs some work.
-- Deletion in postpage returns notfound error.
-- Remove extra code from postpage.

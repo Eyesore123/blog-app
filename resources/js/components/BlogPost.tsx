@@ -112,7 +112,7 @@ const [imageLoading, setImageLoading] = useState(true);
     fetchComments();
   }, [post.id]);
 
-    const handleDeletePost = async (postId: number) => {
+const handleDeletePost = async (postId: number) => {
   // Use the custom confirm dialog
   const confirmed = await confirm({
     title: 'Delete Post',
@@ -121,12 +121,13 @@ const [imageLoading, setImageLoading] = useState(true);
     cancelText: 'Cancel',
     type: 'danger'
   });
-  
+
   if (confirmed) {
     router.delete(`/posts/${postId}`, {
       onSuccess: () => {
         console.log(`Post ${postId} deleted`);
         showAlert('Post deleted successfully', 'success');
+        router.visit('/'); // Redirect to homepage
       },
       onError: () => {
         showAlert('Failed to delete post', 'error');
@@ -152,42 +153,56 @@ const [imageLoading, setImageLoading] = useState(true);
 
 
   async function handleSubmitComment(e: React.FormEvent) {
-      e.preventDefault();
-      if (!mainCommentRef.current || !mainCommentRef.current.value.trim()) return;
-      if (!post?.id) {
-        showAlert('Post ID missing', 'error');
-        return;
-      }
+  e.preventDefault();
 
-      const commentContent = mainCommentRef.current.value;
-      const newCommentData = {
-        post_id: post.id,
-        content: commentContent,
-      };
+  if (!mainCommentRef.current || !mainCommentRef.current.value.trim()) return;
 
-      setSubmitting(true);
-      await getCsrfToken(); // Ensure you handle CSRF token correctly
-
-      try {
-      const response = await axiosInstance.post('/api/comments', newCommentData);
-      setComments(prev => [...prev, response.data]);
-      setMessage(response.data.message || "Comment posted successfully"); // Set message from backend
-      mainCommentRef.current.value = "";
-
-      setTimeout(() => {
-        setMessage("");
-      }, 5000);
-    } catch (error) {
-      console.error('Failed to post comment', error);
-      setMessage("Error posting comment. We apologize for the inconvenience. If you hit the limit of 10 messages per day, please try again tomorrow.");
-
-      setTimeout(() => {
-        setMessage("");
-      }, 5000);
-    } finally {
-      setSubmitting(false);
-    }
+  if (!post?.id) {
+    showAlert('Post ID missing', 'error');
+    return;
   }
+
+  const commentContent = mainCommentRef.current.value;
+  const newCommentData = {
+    post_id: post.id,
+    content: commentContent,
+    user_id: user?.id || 0,
+  };
+
+  setSubmitting(true);
+  await getCsrfToken();
+
+  try {
+    const response = await axiosInstance.post('/api/comments', newCommentData);
+
+    const enrichedComment = {
+      ...response.data,
+      user_id: user?.id || 0,
+      user: {
+        id: user?.id,
+        name: user?.name,
+      },
+    };
+
+    setComments(prev => [...prev, enrichedComment]);
+    setMessage(response.data.message || "Comment posted successfully");
+    mainCommentRef.current.value = "";
+
+    setTimeout(() => {
+      setMessage("");
+    }, 5000);
+  } catch (error) {
+    console.error('Failed to post comment', error);
+    setMessage("Error posting comment. We apologize for the inconvenience. If you hit the limit of 10 messages per day, please try again tomorrow.");
+
+    setTimeout(() => {
+      setMessage("");
+    }, 5000);
+  } finally {
+    setSubmitting(false);
+  }
+}
+
 
 const handleImageClick = (e: React.MouseEvent<HTMLImageElement>) => {
   if (isPostPage) {

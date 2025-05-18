@@ -243,25 +243,25 @@ class PostController extends Controller
     /**
      * Delete a post (admin only).
      */
-    public function destroy($post_id)
-    {
-        $post = Post::findOrFail($post_id);
-        if (!Auth::user()?->is_admin) {
-            abort(403, 'Unauthorized action.');
-        }
-
-        try {
-            if ($post->image_path) {
-                Storage::disk('public')->delete($post->image_path);
-            }
-            $post->comments()->delete();
-            $post->delete();
-            return redirect()->back()->with('success', 'Post deleted successfully.');
-        } catch (\Throwable $e) {
-            Log::error("Failed to delete post: {$e->getMessage()}");
-            return redirect()->back()->with('error', 'Failed to delete post.');
-        }
+    public function destroy(Post $post)
+{
+    if (!Auth::user()?->is_admin) {
+        abort(403, 'Unauthorized action.');
     }
+
+    try {
+        if ($post->image_path) {
+            Storage::disk('public')->delete($post->image_path);
+        }
+        $post->comments()->delete();
+        $post->delete();
+        return redirect('/')->with('success', 'Post deleted successfully.');
+    } catch (\Throwable $e) {
+        Log::error("Failed to delete post: {$e->getMessage()}");
+        return redirect()->back()->with('error', 'Failed to delete post.');
+    }
+}
+
 
     /**
      * Show posts filtered by a tag name.
