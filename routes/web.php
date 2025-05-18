@@ -212,3 +212,8 @@ Route::post('/reset-password', [NewPasswordController::class, 'store'])
 Route::post('/translate', [TranslationController::class, 'translate'])
     ->name('translate')
     ->middleware('auth');  // Optional: protect route for authenticated users/admins only
+
+// Store translation
+
+// routes/api.php
+Route::put('/posts/{post}/translation', [PostController::class, 'storeTranslation']);

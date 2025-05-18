@@ -280,4 +280,27 @@ class PostController extends Controller
             'activeTag' => $tag->name,
         ]);
     }
+
+    // Store the translation of a post
+
+    public function storeTranslation(Request $request, Post $post)
+    {
+        $data = $request->validate([
+            'lang' => 'required|string',
+            'title' => 'nullable|string',
+            'content' => 'required|string',
+        ]);
+
+        $translations = $post->translations ?? [];
+        $translations[$data['lang']] = [
+            'title' => $data['title'] ?? '',
+            'content' => $data['content'],
+        ];
+
+        $post->translations = $translations;
+        $post->save();
+
+        return response()->json(['success' => true]);
+    }
+
 }
