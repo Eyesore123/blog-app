@@ -8,7 +8,7 @@
 
 - This is a blog app that I'm going to hook up with my portfolio site. Work in progress!
 
-So currently app shows posts and comments. Posts can be searched by title and topic. Posts also can be searched using the dropdown menu, showing the posts for each year. There are archive pages which show all the posts for each year (paginated). Posts use tags (optional) and posts can be filtered by tags just by clicking a tag on the post.
+So currently app works like a basic blog app: it shows posts and comments. Posts can be searched by title and topic. Posts also can be searched using the dropdown menu, showing the posts for each year. There are archive pages which show all the posts for each year (paginated). Posts use tags (optional) and posts can be filtered by tags just by clicking a tag on the post.
 
 RSS Feed component is also included. I added custom API endpoint for recent activity, which is used in recent activity component in landing page. I also created "the latest post" endpoint which can be used to fetch the latest post. It's an alternative to rss feed (I plan to use it for my portfolio site).
 
@@ -28,6 +28,8 @@ Blog still needs some work, though, including:
 2. Language toggle to navbar (global translations and post translations)
 3. Advanced features for admin (image size adjustments? etc.)
 4. Email subscription options in admin panel + an improved template for blog post email
+
+I will probably try deploying this app to my Raspberry Pi server. I use my Raspberry Pi for running basic bash scripts, but I'd like to extend its use and use it for hosting this app. I've never hosted a Laravel app before or anything on Raspberry Pi, so it'll be an interesting challenge. This is a minor project so I rather learn how to host the app myself than pay for a hosting service.
 
 ![blog3](https://github.com/user-attachments/assets/9b47ad5c-13f9-4858-9291-1eb1d2397d96)
 
