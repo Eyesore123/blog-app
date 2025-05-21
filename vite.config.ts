@@ -5,27 +5,32 @@ import { resolve } from 'node:path';
 import { defineConfig } from 'vite';
 
 export default defineConfig({
-    plugins: [
-        laravel({
-            input: ['resources/css/app.css', 'resources/js/app.tsx', 'resources/js/pages/MainPage.tsx'],
-            refresh: true,
-        }),
-        react(),
-        tailwindcss(),
-    ],
-    esbuild: {
-        jsx: 'automatic',
+  plugins: [
+    laravel({
+      input: ['resources/css/app.css', 'resources/js/app.tsx', 'resources/js/pages/MainPage.tsx'],
+      refresh: true,
+    }),
+    react(),
+    tailwindcss(),
+  ],
+  esbuild: {
+    jsx: 'automatic',
+  },
+  resolve: {
+    alias: {
+      'ziggy-js': resolve(__dirname, 'vendor/tightenco/ziggy'),
     },
-    resolve: {
-        alias: {
-            'ziggy-js': resolve(__dirname, 'vendor/tightenco/ziggy'),
-        },
+  },
+  build: {
+    rollupOptions: {
+      external: ['react-helmet-async', 'react-markdown', 'react-simplemde-editor'],
     },
-    server: {
-        host: '127.0.0.1',
-        port: 5173,
-        hmr: {
-          host: '127.0.0.1',
-        },
+  },
+  server: {
+    host: '127.0.0.1',
+    port: 5173,
+    hmr: {
+      host: '127.0.0.1',
     },
+  },
 });
