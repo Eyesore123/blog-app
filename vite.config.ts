@@ -25,6 +25,7 @@ export default defineConfig({
     rollupOptions: {
       external: ['react-helmet-async', 'react-markdown', 'react-simplemde-editor'],
     },
+    outDir: 'dist',
   },
   server: {
     host: '127.0.0.1',
