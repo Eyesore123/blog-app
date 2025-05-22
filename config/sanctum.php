@@ -15,12 +15,10 @@ return [
     |
     */
 
-    'stateful' => explode(',', env('SANCTUM_STATEFUL_DOMAINS', sprintf(
-        '%s%s',
-        'localhost,localhost:3000,127.0.0.1,127.0.0.1,127.0.0.1:8000,127.0.0.1:9000,::1,jonis-blog.netlify.app',
+    'stateful' => explode(',', env('SANCTUM_STATEFUL_DOMAINS')),
+
         Sanctum::currentApplicationUrlWithPort(),
         // Sanctum::currentRequestHost(),
-    ))),
 
     /*
     |--------------------------------------------------------------------------
