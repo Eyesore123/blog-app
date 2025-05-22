@@ -3,7 +3,7 @@
     "type": "module",
     "scripts": {
         "build": "vite build --config ./vite.config.ts",
-        "postbuild": "ls -la public/build",
+        "postbuild": "mkdir -p public/build && cp -r dist/* public/build/",
         "build:ssr": "vite build && vite build --ssr",
         "dev": "vite",
         "format": "prettier --write resources/",
