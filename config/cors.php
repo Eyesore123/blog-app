@@ -8,7 +8,7 @@ return [
     'exposed_headers' => [],
     'max_age' => 0,
     'hosts' => [],
-    'paths' => ['api/*', 'sanctum/csrf-cookie'],
+    'paths' => ['api/*', 'sanctum/csrf-cookie', 'login', 'logout'],
 ];
 
 // For production, restrict access, allowed origins: 
