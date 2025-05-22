@@ -1,0 +1,20 @@
+[phases.setup]
+nixpkgs = ["nginx", "php", "phpPackages.composer", "nodejs_18"]
+
+[phases.install]
+cmds = [
+  "composer install --ignore-platform-reqs",
+  "npm ci"
+]
+
+[phases.build]
+cmds = ["npm run build"]
+
+[phases.start]
+cmds = [
+  "php artisan migrate --force",
+  "php artisan config:clear",
+  "php artisan cache:clear",
+  "php artisan optimize:clear",
+  "nginx -g 'daemon off;'"
+]
