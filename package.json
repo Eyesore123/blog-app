@@ -2,7 +2,7 @@
     "private": true,
     "type": "module",
     "scripts": {
-        "build": "vite build",
+        "build": "vite build --config ./vite.config.ts",
         "postbuild": "ls -la public/build",
         "build:ssr": "vite build && vite build --ssr",
         "dev": "vite",
