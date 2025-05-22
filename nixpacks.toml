@@ -16,6 +16,6 @@ cmds = [
   "php artisan config:clear",
   "php artisan cache:clear",
   "php artisan optimize:clear",
-  "php-fpm -y /app/php-fpm.conf &",
-  "nginx -c /app/nginx.conf -g 'daemon off;'"
+  "php-fpm -y php-fpm.conf &",
+  "nginx -c nginx.conf -g 'daemon off;'"
 ]
