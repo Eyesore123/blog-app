@@ -18,8 +18,11 @@ cmds = [
 [phases.build]
 cmds = [
   "npm install",
-  "npm run build"
+  "npm run build",
+  "mkdir -p /app/public/build",
+  "cp -r public/build/* /app/public/build/"
 ]
+
 
 [phases.start]
 cmds = [
