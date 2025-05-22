@@ -20,7 +20,11 @@ cmds = [
   "npm install",
   "npm run build",
   "mkdir -p /app/public/build",
-  "cp -r public/build/* /app/public/build/"
+  "cp -r public/build/* /app/public/build/",
+  "echo '--- Content of /app/public/build ---'",
+  "ls -l /app/public/build",
+  "echo '--- Checking for manifest.json ---'",
+  "cat /app/public/build/manifest.json || echo 'manifest.json NOT FOUND'"
 ]
 
 

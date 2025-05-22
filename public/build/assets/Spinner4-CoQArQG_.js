@@ -1,4 +1,4 @@
-import{j as e}from"./ConfirmationContext-DK_-GFGj.js";function i({size:r=72}){return e.jsxs("div",{className:"flex items-center justify-center",style:{width:r,height:r,borderRadius:"50%",overflow:"hidden"},children:[e.jsx("style",{children:`
+import{j as e}from"./ConfirmationContext-B_AdGWYB.js";function i({size:r=72}){return e.jsxs("div",{className:"flex items-center justify-center",style:{width:r,height:r,borderRadius:"50%",overflow:"hidden"},children:[e.jsx("style",{children:`
           @keyframes spinner-gradient-rotate {
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
