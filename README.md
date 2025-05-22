@@ -29,7 +29,7 @@ Blog still needs some work, though, including:
 3. Advanced features for admin (image size adjustments? etc.)
 4. Email subscription options in admin panel + an improved template for blog post email
 
-I will probably try deploying this app to my Raspberry Pi server. I use my Raspberry Pi for running basic bash scripts, but I'd like to extend its use and use it for hosting this app. I've never hosted a Laravel app before or anything on Raspberry Pi, so it'll be an interesting challenge. This is a minor project so I rather learn how to host the app myself than pay for a hosting service.
+I will probably try deploying this app on Railway.
 
 ![blog3](https://github.com/user-attachments/assets/9b47ad5c-13f9-4858-9291-1eb1d2397d96)
 
