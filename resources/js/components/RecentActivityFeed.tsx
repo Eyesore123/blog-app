@@ -22,7 +22,7 @@ const RecentActivityFeed: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
-    fetch('http://127.0.0.1:8000/api/recent-activity')
+    fetch('https://blog-app-production-16c2.up.railway.app/api/recent-activity')
       .then(res => res.json())
       .then((data: Activity[]) => {
         setActivities(data.slice(0, 9)); // Limit to latest 10
