@@ -1,6 +1,6 @@
 [copy]
-files = ["nginx.conf"]
-target = "/app/nginx.conf"
+files = ["nginx.conf", "php-fpm.conf"]
+target = "/app/"
 
 [phases.setup]
 nixpkgs = ["nginx", "php", "phpPackages.composer", "nodejs_18"]
