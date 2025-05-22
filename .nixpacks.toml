@@ -15,9 +15,11 @@ cmds = [
   "ls -l /app"
 ]
 
-
 [phases.build]
-cmds = ["npm run build"]
+cmds = [
+  "npm install",
+  "npm run build"
+]
 
 [phases.start]
 cmds = [
