@@ -2,7 +2,7 @@
 
 return [
     'supports_credentials' => true,
-    'allowed_origins' => ['https://jonis-blog.netlify.app'],
+    'allowed_origins' => ['https://jonis-blog.netlify.app', 'https://blog-app-production-16c2.up.railway.app/'],
     'allowed_headers' => ['*'],
     'allowed_methods' => ['*'],  // Or specify 'GET', 'POST', etc.
     'exposed_headers' => [],
