@@ -42,6 +42,10 @@
 
     @routes
     @viteReactRefresh
+    @php
+        dd(public_path('build/manifest.json'), file_exists(public_path('build/manifest.json')));
+    @endphp
+
     @vite(['resources/js/app.tsx', "resources/js/pages/{$page['component']}.tsx"])
     @inertiaHead
 </head>
