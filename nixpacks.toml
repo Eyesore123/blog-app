@@ -1,3 +1,7 @@
+[copy]
+files = ["nginx.conf"]
+target = "/app/nginx.conf"
+
 [phases.setup]
 nixpkgs = ["nginx", "php", "phpPackages.composer", "nodejs_18"]
 
