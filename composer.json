@@ -54,7 +54,7 @@
             "@php -r \"file_exists('database/database.sqlite') || touch('database/database.sqlite');\"",
             "@php artisan migrate --graceful --ansi"
         ],
-        "start": "php -S 0.0.0.0:${PORT:-8080} -t public",
+        "start": "sh -c 'php -S 0.0.0.0:${PORT:-8080} -t public",
         "dev": [
             "Composer\\Config::disableProcessTimeout",
             "npx concurrently -c \"#93c5fd,#c4b5fd,#fdba74\" \"php artisan serve --port=9000\" \"php artisan queue:listen --tries=1\" \"npm run dev\" --names='server,queue,vite'"
