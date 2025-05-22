@@ -7,9 +7,14 @@ nixpkgs = ["nginx", "php", "phpPackages.composer", "nodejs_18"]
 
 [phases.install]
 cmds = [
+  "ls -l /app",
   "composer install --ignore-platform-reqs",
-  "npm ci"
+  "npm ci",
+  "cp nginx.conf /app/nginx.conf",
+  "cp php-fpm.conf /app/php-fpm.conf",
+  "ls -l /app"
 ]
+
 
 [phases.build]
 cmds = ["npm run build"]
