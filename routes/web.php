@@ -18,13 +18,13 @@ use App\Http\Controllers\Auth\NewPasswordController;
 use App\Http\Controllers\TranslationController;
 use App\Http\Middleware\AdminMiddleware;
 
-// For production
-use Illuminate\Support\Facades\Artisan;
+// For production to clear cache
+// use Illuminate\Support\Facades\Artisan;
 
-Route::get('/run-config-cache', function () {
-    Artisan::call('config:cache');
-    return '✅ Config cache rebuilt!';
-});
+// Route::get('/run-config-cache', function () {
+//     Artisan::call('config:cache');
+//     return '✅ Config cache rebuilt!';
+// });
 
 
 // Anonymous login route, prevents brute force attacks

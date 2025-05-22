@@ -28,6 +28,7 @@ export default defineConfig({
     outDir: 'dist',
     emptyOutDir: true,
   },
+  base: process.env.ASSET_URL ?? '/', // ✅ <- correct location
   server: {
     host: '127.0.0.1',
     port: 5173,
