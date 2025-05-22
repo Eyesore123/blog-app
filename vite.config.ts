@@ -25,7 +25,7 @@ export default defineConfig({
     rollupOptions: {
       external: ['react-helmet-async', 'react-markdown', 'react-simplemde-editor'],
     },
-    outDir: 'public/build',
+    outDir: 'dist',
     emptyOutDir: true,
   },
   server: {
