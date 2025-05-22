@@ -3,8 +3,8 @@ import axios from 'axios';
 
 const axiosInstance = axios.create({
   baseURL: process.env.NODE_ENV === 'production'
-    ? 'https://your-production-api-url'
-    : 'http://127.0.0.1:8000',
+    ? 'https://blog-app-production-16c2.up.railway.app'
+    : 'http://127.0.0.1:9000',
   headers: {
     'X-Requested-With': 'XMLHttpRequest',
     'Accept': 'application/json'   // Keep Accept, but REMOVE Content-Type

@@ -96,6 +96,11 @@ const [imageLoading, setImageLoading] = useState(true);
   const replyInputRef = useRef<HTMLTextAreaElement>(null);
   const mainCommentRef = useRef<HTMLTextAreaElement>(null);
 
+  const backendBaseUrl =
+  process.env.NODE_ENV === 'production'
+    ? 'https://blog-app-production-16c2.up.railway.app'
+    : 'http://127.0.0.1:9000';
+
   useEffect(() => {
     async function fetchComments() {
       try {
@@ -625,7 +630,7 @@ const postUrl = `/posts/${post.id}`;
     )}
 
     <img
-      src={post.image_url.replace('http://127.0.0.1:8000/', '')}
+      src={`${backendBaseUrl}/${post.image_url.replace(/^\/?/, '')}`}
       alt={post.title}
       className="w-full md:w-100 lg:w-150 h-auto cursor-pointer"
       style={{ display: imageLoading ? 'none' : 'block' }}
