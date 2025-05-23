@@ -21,6 +21,9 @@ export default defineConfig({
       'ziggy-js': resolve(__dirname, 'vendor/tightenco/ziggy'),
     },
   },
+  optimizeDeps: {
+    include: ['react-helmet-async', 'react-markdown', 'react-simplemde-editor'],
+  },
   build: {
     rollupOptions: {
       external: ['react-helmet-async', 'react-markdown', 'react-simplemde-editor'],
