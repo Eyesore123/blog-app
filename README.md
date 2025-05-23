@@ -35,16 +35,19 @@ I will probably try deploying this app on Railway.
 
 ## What I've learned during this project
 
-- How to use Laravel with Inertia. It's a great way to use React with Laravel. Blade views are not used but react components coupled with Laravel classes, models, controllers and routing. This is great for performance and SEO. Laravel backend works normally and React frontend works normally, but inertia is used to render the React components on the client side with backend data, with the classic server-side routing that still has the SPA feel and features (React).
+- How to use Laravel with Inertia. It's a great way to use React with Laravel. Blade views are not used (app.blade.php is the only blade file), but react components are used and coupled with Laravel classes, models, controllers and routing. This is great for performance and SEO. Laravel backend works normally and React frontend works normally. Inertia is used to render the React components on the client side with backend data, with the classic server-side routing that still has the SPA feel and features (React).
 - How to add custom API endpoints to Laravel.
 - How to use models, controllers, routes and views in Laravel (views that are rendered with Inertia).
 - How to add and use a markdown editor.
 - How to use Mailtrap for email testing in a sandbox, and also use it for testing backend routes. Previously I've used SendGrid for sending emails (in my Next.js web shop), but Mailtrap seems to be very easy to use for testing purposes.
-- How to set up rate limiters
-- How to add a queue for sending emails and set up the database queue table and worker + how to use the database driver.
+- How to set up rate limiters in Laravel.
+- How to add admin privileges securely and how to force https in Laravel. Previously I've added admin privileges by changing user data in db, but now it was created with a secure create-admin route (with middleware and a random token). Forcing https was done using middleware and rules, and it was a bit more tricky than the usual approach, like setting the rules in .htaccess file or forcing it on the server.
+- How to add a queue for sending emails and set up the database queue table and a worker + how to use the database driver in Laravel.
+- How to use sqlite db in test environment and then switch to Postgres in production.
+- How to use Railway services, Railway CLI and how connect connect app to db in Railway.
 - I was thinking of sending my blog posts automatically to LinkedIn, but because LinkedIn has become so heavy-handed and frustrating with its unnecessary security measures, I will not support it. Blog users can still share posts on LinkedIn but I won't be adding mine there.
 - It is quite painful to get all the routes and controllers working without hiccups. One subtle change anywhere can break the whole thing. For example, I decided to make changes to account removal logic and suddenly I had to make changes not only to frontend but also to user model, comment model, Accountcontroller, Commentcontroller and to user table with additional migrations. 
-- Deploying can also be a pain if you don't know all the ins and outs of the deployment process. I have never deployed a Laravel app before so I had to learn a lot about it. I had to add bash scripts and other scripts, a Vite helper, an htaccess file, then some changes to providers and other stuff just to get the vite build to work.
+- Deploying can also be a pain if you don't know all the ins and outs of the deployment process. I've never deployed a Laravel app before so I had to learn a lot about it. Vite was causing more issues than usual. I had to add bash scripts and other scripts, a Vite helper, and an htaccess file, and then I had to make some extra changes to providers and vite config file just to get the vite build to work.
 
 ## Issues
 
