@@ -3,7 +3,7 @@
 namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
-use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\File;
 
 class AppServiceProvider extends ServiceProvider
@@ -21,9 +21,17 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        // Check if Vite manifest exists
-        if (!File::exists(public_path('build/manifest.json'))) {
-            Log::error('Vite manifest not found at: ' . public_path('build/manifest.json'));
+        // Register custom Blade directive
+        Blade::directive('viteCustom', function ($expression) {
+            return "<?php echo \App\Helpers\ViteHelper::viteAssets($expression); ?>";
+        });
+        
+        // Check if the manifest exists in the .vite directory and copy it if needed
+        $manifestPath = public_path('build/manifest.json');
+        $altManifestPath = public_path('build/.vite/manifest.json');
+        
+        if (!file_exists($manifestPath) && file_exists($altManifestPath)) {
+            File::copy($altManifestPath, $manifestPath);
         }
     }
 }
