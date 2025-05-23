@@ -21,7 +21,20 @@ class ContentSecurityPolicy
         Log::info('ContentSecurityPolicy middleware applied.');
         $response = $next($request);
 
-        $response->headers->set('Content-Security-Policy', "default-src 'self'; script-src 'self' 'unsafe-inline' blob:; style-src 'self' 'unsafe-inline' blob:; img-src 'self' blob: data:;");
+        $response->headers->set('Content-Security-Policy', "
+            default-src 'self' https: data:;
+            script-src 'self' 'unsafe-inline' 'unsafe-eval' https:;
+            style-src 'self' 'unsafe-inline' https:;
+            img-src 'self' https: data:;
+            font-src 'self' https: data:;
+            connect-src 'self' https:;
+            frame-src 'self' https:;
+            object-src 'none';
+            base-uri 'self';
+            form-action 'self';
+            frame-ancestors 'self';
+            upgrade-insecure-requests;
+        ");
 
         return $response;
     }
