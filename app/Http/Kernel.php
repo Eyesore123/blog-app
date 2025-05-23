@@ -19,11 +19,12 @@ class Kernel extends HttpKernel
             \Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse::class,
             \Illuminate\Session\Middleware\StartSession::class,
             \Illuminate\View\Middleware\ShareErrorsFromSession::class,
-            HandleInertiaRequests::class,  // ← **You need this**
+            HandleInertiaRequests::class,
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
             \App\Http\Middleware\AssignAnonId::class,
            ContentSecurityPolicy::class,
-           \App\Http\Middleware\RewriteAssetUrls::class,
+           \Illuminate\Http\Middleware\HandleCors::class,
+           RewriteAssetUrls::class, // Experimental, remove if it breaks anything
         ],
 
         'api' => [

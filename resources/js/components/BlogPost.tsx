@@ -91,6 +91,8 @@ export function BlogPost({ post, isPostPage = false }: BlogPostProps) {
   const [editingCommentId, setEditingCommentId] = useState<string | null>(null);
 const editCommentRef = useRef<HTMLTextAreaElement>(null);
 const [imageLoading, setImageLoading] = useState(true);
+const [imageError, setImageError] = useState(false);
+const [imageAttempted, setImageAttempted] = useState(false);
 
   // Refs for uncontrolled inputs
   const replyInputRef = useRef<HTMLTextAreaElement>(null);
@@ -620,30 +622,59 @@ const postUrl = `/posts/${post.id}`;
         {post.title}
       </h2>
       
-     {hasValidImageUrl && post.image_url && (
-  <div className="relative w-full flex flex-row justify-center items-center lg:justify-start lg:items-start !mb-6 md:!mb-20 !mt-4"
-  style={{ width: '100%', maxWidth: '40rem', minHeight: '16rem' }}>
-    {imageLoading && (
+{hasValidImageUrl && post.image_url && (
+  <div 
+    className="relative w-full flex flex-row justify-center items-center lg:justify-start lg:items-start !mb-6 md:!mb-20 !mt-4"
+    style={{ width: '100%', maxWidth: '40rem', minHeight: '16rem' }}
+  >
+    {imageLoading && !imageError && (
       <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-10">
         <Spinner size={64} />
       </div>
     )}
+    
+    {/* Original image (hidden when error occurs) */}
+    {!imageError && (
+      <img
+        src={`${backendBaseUrl}/${post.image_url.replace(/^\/?/, '')}`}
+        alt={post.title}
+        className="w-full md:w-100 lg:w-150 h-auto cursor-pointer"
+        style={{ display: imageLoading ? 'none' : 'block' }}
+        onClick={handleImageClick}
+        onLoad={() => {
+          setImageLoading(false);
+          setImageAttempted(true);
+        }}
+        onError={() => {
+          if (!imageAttempted) {
+            setImageLoading(false);
+            setImageError(true);
+            setImageAttempted(true);
+            console.error('Image failed to load:', post.image_url);
+          }
+        }}
+      />
+    )}
+    
+    {/* Fallback image (shown only when error occurs) */}
+    {imageError && (
+      <div className="w-full flex flex-col items-center lg:items-start">
+        <img
+          src="/fallbackimage.jpg"
+          alt={`Placeholder for ${post.title}`}
+          className="w-full md:w-100 lg:w-150 h-auto object-contain cursor-pointer"
+          onClick={handleImageClick}
+        />
 
-    <img
-      src={`${backendBaseUrl}/${post.image_url.replace(/^\/?/, '')}`}
-      alt={post.title}
-      className="w-full md:w-100 lg:w-150 h-auto cursor-pointer"
-      style={{ display: imageLoading ? 'none' : 'block' }}
-      onClick={handleImageClick}
-      onLoad={() => setImageLoading(false)}
-      onError={(e) => {
-        setImageLoading(false);
-        console.error('Image failed to load:', post.image_url);
-        e.currentTarget.style.display = 'none';
-      }}
-    />
+        {/* Placeholder text, used only with icon fallback image */}
+        {/* <p className="text-gray-500 text-sm !mt-10">
+          Image unavailable
+        </p> */}
+      </div>
+    )}
   </div>
 )}
+
       
       <ReactMarkdown
   children={(post.content || '(No content)').replace(/\n/g, '\n\n')}
