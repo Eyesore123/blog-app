@@ -84,17 +84,18 @@ return [
         'pgsql' => [
             'driver' => 'pgsql',
             'url' => env('DATABASE_URL'),
-            'host' => env('PGHOST', '127.0.0.1'),
-            'port' => intval(env('PGPORT', '5432')),  // Convert to integer explicitly
-            'database' => env('PGDATABASE', 'forge'),
-            'username' => env('PGUSER', 'forge'),
-            'password' => env('PGPASSWORD', ''),
+            'host' => parse_url(env('DATABASE_URL'), PHP_URL_HOST) ?? '127.0.0.1',
+            'port' => parse_url(env('DATABASE_URL'), PHP_URL_PORT) ?? '5432',
+            'database' => ltrim(parse_url(env('DATABASE_URL'), PHP_URL_PATH) ?? 'forge', '/'),
+            'username' => parse_url(env('DATABASE_URL'), PHP_URL_USER) ?? 'forge',
+            'password' => parse_url(env('DATABASE_URL'), PHP_URL_PASS) ?? '',
             'charset' => 'utf8',
             'prefix' => '',
             'prefix_indexes' => true,
             'search_path' => 'public',
             'sslmode' => 'prefer',
         ],
+
 
 
 
