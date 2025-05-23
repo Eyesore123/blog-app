@@ -10,6 +10,7 @@ use App\Http\Middleware\ContentSecurityPolicy;
 use Illuminate\Cookie\Middleware\EncryptCookies;
 use App\Http\Middleware\CustomThrottleRequests;
 use App\Http\Middleware\RewriteAssetUrls;
+use App\Http\Middleware\HttpsRedirect;
 
 class Kernel extends HttpKernel
 {
@@ -24,6 +25,7 @@ class Kernel extends HttpKernel
             \App\Http\Middleware\AssignAnonId::class,
            ContentSecurityPolicy::class,
            \Illuminate\Http\Middleware\HandleCors::class,
+          HttpsRedirect::class,
            RewriteAssetUrls::class, // Experimental, remove if it breaks anything
         ],
 
