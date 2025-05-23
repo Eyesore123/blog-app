@@ -35,7 +35,7 @@ I will probably try deploying this app on Railway.
 
 ## What I've learned during this project
 
-- How to use Laravel Inertia. It's a great way to use React with Laravel. Blade views are not used but react components coupled with Laravel classes, models, controllers and routing. This is great for performance and SEO. Laravel backend works normally and React frontend works normally, but inertia is used to render the React components on the client side with backend data, with the classic server-side routing that still has the SPA feel and features (React).
+- How to use Laravel with Inertia. It's a great way to use React with Laravel. Blade views are not used but react components coupled with Laravel classes, models, controllers and routing. This is great for performance and SEO. Laravel backend works normally and React frontend works normally, but inertia is used to render the React components on the client side with backend data, with the classic server-side routing that still has the SPA feel and features (React).
 - How to add custom API endpoints to Laravel.
 - How to use models, controllers, routes and views in Laravel (views that are rendered with Inertia).
 - How to add and use a markdown editor.
