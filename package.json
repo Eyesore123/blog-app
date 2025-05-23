@@ -4,6 +4,8 @@
     "scripts": {
         "build": "vite build",
         "move-vite-assets": "shx mkdir -p public/build && shx cp -r dist/* public/build/ && shx cp -r dist/.vite public/build/",
+        "copy-manifest": "bash copy-manifest.sh",
+        "create-symlinks": "bash create-symlink.sh",
         "postbuild": "npm run move-vite-assets && npm run copy-manifest && npm run create-symlinks",
         "build:ssr": "vite build && vite build --ssr",
         "dev": "vite",
