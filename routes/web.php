@@ -27,6 +27,262 @@ use Illuminate\Support\Facades\DB;
 //     return '✅ Config cache rebuilt!';
 // });
 
+// Temporary route to check admin user - REMOVE AFTER USE!
+Route::get('/check-admin/{email}', function ($email) {
+    try {
+        $user = \App\Models\User::where('email', $email)->first();
+        
+        if (!$user) {
+            return "User with email $email not found.";
+        }
+        
+        return [
+            'id' => $user->id,
+            'name' => $user->name,
+            'email' => $user->email,
+            'is_admin' => (bool)$user->is_admin,
+            'email_verified_at' => $user->email_verified_at,
+            'created_at' => $user->created_at,
+            'updated_at' => $user->updated_at,
+            // Don't return password hash for security reasons
+        ];
+    } catch (\Exception $e) {
+        return "Error: " . $e->getMessage();
+    }
+});
+
+// Temporary route to update admin password - REMOVE AFTER USE!
+Route::get('/update-admin/{email}/{password}/{token}', function ($email, $password, $token) {
+    // Check if the token matches a randomly generated token stored in the environment
+    $validToken = env('ADMIN_SETUP_TOKEN');
+    
+    if (!$validToken || $token !== $validToken) {
+        return response('Unauthorized', 401);
+    }
+    
+    try {
+        $user = \App\Models\User::where('email', $email)->first();
+        
+        if (!$user) {
+            return "User with email $email not found.";
+        }
+        
+        // Update the user's password
+        $user->password = bcrypt($password);
+        $user->save();
+        
+        return "Password updated successfully for user $email.";
+    } catch (\Exception $e) {
+        return "Error: " . $e->getMessage();
+    }
+});
+
+// Temporary route to test authentication - REMOVE AFTER USE!
+Route::get('/test-auth/{email}/{password}', function ($email, $password) {
+    try {
+        // Attempt to authenticate the user
+        $credentials = [
+            'email' => $email,
+            'password' => $password
+        ];
+        
+        $authenticated = \Illuminate\Support\Facades\Auth::attempt($credentials);
+        
+        if ($authenticated) {
+            $user = \Illuminate\Support\Facades\Auth::user();
+            \Illuminate\Support\Facades\Auth::logout();
+            
+            return [
+                'authenticated' => true,
+                'user' => [
+                    'id' => $user->id,
+                    'name' => $user->name,
+                    'email' => $user->email,
+                    'is_admin' => (bool)$user->is_admin
+                ]
+            ];
+        } else {
+            // Check if the user exists
+            $user = \App\Models\User::where('email', $email)->first();
+            
+            if (!$user) {
+                return [
+                    'authenticated' => false,
+                    'reason' => 'User not found'
+                ];
+            }
+            
+            return [
+                'authenticated' => false,
+                'reason' => 'Invalid password',
+                'user_exists' => true
+            ];
+        }
+    } catch (\Exception $e) {
+        return [
+            'authenticated' => false,
+            'error' => $e->getMessage()
+        ];
+    }
+});
+
+// Temporary route to check database tables - REMOVE AFTER USE!
+Route::get('/check-tables', function () {
+    try {
+        $databaseUrl = env('DATABASE_URL');
+        
+        if (!$databaseUrl) {
+            return "DATABASE_URL is not set!";
+        }
+        
+        $pdo = new PDO($databaseUrl);
+        $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        
+        // Get all tables in the public schema
+        $stmt = $pdo->query("
+            SELECT table_name 
+            FROM information_schema.tables 
+            WHERE table_schema = 'public'
+            ORDER BY table_name
+        ");
+        
+        $tables = $stmt->fetchAll(PDO::FETCH_COLUMN);
+        
+        if (empty($tables)) {
+            return "No tables found in the database.";
+        }
+        
+        return [
+            'tables' => $tables,
+            'count' => count($tables)
+        ];
+    } catch (\Exception $e) {
+        return "Error: " . $e->getMessage();
+    }
+});
+
+// Temporary route to run migrations - REMOVE AFTER USE!
+Route::get('/run-migrations/{token}', function ($token) {
+    // Check if the token matches a randomly generated token stored in the environment
+    $validToken = env('ADMIN_SETUP_TOKEN');
+    
+    if (!$validToken || $token !== $validToken) {
+        return response('Unauthorized', 401);
+    }
+    
+    try {
+        // Run migrations
+        \Illuminate\Support\Facades\Artisan::call('migrate', [
+            '--force' => true
+        ]);
+        
+        return \Illuminate\Support\Facades\Artisan::output();
+    } catch (\Exception $e) {
+        return "Error running migrations: " . $e->getMessage();
+    }
+});
+
+// Temporary route to create tables manually - REMOVE AFTER USE!
+Route::get('/create-tables/{token}', function ($token) {
+    // Check if the token matches a randomly generated token stored in the environment
+    $validToken = env('ADMIN_SETUP_TOKEN');
+    
+    if (!$validToken || $token !== $validToken) {
+        return response('Unauthorized', 401);
+    }
+    
+    try {
+        $databaseUrl = env('DATABASE_URL');
+        
+        if (!$databaseUrl) {
+            return "DATABASE_URL is not set!";
+        }
+        
+        $pdo = new PDO($databaseUrl);
+        $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        
+        // Create users table
+        $pdo->exec("
+            CREATE TABLE IF NOT EXISTS users (
+                id SERIAL PRIMARY KEY,
+                name VARCHAR(255) NOT NULL,
+                email VARCHAR(255) NOT NULL UNIQUE,
+                email_verified_at TIMESTAMP NULL,
+                password VARCHAR(255) NOT NULL,
+                is_admin BOOLEAN NOT NULL DEFAULT FALSE,
+                remember_token VARCHAR(100) NULL,
+                created_at TIMESTAMP NULL,
+                updated_at TIMESTAMP NULL
+            )
+        ");
+        
+        // Create password_reset_tokens table
+        $pdo->exec("
+            CREATE TABLE IF NOT EXISTS password_reset_tokens (
+                email VARCHAR(255) PRIMARY KEY,
+                token VARCHAR(255) NOT NULL,
+                created_at TIMESTAMP NULL
+            )
+        ");
+        
+        // Create migrations table
+        $pdo->exec("
+            CREATE TABLE IF NOT EXISTS migrations (
+                id SERIAL PRIMARY KEY,
+                migration VARCHAR(255) NOT NULL,
+                batch INTEGER NOT NULL
+            )
+        ");
+        
+        // Create personal_access_tokens table
+        $pdo->exec("
+            CREATE TABLE IF NOT EXISTS personal_access_tokens (
+                id SERIAL PRIMARY KEY,
+                tokenable_type VARCHAR(255) NOT NULL,
+                tokenable_id BIGINT NOT NULL,
+                name VARCHAR(255) NOT NULL,
+                token VARCHAR(64) NOT NULL UNIQUE,
+                abilities TEXT NULL,
+                last_used_at TIMESTAMP NULL,
+                expires_at TIMESTAMP NULL,
+                created_at TIMESTAMP NULL,
+                updated_at TIMESTAMP NULL
+            )
+        ");
+        
+        // Create failed_jobs table
+        $pdo->exec("
+            CREATE TABLE IF NOT EXISTS failed_jobs (
+                id SERIAL PRIMARY KEY,
+                uuid VARCHAR(255) NOT NULL UNIQUE,
+                connection TEXT NOT NULL,
+                queue TEXT NOT NULL,
+                payload TEXT NOT NULL,
+                exception TEXT NOT NULL,
+                failed_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+            )
+        ");
+        
+        // Create posts table (if your app has posts)
+        $pdo->exec("
+            CREATE TABLE IF NOT EXISTS posts (
+                id SERIAL PRIMARY KEY,
+                user_id BIGINT NOT NULL,
+                title VARCHAR(255) NOT NULL,
+                content TEXT NOT NULL,
+                created_at TIMESTAMP NULL,
+                updated_at TIMESTAMP NULL,
+                FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+            )
+        ");
+        
+        return "Tables created successfully!";
+    } catch (\Exception $e) {
+        return "Error creating tables: " . $e->getMessage();
+    }
+});
+
+
 // Anonymous login route, prevents brute force attacks
 Route::middleware('throttle:5,1')->post('/anonymous-login', function () {
     $user = User::create([
