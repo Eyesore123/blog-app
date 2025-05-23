@@ -26,6 +26,10 @@ use App\Http\Middleware\AdminMiddleware;
 //     return '✅ Config cache rebuilt!';
 // });
 
+Route::get('/test-route', function () {
+    return 'Laravel is working!';
+});
+
 // Anonymous login route, prevents brute force attacks
 Route::middleware('throttle:5,1')->post('/anonymous-login', function () {
     $user = User::create([
