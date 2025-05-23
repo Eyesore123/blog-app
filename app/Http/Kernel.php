@@ -9,6 +9,7 @@ use App\Http\Middleware\HandleInertiaRequests;
 use App\Http\Middleware\ContentSecurityPolicy;
 use Illuminate\Cookie\Middleware\EncryptCookies;
 use App\Http\Middleware\CustomThrottleRequests;
+use App\Http\Middleware\RewriteAssetUrls;
 
 class Kernel extends HttpKernel
 {
@@ -22,6 +23,7 @@ class Kernel extends HttpKernel
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
             \App\Http\Middleware\AssignAnonId::class,
            ContentSecurityPolicy::class,
+           \App\Http\Middleware\RewriteAssetUrls::class,
         ],
 
         'api' => [

@@ -35,4 +35,13 @@ class ViteHelper
             <script type="module" src="/build/assets/app-_lpql_RX.js"></script>
         ');
     }
+    
+    /**
+     * Fix asset URLs in the generated HTML
+     */
+    private static function fixAssetUrls($html)
+    {
+        // Replace /assets/ with /build/assets/
+        return str_replace('"/assets/', '"/build/assets/', $html);
+    }
 }
