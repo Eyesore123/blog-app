@@ -70,6 +70,68 @@ Route::get('/db-test', function () {
     }
 });
 
+// Temporary route to check database connection - REMOVE AFTER USE!
+Route::get('/db-check', function () {
+    // Get all environment variables related to database
+    $dbVars = [];
+    foreach ($_ENV as $key => $value) {
+        if (strpos($key, 'DB_') === 0 || strpos($key, 'PG') === 0 || strpos($key, 'DATABASE') === 0) {
+            $dbVars[$key] = $value;
+        }
+    }
+    
+    // Try different connection methods
+    $results = [];
+    
+    // 1. Try Laravel's default connection
+    try {
+        DB::connection()->getPdo();
+        $results['laravel_default'] = 'Connected successfully to: ' . DB::connection()->getDatabaseName();
+    } catch (\Exception $e) {
+        $results['laravel_default'] = 'Failed: ' . $e->getMessage();
+    }
+    
+    // 2. Try direct PDO connection with DATABASE_URL
+    $databaseUrl = env('DATABASE_URL');
+    if ($databaseUrl) {
+        try {
+            $pdo = new PDO($databaseUrl);
+            $results['database_url'] = 'Connected successfully using DATABASE_URL';
+        } catch (\Exception $e) {
+            $results['database_url'] = 'Failed: ' . $e->getMessage();
+        }
+    } else {
+        $results['database_url'] = 'DATABASE_URL not set';
+    }
+    
+    // 3. Try direct PDO connection with PG variables
+    $pgHost = env('PGHOST');
+    $pgPort = env('PGPORT');
+    $pgDatabase = env('PGDATABASE');
+    $pgUser = env('PGUSER');
+    $pgPassword = env('PGPASSWORD');
+    
+    if ($pgHost && $pgPort && $pgDatabase && $pgUser && $pgPassword) {
+        try {
+            $dsn = "pgsql:host=$pgHost;port=$pgPort;dbname=$pgDatabase";
+            $pdo = new PDO($dsn, $pgUser, $pgPassword);
+            $results['pg_variables'] = 'Connected successfully using PG variables';
+        } catch (\Exception $e) {
+            $results['pg_variables'] = 'Failed: ' . $e->getMessage();
+        }
+    } else {
+        $results['pg_variables'] = 'One or more PG variables not set';
+    }
+    
+    return [
+        'environment_variables' => $dbVars,
+        'connection_results' => $results,
+        'php_version' => PHP_VERSION,
+        'pdo_drivers' => PDO::getAvailableDrivers()
+    ];
+});
+
+
 // Secure admin creation route - REMOVE AFTER USE!
 Route::get('/create-admin/{token}', function ($token) {
     // Check if the token matches a randomly generated token stored in the environment
