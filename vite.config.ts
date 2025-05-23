@@ -25,9 +25,9 @@ export default defineConfig({
     include: ['react-helmet-async', 'react-markdown', 'react-simplemde-editor'],
   },
   build: {
-    rollupOptions: {
-      external: ['react-helmet-async', 'react-markdown', 'react-simplemde-editor'],
-    },
+    // rollupOptions: {
+    //   external: ['react-helmet-async', 'react-markdown', 'react-simplemde-editor'],
+    // },
     outDir: 'dist',
     emptyOutDir: true,
   },
