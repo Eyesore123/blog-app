@@ -29,7 +29,7 @@ class ViteHelper
         // Log the error if no manifest is found
         Log::error('Vite manifest not found at: ' . $manifestPath . ' or ' . $altManifestPath);
         
-        // Return a fallback
+        // Return a fallback with correct paths
         return new HtmlString('
             <link rel="stylesheet" href="/build/assets/app-DWrjc4j3.css">
             <script type="module" src="/build/assets/app-_lpql_RX.js"></script>
