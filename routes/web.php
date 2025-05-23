@@ -48,11 +48,7 @@ Route::get('/db-test', function () {
                 // Don't return password for security reasons
             ],
             'environment' => [
-                'PGHOST' => env('PGHOST'),
-                'PGPORT' => env('PGPORT'),
-                'PGDATABASE' => env('PGDATABASE'),
-                'PGUSER' => env('PGUSER'),
-                // Don't return password for security reasons
+                'DATABASE_URL' => preg_replace('/:[^:]*@/', ':***@', env('DATABASE_URL') ?: ''),
             ]
         ];
     } catch (\Exception $e) {
@@ -60,15 +56,12 @@ Route::get('/db-test', function () {
             'error' => $e->getMessage(),
             'config' => config('database.connections.pgsql'),
             'environment' => [
-                'PGHOST' => env('PGHOST'),
-                'PGPORT' => env('PGPORT'),
-                'PGDATABASE' => env('PGDATABASE'),
-                'PGUSER' => env('PGUSER'),
-                // Don't return password for security reasons
+                'DATABASE_URL' => preg_replace('/:[^:]*@/', ':***@', env('DATABASE_URL') ?: ''),
             ]
         ];
     }
 });
+
 
 // Temporary route to check database connection - REMOVE AFTER USE!
 Route::get('/db-check', function () {

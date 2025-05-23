@@ -82,21 +82,19 @@ return [
             ]) : [],
         ],
         'pgsql' => [
-            'driver' => 'pgsql',
-            'url' => env('DATABASE_URL'),
-            'host' => parse_url(env('DATABASE_URL'), PHP_URL_HOST) ?? '127.0.0.1',
-            'port' => parse_url(env('DATABASE_URL'), PHP_URL_PORT) ?? '5432',
-            'database' => ltrim(parse_url(env('DATABASE_URL'), PHP_URL_PATH) ?? 'forge', '/'),
-            'username' => parse_url(env('DATABASE_URL'), PHP_URL_USER) ?? 'forge',
-            'password' => parse_url(env('DATABASE_URL'), PHP_URL_PASS) ?? '',
-            'charset' => 'utf8',
-            'prefix' => '',
-            'prefix_indexes' => true,
-            'search_path' => 'public',
-            'sslmode' => 'prefer',
-        ],
-
-
+    'driver' => 'pgsql',
+    'url' => env('DATABASE_URL'),
+    'host' => env('DB_HOST', '127.0.0.1'),
+    'port' => env('DB_PORT', '5432'),
+    'database' => env('DB_DATABASE', 'forge'),
+    'username' => env('DB_USERNAME', 'forge'),
+    'password' => env('DB_PASSWORD', ''),
+    'charset' => 'utf8',
+    'prefix' => '',
+    'prefix_indexes' => true,
+    'search_path' => 'public',
+    'sslmode' => 'prefer',
+],
 
 
         'sqlsrv' => [
