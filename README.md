@@ -28,8 +28,10 @@ Blog still needs some work, though, including:
 2. Language toggle to navbar (global translations and post translations)
 3. Advanced features for admin (image size adjustments? etc.)
 4. Email subscription options in admin panel + an improved template for blog post email
+5. Profile images? - would be a nice addition
+6. Automated backups - I will probably use my own php scripts for controlling backups, then set up cron jobs with GitHub Actions
 
-I will probably try deploying this app on Railway.
+I deployed this app on Railway with two services, one for app (both frontend and backend use the same url) and one for database (PostgreSQL).
 
 ![blog3](https://github.com/user-attachments/assets/9b47ad5c-13f9-4858-9291-1eb1d2397d96)
 

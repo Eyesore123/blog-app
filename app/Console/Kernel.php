@@ -9,8 +9,9 @@ class Kernel extends ConsoleKernel
 {
     protected function schedule(Schedule $schedule): void
 {
-    // $schedule->command('emails:send-new-posts')->hourly();
-    $schedule->command('emails:send-new-posts')->everyMinute(); 
+    $schedule->command('emails:send-new-posts')->hourly();
+    $schedule->command('db:backup')->daily();
+    // $schedule->command('emails:send-new-posts')->everyMinute(); 
     // for testing
 }
 
