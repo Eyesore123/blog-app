@@ -1,4 +1,7 @@
 <?php
+
+use Illuminate\Support\Facades\DB;
+
 echo "<h1>Database Connection Check</h1>";
 
 // Get the current database connection
