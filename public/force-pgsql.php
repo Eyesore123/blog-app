@@ -31,7 +31,7 @@ $configPath = __DIR__ . '/../config/database.php';
 $backupPath = $configPath . '.original';
 
 // Backup the original file if it hasn't been backed up yet
-if (!file_exists($backupPath)) {
+if (!file_exists($backupPath) && file_exists($configPath)) {
     copy($configPath, $backupPath);
     echo "<p>Original database.php backed up to database.php.original</p>";
 }
@@ -107,10 +107,13 @@ $cacheConfigPath = __DIR__ . '/../config/cache.php';
 $cacheBackupPath = $cacheConfigPath . '.original';
 
 // Backup the original file if it hasn't been backed up yet
-if (!file_exists($cacheBackupPath)) {
+if (!file_exists($cacheBackupPath) && file_exists($cacheConfigPath)) {
     copy($cacheConfigPath, $cacheBackupPath);
     echo "<p>Original cache.php backed up to cache.php.original</p>";
 }
+
+// Define the base storage path
+$basePath = __DIR__ . '/../storage';
 
 // Create a new cache.php file with file driver as default
 $newCacheConfig = <<<EOD
@@ -127,8 +130,8 @@ return [
         ],
         'file' => [
             'driver' => 'file',
-            'path' => storage_path('framework/cache/data'),
-            'lock_path' => storage_path('framework/cache/data'),
+            'path' => '{$basePath}/framework/cache/data',
+            'lock_path' => '{$basePath}/framework/cache/data',
         ],
         'redis' => [
             'driver' => 'redis',
@@ -148,20 +151,48 @@ if (file_put_contents($cacheConfigPath, $newCacheConfig)) {
 }
 
 // Create the storage directories if they don't exist
-$cachePath = __DIR__ . '/../storage/framework/cache/data';
+$cachePath = $basePath . '/framework/cache/data';
 if (!is_dir($cachePath)) {
-    mkdir($cachePath, 0755, true);
-    echo "<p>Created cache directory at: $cachePath</p>";
+    if (mkdir($cachePath, 0755, true)) {
+        echo "<p>Created cache directory at: $cachePath</p>";
+    } else {
+        echo "<p>Failed to create cache directory. Check permissions.</p>";
+    }
 }
 
-// Clear the configuration cache
-echo "<h2>Clearing Configuration Cache</h2>";
-$output = [];
-$return_var = 0;
-exec('cd ' . __DIR__ . '/../ && php artisan config:clear', $output, $return_var);
-echo "<pre>";
-print_r($output);
-echo "</pre>";
-echo "<p>Return code: $return_var</p>";
+// Create a .env file with the correct database configuration
+$envPath = __DIR__ . '/../.env';
+$envContent = file_exists($envPath) ? file_get_contents($envPath) : '';
 
-echo "<p>Done. <a href='/'>Go to homepage</a></p>";
+// Update or add the database configuration
+$envLines = [
+    'DB_CONNECTION=pgsql',
+    "DB_HOST=$host",
+    "DB_PORT=$port",
+    "DB_DATABASE=$database",
+    "DB_USERNAME=$username",
+    "DB_PASSWORD=$password",
+    'CACHE_DRIVER=file'
+];
+
+foreach ($envLines as $line) {
+    $key = substr($line, 0, strpos($line, '='));
+    
+    // Check if the key exists in the .env file
+    if (preg_match('/^' . preg_quote($key) . '=/m', $envContent)) {
+        // Replace the existing line
+        $envContent = preg_replace('/^' . preg_quote($key) . '=.*/m', $line, $envContent);
+    } else {
+        // Add the line if it doesn't exist
+        $envContent .= "\n" . $line;
+    }
+}
+
+// Write the updated .env file
+if (file_put_contents($envPath, $envContent)) {
+    echo "<p>.env file updated with PostgreSQL and file cache configuration.</p>";
+} else {
+    echo "<p>Failed to update .env file. Check permissions.</p>";
+}
+
+echo "<p>Done. <a href='/check-config.php'>Check Configuration</a></p>";

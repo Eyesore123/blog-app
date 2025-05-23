@@ -1,16 +1,19 @@
 <?php
 echo "<h1>Creating Storage Directories</h1>";
 
+// Define the base storage path
+$basePath = __DIR__ . '/../storage';
+
 // Define the storage directories to create
 $storagePaths = [
-    'app' => storage_path('app'),
-    'app/public' => storage_path('app/public'),
-    'framework' => storage_path('framework'),
-    'framework/cache' => storage_path('framework/cache'),
-    'framework/cache/data' => storage_path('framework/cache/data'),
-    'framework/sessions' => storage_path('framework/sessions'),
-    'framework/views' => storage_path('framework/views'),
-    'logs' => storage_path('logs'),
+    'app' => $basePath . '/app',
+    'app/public' => $basePath . '/app/public',
+    'framework' => $basePath . '/framework',
+    'framework/cache' => $basePath . '/framework/cache',
+    'framework/cache/data' => $basePath . '/framework/cache/data',
+    'framework/sessions' => $basePath . '/framework/sessions',
+    'framework/views' => $basePath . '/framework/views',
+    'logs' => $basePath . '/logs',
 ];
 
 // Create each directory and set permissions

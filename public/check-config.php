@@ -1,66 +1,20 @@
 <?php
 echo "<h1>Configuration Check</h1>";
 
-// Check database configuration
-echo "<h2>Database Configuration</h2>";
-echo "<pre>";
-try {
-    $default = config('database.default');
-    echo "Default connection: $default\n\n";
-    
-    $connections = config('database.connections');
-    echo "Available connections:\n";
-    foreach ($connections as $name => $config) {
-        echo "- $name\n";
-        if ($name === $default) {
-            echo "  Driver: " . ($config['driver'] ?? 'not set') . "\n";
-            echo "  Host: " . ($config['host'] ?? 'not set') . "\n";
-            echo "  Database: " . ($config['database'] ?? 'not set') . "\n";
-            echo "  Username: " . ($config['username'] ?? 'not set') . "\n";
-            echo "  Password: " . (isset($config['password']) ? '******' : 'not set') . "\n";
-        }
-    }
-} catch (Exception $e) {
-    echo "Error reading database configuration: " . $e->getMessage() . "\n";
-}
-echo "</pre>";
-
-// Check cache configuration
-echo "<h2>Cache Configuration</h2>";
-echo "<pre>";
-try {
-    $default = config('cache.default');
-    echo "Default cache driver: $default\n\n";
-    
-    $stores = config('cache.stores');
-    echo "Available cache stores:\n";
-    foreach ($stores as $name => $config) {
-        echo "- $name\n";
-        if ($name === $default) {
-            echo "  Driver: " . ($config['driver'] ?? 'not set') . "\n";
-            if (isset($config['path'])) {
-                echo "  Path: " . $config['path'] . "\n";
-                echo "  Path exists: " . (is_dir($config['path']) ? 'Yes' : 'No') . "\n";
-                echo "  Path writable: " . (is_writable($config['path']) ? 'Yes' : 'No') . "\n";
-            }
-        }
-    }
-} catch (Exception $e) {
-    echo "Error reading cache configuration: " . $e->getMessage() . "\n";
-}
-echo "</pre>";
+// Define the base storage path
+$basePath = __DIR__ . '/../storage';
 
 // Check storage directories
 echo "<h2>Storage Directories</h2>";
 echo "<pre>";
 $storagePaths = [
-    'app' => storage_path('app'),
-    'framework' => storage_path('framework'),
-    'framework/cache' => storage_path('framework/cache'),
-    'framework/cache/data' => storage_path('framework/cache/data'),
-    'framework/sessions' => storage_path('framework/sessions'),
-    'framework/views' => storage_path('framework/views'),
-    'logs' => storage_path('logs'),
+    'app' => $basePath . '/app',
+    'framework' => $basePath . '/framework',
+    'framework/cache' => $basePath . '/framework/cache',
+    'framework/cache/data' => $basePath . '/framework/cache/data',
+    'framework/sessions' => $basePath . '/framework/sessions',
+    'framework/views' => $basePath . '/framework/views',
+    'logs' => $basePath . '/logs',
 ];
 
 foreach ($storagePaths as $name => $path) {
@@ -88,6 +42,94 @@ foreach ($_ENV as $key => $value) {
     }
 }
 print_r($env_vars);
+echo "</pre>";
+
+// Check database connection
+echo "<h2>Database Connection Test</h2>";
+echo "<pre>";
+
+// Get the DATABASE_URL
+$databaseUrl = getenv('DATABASE_URL');
+
+if (!$databaseUrl) {
+    echo "DATABASE_URL is not set!\n";
+} else {
+    // Parse the DATABASE_URL
+    $dbParts = parse_url($databaseUrl);
+    $host = $dbParts['host'] ?? '';
+    $port = $dbParts['port'] ?? 5432;
+    $database = ltrim($dbParts['path'] ?? '', '/');
+    $username = $dbParts['user'] ?? '';
+    $password = $dbParts['pass'] ?? '';
+    
+    echo "Host: $host\n";
+    echo "Port: $port\n";
+    echo "Database: $database\n";
+    echo "Username: $username\n";
+    echo "Password: " . (empty($password) ? 'not set' : '******') . "\n\n";
+    
+    // Try to connect using PDO
+    try {
+        $dsn = "pgsql:host=$host;port=$port;dbname=$database;user=$username;password=$password";
+        $pdo = new PDO($dsn);
+        $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        
+        echo "PDO Connection: Success\n";
+        
+        // Get the PostgreSQL version
+        $stmt = $pdo->query('SELECT version()');
+        $version = $stmt->fetchColumn();
+        echo "PostgreSQL Version: $version\n\n";
+        
+        // List tables
+        $stmt = $pdo->query("
+            SELECT table_name 
+            FROM information_schema.tables 
+            WHERE table_schema = 'public'
+            ORDER BY table_name
+        ");
+        
+        echo "Tables:\n";
+        $tables = $stmt->fetchAll(PDO::FETCH_COLUMN);
+        
+        if (empty($tables)) {
+            echo "No tables found.\n";
+        } else {
+            foreach ($tables as $table) {
+                echo "- $table\n";
+            }
+        }
+        
+    } catch (PDOException $e) {
+        echo "PDO Connection Error: " . $e->getMessage() . "\n";
+    }
+    
+    // Try to connect using pg_connect
+    if (function_exists('pg_connect')) {
+        try {
+            $connectionString = "host=$host port=$port dbname=$database user=$username password=$password";
+            $conn = pg_connect($connectionString);
+            
+            if ($conn) {
+                echo "\npg_connect Connection: Success\n";
+                
+                // Get PostgreSQL version
+                $result = pg_query($conn, "SELECT version()");
+                $version = pg_fetch_result($result, 0, 0);
+                echo "PostgreSQL Version: $version\n";
+                
+                // Close connection
+                pg_close($conn);
+            } else {
+                echo "\npg_connect Connection Error: " . pg_last_error() . "\n";
+            }
+        } catch (Exception $e) {
+            echo "\npg_connect Error: " . $e->getMessage() . "\n";
+        }
+    } else {
+        echo "\npg_connect function does not exist. PostgreSQL extension is not installed.\n";
+    }
+}
 echo "</pre>";
 
 echo "<p>Done. <a href='/'>Go to homepage</a></p>";
