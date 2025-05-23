@@ -10,6 +10,7 @@ export default defineConfig({
     laravel({
       input: ['resources/css/app.css', 'resources/js/app.tsx', 'resources/js/pages/MainPage.tsx'],
       refresh: true,
+      publicDirectory: 'public',
     }),
     react(),
     tailwindcss(),
@@ -27,10 +28,17 @@ export default defineConfig({
     include: ['react-helmet-async', 'react-markdown', 'react-simplemde-editor'],
   },
   build: {
-    // rollupOptions: {
-    //   external: ['react-helmet-async', 'react-markdown', 'react-simplemde-editor'],
-    // },
+    // Keep building to dist directory since your post-build script copies from there
     outDir: 'dist',
+    assetsDir: 'assets',
+    manifest: true,
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          vendor: ['react', 'react-dom', 'react-helmet-async'],
+        },
+      },
+    },
     emptyOutDir: true,
   },
   base: process.env.ASSET_URL ?? '/',

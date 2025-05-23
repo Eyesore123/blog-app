@@ -1,0 +1,1 @@
+import{c as t}from"./ConfirmationContext-_sHM_c2k.js";const e=t.create({baseURL:"https://blog-app-production-16c2.up.railway.app",headers:{"X-Requested-With":"XMLHttpRequest",Accept:"application/json"},withCredentials:!0});export{e as a};

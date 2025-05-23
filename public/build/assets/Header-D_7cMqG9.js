@@ -1,0 +1,1 @@
+import{j as e}from"./ConfirmationContext-_sHM_c2k.js";function o(){return e.jsx("div",{children:e.jsx("div",{className:"text-center !py-8 bg-gradient-to-r from-[#5800FF] via-[#E900FF] to-[#FFC600] text-white",children:e.jsx("h1",{className:"text-4xl font-bold hover:cursor-pointer",onClick:()=>window.location.href="/",children:"Joni's Blog"})})})}export{o as H};
