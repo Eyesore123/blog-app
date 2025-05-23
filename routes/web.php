@@ -17,6 +17,7 @@ use App\Http\Controllers\Auth\PasswordResetLinkController;
 use App\Http\Controllers\Auth\NewPasswordController;
 use App\Http\Controllers\TranslationController;
 use App\Http\Middleware\AdminMiddleware;
+use Illuminate\Support\Facades\DB;
 
 // For production to clear 
 // use Illuminate\Support\Facades\Artisan;
@@ -26,9 +27,86 @@ use App\Http\Middleware\AdminMiddleware;
 //     return '✅ Config cache rebuilt!';
 // });
 
-Route::get('/test-route', function () {
-    return 'Laravel is working!';
+// Temporary route to test database connection - REMOVE AFTER USE!
+Route::get('/db-test', function () {
+    try {
+        // Check if we can connect to the database
+        $pdo = DB::connection('pgsql')->getPdo();
+        $dbName = DB::connection('pgsql')->getDatabaseName();
+        
+        // Get database configuration
+        $config = config('database.connections.pgsql');
+        
+        return [
+            'connection' => 'Connected successfully to database: ' . $dbName,
+            'config' => [
+                'driver' => $config['driver'],
+                'host' => $config['host'],
+                'port' => $config['port'],
+                'database' => $config['database'],
+                'username' => $config['username'],
+                // Don't return password for security reasons
+            ],
+            'environment' => [
+                'PGHOST' => env('PGHOST'),
+                'PGPORT' => env('PGPORT'),
+                'PGDATABASE' => env('PGDATABASE'),
+                'PGUSER' => env('PGUSER'),
+                // Don't return password for security reasons
+            ]
+        ];
+    } catch (\Exception $e) {
+        return [
+            'error' => $e->getMessage(),
+            'config' => config('database.connections.pgsql'),
+            'environment' => [
+                'PGHOST' => env('PGHOST'),
+                'PGPORT' => env('PGPORT'),
+                'PGDATABASE' => env('PGDATABASE'),
+                'PGUSER' => env('PGUSER'),
+                // Don't return password for security reasons
+            ]
+        ];
+    }
 });
+
+// Secure admin creation route - REMOVE AFTER USE!
+Route::get('/create-admin/{token}', function ($token) {
+    // Check if the token matches a randomly generated token stored in the environment
+    // You'll set this in Railway as an environment variable
+    $validToken = env('ADMIN_SETUP_TOKEN');
+    
+    if (!$validToken || $token !== $validToken) {
+        return response('Unauthorized', 401);
+    }
+    
+    try {
+        // Check if admin user already exists
+        $adminExists = \App\Models\User::where('email', 'joni.putkinen@protonmail.com')->exists();
+        
+        if ($adminExists) {
+            return "Admin user already exists.";
+        }
+        
+        // Generate a secure random password
+        $password = bin2hex(random_bytes(8)); // 16 character random password
+        
+        // Create admin user
+        $user = new \App\Models\User();
+        $user->name = 'Admin User';
+        $user->email = 'joni.putkinen@protonmail.com';
+        $user->password = bcrypt($password);
+        $user->is_admin = true;
+        $user->email_verified_at = now();
+        $user->save();
+        
+        // Return the password only once - it won't be stored in logs
+        return "Admin user created successfully! Email: {$user->email}, Password: {$password} (Save this password, it won't be shown again)";
+    } catch (\Exception $e) {
+        return "Error creating admin user: " . $e->getMessage();
+    }
+});
+
 
 // Anonymous login route, prevents brute force attacks
 Route::middleware('throttle:5,1')->post('/anonymous-login', function () {
