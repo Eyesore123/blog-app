@@ -24,26 +24,24 @@ class Kernel extends HttpKernel
             HandleInertiaRequests::class,
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
             \App\Http\Middleware\AssignAnonId::class,
-           ContentSecurityPolicy::class,
-           \Illuminate\Http\Middleware\HandleCors::class,
-          HttpsRedirect::class,
-          HandleCors::class,
-           RewriteAssetUrls::class, // Experimental, remove if it breaks anything
+            ContentSecurityPolicy::class,
+            HandleCors::class, // Removed duplicate and kept the correct one
+            HttpsRedirect::class,
+            RewriteAssetUrls::class, // Experimental, remove if it breaks anything
         ],
-
+        
         'api' => [
             EnsureFrontendRequestsAreStateful::class,
             'throttle:api',
-            \Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful::class,
-            \Illuminate\Routing\Middleware\ThrottleRequests::class.':api',
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
         ],
     ];
 
     protected $routeMiddleware = [
         'admin' => AdminMiddleware::class,
-    'throttle' => CustomThrottleRequests::class,
-    'comment-post' => \App\Http\Middleware\CommentPostRateLimiter::class,
-    'csp' => ContentSecurityPolicy::class,
+        'throttle' => CustomThrottleRequests::class,
+        'comment-post' => \App\Http\Middleware\CommentPostRateLimiter::class,
+        'csp' => ContentSecurityPolicy::class,
+        'cors' => HandleCors::class, // Added CORS middleware alias
     ];
 }
