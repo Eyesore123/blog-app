@@ -11,6 +11,7 @@ use Illuminate\Cookie\Middleware\EncryptCookies;
 use App\Http\Middleware\CustomThrottleRequests;
 use App\Http\Middleware\RewriteAssetUrls;
 use App\Http\Middleware\HttpsRedirect;
+use App\Http\Middleware\HandleCors;
 
 class Kernel extends HttpKernel
 {
@@ -26,6 +27,7 @@ class Kernel extends HttpKernel
            ContentSecurityPolicy::class,
            \Illuminate\Http\Middleware\HandleCors::class,
           HttpsRedirect::class,
+          HandleCors::class,
            RewriteAssetUrls::class, // Experimental, remove if it breaks anything
         ],
 
