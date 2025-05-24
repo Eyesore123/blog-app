@@ -22,6 +22,10 @@ Loading spinners are used for images and log-in. Custom alerts pop up to notify 
 
 Errors are mostly handled with custom error pages. Images use a fallback image in case the image is not found.
 
+Automated backups - Php scripts are used for controlling backups. Cron jobs are set up with GitHub Actions to back up the db in regular intervals.
+
+Postgres admin panel is added to make the backend work easier. Backend admin can run scripts, make changes to users and tables, add new admins etc.
+
 Blog still needs some work, though, including:
 
 1. Post translation save to database and fetch for translated posts
@@ -29,11 +33,17 @@ Blog still needs some work, though, including:
 3. Advanced features for admin (image size adjustments? etc.)
 4. Email subscription options in admin panel + an improved template for blog post email
 5. Profile images? - would be a nice addition
-6. Automated backups - I will probably use my own php scripts for controlling backups, then set up cron jobs with GitHub Actions
 
 I deployed this app on Railway with two services, one for app (both frontend and backend use the same url) and one for database (PostgreSQL).
 
+Comment section looks like this when user is not signed in. Signed in users can reply to comments and edit/delete comments.
+
 ![blog3](https://github.com/user-attachments/assets/9b47ad5c-13f9-4858-9291-1eb1d2397d96)
+
+Portgres admin panel looks nice:
+
+![admindashboard](https://github.com/user-attachments/assets/0530e3cf-617f-4e1a-974d-68bf35c829f2)
+
 
 ## What I've learned during this project
 
