@@ -25,12 +25,12 @@ class Kernel extends HttpKernel
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
             \App\Http\Middleware\AssignAnonId::class,
             ContentSecurityPolicy::class,
-            HandleCors::class, // Removed duplicate and kept the correct one
             HttpsRedirect::class,
-            RewriteAssetUrls::class, // Experimental, remove if it breaks anything
+            RewriteAssetUrls::class,
         ],
         
         'api' => [
+            HandleCors::class, // Add CORS to API middleware group
             EnsureFrontendRequestsAreStateful::class,
             'throttle:api',
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
@@ -42,6 +42,6 @@ class Kernel extends HttpKernel
         'throttle' => CustomThrottleRequests::class,
         'comment-post' => \App\Http\Middleware\CommentPostRateLimiter::class,
         'csp' => ContentSecurityPolicy::class,
-        'cors' => HandleCors::class, // Added CORS middleware alias
+        'cors' => HandleCors::class,
     ];
 }
