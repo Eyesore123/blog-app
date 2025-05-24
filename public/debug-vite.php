@@ -227,5 +227,4 @@ if ($_POST['action'] ?? '' === 'rebuild') {
         </div>
     </div>
 </body>
-</html>";
-?>
+</html>
