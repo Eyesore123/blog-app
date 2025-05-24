@@ -19,23 +19,52 @@ echo "<!DOCTYPE html>
     <div class='max-w-2xl mx-auto'>
         <h1 class='text-2xl font-bold mb-6'>👑 Create Admin User (PostgreSQL)</h1>";
 
-// Get database credentials from environment
-$dbHost = getenv('PGHOST');
-$dbPort = getenv('PGPORT') ?: '5432';
-$dbName = getenv('PGDATABASE');
-$dbUser = getenv('PGUSER');
-$dbPass = getenv('PGPASSWORD');
+// Try Railway's DATABASE_URL first, then fall back to individual vars
+$databaseUrl = getenv('DATABASE_URL');
+$pdo = null;
+
+if ($databaseUrl) {
+    // Parse DATABASE_URL (Railway format)
+    $dbParts = parse_url($databaseUrl);
+    $dbHost = $dbParts['host'];
+    $dbPort = $dbParts['port'] ?? 5432;
+    $dbName = ltrim($dbParts['path'], '/');
+    $dbUser = $dbParts['user'];
+    $dbPass = $dbParts['pass'];
+    
+    echo "<div class='bg-blue-100 border border-blue-400 p-4 rounded mb-4'>
+            <h3 class='font-bold text-blue-800'>🔍 Using Railway DATABASE_URL</h3>
+            <p class='text-blue-700'>Host: $dbHost | Database: $dbName | User: $dbUser</p>
+          </div>";
+} else {
+    // Fall back to individual environment variables
+    $dbHost = getenv('PGHOST');
+    $dbPort = getenv('PGPORT') ?: '5432';
+    $dbName = getenv('PGDATABASE');
+    $dbUser = getenv('PGUSER');
+    $dbPass = getenv('PGPASSWORD');
+    
+    echo "<div class='bg-yellow-100 border border-yellow-400 p-4 rounded mb-4'>
+            <h3 class='font-bold text-yellow-800'>🔍 Using Individual Environment Variables</h3>
+            <p class='text-yellow-700'>Host: $dbHost | Database: $dbName | User: $dbUser</p>
+          </div>";
+}
 
 if (!$dbHost || !$dbName || !$dbUser || !$dbPass) {
     echo "<div class='bg-red-100 border border-red-400 p-4 rounded mb-4'>
             <h3 class='font-bold text-red-800'>❌ Missing Database Configuration</h3>
-            <p class='text-red-700'>Required environment variables not found:</p>
+            <p class='text-red-700'>Database connection details not found. Available environment variables:</p>
             <ul class='list-disc list-inside text-sm text-red-600 mt-2'>
-                <li>PGHOST: " . ($dbHost ? '✓' : '❌') . "</li>
-                <li>PGDATABASE: " . ($dbName ? '✓' : '❌') . "</li>
-                <li>PGUSER: " . ($dbUser ? '✓' : '❌') . "</li>
-                <li>PGPASSWORD: " . ($dbPass ? '✓' : '❌') . "</li>
+                <li>DATABASE_URL: " . ($databaseUrl ? '✓ Found' : '❌ Not found') . "</li>
+                <li>PGHOST: " . (getenv('PGHOST') ? '✓ Found' : '❌ Not found') . "</li>
+                <li>PGDATABASE: " . (getenv('PGDATABASE') ? '✓ Found' : '❌ Not found') . "</li>
+                <li>PGUSER: " . (getenv('PGUSER') ? '✓ Found' : '❌ Not found') . "</li>
+                <li>PGPASSWORD: " . (getenv('PGPASSWORD') ? '✓ Found' : '❌ Not found') . "</li>
             </ul>
+            <div class='mt-4 p-3 bg-gray-100 rounded'>
+                <p class='text-xs text-gray-600'>Debug info:</p>
+                <p class='text-xs font-mono'>DATABASE_URL exists: " . (getenv('DATABASE_URL') ? 'Yes' : 'No') . "</p>
+            </div>
           </div>";
     echo "</div></body></html>";
     exit;
@@ -51,58 +80,20 @@ try {
     
     echo "<div class='bg-green-100 border border-green-400 p-4 rounded mb-4'>
             <h3 class='font-bold text-green-800'>✅ Database Connection Successful</h3>
-            <p class='text-green-700'>Connected to PostgreSQL database: $dbName</p>
+            <p class='text-green-700'>Connected to PostgreSQL database: $dbName on $dbHost</p>
           </div>";
     
 } catch (PDOException $e) {
     echo "<div class='bg-red-100 border border-red-400 p-4 rounded mb-4'>
             <h3 class='font-bold text-red-800'>❌ Database Connection Failed</h3>
             <p class='text-red-700'>Error: " . htmlspecialchars($e->getMessage()) . "</p>
+            <div class='mt-2 text-xs text-red-600'>
+                <p>DSN: $dsn</p>
+                <p>User: $dbUser</p>
+            </div>
           </div>";
     echo "</div></body></html>";
     exit;
-}
-
-// Check if users table exists
-try {
-    $stmt = $pdo->query("SELECT COUNT(*) FROM information_schema.tables WHERE table_name = 'users'");
-    $tableExists = $stmt->fetchColumn() > 0;
-    
-    if (!$tableExists) {
-        echo "<div class='bg-yellow-100 border border-yellow-400 p-4 rounded mb-4'>
-                <h3 class='font-bold text-yellow-800'>⚠️ Users Table Missing</h3>
-                <p class='text-yellow-700'>The users table doesn't exist. Creating it now...</p>
-              </div>";
-        
-        // Create users table
-        $createTable = "
-            CREATE TABLE users (
-                id SERIAL PRIMARY KEY,
-                name VARCHAR(255) NOT NULL,
-                email VARCHAR(255) UNIQUE NOT NULL,
-                email_verified_at TIMESTAMP NULL,
-                password VARCHAR(255) NOT NULL,
-                is_admin BOOLEAN DEFAULT FALSE,
-                is_active BOOLEAN DEFAULT TRUE,
-                remember_token VARCHAR(100) NULL,
-                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-            )
-        ";
-        
-        $pdo->exec($createTable);
-        
-        echo "<div class='bg-green-100 border border-green-400 p-4 rounded mb-4'>
-                <h3 class='font-bold text-green-800'>✅ Users Table Created</h3>
-                <p class='text-green-700'>Users table has been created successfully.</p>
-              </div>";
-    }
-    
-} catch (PDOException $e) {
-    echo "<div class='bg-red-100 border border-red-400 p-4 rounded mb-4'>
-            <h3 class='font-bold text-red-800'>❌ Table Check Failed</h3>
-            <p class='text-red-700'>Error: " . htmlspecialchars($e->getMessage()) . "</p>
-          </div>";
 }
 
 // Handle form submission
