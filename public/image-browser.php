@@ -1,11 +1,15 @@
 <?php
 $validToken = getenv('ADMIN_SETUP_TOKEN');
-if (($_GET['token'] ?? '') !== $validToken) { http_response_code(404); exit; }
+if (($_GET['token'] ?? '') !== $validToken) { 
+    http_response_code(404); 
+    exit; 
+}
 
 // Fix the undefined array key warning
 $action = $_POST['action'] ?? $_GET['action'] ?? '';
 
-$uploadDir = '/app/storage/app/public/images/';
+// Change to uploads directory to match Laravel app expectation
+$uploadDir = '/app/storage/app/public/uploads/';
 if (!is_dir($uploadDir)) {
     mkdir($uploadDir, 0755, true);
 }
@@ -122,7 +126,8 @@ if (empty($images)) {
     echo "<div style='display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px;'>";
     
     foreach ($images as $image) {
-        $imageUrl = "/storage/images/" . $image['name'];
+        // Changed from /storage/images/ to /storage/uploads/
+        $imageUrl = "/storage/uploads/" . $image['name'];
         $fullUrl = "https://blog-app-production-16c2.up.railway.app" . $imageUrl;
         
         echo "<div style='border: 1px solid #e5e7eb; border-radius: 8px; padding: 15px; background: white;'>";
