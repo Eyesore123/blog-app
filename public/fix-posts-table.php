@@ -51,6 +51,30 @@ if ($databaseUrl) {
     }
 }
 
+// Check for users and get first user ID
+$firstUserId = null;
+try {
+    $stmt = $pdo->query("SELECT id FROM users ORDER BY id LIMIT 1");
+    $user = $stmt->fetch();
+    if ($user) {
+        $firstUserId = $user['id'];
+        echo "<div class='bg-blue-100 border border-blue-400 p-4 rounded mb-4'>
+                <h3 class='font-bold text-blue-800'>👤 Found User</h3>
+                <p class='text-blue-700'>Will use User ID: $firstUserId for posts</p>
+              </div>";
+    } else {
+        echo "<div class='bg-yellow-100 border border-yellow-400 p-4 rounded mb-4'>
+                <h3 class='font-bold text-yellow-800'>⚠️ No Users Found</h3>
+                <p class='text-yellow-700'>You'll need to create a user first, or we'll create a default one.</p>
+              </div>";
+    }
+} catch (PDOException $e) {
+    echo "<div class='bg-red-100 border border-red-400 p-4 rounded mb-4'>
+            <h3 class='font-bold text-red-800'>❌ Error checking users</h3>
+            <p class='text-red-700'>Error: " . htmlspecialchars($e->getMessage()) . "</p>
+          </div>";
+}
+
 // Check current table structure
 echo "<div class='bg-white p-6 rounded-lg shadow mb-6'>
         <h3 class='text-lg font-semibold mb-4'>📋 Current Posts Table Structure</h3>";
@@ -80,7 +104,8 @@ try {
         $existingColumns = [];
         foreach ($columns as $column) {
             $existingColumns[] = $column['column_name'];
-            echo "<tr>
+            $rowClass = $column['column_name'] === 'user_id' ? 'bg-yellow-50' : '';
+            echo "<tr class='$rowClass'>
                     <td class='p-3 border font-medium'>{$column['column_name']}</td>
                     <td class='p-3 border'>{$column['data_type']}</td>
                     <td class='p-3 border'>{$column['is_nullable']}</td>
@@ -95,6 +120,7 @@ try {
         // Check what columns are missing
         $requiredColumns = [
             'id' => 'bigint PRIMARY KEY',
+            'user_id' => 'bigint NOT NULL (references users)',
             'title' => 'varchar(255) NOT NULL',
             'slug' => 'varchar(255) UNIQUE NOT NULL',
             'content' => 'text',
@@ -140,6 +166,40 @@ try {
 
 echo "</div>";
 
+// Create default user if needed
+if ($_POST['action'] ?? '' === 'create_user') {
+    echo "<div class='bg-yellow-100 border border-yellow-400 p-4 rounded mb-4'>
+            <h3 class='font-bold text-yellow-800'>👤 Creating Default User...</h3>
+          </div>";
+    
+    try {
+        $stmt = $pdo->prepare("
+            INSERT INTO users (name, email, email_verified_at, password, created_at, updated_at) 
+            VALUES (?, ?, NOW(), ?, NOW(), NOW()) 
+            RETURNING id
+        ");
+        
+        $defaultPassword = password_hash('admin123', PASSWORD_DEFAULT);
+        
+        if ($stmt->execute(['Admin User', 'admin@blog.com', $defaultPassword])) {
+            $userId = $stmt->fetchColumn();
+            $firstUserId = $userId;
+            echo "<div class='bg-green-100 border border-green-400 p-4 rounded mb-4'>
+                    <h3 class='font-bold text-green-800'>✅ Default User Created!</h3>
+                    <p class='text-green-700'>User ID: $userId</p>
+                    <p class='text-green-700'>Email: admin@blog.com</p>
+                    <p class='text-green-700'>Password: admin123</p>
+                  </div>";
+        }
+        
+    } catch (PDOException $e) {
+        echo "<div class='bg-red-100 border border-red-400 p-4 rounded mb-4'>
+                <h3 class='font-bold text-red-800'>❌ Error creating user</h3>
+                <p class='text-red-700'>Error: " . htmlspecialchars($e->getMessage()) . "</p>
+              </div>";
+    }
+}
+
 // Fix table structure
 if ($_POST['action'] ?? '' === 'fix_table') {
     echo "<div class='bg-yellow-100 border border-yellow-400 p-4 rounded mb-4'>
@@ -156,6 +216,20 @@ if ($_POST['action'] ?? '' === 'fix_table') {
         $existingColumns = $stmt->fetchAll(PDO::FETCH_COLUMN);
         
         $alterStatements = [];
+        
+        // Add user_id if missing
+        if (!in_array('user_id', $existingColumns)) {
+            if ($firstUserId) {
+                $alterStatements[] = "ALTER TABLE posts ADD COLUMN user_id BIGINT";
+                $alterStatements[] = "UPDATE posts SET user_id = $firstUserId WHERE user_id IS NULL";
+                $alterStatements[] = "ALTER TABLE posts ALTER COLUMN user_id SET NOT NULL";
+            } else {
+                echo "<div class='bg-red-100 border border-red-400 p-4 rounded mb-4'>
+                        <h3 class='font-bold text-red-800'>❌ Cannot add user_id column</h3>
+                        <p class='text-red-700'>No users exist. Please create a user first.</p>
+                      </div>";
+            }
+        }
         
         // Add missing columns
         if (!in_array('slug', $existingColumns)) {
@@ -285,5 +359,5 @@ if ($_POST['action'] ?? '' === 'test_post') {
         </div>
     </div>
 </body>
-</html>";
-?>
+</html>
+
