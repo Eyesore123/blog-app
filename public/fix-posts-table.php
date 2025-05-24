@@ -297,34 +297,44 @@ if ($_POST['action'] ?? '' === 'test_post') {
             <h3 class='font-bold text-yellow-800'>🧪 Testing Post Creation...</h3>
           </div>";
     
-    try {
-        $title = 'Test Post ' . date('Y-m-d H:i:s');
-        $slug = 'test-post-' . time();
-        $content = 'This is a test post created after fixing the table structure.';
-        
-        $stmt = $pdo->prepare("
-            INSERT INTO posts (title, slug, content, is_published, created_at, updated_at, published_at) 
-            VALUES (?, ?, ?, true, NOW(), NOW(), NOW()) 
-            RETURNING id
-        ");
-        
-        if ($stmt->execute([$title, $slug, $content])) {
-            $postId = $stmt->fetchColumn();
-            echo "<div class='bg-green-100 border border-green-400 p-4 rounded mb-4'>
-                    <h3 class='font-bold text-green-800'>✅ Test Post Created Successfully!</h3>
-                    <p class='text-green-700'>Post ID: $postId</p>
-                    <p class='text-green-700'>Title: $title</p>
-                    <p class='text-green-700'>Slug: $slug</p>
+    if (!$firstUserId) {
+        echo "<div class='bg-red-100 border border-red-400 p-4 rounded mb-4'>
+                <h3 class='font-bold text-red-800'>❌ Cannot create test post</h3>
+                <p class='text-red-700'>No users exist. Please create a user first.</p>
+              </div>";
+    } else {
+        try {
+            $title = 'Test Post ' . date('Y-m-d H:i:s');
+            $slug = 'test-post-' . time();
+            $content = 'This is a test post created after fixing the table structure.';
+            
+            // INCLUDE user_id in the INSERT
+            $stmt = $pdo->prepare("
+                INSERT INTO posts (user_id, title, slug, content, is_published, created_at, updated_at, published_at) 
+                VALUES (?, ?, ?, ?, true, NOW(), NOW(), NOW()) 
+                RETURNING id
+            ");
+            
+            if ($stmt->execute([$firstUserId, $title, $slug, $content])) {
+                $postId = $stmt->fetchColumn();
+                echo "<div class='bg-green-100 border border-green-400 p-4 rounded mb-4'>
+                        <h3 class='font-bold text-green-800'>✅ Test Post Created Successfully!</h3>
+                        <p class='text-green-700'>Post ID: $postId</p>
+                        <p class='text-green-700'>User ID: $firstUserId</p>
+                        <p class='text-green-700'>Title: $title</p>
+                        <p class='text-green-700'>Slug: $slug</p>
+                      </div>";
+            }
+            
+        } catch (PDOException $e) {
+            echo "<div class='bg-red-100 border border-red-400 p-4 rounded mb-4'>
+                    <h3 class='font-bold text-red-800'>❌ Test Post Creation Failed</h3>
+                    <p class='text-red-700'>Error: " . htmlspecialchars($e->getMessage()) . "</p>
                   </div>";
         }
-        
-    } catch (PDOException $e) {
-        echo "<div class='bg-red-100 border border-red-400 p-4 rounded mb-4'>
-                <h3 class='font-bold text-red-800'>❌ Test Post Creation Failed</h3>
-                <p class='text-red-700'>Error: " . htmlspecialchars($e->getMessage()) . "</p>
-              </div>";
     }
 }
+
 
 ?>
 
