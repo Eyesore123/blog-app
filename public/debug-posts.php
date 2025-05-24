@@ -201,5 +201,4 @@ echo "</div>";
         </div>
     </div>
 </body>
-</html>";
-?>
+</html>
