@@ -9,6 +9,7 @@ import SearchComponent from '@/components/SearchComponent';
 import YearFilterComponent from '@/components/YearFilterComponent';
 import ArchivesComponent from '@/components/ArchiveComponent';
 import RecentActivityFeed from '@/components/RecentActivityFeed';
+import { PortfolioLink } from '@/components/PortfolioLink';
 import { RssSubscribeLink } from '@/components/RssSubscribeLink';
 import { useTheme } from '../context/ThemeContext';
 
@@ -124,6 +125,7 @@ export default function MainPage() {
                   <ArchivesComponent />
                   <RssSubscribeLink />
                   <RecentActivityFeed />
+                  <PortfolioLink />
                 </div>
               </div>
             </aside>

@@ -10,6 +10,7 @@ import ArchivesComponent from '@/components/ArchiveComponent';
 import RecentActivityFeed from '@/components/RecentActivityFeed';
 import { BlogPost } from '@/components/BlogPost';
 import { RssSubscribeLink } from '@/components/RssSubscribeLink';
+import { PortfolioLink } from '@/components/PortfolioLink';
 import { Navbar } from '@/components/Navbar';
 import { useTheme } from '../context/ThemeContext';
 import axiosInstance from "../components/axiosInstance";
@@ -195,6 +196,7 @@ const PostPage: React.FC<PostPageProps> = ({ post }) => {
                 <ArchivesComponent />
                 <RecentActivityFeed />
                 <RssSubscribeLink />
+                <PortfolioLink />
               </div>
             </div>
           </aside>
