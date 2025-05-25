@@ -33,8 +33,24 @@ class Post extends Model
     }
 
     public function tags()
-{
-    return $this->belongsToMany(Tag::class);
-}
+    {
+        return $this->belongsToMany(Tag::class);
+    }
+    
+    public function getImageUrlAttribute($value)
+    {
+        // If it's already a full URL, return as-is
+        if (str_starts_with($value, 'http')) {
+            return $value;
+        }
+        
+        // If it's a relative path, return the route URL
+        if ($value) {
+            return route('image.show', ['filename' => $value]);
+        }
+        
+        return null;
+    }
+
 
 }

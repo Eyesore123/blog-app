@@ -27,6 +27,20 @@ use Illuminate\Support\Facades\DB;
 //     return '✅ Config cache rebuilt!';
 // });
 
+// Image route test
+Route::get('/img/{filename}', function ($filename) {
+    $path = public_path($filename);
+    
+    if (!file_exists($path)) {
+        abort(404);
+    }
+    
+    return response()->file($path, [
+        'Cache-Control' => 'public, max-age=31536000',
+    ]);
+})->name('image.show');
+
+
 
 // Anonymous login route, prevents brute force attacks
 Route::middleware('throttle:5,1')->post('/anonymous-login', function () {
