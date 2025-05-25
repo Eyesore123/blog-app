@@ -28,8 +28,9 @@ use Illuminate\Support\Facades\DB;
 // });
 
 // Image route test
-Route::get('/img/{filename}', function ($filename) {
-    $path = public_path($filename);
+
+Route::get('/storage/{folder}/{filename}', function ($folder, $filename) {
+    $path = storage_path('app/public/' . $folder . '/' . $filename);
     
     if (!file_exists($path)) {
         abort(404);
@@ -38,7 +39,8 @@ Route::get('/img/{filename}', function ($filename) {
     return response()->file($path, [
         'Cache-Control' => 'public, max-age=31536000',
     ]);
-})->name('image.show');
+})->name('storage.file');
+
 
 
 

@@ -650,8 +650,7 @@ const postUrl = `/posts/${post.id}`;
     {/* Original image - ALWAYS rendered but with opacity control */}
     {!imageError && (
       <img
-        src={`${backendBaseUrl}/img/${post.image_url.replace(/^\/?/, '')}`}
-        alt={post.title}
+        src={post.image_url}
         className={`w-full md:w-100 lg:w-150 h-auto cursor-pointer transition-opacity duration-300 ${
           imageLoading ? 'opacity-0' : 'opacity-100'
         }`}
