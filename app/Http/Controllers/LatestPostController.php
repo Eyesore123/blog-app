@@ -23,6 +23,7 @@ class LatestPostController extends Controller
             'url' => route('posts.show', $latestPost),
             'excerpt' => \Illuminate\Support\Str::limit(strip_tags($latestPost->content), 100),
             'publishedAt' => $latestPost->created_at->toDateString(),
+            'imageUrl' => $latestPost->image_url,
         ])->header('Access-Control-Allow-Origin', 'https://jonis-portfolio.netlify.app')
           ->header('Access-Control-Allow-Methods', 'GET, OPTIONS')
           ->header('Access-Control-Allow-Headers', 'Content-Type');
