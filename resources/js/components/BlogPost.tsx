@@ -92,35 +92,19 @@ export function BlogPost({ post, isPostPage = false }: BlogPostProps) {
 const editCommentRef = useRef<HTMLTextAreaElement>(null);
 const [imageLoading, setImageLoading] = useState(true);
 const [imageError, setImageError] = useState(false);
-const [imageAttempted, setImageAttempted] = useState(false);
 
-// Force minimum loading times because images are served from public folder without routes
-
-const [minLoadingTime, setMinLoadingTime] = useState(true);
-
-useEffect(() => {
-    // Force minimum loading time of 800ms
-    const timer = setTimeout(() => {
-        setMinLoadingTime(false);
-    }, 800);
-
-    return () => clearTimeout(timer);
-}, []);
-
+// Image loading and error handling
 const handleImageLoad = () => {
+    console.log('Image loaded successfully'); // Debug log
     setImageLoading(false);
-    setImageAttempted(true);
 };
 
 const handleImageError = () => {
+    console.log('Image failed to load'); // Debug log
     setImageLoading(false);
     setImageError(true);
-    setImageAttempted(true);
     console.error('Image failed to load:', post.image_url);
 };
-
-// Show spinner when either image is loading OR minimum time hasn't passed
-const showSpinner = (imageLoading || minLoadingTime) && !imageError;
 
   // Refs for uncontrolled inputs
   const replyInputRef = useRef<HTMLTextAreaElement>(null);
@@ -650,25 +634,26 @@ const postUrl = `/posts/${post.id}`;
         {post.title}
       </h2>
       
+
 {hasValidImageUrl && post.image_url && (
   <div
     className="relative w-full flex flex-row justify-center items-center lg:justify-start lg:items-start !mb-6 md:!mb-20 !mt-4"
     style={{ width: '100%', maxWidth: '40rem', minHeight: '16rem' }}
   >
-    {/* Show spinner only when loading and no error */}
-    {showSpinner && (
+    {/* Show spinner while image is loading */}
+    {imageLoading && !imageError && (
       <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-10">
         <Spinner size={64} />
       </div>
     )}
        
-    {/* Original image (hidden when error occurs or still loading) */}
+    {/* Original image - ALWAYS rendered but with opacity control */}
     {!imageError && (
       <img
         src={`${backendBaseUrl}/${post.image_url.replace(/^\/?/, '')}`}
         alt={post.title}
         className={`w-full md:w-100 lg:w-150 h-auto cursor-pointer transition-opacity duration-300 ${
-          showSpinner ? 'opacity-0' : 'opacity-100'
+          imageLoading ? 'opacity-0' : 'opacity-100'
         }`}
         onClick={handleImageClick}
         onLoad={handleImageLoad}
@@ -676,24 +661,19 @@ const postUrl = `/posts/${post.id}`;
       />
     )}
        
-    {/* Fallback image (shown only when error occurs) */}
-    {imageError && !showSpinner && (
+    {/* Fallback image */}
+    {imageError && (
       <div className="w-full flex flex-col items-center lg:items-start">
         <img
           src="/fallbackimage.jpg"
           alt={`Placeholder for ${post.title}`}
-          className="w-full md:w-100 lg:w-150 h-auto object-contain cursor-pointer opacity-100"
+          className="w-full md:w-100 lg:w-150 h-auto object-contain cursor-pointer"
           onClick={handleImageClick}
         />
-        {/* Placeholder text, used only with icon fallback image */}
-        {/* <p className="text-gray-500 text-sm !mt-10">
-          Image unavailable
-        </p> */}
       </div>
     )}
   </div>
 )}
-
       
       <ReactMarkdown
   children={(post.content || '(No content)').replace(/\n/g, '\n\n')}
