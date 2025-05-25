@@ -28,7 +28,6 @@ class LatestPostController extends Controller
             'excerpt' => \Illuminate\Support\Str::limit(strip_tags($latestPost->content), 100),
             'publishedAt' => $latestPost->created_at->toDateString(),
             'imageUrl' => $imageUrl,
-            'debug_columns' => array_keys($latestPost->getAttributes()), // Debug: see all columns
         ])->header('Access-Control-Allow-Origin', 'https://jonis-portfolio.netlify.app')
           ->header('Access-Control-Allow-Methods', 'GET, OPTIONS')
           ->header('Access-Control-Allow-Headers', 'Content-Type');
@@ -36,18 +35,25 @@ class LatestPostController extends Controller
 
     private function getImageUrl($post)
     {
-        // Try different possible column names
-        $imageColumns = ['image_url', 'image', 'image_path', 'featured_image', 'thumbnail'];
-        
-        foreach ($imageColumns as $column) {
-            if (isset($post->$column) && !empty($post->$column)) {
-                $imageValue = $post->$column;
-                
-                if (str_starts_with($imageValue, 'http')) {
-                    return $imageValue;
-                } else {
-                    return url($imageValue);
-                }
+        // Check the correct column name: image_path
+        if (isset($post->image_path) && !empty($post->image_path)) {
+            $imagePath = $post->image_path;
+            
+            // If it's already a full URL, return as-is
+            if (str_starts_with($imagePath, 'http')) {
+                return $imagePath;
+            }
+            
+            // If it's a relative path, fix the path structure
+            if (str_starts_with($imagePath, 'uploads/')) {
+                // Convert "uploads/filename.jpg" to "/storage/uploads/filename.jpg"
+                return url('/storage/' . $imagePath);
+            } elseif (str_starts_with($imagePath, '/uploads/')) {
+                // Convert "/uploads/filename.jpg" to "/storage/uploads/filename.jpg"
+                return url('/storage' . $imagePath);
+            } else {
+                // Assume it's just the filename or already has correct path
+                return url($imagePath);
             }
         }
 
