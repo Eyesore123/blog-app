@@ -35,10 +35,13 @@ class AdminController extends Controller
 
     Log::info('Editing post', ['post_id' => $post->id]);
 
-    // Check if the tag already exists
-    $tagName = $post->tags->first()->name; // Get the first tag name
-    $tag = Tag::firstOrCreate(['name' => $tagName]);
-    $post->tags()->attach($tag->id); // Add the tag to the post's tags collection
+    // Check if the post has any tags
+    if ($post->tags->count() > 0) {
+        // Check if the tag already exists
+        $tagName = $post->tags->first()->name; // Get the first tag name
+        $tag = Tag::firstOrCreate(['name' => $tagName]);
+        $post->tags()->attach($tag->id); // Add the tag to the post's tags collection
+    }
 
     return Inertia::render('EditPostPage', [
         'post' => [
@@ -48,7 +51,7 @@ class AdminController extends Controller
             'topic' => $post->topic,
             'image_url' => $imageUrl,
             'published' => $post->published,
-            'tags' => $post->tags,
+            'tags' => $post->tags, // Pass the entire tags collection
         ],
     ]);
 }
