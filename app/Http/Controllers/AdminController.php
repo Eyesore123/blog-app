@@ -6,9 +6,7 @@ use Inertia\Inertia;
 use App\Models\Post;
 use App\Models\User;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Storage;
+use App\Models\Tag;
 
 
 class AdminController extends Controller
@@ -37,6 +35,9 @@ class AdminController extends Controller
 
     Log::info('Editing post', ['post_id' => $post->id]);
 
+    // Check if the tag already exists
+    $tag = Tag::firstOrCreate(['name' => $post->tags]);
+
     return Inertia::render('EditPostPage', [
         'post' => [
             'id' => $post->id,
@@ -45,7 +46,7 @@ class AdminController extends Controller
             'topic' => $post->topic,
             'image_url' => $imageUrl,
             'published' => $post->published,
-            'tags' => $post->tags,
+            'tags' => $tag->name,
         ],
     ]);
 }
