@@ -40,7 +40,9 @@ class AdminController extends Controller
         // Check if the tag already exists
         $tagName = $post->tags->first()->name; // Get the first tag name
         $tag = Tag::firstOrCreate(['name' => $tagName]);
-        $post->tags()->attach($tag->id); // Add the tag to the post's tags collection
+        $post->tags()->syncWithoutDetaching([$tag->id]);
+        // IF doesn't work, try this:
+        // $post->tags()->toggle($tag->id);
     }
 
     return Inertia::render('EditPostPage', [
