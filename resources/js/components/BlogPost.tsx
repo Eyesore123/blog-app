@@ -673,9 +673,9 @@ const postUrl = `/posts/${post.id}`;
     )}
   </div>
 )}
-      
-      <ReactMarkdown
-  children={(post.content || '(No content)').replace(/\n/g, '\n\n')}
+      <div className="markdown-text" style={{ whiteSpace: 'pre-wrap' }}>
+     <ReactMarkdown
+  children={(post.content || '(No content)')}
   components={{
     p: ({ node, ...props }) => <p className="mb-4" {...props} />,
     ul: ({ node, ...props }) => <ul className="list-disc ml-6 mb-4" {...props} />,
@@ -686,17 +686,9 @@ const postUrl = `/posts/${post.id}`;
     blockquote: ({ node, ...props }) => (
       <blockquote className="border-l-4 border-gray-300 pl-4 italic text-gray-600 mb-4" {...props} />
     ),
-    code: ({ inline, ...props }) =>
-      inline ? (
-        <code className="bg-gray-100 text-red-500 px-1 rounded" {...props} />
-      ) : (
-        <pre className="bg-gray-100 p-2 rounded overflow-x-auto">
-          <code {...props} />
-        </pre>
-      ),
   }}
-  skipHtml={false}
 />
+</div>
       
       <div className="text-xs md:text-sm flex flex-col justify-center items-center  md:justify-start md:items-start text-gray-500 !mt-3 !pt-4 md:!pt-6 !space-y-1 border-t border-[#5800FF]/20">
         {post.created_at &&  (
