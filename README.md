@@ -18,7 +18,7 @@ Logged in users have a My Account page where they can change their password, del
 
 Providers are used for themes, alerts and confirmations. I added a markdown editor for posts. Perhaps I could add one for comments, but it was quite bothersome to get it work without errors for posts so I'm not sure if I'll add new editors.
 
-Loading spinners are used for images and log-in. Custom alerts pop up to notify user of successful logout. Login doesn't include popup, because it would feel a bit intrusive towards regular users. Admin gets a pop up notification when a new post is added. Custom dialogue window in used for verifying important actions (like deleting a post or a user account). Admin can use Google Cloud Tranlation AP to translate posts to other languages.
+Loading spinners are used for images and log-in. Custom alerts pop up to notify user of successful logout. Login doesn't include popup, because it would feel a bit intrusive towards regular users. Admin gets a pop up notification when a new post is added. Custom dialogue window in used for verifying important actions (like deleting a post or a user account). Admin can use Google Cloud Tranlation API to translate posts to other languages.
 
 Errors are mostly handled with custom error pages. Images use a fallback image in case the image is not found.
 
@@ -35,6 +35,11 @@ Blog still needs some work, though, including:
 5. Profile images? - would be a nice addition
 6. Also I need to store the images somewhere. Perhaps AWS S3?
 7. Bookmark icon from Laravel icon to my own
+8. Post page comments revealed by default
+9. Suggestions for posts based on tags after there are more posts
+10. New comment notification to admin (timed, once per day). Notification to registered users when someone replies to their comment.
+11. Scheduled uploads feature would be nice
+12. Save sketches feature + fetch sketches from database in admin panel
 
 I deployed this app on Railway with two services, one for app (both frontend and backend use the same url) and one for database (PostgreSQL).
 

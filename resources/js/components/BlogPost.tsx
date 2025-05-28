@@ -680,7 +680,7 @@ const postUrl = `/posts/${post.id}`;
     p: ({ node, ...props }) => <p className="mb-4" {...props} />,
     ul: ({ node, ...props }) => <ul className="list-disc ml-6 mb-4" {...props} />,
     ol: ({ node, ...props }) => <ol className="list-decimal ml-6 mb-4" {...props} />,
-    li: ({ node, ...props }) => <li className="mb-2" {...props} />,
+    li: ({ node, ...props }) => <li className="mb-2 ml-6" {...props} />,
     strong: ({ node, ...props }) => <strong className="font-bold" {...props} />,
     em: ({ node, ...props }) => <em className="italic" {...props} />,
     blockquote: ({ node, ...props }) => (
