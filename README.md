@@ -24,7 +24,7 @@ Errors are mostly handled with custom error pages. Images use a fallback image i
 
 Automated backups - Php scripts are used for controlling backups. Cron jobs are set up with GitHub Actions to back up the db in regular intervals.
 
-Postgres admin panel is added to make the backend work easier. Backend admin can run scripts, make changes to users and tables, add new admins etc.
+Postgres admin panel is added to make the backend adjustments easier. Backend admin can run scripts, make changes to users and tables, create new admins etc. Only admin has access to the admin panel and scripts. Symlink is recreated via script after each deployment. Currently Vite assets need also rebuilding after a new deployment.
 
 Blog still needs some work, though, including:
 

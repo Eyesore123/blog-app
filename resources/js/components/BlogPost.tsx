@@ -678,13 +678,13 @@ const postUrl = `/posts/${post.id}`;
   children={(post.content || '(No content)')}
   components={{
     p: ({ node, ...props }) => <p className="mb-4" {...props} />,
-    ul: ({ node, ...props }) => <ul className="list-disc ml-6 mb-4" {...props} />,
-    ol: ({ node, ...props }) => <ol className="list-decimal ml-6 mb-4" {...props} />,
-    li: ({ node, ...props }) => <li className="mb-2 ml-6" {...props} />,
+    ul: ({ node, ...props }) => <ul className="list-disc !ml-6 !mb-4" {...props} />,
+    ol: ({ node, ...props }) => <ol className="list-decimal !ml-6 !mb-4" {...props} />,
+    li: ({ node, ...props }) => <li className="!mb-2 !ml-6" {...props} />,
     strong: ({ node, ...props }) => <strong className="font-bold" {...props} />,
     em: ({ node, ...props }) => <em className="italic" {...props} />,
     blockquote: ({ node, ...props }) => (
-      <blockquote className="border-l-4 border-gray-300 pl-4 italic text-gray-600 mb-4" {...props} />
+      <blockquote className="border-l-4 border-gray-300 !pl-4 italic text-gray-600 !mb-4" {...props} />
     ),
   }}
 />
