@@ -42,8 +42,6 @@ Route::get('/storage/{folder}/{filename}', function ($folder, $filename) {
 })->name('storage.file');
 
 
-
-
 // Anonymous login route, prevents brute force attacks
 Route::middleware('throttle:5,1')->post('/anonymous-login', function () {
     $user = User::create([
@@ -74,7 +72,6 @@ Route::get('/post/{id}/edit', [AdminController::class, 'edit'])->name('admin.edi
 
 // Route::post('/comments', 'CommentController@store')->middleware('comment-post');
 
-// In your web.php file, change this:
 // Route::middleware(['auth', 'throttle:comment-post'])
 //     ->post('/api/comments', [CommentController::class, 'store']);
 Route::middleware(['auth', 'throttle:10,1'])

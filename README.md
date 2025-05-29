@@ -71,3 +71,4 @@ Portgres admin panel looks nice:
 
 - Markdown editor needs some work.
 - Flash messages are not working properly so I made a workaround for pop-ups. Pop-ups work fine but they are not really flash messages.
+- Posts by year component is showing only posts of the same page

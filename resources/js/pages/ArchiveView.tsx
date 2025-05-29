@@ -148,7 +148,7 @@ export default function ArchiveView() {
               ) : (
                 <>
                   {posts.data.map((post) => {
-                    const imageUrl = post.image_url ? `${window.location.origin}/${post.image_url}` : null;
+                    const imageUrl = post.image_url || undefined;
                     const slug = post.slug && post.slug !== 'slug' ? post.slug : undefined;
                     const author = post.author && post.author !== 'author' ? post.author : 'Unknown';
 

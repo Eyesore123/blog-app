@@ -10,55 +10,35 @@ use Illuminate\Support\Facades\Log;
 
 class ArchiveController extends Controller
 {
-    // Handle the /archives route
     public function index(Request $request)
     {
-        // For SQLite, use strftime instead of YEAR
-        if (DB::connection()->getDriverName() === 'sqlite') {
-            $years = Post::selectRaw("strftime('%Y', created_at) as year")
-                        ->distinct()
-                        ->orderBy('year', 'desc')
-                        ->pluck('year');
-        } else {
-            // For MySQL or other databases
-            $years = Post::selectRaw('YEAR(created_at) as year')
-                        ->distinct()
-                        ->orderBy('year', 'desc')
-                        ->pluck('year');
-        }
-                    
+        // Get distinct years from posts depending on DB driver
+        $years = DB::connection()->getDriverName() === 'sqlite'
+            ? Post::selectRaw("strftime('%Y', created_at) as year")->distinct()->orderBy('year', 'desc')->pluck('year')
+            : Post::selectRaw('YEAR(created_at) as year')->distinct()->orderBy('year', 'desc')->pluck('year');
+
         return Inertia::render('ArchiveView', [
             'years' => $years,
-            'posts' => ['data' => []],  // Empty posts array
+            'posts' => ['data' => []],
             'allPosts' => [],
             'topics' => [],
             'currentTopic' => null,
             'currentPage' => 0,
             'hasMore' => false,
             'total' => 0,
-            'archiveYear' => date('Y'),  // Current year as default
+            'archiveYear' => date('Y'),
         ]);
     }
 
     public function getYears()
     {
         try {
-            if (DB::connection()->getDriverName() === 'sqlite') {
-                // Use strftime for SQLite
-                $years = Post::selectRaw("strftime('%Y', created_at) as year")
-                    ->distinct()
-                    ->orderBy('year', 'desc')
-                    ->pluck('year');
-            } else {
-                // Use YEAR() for MySQL or other databases
-                $years = Post::selectRaw("YEAR(created_at) as year")
-                    ->distinct()
-                    ->orderBy('year', 'desc')
-                    ->pluck('year');
-            }
-    
+            $years = DB::connection()->getDriverName() === 'sqlite'
+                ? Post::selectRaw("strftime('%Y', created_at) as year")->distinct()->orderBy('year', 'desc')->pluck('year')
+                : Post::selectRaw("YEAR(created_at) as year")->distinct()->orderBy('year', 'desc')->pluck('year');
+
             Log::info('Years fetched successfully:', $years->toArray());
-    
+
             return response()->json(['years' => $years]);
         } catch (\Exception $e) {
             Log::error('Error fetching years:', ['error' => $e->getMessage()]);
@@ -72,77 +52,73 @@ class ArchiveController extends Controller
         $page = $request->input('page', 1);
         $perPage = 6;
 
-        // Query to get posts from the specified year
-        if (DB::connection()->getDriverName() === 'sqlite') {
-            $query = Post::select('id', 'title', 'content', 'topic', 'created_at', 'slug', 'image_path')
-                        ->whereRaw("strftime('%Y', created_at) = ?", [$year]);
-        } else {
-            $query = Post::select('id', 'title', 'content', 'topic', 'created_at', 'slug', 'image_path')
-                        ->whereYear('created_at', $year);
-        }
+        // Base query depending on DB
+        $query = DB::connection()->getDriverName() === 'sqlite'
+            ? Post::select('id', 'title', 'content', 'topic', 'created_at', 'slug', 'image_path')
+                ->whereRaw("strftime('%Y', created_at) = ?", [$year])
+            : Post::select('id', 'title', 'content', 'topic', 'created_at', 'slug', 'image_path')
+                ->whereYear('created_at', $year);
 
-        // Filter by topic if provided
         if ($topic) {
             $query->where('topic', $topic);
         }
 
-        // Get paginated posts
-        $posts = $query->orderBy('created_at', 'desc')
-                    ->paginate($perPage);
+        // Paginated posts
+        $posts = $query->orderBy('created_at', 'desc')->paginate($perPage);
 
-        // Transform posts to include `image_url`
+        // Fix image URLs
         $posts->getCollection()->transform(function ($post) {
-            $post->image_url = $post->image_path 
-                ? (strpos($post->image_path, 'http') === 0 
-                    ? $post->image_path 
-                    : asset('storage/' . $post->image_path))
-                : null;
+            $post->image_url = $this->formatImageUrl($post->image_path);
             return $post;
         });
 
-        // Get all posts for the specified year
-        if (DB::connection()->getDriverName() === 'sqlite') {
-            $allPosts = Post::select('id', 'title', 'content', 'topic', 'created_at', 'slug', 'image_path')
-                        ->whereRaw("strftime('%Y', created_at) = ?", [$year])
-                        ->orderBy('created_at', 'desc')
-                        ->get();
-        } else {
-            $allPosts = Post::select('id', 'title', 'content', 'topic', 'created_at', 'slug', 'image_path')
-                        ->whereYear('created_at', $year)
-                        ->orderBy('created_at', 'desc')
-                        ->get();
-        }
-
-        // Transform `allPosts` to include `image_url`
-        $allPosts->transform(function ($post) {
-            $post->image_url = $post->image_path 
-                ? (strpos($post->image_path, 'http') === 0 
-                    ? $post->image_path 
-                    : asset('storage/' . $post->image_path))
-                : null;
-            return $post;
-        });
-
-        // Get all unique topics for the specified year
-        $topics = DB::connection()->getDriverName() === 'sqlite'
+        // All posts for the year
+        $allPostsQuery = DB::connection()->getDriverName() === 'sqlite'
             ? Post::whereRaw("strftime('%Y', created_at) = ?", [$year])
-                ->distinct('topic')
-                ->pluck('topic')
-                ->toArray()
-            : Post::whereYear('created_at', $year)
-                ->distinct('topic')
-                ->pluck('topic')
-                ->toArray();
+            : Post::whereYear('created_at', $year);
+
+        $allPosts = $allPostsQuery->orderBy('created_at', 'desc')->get();
+
+        // Fix image URLs
+        $allPosts->transform(function ($post) {
+            $post->image_url = $this->formatImageUrl($post->image_path);
+            return $post;
+        });
+
+        // All topics for the year
+        $topics = DB::connection()->getDriverName() === 'sqlite'
+            ? Post::whereRaw("strftime('%Y', created_at) = ?", [$year])->distinct()->pluck('topic')->toArray()
+            : Post::whereYear('created_at', $year)->distinct()->pluck('topic')->toArray();
 
         return Inertia::render('ArchiveView', [
             'posts' => $posts,
             'allPosts' => $allPosts,
             'topics' => $topics,
             'currentTopic' => $topic,
-            'currentPage' => $page - 1, // Adjust for zero-based indexing in frontend
+            'currentPage' => $page - 1,
             'hasMore' => $posts->hasMorePages(),
             'total' => $posts->total(),
             'archiveYear' => (int)$year,
         ]);
     }
+
+    // Helper method to generate correct image URL
+    private function formatImageUrl(?string $imagePath): ?string
+    {
+        $imagePath = trim((string) $imagePath);
+
+        if (!$imagePath) {
+            return null;
+        }
+
+        // Already a full URL
+        if (preg_match('/^https?:\/\//i', $imagePath)) {
+            return $imagePath;
+        }
+
+        // Assume path like: /storage/uploads/xyz.jpg — generate full URL using url()
+        return $imagePath ? asset('storage/' . $imagePath) : null;
+    }
+
+
 }
