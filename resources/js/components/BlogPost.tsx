@@ -79,7 +79,7 @@ export function BlogPost({ post, isPostPage = false }: BlogPostProps) {
   const token = user?.token;
   // Convert is_admin to boolean explicitly
   const isAdmin = user ? Boolean(user.is_admin) : false;
-  const [showComments, setShowComments] = useState(false);
+  const [showComments, setShowComments] = useState(isPostPage);
   const [replyingTo, setReplyingTo] = useState<string | null>(null);
    const [message, setMessage] = useState(""); // To store the message from backend
   const [newComment, setNewComment] = useState("");

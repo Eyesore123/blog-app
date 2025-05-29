@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
+import { useTheme } from '../context/ThemeContext';
 
 interface AlertProps {
   message: string;
@@ -16,6 +17,7 @@ const CustomAlert: React.FC<AlertProps> = ({
 }) => {
   const [isVisible, setIsVisible] = useState(true);
   const [progress, setProgress] = useState(100);
+  const { theme } = useTheme();
   
   // Color mapping based on your site's color scheme
   const colors = {
@@ -76,7 +78,13 @@ const CustomAlert: React.FC<AlertProps> = ({
           {color.icon}
         </div>
         <div className="flex-1">
-          <p className="fon-medium text-white">{message}</p>
+          <p
+            className={`font-medium ${
+              theme === "dark" ? "text-white" : "text-green-800"
+            }`}
+          >
+            {message}
+          </p>
           <div className="w-full h-1 bg-gray-200 rounded-full !mt-2 overflow-hidden">
             <div
               className={`h-full ${type === 'error' || type === 'warning' ? 'bg-[#E900FF]' : 'bg-[#5800FF]'}`}

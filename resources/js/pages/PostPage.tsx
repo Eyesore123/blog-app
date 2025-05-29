@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { router } from '@inertiajs/react';
-import { usePage } from '@inertiajs/react';
-import { Toaster } from 'sonner';
+import { router, usePage } from '@inertiajs/react';
+import { Toaster, toast } from 'sonner';
 import Header from '../components/Header';
 import SearchComponent from '@/components/SearchComponent';
 import '../../css/app.css';
@@ -14,7 +13,6 @@ import { PortfolioLink } from '@/components/PortfolioLink';
 import { Navbar } from '@/components/Navbar';
 import { useTheme } from '../context/ThemeContext';
 import axiosInstance from "../components/axiosInstance";
-import { getCsrfToken } from "../components/auth";
 import { useAlert } from '@/context/AlertContext';
 import { useConfirm } from '@/context/ConfirmationContext';
 
@@ -67,27 +65,31 @@ interface PostPageProps {
   topics?: string[];
   currentTopic?: string | null;
   isPostPage?: boolean;
+  flash?: {
+    success?: string;
+    error?: string;
+    info?: string;
+  };
 }
 
 const PostPage: React.FC<PostPageProps> = ({ post }) => {
   const { props } = usePage<PostPageProps>();
   const { theme } = useTheme();
   const allPosts: Post[] | AllPosts = props.allPosts ?? {};
-  const { auth, topics, currentTopic } = props;
+  const { auth, topics, currentTopic, flash } = props;
   const user = auth?.user;
   const { confirm } = useConfirm();
-  
+
   // Convert is_admin to boolean explicitly
   const isAdmin = user ? Boolean(user.is_admin) : false;
   const isSignedIn = Boolean(user);
-  
+
   const [newComment, setNewComment] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [comments, setComments] = useState<Comment[]>([]);
   const { showAlert } = useAlert();
-  const normalizedPosts = Array.isArray(allPosts)
-  ? allPosts
-  : allPosts?.data || [];
+
+  const normalizedPosts = Array.isArray(allPosts) ? allPosts : allPosts?.data || [];
 
   useEffect(() => {
     async function fetchComments() {
@@ -100,10 +102,24 @@ const PostPage: React.FC<PostPageProps> = ({ post }) => {
         setComments(formattedComments);
       } catch (error) {
         console.error('Failed to fetch comments', error);
+        toast.error('Failed to load comments');
       }
     }
     fetchComments();
   }, [post.id]);
+
+  // Show flash messages from server on page load
+  useEffect(() => {
+  if (flash?.success) {
+    showAlert(flash.success, 'success');
+  }
+  if (flash?.error) {
+    showAlert(flash.error, 'error');
+  }
+  if (flash?.info) {
+    showAlert(flash.info, 'info');
+  }
+}, [flash]);
 
 
   const handleTopicChange = (topic: string | null) => {
@@ -112,133 +128,127 @@ const PostPage: React.FC<PostPageProps> = ({ post }) => {
     router.get('/', Object.fromEntries(params));
   };
 
-
-  // console.log('BlogPost image path:', post.image_url);
+  // Handler to delete comment with flash messages
+  const handleDeleteComment = async (commentId: string) => {
+    try {
+      await axiosInstance.delete(`/api/comments/${commentId}`);
+      setComments(comments.filter((comment) => comment._id !== commentId));
+      toast.success('Comment deleted successfully!');
+    } catch (error) {
+      console.error('Failed to delete comment', error);
+      toast.error('Failed to delete comment. Please try again.');
+    }
+  };
 
   return (
-  <div className={`min-h-160 ${theme}`}>
-    <div className="min-h-160 bg-[var(--bg-primary)] text-[var(--text-primary)]">
-      <Navbar />
-      <Header />
-      <main className="!p-4 md:!p-8 !gap-1">
-        {/* Change to flex-col on mobile, row on larger screens */}
-        <div className="w-full !mx-auto flex flex-col lg:flex-row md:!gap-10">
-          {/* Sidebar - full width on mobile, fixed width on desktop */}
-          <aside className="w-full lg:!w-120 lg:!ml-30 !mb-8 lg:!mb-0">
-            <div className="lg:sticky lg:top-24 !space-y-4 md:!space-y-6 w-full lg:!w-80 xl:!w-120">
-              <div className="rounded-lg bg-[#5800FF]/10 !p-4">
-                <h3 className="font-semibold !mb-2">About This Post</h3>
-                <p className="opacity-80">
-                  This is a blog post about {post.topic || 'various topics'}.
-                </p>
-              </div>
+    <div className={`min-h-160 ${theme}`}>
+      <div className="min-h-160 bg-[var(--bg-primary)] text-[var(--text-primary)]">
+        <Navbar />
+        <Header />
+        <main className="!p-4 md:!p-8 !gap-1">
+          <div className="w-full !mx-auto flex flex-col lg:flex-row md:!gap-10">
+            <aside className="w-full lg:!w-120 lg:!ml-30 !mb-8 lg:!mb-0">
+              <div className="lg:sticky lg:top-24 !space-y-4 md:!space-y-6 w-full lg:!w-80 xl:!w-120">
+                <div className="rounded-lg bg-[#5800FF]/10 !p-4">
+                  <h3 className="font-semibold !mb-2">About This Post</h3>
+                  <p className="opacity-80">
+                    This is a blog post about {post.topic || 'various topics'}.
+                  </p>
+                </div>
 
-              <div className="rounded-lg bg-[#5800FF]/10 !p-4">
-                <h3 className="font-semibold !mb-2">Actions</h3>
-                <ul className="!space-y-1">
-                  <li>
-                    <button
-                      onClick={() => router.visit('/')}
-                      className="w-full text-left !px-2 !py-1 rounded hover:bg-[#5800FF]/20"
-                    >
-                      Back to All Posts
-                    </button>
-                  </li>
-                  {isAdmin && (
+                <div className="rounded-lg bg-[#5800FF]/10 !p-4">
+                  <h3 className="font-semibold !mb-2">Actions</h3>
+                  <ul className="!space-y-1">
                     <li>
                       <button
-                        onClick={() => router.visit(`/post/${post.id}/edit`)}
+                        onClick={() => router.visit('/')}
                         className="w-full text-left !px-2 !py-1 rounded hover:bg-[#5800FF]/20"
                       >
-                        Edit Post
+                        Back to All Posts
                       </button>
                     </li>
-                  )}
-                </ul>
-              </div>
-
-              <div className="rounded-lg bg-[#5800FF]/10 !p-4">
-                {topics && (
-                  <div className="!mb-4">
-                    <h3 className="font-semibold !mb-2">Topics</h3>
-                    <ul className="!space-y-1">
+                    {isAdmin && (
                       <li>
                         <button
-                          onClick={() => handleTopicChange(null)}
-                          className={`w-full text-left !px-2 !py-1 rounded ${
-                            currentTopic === null
-                              ? 'bg-[#5800FF] text-white'
-                              : 'hover:bg-[#5800FF]/20'
-                          }`}
+                          onClick={() => router.visit(`/post/${post.id}/edit`)}
+                          className="w-full text-left !px-2 !py-1 rounded hover:bg-[#5800FF]/20"
                         >
-                          All Topics
+                          Edit Post
                         </button>
                       </li>
-                      {topics.map((topic) => (
-                        <li key={topic}>
+                    )}
+                  </ul>
+                </div>
+
+                <div className="rounded-lg bg-[#5800FF]/10 !p-4">
+                  {topics && (
+                    <div className="!mb-4">
+                      <h3 className="font-semibold !mb-2">Topics</h3>
+                      <ul className="!space-y-1">
+                        <li>
                           <button
-                            onClick={() => handleTopicChange(topic)}
+                            onClick={() => handleTopicChange(null)}
                             className={`w-full text-left !px-2 !py-1 rounded ${
-                              currentTopic === topic
+                              currentTopic === null
                                 ? 'bg-[#5800FF] text-white'
                                 : 'hover:bg-[#5800FF]/20'
                             }`}
                           >
-                            {topic}
+                            All Topics
                           </button>
                         </li>
-                      ))}
-                    </ul>
-                  </div>
-                )}
-                <SearchComponent posts={normalizedPosts} />
-                <YearFilterComponent posts={normalizedPosts} />
-                <ArchivesComponent />
-                <RecentActivityFeed key="recent-activity-feed" />
-                <RssSubscribeLink />
-                <PortfolioLink />
+                        {topics.map((topic) => (
+                          <li key={topic}>
+                            <button
+                              onClick={() => handleTopicChange(topic)}
+                              className={`w-full text-left !px-2 !py-1 rounded ${
+                                currentTopic === topic
+                                  ? 'bg-[#5800FF] text-white'
+                                  : 'hover:bg-[#5800FF]/20'
+                              }`}
+                            >
+                              {topic}
+                            </button>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+                  <SearchComponent posts={normalizedPosts} />
+                  <YearFilterComponent posts={normalizedPosts} />
+                  <ArchivesComponent />
+                  <RecentActivityFeed key="recent-activity-feed" />
+                  <RssSubscribeLink />
+                  <PortfolioLink />
+                </div>
+              </div>
+            </aside>
+
+            <div className="lg:flex-1 flex flex-col items-center">
+              <div className="!space-y-6 md:!space-y-8">
+                <BlogPost
+                  post={post}
+                  comments={comments}
+                  isAdmin={isAdmin}
+                  onReply={(commentId: string) => {
+                    console.log(`Reply to comment ${commentId}`);
+                    // Add reply logic here
+                  }}
+                  onEdit={(commentId: string, newContent: string) => {
+                    console.log(`Edit comment ${commentId} with new content: ${newContent}`);
+                  }}
+                  onDelete={handleDeleteComment}
+                  isPostPage={true}
+                  showComments={true}
+                />
               </div>
             </div>
-          </aside>
-
-          {/* Main content - full width on mobile, flex-1 on desktop */}
-          <div className="lg:flex-1 flex flex-col items-center">
-              <div className="!space-y-6 md:!space-y-8">
-
-             {/* Replace the comments section */}
-              <BlogPost
-                post={post}
-                comments={comments}
-                isAdmin={isAdmin}
-                onReply={(commentId: string) => {
-                console.log(`Reply to comment ${commentId}`);
-                // Add reply logic here
-              }}
-
-              onEdit={(commentId: string, newContent: string) => {
-                console.log(`Edit comment ${commentId} with new content: ${newContent}`);
-              }}
-
-              onDelete={async (commentId: string) => {
-                try {
-                  await axiosInstance.delete(`/api/comments/${commentId}`);
-                    setComments(comments.filter((comment) => comment._id !== commentId));
-                  } catch (error) {
-                    console.error('Failed to delete comment', error);
-                  }
-                }}
-                isPostPage={true}
-              />
-     
-            </div>
           </div>
-        </div>
-      </main>
-      <Toaster />
+        </main>
+        <Toaster />
+      </div>
     </div>
-  </div>
-);
-  
+  );
 };
 
 export default PostPage;

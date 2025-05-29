@@ -102,9 +102,13 @@ const EditPostPage: React.FC<EditPostPageProps> = ({ post }) => {
       }
 
       await axiosInstance.post(`/api/posts/${post.id}`, formData);
-
       toast.success('Post updated successfully');
-      router.visit(`/post/${post.id}`);
+      setTimeout(() => {
+        router.visit(`/post/${post.id}`, {
+        data: { flash: { success: 'Post updated successfully!' } },
+        preserveState: true,
+      });
+      }, 2000);
     } catch (error: any) {
       if (error.response?.data?.errors) {
         console.error('Validation Errors:', error.response.data.errors);

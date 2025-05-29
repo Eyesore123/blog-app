@@ -1,6 +1,6 @@
 import { usePage } from '@inertiajs/react';
 import { router } from '@inertiajs/react';
-import { Toaster } from 'sonner';
+import { Toaster, toast } from 'sonner';
 import { BlogPost } from '../components/BlogPost';
 import Header from '../components/Header';
 import '../../css/app.css';
@@ -12,6 +12,7 @@ import RecentActivityFeed from '@/components/RecentActivityFeed';
 import { PortfolioLink } from '@/components/PortfolioLink';
 import { RssSubscribeLink } from '@/components/RssSubscribeLink';
 import { useTheme } from '../context/ThemeContext';
+import { useEffect } from 'react';
 
 interface BlogPostType {
   id: number;
@@ -47,47 +48,50 @@ interface PageProps {
       name: string;
     } | null;
   };
+  flash?: {
+    message?: string;
+  };
   [key: string]: any;
 }
 
 export default function MainPage() {
   const { props } = usePage<PageProps>();
   const { theme } = useTheme();
-  const { posts, allPosts, topics, currentTopic, currentPage, hasMore, total } = props;
+  const { posts, allPosts, topics, currentTopic, currentPage, hasMore, total, flash } = props;
 
   const isAdmin = Boolean(props.auth?.user?.is_admin);
-  // Helper to scroll smoothly to top, then call callback when scroll finished
-  // Without this the sidebar will stop scrolling by loading the contents when the sidebar is open
 
-  const scrollToTopAndThen = (callback: () => void) => {
-  window.scrollTo({ top: 0, behavior: 'smooth' });
-
-  const checkIfNearTop = () => {
-    if (window.scrollY < 400) {
-      callback();
-    } else {
-      requestAnimationFrame(checkIfNearTop);
+  // Show flash message once on mount
+  useEffect(() => {
+  if (flash?.alert) {
+    const { type, message } = flash.alert;
+    if (message) {
+      switch (type) {
+        case 'error':
+          toast.error(message);
+          break;
+        case 'info':
+        default:
+          toast.success(message);
+      }
     }
+  }
+}, [flash]);
+
+  // Helper to scroll smoothly to top, then call callback when scroll finished
+  const scrollToTopAndThen = (callback: () => void) => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+
+    const checkIfNearTop = () => {
+      if (window.scrollY < 400) {
+        callback();
+      } else {
+        requestAnimationFrame(checkIfNearTop);
+      }
+    };
+
+    requestAnimationFrame(checkIfNearTop);
   };
-
-  requestAnimationFrame(checkIfNearTop);
-};
-
-  // Not in use, wait until the position is at the top and then loads:
-
-  // const scrollToTopAndThen = (callback: () => void) => {
-  //   window.scrollTo({ top: 0, behavior: 'smooth' });
-
-  //   const checkIfScrolledToTop = () => {
-  //     if (window.scrollY === 0) {
-  //       callback();
-  //     } else {
-  //       requestAnimationFrame(checkIfScrolledToTop);
-  //     }
-  //   };
-
-  //   requestAnimationFrame(checkIfScrolledToTop);
-  // };
 
   const handlePageChange = (page: number) => {
     scrollToTopAndThen(() => {
@@ -112,9 +116,7 @@ export default function MainPage() {
         <Navbar />
         <Header />
         <main className="!p-4 md:!p-8 !gap-1">
-          {/* Change to flex-col on mobile, row on larger screens */}
           <div className="w-full !mx-auto flex flex-col lg:flex-row md:!gap-0">
-            {/* Sidebar - full width on mobile, fixed width on desktop */}
             <aside className="w-full lg:!w-120 lg:!ml-30 !mb-8 lg:!mb-0">
               <div className="lg:top-24 !space-y-4 md:!space-y-6 w-full lg:!w-80 xl:!w-120">
                 <div className="rounded-lg bg-[#5800FF]/10 !p-4">
@@ -167,7 +169,6 @@ export default function MainPage() {
               </div>
             </aside>
 
-            {/* Main content - full width on mobile, flex-1 on desktop */}
             <div className="lg:flex-1 flex flex-col items-center">
               <div className="!space-y-6 md:!space-y-8">
                 {posts.length === 0 ? (

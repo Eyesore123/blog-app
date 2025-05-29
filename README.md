@@ -34,11 +34,10 @@ Blog still needs some work, though, including:
 4. Email subscription options in admin panel + an improved template for blog post email
 5. Profile images? - would be a nice addition
 6. Bookmark icon from Laravel icon to my own
-7. Post page comments revealed by default
-8. Suggestions for posts based on tags after there are more posts
-9. New comment notification to admin (timed, once per day). Notification to registered users when someone replies to their comment.
-10. Scheduled uploads feature would be nice
-11. Save sketches feature + fetch sketches from database in admin panel
+7. Suggestions for posts based on tags after there are more posts
+8. New comment notification to admin (timed, once per day). Notification to registered users when someone replies to their comment.
+9. Scheduled uploads feature would be nice
+10. Save sketches feature + fetch sketches from database in admin panel
 
 I deployed this app on Railway with two services, one for app (both frontend and backend use the same url) and one for database (PostgreSQL). Railway uses a volume to store the images so they are not lost after a new deployment.
 
@@ -71,4 +70,4 @@ Portgres admin panel looks nice:
 ## Issues
 
 - Markdown editor needs some work.
-- Blog update pop-up is not working correctly + pop-up text is too transparent on light theme.
+- Flash messages are not working properly so I made a workaround for pop-ups. Pop-ups work fine but they are not really flash messages.

@@ -232,7 +232,7 @@ class PostController extends Controller
             $post->save();
             DB::commit();
 
-            return response()->json(['message' => 'Post updated successfully!', 'post' => $post]);
+            return redirect()->back()->with('success', 'Post updated successfully.');
         } catch (\Throwable $e) {
             DB::rollBack();
             Log::error("Post update failed: {$e->getMessage()}");

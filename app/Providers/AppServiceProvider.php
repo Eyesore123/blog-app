@@ -6,6 +6,7 @@ use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\URL;
+use Inertia\Inertia;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -25,6 +26,14 @@ class AppServiceProvider extends ServiceProvider
          if (env('APP_ENV') !== 'local') {
             URL::forceScheme('https');
         }
+
+            Inertia::share([
+            'flash' => function () {
+                return [
+                    'alert' => session('alert'),
+                ];
+            },
+        ]);
 
         // Register custom Blade directive
         Blade::directive('viteCustom', function ($expression) {
