@@ -74,10 +74,10 @@ class ArchiveController extends Controller
 
         // Query to get posts from the specified year
         if (DB::connection()->getDriverName() === 'sqlite') {
-            $query = Post::select('id', 'title', 'content', 'topic', 'author', 'created_at', 'slug', 'image_path')
+            $query = Post::select('id', 'title', 'content', 'topic', 'created_at', 'slug', 'image_path')
                         ->whereRaw("strftime('%Y', created_at) = ?", [$year]);
         } else {
-            $query = Post::select('id', 'title', 'content', 'topic', 'author', 'created_at', 'slug', 'image_path')
+            $query = Post::select('id', 'title', 'content', 'topic', 'created_at', 'slug', 'image_path')
                         ->whereYear('created_at', $year);
         }
 
@@ -102,12 +102,12 @@ class ArchiveController extends Controller
 
         // Get all posts for the specified year
         if (DB::connection()->getDriverName() === 'sqlite') {
-            $allPosts = Post::select('id', 'title', 'content', 'topic', 'author', 'created_at', 'slug', 'image_path')
+            $allPosts = Post::select('id', 'title', 'content', 'topic', 'created_at', 'slug', 'image_path')
                         ->whereRaw("strftime('%Y', created_at) = ?", [$year])
                         ->orderBy('created_at', 'desc')
                         ->get();
         } else {
-            $allPosts = Post::select('id', 'title', 'content', 'topic', 'author', 'created_at', 'slug', 'image_path')
+            $allPosts = Post::select('id', 'title', 'content', 'topic', 'created_at', 'slug', 'image_path')
                         ->whereYear('created_at', $year)
                         ->orderBy('created_at', 'desc')
                         ->get();
