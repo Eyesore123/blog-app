@@ -87,8 +87,8 @@ export default function ArchiveView() {
         {/* Change to flex-col on mobile, row on larger screens */}
         <div className="w-full !mx-auto flex flex-col lg:flex-row md:!gap-10 xl:!gap-18">
           {/* Sidebar - full width on mobile, fixed width on desktop */}
-          <aside className="w-full lg:!w-120 lg:!ml-50 !mb-8 lg:!mb-0">
-            <div className="lg:sticky lg:top-24 !space-y-4 md:!space-y-6 w-full lg:!w-80 xl:!w-120">
+          <aside className="w-full lg:!w-120 lg:!ml-30 !mb-8 lg:!mb-0">
+            <div className="!space-y-4 md:!space-y-6 w-full lg:!w-80 xl:!w-120">
               <div className="rounded-lg bg-[#5800FF]/10 !p-4">
                 <h3 className="font-semibold !mb-2">About</h3>
                 <p className="opacity-80">

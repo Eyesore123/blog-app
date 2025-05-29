@@ -13,7 +13,8 @@ interface YearFilterComponentProps {
 }
 
 const YearFilterComponent: React.FC<YearFilterComponentProps> = ({ posts = [] }) => {
-  const [selectedYear, setSelectedYear] = useState<string | null>(null);
+  const currentYear = new Date().getFullYear().toString();
+  const [selectedYear, setSelectedYear] = useState<string | null>(currentYear);
   const [selectedMonth, setSelectedMonth] = useState<string | null>(null);
 
   const groupedByYearAndMonth = posts.reduce((acc: Record<string, Record<string, Post[]>>, post: Post) => {
@@ -34,6 +35,17 @@ const YearFilterComponent: React.FC<YearFilterComponentProps> = ({ posts = [] })
       <h3 className="font-semibold !mb-2">All Posts</h3>
 
       <ul className="!space-y-1">
+        <li key="all">
+          <button
+            onClick={() => setSelectedYear(null)}
+            className={`w-full text-left !px-2 !py-1 rounded hover:bg-[#5800FF]/20 ${
+              selectedYear === null ? 'bg-[#5800FF] font-semibold text-white' : ''
+            }`}
+          >
+            <span className="font-medium">All</span>
+            <span className="text-xs opacity-60 !ml-2">({posts.length})</span>
+          </button>
+        </li>
         {years.map((year) => (
           <li key={year}>
             <button
@@ -86,8 +98,24 @@ const YearFilterComponent: React.FC<YearFilterComponentProps> = ({ posts = [] })
           </li>
         ))}
       </ul>
+
+        {selectedYear === null && (
+    <ul className="!ml-4 !mt-2 space-y-1">
+      {posts.map((post) => (
+        <li key={post.id}>
+          <button
+            onClick={() => router.visit(`/post/${post.id}`)}
+            className="w-full text-left !px-2 !py-1 rounded hover:bg-[#5800FF]/20"
+          >
+            <span className="font-medium">{post.title}</span>
+            <span className="text-xs opacity-60 block">{post.topic}</span>
+          </button>
+        </li>
+      ))}
+    </ul>
+  )}
     </div>
   );
-};
+}
 
 export default YearFilterComponent;

@@ -57,7 +57,7 @@ interface PageProps {
 export default function MainPage() {
   const { props } = usePage<PageProps>();
   const { theme } = useTheme();
-  const { posts, allPosts, topics, currentTopic, currentPage, hasMore, total, flash } = props;
+  const { posts, allPosts, allPostsForFilter, topics, currentTopic, currentPage, hasMore, total, flash } = props;
 
   const isAdmin = Boolean(props.auth?.user?.is_admin);
 
@@ -160,7 +160,7 @@ export default function MainPage() {
 
                 <div className="rounded-lg bg-[#5800FF]/10 !p-4">
                   <SearchComponent posts={allPosts.data} />
-                  <YearFilterComponent posts={allPosts.data} />
+                  <YearFilterComponent posts={allPostsForFilter ?? allPosts.data} />
                   <ArchivesComponent />
                   <RssSubscribeLink />
                   <RecentActivityFeed key="recent-activity-feed" />

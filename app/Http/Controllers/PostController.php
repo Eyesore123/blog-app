@@ -52,39 +52,34 @@ class PostController extends Controller
      * List posts, optionally filtered by topic.
      */
     public function index(Request $request)
-    {
-        $topicFilter    = $request->query('topic');
-        $includePosts   = $request->query('includePosts', true);
-        $includeTopics  = $request->query('includeTopics', true);
-        $includeUser    = $request->query('includeUser', true);
-        $props          = [];
+{
+    $topicFilter = $request->query('topic');
+    $props = [];
 
-        if ($includePosts) {
-            $query = Post::with('tags');
-            if ($topicFilter) {
-                $query->where('topic', $topicFilter);
-            }
-
-            $posts = $query->latest()->paginate(6);
-
-            $props['posts']        = collect($posts->items())->map(fn($p) => $this->transformPost($p));
-            $props['currentPage']  = $posts->currentPage() - 1;
-            $props['hasMore']      = $posts->hasMorePages();
-            $props['total']        = $posts->total();
-            $props['allPosts']     = $posts;
-            $props['currentTopic'] = $topicFilter;
-        }
-
-        if ($includeTopics) {
-            $props['topics'] = Post::distinct()->pluck('topic')->filter()->values();
-        }
-
-        if ($includeUser) {
-            $props['user'] = $this->getUserInfo();
-        }
-
-        return Inertia::render('MainPage', $props);
+    // Pagination query for main posts
+    $query = Post::with('tags');
+    if ($topicFilter) {
+        $query->where('topic', $topicFilter);
     }
+    $posts = $query->latest()->paginate(6);
+
+    // Query ALL posts for filter, but only needed fields
+    $allPostsForFilter = Post::select('id', 'title', 'topic', 'created_at')->get();
+
+    $props['posts'] = collect($posts->items())->map(fn($p) => $this->transformPost($p));
+    $props['currentPage'] = $posts->currentPage() - 1;
+    $props['hasMore'] = $posts->hasMorePages();
+    $props['total'] = $posts->total();
+    $props['allPosts'] = $posts; // paginated posts for main listing
+    $props['allPostsForFilter'] = $allPostsForFilter; // all posts for year filter
+    $props['currentTopic'] = $topicFilter;
+
+    $props['topics'] = Post::distinct()->pluck('topic')->filter()->values();
+    $props['user'] = $this->getUserInfo();
+
+    return Inertia::render('MainPage', $props);
+}
+
 
     /**
      * Show form to create a new post — omitted here if you handle that on the front end.

@@ -44,7 +44,7 @@ Route::get('/latest-post', [LatestPostController::class, 'show']);
 // Recent activity feed routes
 Route::get('/recent-activity', [RecentActivityController::class, 'index']);
 
-// Additional routes for portfolio integration + all posts component. can't remember if there was a reason to take 10 only.
+// Additional routes for portfolio integration + all posts component. can't remember if there was a reason to take 10
 Route::get('/blog/posts', function () {
     $posts = \App\Models\Post::with(['user', 'tags'])
         ->where('published', true)
