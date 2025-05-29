@@ -1,0 +1,21 @@
+{
+  "name": "Joni's blog",
+  "short_name": "Blog",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#000000",
+  "theme_color": "#000000",
+   "description": "Thoughts and experiments with web development, design, and technology",
+  "icons": [
+    {
+      "src": "/favicon.ico",
+      "type": "image/x-icon",
+      "sizes": "32x32"
+    },
+    {
+      "src": "/favicon.png",
+      "type": "image/png",
+      "sizes": "88x88"
+    }
+  ]
+}

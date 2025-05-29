@@ -56,21 +56,57 @@ export default function MainPage() {
   const { posts, allPosts, topics, currentTopic, currentPage, hasMore, total } = props;
 
   const isAdmin = Boolean(props.auth?.user?.is_admin);
+  // Helper to scroll smoothly to top, then call callback when scroll finished
+  // Without this the sidebar will stop scrolling by loading the contents when the sidebar is open
+
+  const scrollToTopAndThen = (callback: () => void) => {
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+
+  const checkIfNearTop = () => {
+    if (window.scrollY < 400) {
+      callback();
+    } else {
+      requestAnimationFrame(checkIfNearTop);
+    }
+  };
+
+  requestAnimationFrame(checkIfNearTop);
+};
+
+  // Not in use, wait until the position is at the top and then loads:
+
+  // const scrollToTopAndThen = (callback: () => void) => {
+  //   window.scrollTo({ top: 0, behavior: 'smooth' });
+
+  //   const checkIfScrolledToTop = () => {
+  //     if (window.scrollY === 0) {
+  //       callback();
+  //     } else {
+  //       requestAnimationFrame(checkIfScrolledToTop);
+  //     }
+  //   };
+
+  //   requestAnimationFrame(checkIfScrolledToTop);
+  // };
 
   const handlePageChange = (page: number) => {
-    const params = new URLSearchParams();
-    if (currentTopic) params.append('topic', currentTopic);
-    params.append('page', (page + 1).toString());
-    router.get('/', Object.fromEntries(params));
+    scrollToTopAndThen(() => {
+      const params = new URLSearchParams();
+      if (currentTopic) params.append('topic', currentTopic);
+      params.append('page', (page + 1).toString());
+      router.get('/', Object.fromEntries(params));
+    });
   };
 
   const handleTopicChange = (topic: string | null) => {
-    const params = new URLSearchParams();
-    if (topic) params.append('topic', topic);
-    router.get('/', Object.fromEntries(params));
+    scrollToTopAndThen(() => {
+      const params = new URLSearchParams();
+      if (topic) params.append('topic', topic);
+      router.get('/', Object.fromEntries(params));
+    });
   };
 
-    return (
+  return (
     <div className={`min-h-160 ${theme}`}>
       <div className="min-h-160 bg-[var(--bg-primary)] text-[var(--text-primary)]">
         <Navbar />
@@ -119,12 +155,13 @@ export default function MainPage() {
                     )}
                   </ul>
                 </div>
+
                 <div className="rounded-lg bg-[#5800FF]/10 !p-4">
                   <SearchComponent posts={allPosts.data} />
                   <YearFilterComponent posts={allPosts.data} />
                   <ArchivesComponent />
                   <RssSubscribeLink />
-                  <RecentActivityFeed />
+                  <RecentActivityFeed key="recent-activity-feed" />
                   <PortfolioLink />
                 </div>
               </div>
@@ -146,7 +183,7 @@ export default function MainPage() {
                       <button
                         onClick={() => handlePageChange(currentPage - 1)}
                         disabled={currentPage === 0}
-                        className="!px-3 !py-1 md:!px-4 md:!py-2 bg-[#5800FF] text-white rounded hover:bg-[#E900FF] disabled:opacity-50 transition-colors text-sm md:text-base"
+                        className="paginationbutton !px-3 !py-1 md:!px-4 md:!py-2 bg-[#5800FF] text-white rounded hover:bg-[#E900FF] disabled:opacity-50 transition-colors text-sm md:text-base"
                       >
                         Previous
                       </button>
@@ -156,7 +193,7 @@ export default function MainPage() {
                       <button
                         onClick={() => handlePageChange(currentPage + 1)}
                         disabled={!hasMore}
-                        className="!px-3 !py-1 md:!px-4 md:!py-2 bg-[#5800FF] text-white rounded hover:bg-[#E900FF] disabled:opacity-50 transition-colors text-sm md:text-base"
+                        className="paginationbutton !px-3 !py-1 md:!px-4 md:!py-2 bg-[#5800FF] text-white rounded hover:bg-[#E900FF] disabled:opacity-50 transition-colors text-sm md:text-base"
                       >
                         Next
                       </button>
@@ -171,5 +208,4 @@ export default function MainPage() {
       </div>
     </div>
   );
-
 }

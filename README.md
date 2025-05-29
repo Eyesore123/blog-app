@@ -71,5 +71,4 @@ Portgres admin panel looks nice:
 ## Issues
 
 - Markdown editor needs some work.
-- Site.webmanifest file is missing.
 - Blog update pop-up is not working correctly + pop-up text is too transparent on light theme.

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import { usePage, router } from '@inertiajs/react';
 import { Toaster } from 'sonner';
 import { BlogPost } from '@/components/BlogPost';
@@ -62,6 +62,16 @@ export default function PostsIndex() {
     router.get('/', Object.fromEntries(params));
   };
 
+  const paginationButtonRef = useRef<HTMLButtonElement | null>(null);
+
+  useEffect(() => {
+  if (paginationButtonRef.current) {
+    paginationButtonRef.current.addEventListener('click', function() {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+  }
+}, []);
+
   return (
     <div className={`min-h-160 ${theme}`}>
       <div className="min-h-160 bg-[var(--bg-primary)] text-[var(--text-primary)]">
@@ -117,7 +127,7 @@ export default function PostsIndex() {
                   <YearFilterComponent posts={allPosts?.data || posts} />
                   <ArchivesComponent />
                   <RssSubscribeLink />
-                  <RecentActivityFeed />
+                  <RecentActivityFeed key="recent-activity-feed" />
                 </div>
               </div>
             </aside>
@@ -151,13 +161,13 @@ export default function PostsIndex() {
                   ))
                 )}
 
-                {/* Optional pagination if you want */}
                 {allPosts && (
                   <div className="flex justify-center items-center !gap-4 md:!gap-10 !mt-8 md:!mt-18">
                     <button
+                      ref={paginationButtonRef}
                       onClick={() => router.get('/', { page: (currentPage || 0) })}
                       disabled={(currentPage || 0) === 0}
-                      className="!px-3 !py-1 md:!px-4 md:!py-2 bg-[#5800FF] text-white rounded hover:bg-[#E900FF] disabled:opacity-50 transition-colors text-sm md:text-base"
+                      className="paginationbutton !px-3 !py-1 md:!px-4 md:!py-2 bg-[#5800FF] text-white rounded hover:bg-[#E900FF] disabled:opacity-50 transition-colors text-sm md:text-base"
                     >
                       Previous
                     </button>
@@ -165,9 +175,10 @@ export default function PostsIndex() {
                       Page {(currentPage || 0) + 1} of {Math.ceil((total || posts.length) / 6)}
                     </span>
                     <button
+                      ref={paginationButtonRef}
                       onClick={() => router.get('/', { page: (currentPage || 0) + 2 })}
                       disabled={!hasMore}
-                      className="!px-3 !py-1 md:!px-4 md:!py-2 bg-[#5800FF] text-white rounded hover:bg-[#E900FF] disabled:opacity-50 transition-colors text-sm md:text-base"
+                      className="paginationbutton !px-3 !py-1 md:!px-4 md:!py-2 bg-[#5800FF] text-white rounded hover:bg-[#E900FF] disabled:opacity-50 transition-colors text-sm md:text-base"
                     >
                       Next
                     </button>

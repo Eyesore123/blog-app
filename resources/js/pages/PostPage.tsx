@@ -194,7 +194,7 @@ const PostPage: React.FC<PostPageProps> = ({ post }) => {
                 <SearchComponent posts={normalizedPosts} />
                 <YearFilterComponent posts={normalizedPosts} />
                 <ArchivesComponent />
-                <RecentActivityFeed />
+                <RecentActivityFeed key="recent-activity-feed" />
                 <RssSubscribeLink />
                 <PortfolioLink />
               </div>

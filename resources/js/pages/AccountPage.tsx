@@ -250,7 +250,7 @@ const handleDeleteAccount = async () => {
             <YearFilterComponent posts={allPostsData} />
             <ArchivesComponent />
             <RssSubscribeLink />
-            <RecentActivityFeed />
+            <RecentActivityFeed key="recent-activity-feed" />
           </div>
         </div>
       </aside>
