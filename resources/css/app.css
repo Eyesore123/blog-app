@@ -111,6 +111,7 @@ h6 {
 p {
     font-size: var(--fs-p);
 }
+
 small {
     font-size: var(--fs-small);
     font-weight: 600;

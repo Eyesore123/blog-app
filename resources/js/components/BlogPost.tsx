@@ -678,18 +678,18 @@ const postUrl = `/posts/${post.id}`;
   </div>
 )}
   {/* xl:!max-w-[1000px] */}
-    <div className="markdown-text whitespace-pre-wrap break-words xl:!max-w-[700px] 2xl:!max-w-[900px] " style={{ whiteSpace: 'pre-wrap' }}>
+    <div className="markdown-text whitespace-pre-wrap break-words !max-w-[300px] md:!max-w-[500px] xl:!max-w-[700px] 2xl:!max-w-[900px]" style={{ whiteSpace: 'pre-wrap' }}>
       <ReactMarkdown
         children={(post.content || '(No content)')}
         components={{
-          p: ({ node, ...props }) => <p className="mb-4" {...props} />,
+          p: ({ node, ...props }) => <p className="mb-4 !max-w-[300px] md:!max-w-[500px] xl:!max-w-[700px] 2xl:!max-w-[900px]" {...props} />,
           ul: ({ node, ...props }) => <ul className="list-disc !ml-6 !mb-4" {...props} />,
           ol: ({ node, ...props }) => <ol className="list-decimal !ml-6 !mb-4" {...props} />,
-          li: ({ node, ...props }) => <li className="!mb-2 !ml-6" {...props} />,
-          strong: ({ node, ...props }) => <strong className="font-bold" {...props} />,
+          li: ({ node, ...props }) => <li className="!mb-2 !ml-6 !max-w-[300px] md:!max-w-[500px] xl:!max-w-[700px] 2xl:!max-w-[900px]" {...props} />,
+          strong: ({ node, ...props }) => <strong className="font-bold !max-w-[300px] md:!max-w-[500px] xl:!max-w-[700px] 2xl:!max-w-[900px]" {...props} />,
           em: ({ node, ...props }) => <em className="italic" {...props} />,
           blockquote: ({ node, ...props }) => (
-            <blockquote className="border-l-4 border-gray-300 !pl-4 italic text-gray-600 !mb-4" {...props} />
+            <blockquote className="border-l-4 border-gray-300 !pl-4 italic text-gray-600 !mb-4 !max-w-[300px] md:!max-w-[500px] xl:!max-w-[700px] 2xl:!max-w-[900px]" {...props} />
           ),
         }}
       />
