@@ -506,7 +506,8 @@ const renderComment = (comment: Comment, level = 0) => {
         </form>
       ) : (
         <div>
-          <p className="opacity-80 break-words !max-w-full md:!max-w-240 overflow-wrap-anywhere h-auto text-xs md:text-sm">
+          {/* Break words to prevent overflow on smaller screen sizes */}
+          <p className="opacity-80 break-words max-w-full overflow-wrap md:!max-w-240 overflow-wrap-anywhere h-auto text-xs md:text-sm">
             {comment.content}
           </p>
           {comment.edited && (
@@ -666,29 +667,32 @@ const postUrl = `/posts/${post.id}`;
         <img
           src="/fallbackimage.jpg"
           alt={`Placeholder for ${post.title}`}
-          className="w-full md:w-100 lg:w-150 h-auto object-contain cursor-pointer"
+          className={`w-full md:w-[25rem] lg:w-[37.5rem] h-auto cursor-pointer transition-opacity duration-300 ${
+          imageLoading ? 'opacity-0' : 'opacity-100'
+        }`}
+
           onClick={handleImageClick}
         />
       </div>
     )}
   </div>
 )}
-      <div className="markdown-text" style={{ whiteSpace: 'pre-wrap' }}>
-     <ReactMarkdown
-  children={(post.content || '(No content)')}
-  components={{
-    p: ({ node, ...props }) => <p className="mb-4" {...props} />,
-    ul: ({ node, ...props }) => <ul className="list-disc !ml-6 !mb-4" {...props} />,
-    ol: ({ node, ...props }) => <ol className="list-decimal !ml-6 !mb-4" {...props} />,
-    li: ({ node, ...props }) => <li className="!mb-2 !ml-6" {...props} />,
-    strong: ({ node, ...props }) => <strong className="font-bold" {...props} />,
-    em: ({ node, ...props }) => <em className="italic" {...props} />,
-    blockquote: ({ node, ...props }) => (
-      <blockquote className="border-l-4 border-gray-300 !pl-4 italic text-gray-600 !mb-4" {...props} />
-    ),
-  }}
-/>
-</div>
+    <div className="markdown-text" style={{ whiteSpace: 'pre-wrap' }}>
+      <ReactMarkdown
+        children={(post.content || '(No content)')}
+        components={{
+          p: ({ node, ...props }) => <p className="mb-4" {...props} />,
+          ul: ({ node, ...props }) => <ul className="list-disc !ml-6 !mb-4" {...props} />,
+          ol: ({ node, ...props }) => <ol className="list-decimal !ml-6 !mb-4" {...props} />,
+          li: ({ node, ...props }) => <li className="!mb-2 !ml-6" {...props} />,
+          strong: ({ node, ...props }) => <strong className="font-bold" {...props} />,
+          em: ({ node, ...props }) => <em className="italic" {...props} />,
+          blockquote: ({ node, ...props }) => (
+            <blockquote className="border-l-4 border-gray-300 !pl-4 italic text-gray-600 !mb-4" {...props} />
+          ),
+        }}
+      />
+    </div>
       
       <div className="text-xs md:text-sm flex flex-col justify-center items-center  md:justify-start md:items-start text-gray-500 !mt-3 !pt-4 md:!pt-6 !space-y-1 border-t border-[#5800FF]/20">
         {post.created_at &&  (
