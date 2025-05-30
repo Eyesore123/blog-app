@@ -147,7 +147,7 @@ const PostPage: React.FC<PostPageProps> = ({ post }) => {
         <Header />
         <main className="!p-4 md:!p-8 !gap-1">
           <div className="w-full !mx-auto flex flex-col lg:flex-row md:!gap-10">
-            <aside className="w-full lg:!w-120 lg:!ml-20 !mr-10 !mb-8 lg:!mb-0">
+            <aside className="w-full lg:!w-120 lg:!ml-20 xl:!ml-30 !mr-10 !mb-8 lg:!mb-0">
               <div className="!space-y-4 md:!space-y-6 w-full lg:!w-80 xl:!w-120">
                 <div className="rounded-lg bg-[#5800FF]/10 !p-4">
                   <h3 className="font-semibold !mb-2">About This Post</h3>

@@ -627,7 +627,7 @@ const postUrl = `/posts/${post.id}`;
         <meta property="og:url" content={seoProps.url} />
       </Helmet>
 
-    <article className="flex flex-col justify-center items-center lg:items-start lg:justify-start rounded-lg bg-[#5800FF]/5 !p-4 md:!pl-10 w-full md:!w-150 xl:!w-170 2xl:!w-220 !mb-6 md:!mb-10 xl:!ml-0">
+    <article className="flex flex-col justify-center items-center lg:items-start lg:justify-start rounded-lg bg-[#5800FF]/5 !p-4 md:!pl-10 w-full md:!w-150 xl:!w-220 2xl:!w-240 !mb-6 md:!mb-10 lg:!ml-10">
       <h2
         className="text-xl md:text-2xl font-bold flex justify-start !mb-4 md:!mb-10 cursor-pointer hover:underline"
         onClick={goToPostPage}
@@ -677,7 +677,8 @@ const postUrl = `/posts/${post.id}`;
     )}
   </div>
 )}
-    <div className="markdown-text" style={{ whiteSpace: 'pre-wrap' }}>
+  {/* xl:!max-w-[1000px] */}
+    <div className="markdown-text xl:!max-w-[1000px]" style={{ whiteSpace: 'pre-wrap' }}>
       <ReactMarkdown
         children={(post.content || '(No content)')}
         components={{
