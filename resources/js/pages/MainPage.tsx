@@ -117,7 +117,7 @@ export default function MainPage() {
         <Header />
         <main className="!p-4 md:!p-8 !gap-1">
           <div className="w-full !mx-auto flex flex-col lg:flex-row md:!gap-0">
-            <aside className="w-full lg:!w-120 lg:!ml-30 !mb-8 lg:!mb-0">
+            <aside className="w-full lg:!w-120 lg:!ml-20 !mr-10 !mb-8 lg:!mb-0">
               <div className="lg:top-24 !space-y-4 md:!space-y-6 w-full lg:!w-80 xl:!w-120">
                 <div className="rounded-lg bg-[#5800FF]/10 !p-4">
                   <h3 className="font-semibold !mb-2">About</h3>
@@ -169,7 +169,7 @@ export default function MainPage() {
               </div>
             </aside>
 
-            <div className="lg:flex-1 flex flex-col items-center">
+            <div className="lg:flex-1 flex flex-col items-center lg:-translate-x-14">
               <div className="!space-y-6 md:!space-y-8">
                 {posts.length === 0 ? (
                   <div className="text-center opacity-70 !mt-8 md:!mt-30">No blog posts yet.</div>
