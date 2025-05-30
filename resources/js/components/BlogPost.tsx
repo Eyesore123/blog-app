@@ -707,7 +707,7 @@ const postUrl = `/posts/${post.id}`;
       <li className="!mb-2 !ml-6 max-w-[320px] md:max-w-[500px] xl:max-w-[700px] 2xl:max-w-[900px]" {...props} />
     ),
     strong: ({ node, ...props }) => (
-      <strong className="font-bold max-w-[320px] md:max-w-[500px] xl:max-w-[700px] 2xl:max-w-[900px]" {...props} />
+      <strong className="!mt-4 font-bold max-w-[320px] md:max-w-[500px] xl:max-w-[700px] 2xl:max-w-[900px]" {...props} />
     ),
     em: ({ node, ...props }) => <em className="italic" {...props} />,
     blockquote: ({ node, ...props }) => (
