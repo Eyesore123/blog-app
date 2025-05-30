@@ -699,30 +699,30 @@ const postUrl = `/posts/${post.id}`;
   children={post.content || '(No content)'}
   components={{
     p: ({ node, ...props }) => (
-      <p className="!mb-4 max-w-[300px] md:max-w-[500px] xl:max-w-[700px] 2xl:max-w-[900px]" {...props} />
+      <p className="!mb-4 max-w-[320px] md:max-w-[500px] xl:max-w-[700px] 2xl:max-w-[900px]" {...props} />
     ),
     ul: ({ node, ...props }) => <ul className="list-disc !ml-6 !mb-4" {...props} />,
     ol: ({ node, ...props }) => <ol className="list-decimal !ml-6 !mb-4" {...props} />,
     li: ({ node, ...props }) => (
-      <li className="mb-2 ml-6 max-w-[300px] md:max-w-[500px] xl:max-w-[700px] 2xl:max-w-[900px]" {...props} />
+      <li className="mb-2 ml-6 max-w-[320px] md:max-w-[500px] xl:max-w-[700px] 2xl:max-w-[900px]" {...props} />
     ),
     strong: ({ node, ...props }) => (
-      <strong className="font-bold max-w-[300px] md:max-w-[500px] xl:max-w-[700px] 2xl:max-w-[900px]" {...props} />
+      <strong className="font-bold max-w-[320px] md:max-w-[500px] xl:max-w-[700px] 2xl:max-w-[900px]" {...props} />
     ),
     em: ({ node, ...props }) => <em className="italic" {...props} />,
     blockquote: ({ node, ...props }) => (
-      <blockquote className="!border-l-4 border-gray-300 !pl-4 italic text-gray-600 mb-4 max-w-[300px] md:max-w-[500px] xl:max-w-[700px] 2xl:max-w-[900px]" {...props} />
+      <blockquote className="!border-l-4 border-gray-300 !pl-4 italic text-gray-600 mb-4 max-w-[320px] md:max-w-[500px] xl:max-w-[700px] 2xl:max-w-[900px]" {...props} />
     ),
     code: ({ node, inline, className, children, ...props }) => {
       if (inline) {
         return (
-          <code className="bg-gray-100 text-sm !px-1 !py-0.5 rounded" {...props}>
+          <code className="text-sm !px-1 !py-0.5 rounded break-words whitespace-pre-wrap" {...props}>
             {children}
           </code>
         );
       }
       return (
-        <pre className="overflow-auto p-4 rounded bg-gray-900 text-white text-sm max-w-[300px] md:max-w-[500px] xl:max-w-[700px] 2xl:max-w-[900px]">
+        <pre className="break-words whitespace-pre-wrap p-4 rounded text-sm max-w-[320px] md:max-w-[500px] xl:max-w-[700px] 2xl:max-w-[900px]">
           <code className={className} {...props}>
             {children}
           </code>

@@ -26,7 +26,7 @@ export function PortfolioLink() {
       {hasValidImageUrl && (
         <div
           className="relative w-full flex flex-row justify-center items-center lg:justify-start lg:items-start !mt-4"
-          style={{ width: '100%', maxWidth: '40rem', minHeight: '16rem' }}
+          style={{ width: '100%', maxWidth: '40rem', minHeight: '14rem' }}
         >
           {imageLoading && !imageError && (
             <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-10">
@@ -69,15 +69,16 @@ export function PortfolioLink() {
           )}
         </div>
       )}
-
-      <a
-        href={portfolioUrl}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="inline-block text-[#5800FF] hover:text-[#E900FF] transition-colors"
-      >
-        → Visit Portfolio
-      </a>
+      <div className='w-full inline-flex justify-center md:justify-start'>
+        <a
+          href={portfolioUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="!mt-4 md:!mt-0 text-[#5800FF] hover:text-[#E900FF] transition-colors"
+        >
+          → Visit Portfolio
+        </a>
+      </div>
     </div>
   );
 }
