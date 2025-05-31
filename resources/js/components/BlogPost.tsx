@@ -699,7 +699,7 @@ const postUrl = `/posts/${post.id}`;
   children={post.content || '(No content)'}
   components={{
     p: ({ node, ...props }) => (
-      <p className="!text-sm md:!text-base xl:!text-lg !mb-4 !mt-2 max-w-[340px] md:max-w-[500px] xl:max-w-[700px] 2xl:max-w-[900px]" {...props} />
+      <p className="!text-sm md:!text-base xl:!text-lg !mb-4 !mt-2 min-w-[340px] max-w-[340px] md:max-w-[500px] xl:max-w-[700px] 2xl:max-w-[900px]" {...props} />
     ),
     ul: ({ node, ...props }) => <ul className="list-disc !ml-6 !mb-4" {...props} />,
     ol: ({ node, ...props }) => <ol className="list-decimal !ml-6 !mb-4" {...props} />,
