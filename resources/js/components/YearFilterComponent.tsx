@@ -20,7 +20,7 @@ const YearFilterComponent: React.FC<YearFilterComponentProps> = ({ posts = [] })
   const groupedByYearAndMonth = posts.reduce((acc: Record<string, Record<string, Post[]>>, post: Post) => {
     const date = new Date(post.created_at);
     const year = date.getFullYear().toString();
-    const month = date.toLocaleString('default', { month: 'long' });
+    const month = date.toLocaleString('en-US', { month: 'long' });
 
     if (!acc[year]) acc[year] = {};
     if (!acc[year][month]) acc[year][month] = [];
