@@ -74,7 +74,7 @@ export function PortfolioLink() {
           href={portfolioUrl}
           target="_blank"
           rel="noopener noreferrer"
-          className="!mt-4 md:!mt-0 text-[#5800FF] hover:text-[#E900FF] transition-colors"
+          className="scale-115 md:scale-100 !mt-8 md:!mt-0 text-[#E900FF] md:text-[#5800FF] hover:text-[#E900FF] transition-colors"
         >
           → Visit Portfolio
         </a>
