@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use App\Services\RateLimitService;
 use App\Models\User;
+use App\Notifications\NewCommentNotification;
 
 class CommentController extends Controller
 {
@@ -50,18 +51,18 @@ class CommentController extends Controller
         ]);
 
         // Skip rate limiting for admin users
-    if (!(Auth::check() && Auth::user()->is_admin)) {
-        $remaining = $this->rateLimiter->getRemainingComments();
+        if (!(Auth::check() && Auth::user()->is_admin)) {
+            $remaining = $this->rateLimiter->getRemainingComments();
 
-        if ($remaining <= 0) {
-            return response()->json([
-                'message' => 'You have reached the maximum of 10 comments today. Please try again tomorrow.',
-            ], 429);
+            if ($remaining <= 0) {
+                return response()->json([
+                    'message' => 'You have reached the maximum of 10 comments today. Please try again tomorrow.',
+                ], 429);
+            }
+
+            // Increment count after passing check
+            $this->rateLimiter->incrementCommentCount();
         }
-
-        // Increment count after passing check
-        $this->rateLimiter->incrementCommentCount();
-    }
 
         $comment = Comment::create([
             'post_id' => $request->post_id,
@@ -73,6 +74,17 @@ class CommentController extends Controller
             'edited' => false,
         ]);
 
+        // Notify admin BEFORE returning response
+        try {
+        $admin = User::where('is_admin', true)->first();
+        if ($admin) {
+            Log::info('Admin for notification:', ['admin' => $admin]);
+            $admin->notify(new NewCommentNotification($comment));
+        }
+        } catch (\Exception $e) {
+            Log::error('Failed to send comment notification: ' . $e->getMessage());
+        }
+
         return response()->json([
             '_id' => $comment->id,
             'authorName' => Auth::check() ? Auth::user()->name : $request->cookie('anonId'),
@@ -82,60 +94,7 @@ class CommentController extends Controller
             'deleted' => false,
             'edited' => false,
         ]);
-
     }
-
-    // Old function:
-
-    // public function destroy($id)
-    // {
-    //     try {
-    //         Log::info("Attempting to delete comment with ID: {$id}");
-            
-    //         $comment = Comment::findOrFail($id);
-    //         Log::info("Comment found: " . json_encode($comment));
-            
-    //         if (!Auth::check()) {
-    //             Log::warning("User not authenticated");
-    //             return response()->json(['message' => 'Unauthenticated'], 401);
-    //         }
-            
-    //         if (!Auth::user()->is_admin && Auth::id() !== $comment->user_id) {
-    //             Log::warning("Unauthorized attempt to delete comment {$id} by user " . Auth::id());
-    //             return response()->json(['message' => 'Unauthorized'], 403);
-    //         }
-            
-    //         $hasReplies = Comment::where('parent_id', $id)->exists();
-    //         $isReply = $comment->parent_id !== null;
-            
-    //         Log::info("Comment {$id} - Has replies: " . ($hasReplies ? 'Yes' : 'No') . ", Is reply: " . ($isReply ? 'Yes' : 'No'));
-            
-    //         if ($hasReplies || $isReply) {
-    //             $comment->update([
-    //                 'deleted' => true,
-    //                 'content' => '[Message removed by moderator]'
-    //             ]);
-                
-    //             Log::info("Comment {$id} soft-deleted successfully");
-    //             return response()->json([
-    //                 'message' => 'Comment soft-deleted successfully',
-    //                 'softDeleted' => true
-    //             ]);
-    //         } else {
-    //             $comment->delete();
-                
-    //             Log::info("Comment {$id} hard-deleted successfully");
-    //             return response()->json([
-    //                 'message' => 'Comment deleted successfully',
-    //                 'softDeleted' => false
-    //             ]);
-    //         }
-    //     } catch (\Exception $e) {
-    //         Log::error("Error deleting comment {$id}: " . $e->getMessage());
-    //         Log::error($e->getTraceAsString());
-    //         return response()->json(['message' => 'Error deleting comment: ' . $e->getMessage()], 500);
-    //     }
-    // }
 
     public function destroy($id)
     {

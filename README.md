@@ -34,7 +34,7 @@ Blog still needs some work, though, including:
 4. Email subscription options in admin panel + an improved template for blog post email
 5. Profile images? - would be a nice addition
 6. Bookmark icon from Laravel icon to my own
-7. Suggestions for posts based on tags after there are more posts
+7. Suggestions for posts based on tags (two max, only on post page)
 8. New comment notification to admin (timed, once per day). Notification to registered users when someone replies to their comment.
 9. Scheduled uploads feature would be nice
 10. Save sketches feature + fetch sketches from database in admin panel
