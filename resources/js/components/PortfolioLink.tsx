@@ -69,7 +69,7 @@ export function PortfolioLink() {
           )}
         </div>
       )}
-      <div className='w-full inline-flex justify-center md:justify-start'>
+      <div className='w-full inline-flex justify-center lg:justify-start'>
         <a
           href={portfolioUrl}
           target="_blank"

@@ -37,6 +37,7 @@ interface PaginatedPosts {
 interface PageProps {
   posts: BlogPostType[];
   allPosts: PaginatedPosts;
+  allPostsForFilter?: BlogPostType[];
   topics: string[];
   currentTopic: string | null;
   currentPage: number;
@@ -50,7 +51,10 @@ interface PageProps {
     } | null;
   };
   flash?: {
-    message?: string;
+    alert?: {
+      type: 'error' | 'info' | 'success';
+      message?: string;
+    };
   };
   [key: string]: any;
 }
@@ -58,28 +62,37 @@ interface PageProps {
 export default function MainPage() {
   const { props } = usePage<PageProps>();
   const { theme } = useTheme();
-  const { posts, allPosts, allPostsForFilter, topics, currentTopic, currentPage, hasMore, total, flash } = props;
+  const {
+    posts,
+    allPosts,
+    allPostsForFilter = allPosts.data,
+    topics,
+    currentTopic,
+    currentPage,
+    hasMore,
+    total,
+    flash,
+  } = props;
 
-  const isAdmin = Boolean(props.auth?.user?.is_admin);
+  const isAdmin = !!props.auth?.user?.is_admin;
 
-  // Show flash message once on mount
   useEffect(() => {
-  if (flash?.alert) {
-    const { type, message } = flash.alert;
-    if (message) {
-      switch (type) {
-        case 'error':
-          toast.error(message);
-          break;
-        case 'info':
-        default:
-          toast.success(message);
+    if (flash?.alert) {
+      const { type, message } = flash.alert;
+      if (message) {
+        switch (type) {
+          case 'error':
+            toast.error(message);
+            break;
+          case 'info':
+          case 'success':
+          default:
+            toast.success(message);
+        }
       }
     }
-  }
-}, [flash]);
+  }, [flash]);
 
-  // Helper to scroll smoothly to top, then call callback when scroll finished
   const scrollToTopAndThen = (callback: () => void) => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
 
@@ -95,6 +108,8 @@ export default function MainPage() {
   };
 
   const handlePageChange = (page: number) => {
+    if (page < 0 || (!hasMore && page > currentPage)) return;
+
     scrollToTopAndThen(() => {
       const params = new URLSearchParams();
       if (currentTopic) params.append('topic', currentTopic);
@@ -117,9 +132,9 @@ export default function MainPage() {
         <Navbar />
         <Header />
         <main className="!p-4 md:!p-8 !gap-1">
-          <div className="w-full !mx-auto flex flex-col lg:flex-row md:!gap-0">
+          <div className="flex flex-col lg:flex-row gap-4 md:gap-6 custom-2xl-gap">
             <aside className="w-full lg:!w-120 lg:!ml-20 xl:!ml-30 !mr-10 !mb-8 lg:!mb-0">
-              <div className="lg:top-24 !space-y-4 md:!space-y-6 w-full lg:!w-80 xl:!w-120">
+              <div className="lg:top-24 !space-y-4 md:!space-y-6 w-full lg:!w-80 xl:!w-120 flexcontainer">
                 <div className="rounded-lg bg-[#5800FF]/10 !p-4">
                   <h3 className="font-semibold !mb-2">About</h3>
                   <p className="opacity-80">
@@ -140,7 +155,7 @@ export default function MainPage() {
                         All Topics
                       </button>
                     </li>
-                    {topics && topics.length > 0 ? (
+                    {topics.length > 0 ? (
                       topics.map((topic) => (
                         <li key={topic}>
                           <button
@@ -161,7 +176,7 @@ export default function MainPage() {
 
                 <div className="rounded-lg bg-[#5800FF]/10 !p-4">
                   <SearchComponent posts={allPosts.data} />
-                  <YearFilterComponent posts={allPostsForFilter ?? allPosts.data} />
+                  <YearFilterComponent posts={allPostsForFilter} />
                   <ArchivesComponent />
                   <RssSubscribeLink />
                   <RecentActivityFeed key="recent-activity-feed" />
@@ -171,18 +186,18 @@ export default function MainPage() {
               </div>
             </aside>
 
-            <div className="lg:flex-1 flex flex-col items-center lg:-translate-x-14">
+            <div className="flex flex-col items-center lg:-translate-x-14">
               <div className="!space-y-6 md:!space-y-8">
                 {posts.length === 0 ? (
                   <div className="text-center opacity-70 !mt-8 md:!mt-30">No blog posts yet.</div>
                 ) : (
                   <>
                     {posts.map((post) => (
-                      <div key={post.id} className="flex-1 justify-center items-center flex flex-col w-full">
+                      <div key={post.id} className="flex-1 flex-container justify-center items-center flex flex-col w-full">
                         <BlogPost post={{ ...post, _id: post.id.toString(), postUrl: '/posts/' + post.slug }} />
                       </div>
                     ))}
-                    <div className="flex justify-center items-center !gap-4 md:!gap-10 !mt-8 md:!mt-18">
+                    <div className="flex justify-center items-center !gap-4 md:!gap-10 !mt-8 md:!mt-18 customdiv">
                       <button
                         onClick={() => handlePageChange(currentPage - 1)}
                         disabled={currentPage === 0}

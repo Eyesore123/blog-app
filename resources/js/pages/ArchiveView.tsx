@@ -84,12 +84,10 @@ export default function ArchiveView() {
       <Navbar />
       <Header />
       <main className="!p-4 md:!p-8 !gap-1">
-        {/* Change to flex-col on mobile, row on larger screens */}
-        <div className="w-full !mx-auto flex flex-col lg:flex-row md:!gap-10 xl:!gap-18">
-          {/* Sidebar - full width on mobile, fixed width on desktop */}
-          <aside className="w-full lg:!w-120 lg:!ml-20 xl:!ml-30 !mr-10 !mb-8 lg:!mb-0">
-            <div className="!space-y-4 md:!space-y-6 w-full lg:!w-80 xl:!w-120">
-              <div className="rounded-lg bg-[#5800FF]/10 !p-4">
+          <div className="flex flex-col lg:flex-row gap-4 md:gap-6 xl:gap-10 custom-2xl-gap">
+            <aside className="w-full lg:!w-120 lg:!ml-20 xl:!ml-30 !mr-10 !mb-8 lg:!mb-0">
+              <div className="lg:top-24 !space-y-4 md:!space-y-6 w-full lg:!w-80 xl:!w-120">
+                <div className="rounded-lg bg-[#5800FF]/10 !p-4">
                 <h3 className="font-semibold !mb-2">About</h3>
                 <p className="opacity-80">
                   Viewing posts from <strong>{archiveYear}</strong>. Browse other years or topics to explore more.
@@ -137,9 +135,9 @@ export default function ArchiveView() {
 
           {/* Main content - full width on mobile, flex-1 on desktop */}
           {/* Add: lg:-translate-x-2? */}
-          <div className="flex-1 flex flex-col items-center w-full lg:-translate-x-14">
+          <div className="flex flex-col items-center w-full lg:-translate-x-14">
             <div className="!space-y-8">
-              <h2 className="text-2xl font-bold w-full !mb-10 lg:!ml-10 text-center lg:text-left xl:!mt-6">
+              <h2 className="text-2xl font-bold w-full !mb-10 lg:!ml-10 xl:!ml-42 text-center lg:text-left xl:!mt-6">
               Archive — Posts from {archiveYear}:
             </h2>
               {posts.data.length === 0 ? (

@@ -627,7 +627,7 @@ const postUrl = `/posts/${post.id}`;
         <meta property="og:url" content={seoProps.url} />
       </Helmet>
 
-    <article className="flex flex-col justify-center items-center lg:items-start lg:justify-start rounded-lg bg-[#5800FF]/5 !p-4 md:!pl-10 w-full md:!w-150 xl:!w-220 2xl:!w-260 !mb-6 md:!mb-10 lg:!ml-10 2xl:!ml-32">
+    <article className="article-container flex flex-col justify-center items-center lg:items-start lg:justify-start rounded-lg bg-[#5800FF]/5 !p-4 md:!pl-10 w-full md:!w-150 xl:!w-220 2xl:!w-260 !mb-6 md:!mb-10 lg:!ml-10 2xl:!ml-32">
       <h2
         className="text-xl md:text-2xl font-bold flex justify-start !mb-4 md:!mb-10 cursor-pointer hover:underline !max-w-[800px]"
         onClick={goToPostPage}
@@ -705,6 +705,12 @@ const postUrl = `/posts/${post.id}`;
     ol: ({ node, ...props }) => <ol className="list-decimal !ml-6 !mb-4" {...props} />,
     li: ({ node, ...props }) => (
       <li className="!mb-2 !ml-6 max-w-[340px] md:max-w-[500px] xl:max-w-[700px] 2xl:max-w-[900px]" {...props} />
+    ),
+     a: ({ node, ...props }) => (
+      <a
+        className="text-purple-400 hover:text-white transition-colors"
+        {...props}
+      />
     ),
     strong: ({ node, ...props }) => (
       <strong className="!mt-4 font-bold max-w-[340px] md:max-w-[500px] xl:max-w-[700px] 2xl:max-w-[900px]" {...props} />

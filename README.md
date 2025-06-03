@@ -38,7 +38,6 @@ Blog still needs some work, though, including:
 8. New comment notification to admin (timed, once per day). Notification to registered users when someone replies to their comment.
 9. Scheduled uploads feature would be nice
 10. Save sketches feature + fetch sketches from database in admin panel
-11. Larger screen sizes still need viewport adjustments and links to other pages need better styling to make clear that they are links.
 
 I deployed this app on Railway with two services, one for app (both frontend and backend use the same url) and one for database (PostgreSQL). Railway uses a volume to store the images so they are not lost after a new deployment.
 
