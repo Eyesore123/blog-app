@@ -9,6 +9,7 @@ import SearchComponent from '@/components/SearchComponent';
 import YearFilterComponent from '@/components/YearFilterComponent';
 import ArchivesComponent from '@/components/ArchiveComponent';
 import RecentActivityFeed from '@/components/RecentActivityFeed';
+import { WebsiteAnalyzerLink } from '@/components/WebsiteAnalyzerLink';
 import { PortfolioLink } from '@/components/PortfolioLink';
 import { RssSubscribeLink } from '@/components/RssSubscribeLink';
 import { useTheme } from '../context/ThemeContext';
@@ -165,6 +166,7 @@ export default function MainPage() {
                   <RssSubscribeLink />
                   <RecentActivityFeed key="recent-activity-feed" />
                   <PortfolioLink />
+                  <WebsiteAnalyzerLink />
                 </div>
               </div>
             </aside>
