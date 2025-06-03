@@ -79,10 +79,9 @@ export default function PostsIndex() {
         <Header />
 
         <main className="!p-4 md:!p-8 !gap-1">
-          <div className="w-full !mx-auto flex flex-col lg:flex-row md:!gap-0">
-            {/* Sidebar */}
-            <aside className="w-full lg:!w-120 lg:!ml-30 !mb-8 lg:!mb-0">
-              <div className="lg:sticky lg:top-24 !space-y-4 md:!space-y-6 w-full lg:!w-80 xl:!w-120">
+          <div className="flex flex-col lg:flex-row gap-4 md:gap-6 custom-2xl-gap">
+            <aside className="w-full lg:!w-120 lg:!ml-20 xl:!ml-30 !mr-10 !mb-8 lg:!mb-0">
+              <div className="lg:top-24 !space-y-4 md:!space-y-6 w-full lg:!w-80 xl:!w-120 flexcontainer">
                 <div className="rounded-lg bg-[#5800FF]/10 !p-4">
                   <h3 className="font-semibold !mb-2">About</h3>
                   <p className="opacity-80">
@@ -133,11 +132,11 @@ export default function PostsIndex() {
             </aside>
 
             {/* Main content */}
-            <div className="lg:flex-1 flex flex-col items-center">
+            <div className="flex flex-col items-center">
               <div className="!space-y-6 md:!space-y-8 w-full max-w-2xl">
                 {/* Tag header */}
                 {activeTag && (
-                  <h2 className="text-2xl font-bold !mb-8 xl:!ml-10">
+                  <h2 className="text-2xl font-bold !mt-4 !mb-8 xl:!ml-42">
                     Posts tagged <span className="text-[#5800FF]">#{activeTag}:</span>
                   </h2>
                 )}
