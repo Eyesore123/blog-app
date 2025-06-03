@@ -38,8 +38,9 @@ Blog still needs some work, though, including:
 8. New comment notification to admin (timed, once per day). Notification to registered users when someone replies to their comment.
 9. Scheduled uploads feature would be nice
 10. Save sketches feature + fetch sketches from database in admin panel
+11. Customized emails that look better than the default Laravel emails
 
-I deployed this app on Railway with two services, one for app (both frontend and backend use the same url) and one for database (PostgreSQL). Railway uses a volume to store the images so they are not lost after a new deployment.
+I deployed this app on Railway with three different services or containers, one for app (both frontend and backend use the same url), one for database (PostgreSQL) and one for queue worker which takes care of notifications (comment and blog post notifications). Railway uses a volume to store the images so they are not lost after a new deployment.
 
 Comment section looks like this when user is not signed in. Signed in users can reply to comments and edit/delete comments.
 
@@ -62,6 +63,7 @@ Portgres admin panel looks nice:
 - How to add a queue for sending emails and set up the database queue table and a worker + how to use the database driver in Laravel.
 - How to use sqlite db in test environment and then switch to Postgres in production.
 - How to use Railway services, Railway CLI and how connect app to db in Railway.
+- How to use several services or container in tandem in Railway and connect them to each other.
 - I was thinking of sending my blog posts automatically to LinkedIn, but because LinkedIn has become so heavy-handed and frustrating with its unnecessary security measures, I will not support it. Blog users can still share posts on LinkedIn but I won't be adding mine there.
 - It is quite painful to get all the routes and controllers working without hiccups. One subtle change anywhere can break the whole thing. For example, I decided to make changes to account removal logic and suddenly I had to make changes not only to frontend but also to user model, comment model, Accountcontroller, Commentcontroller and to user table with additional migrations. 
 - Deploying can also be a pain if you don't know all the ins and outs of the deployment process. I've never deployed a Laravel app before so I had to learn a lot about it. How Laravel caching works, how images should be loaded (and stored), how to set cors policies properly etc.
