@@ -18,7 +18,7 @@ Logged in users have a My Account page where they can change their password, del
 
 Providers are used for themes, alerts and confirmations. I added a markdown editor for posts. Perhaps I could add one for comments, but it was quite bothersome to get it work without errors for posts so I'm not sure if I'll add new editors.
 
-Loading spinners are used for images and log-in. Custom alerts pop up to notify user of successful logout. Login doesn't include popup, because it would feel a bit intrusive towards regular users. Admin gets a pop up notification when a new post is added. Custom dialogue window in used for verifying important actions (like deleting a post or a user account). Admin can use Google Cloud Tranlation API to translate posts to other languages.
+Loading spinners are used for images and log-in. Custom alerts pop up to notify user of successful logout. Login doesn't include popup, because it would feel a bit intrusive towards regular users. Admin gets a pop up notification when a new post is added. Custom dialogue window in used for verifying important actions (like deleting a post or a user account). Admin can use Google Cloud Translation API to translate posts to other languages.
 
 Errors are mostly handled with custom error pages. Images use a fallback image in case the image is not found.
 
@@ -38,9 +38,18 @@ Blog still needs some work, though, including:
 8. Scheduled uploads feature would be nice
 9. Save sketches feature + fetch sketches from database in admin panel
 10. Customized emails that look better than the default Laravel emails
-11. Show previously used tags in post editor
+
+## Deployment
 
 I deployed this app on Railway with three different services or containers, one for app (both frontend and backend use the same url), one for database (PostgreSQL) and one for queue worker which takes care of notifications (comment and blog post notifications). Railway uses a volume to store the images so they are not lost after a new deployment.
+
+A few words about the deployment:
+
+The start.sh script is the main entrypoint for Railway deployment. The Railway service uses "bash start.sh" as its start command. The build command is defined in railway.toml, which calls the railway-build script from package.json, and this script runs start.sh.
+
+Check start.sh for more details. There are some scripts included in this repo that are not used in Railway but have been used in local development for testing. Start.sh was created to make the deployment process easier: it made the start command shorter and it decreased the amount of manual steps in deployment, like fixing the symlink and rebuilding vite assets. Postbuild script is not in use anymore but it's still included in the repo in case bash scripts need changes.
+
+## Screenshots
 
 Comment section looks like this when user is not signed in. Signed in users can reply to comments and edit/delete comments.
 
