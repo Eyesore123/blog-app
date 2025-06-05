@@ -2,7 +2,7 @@
     "private": true,
     "type": "module",
     "scripts": {
-        "build": "vite build --manifest public/build/manifest.json",
+        "build": "vite build",
         "move-vite-assets": "shx mkdir -p public/build && shx cp -r dist/* public/build/ && shx cp -r dist/.vite public/build/",
         "copy-manifest": "bash copy-manifest.sh",
         "create-symlinks": "bash create-symlink.sh",
