@@ -12,7 +12,8 @@
         "format": "prettier --write resources/",
         "format:check": "prettier --check resources/",
         "lint": "eslint . --fix",
-        "types": "tsc --noEmit"
+        "types": "tsc --noEmit",
+        "railway-build": "./start.sh"
     },
     "devDependencies": {
         "@eslint/js": "^9.19.0",
