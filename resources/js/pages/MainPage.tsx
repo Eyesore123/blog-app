@@ -175,7 +175,7 @@ export default function MainPage() {
                 </div>
 
                 <div className="rounded-lg bg-[#5800FF]/10 !p-4">
-                  <SearchComponent posts={allPosts.data} />
+                  <SearchComponent posts={allPostsForFilter} />
                   <YearFilterComponent posts={allPostsForFilter} />
                   <ArchivesComponent />
                   <RssSubscribeLink />
