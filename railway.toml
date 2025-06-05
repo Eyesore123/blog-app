@@ -5,7 +5,5 @@
   allowed_headers = ["Content-Type"]
   max_age = 3600
 
-  [
-tasks
-]
+[tasks]
   build = "npm run railway-build"
