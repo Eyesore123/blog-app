@@ -10,6 +10,7 @@ use App\Http\Controllers\CommentController;
 use App\Http\Controllers\ArchiveController;
 use App\Http\Controllers\SubscriptionController;
 use App\Http\Controllers\RssFeedController;
+use App\Http\Controllers\TagController;
 use Inertia\Inertia;
 use Illuminate\Support\Str;
 use App\Models\User;
@@ -242,3 +243,7 @@ Route::post('/translate', [TranslationController::class, 'translate'])
 
 // routes/api.php
 Route::put('/posts/{post}/translation', [PostController::class, 'storeTranslation']);
+
+// Tag fetch route
+
+Route::get('api/tags', [TagController::class, 'index']);

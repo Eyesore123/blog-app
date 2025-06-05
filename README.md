@@ -33,12 +33,12 @@ Blog still needs some work, though, including:
 3. Advanced features for admin (image size adjustments? etc.)
 4. Email subscription options in admin panel + an improved template for blog post email
 5. Profile images? - would be a nice addition
-6. Bookmark icon from Laravel icon to my own
-7. Suggestions for posts based on tags (two max, only on post page)
-8. New comment notification to admin (timed, once per day). Notification to registered users when someone replies to their comment.
-9. Scheduled uploads feature would be nice
-10. Save sketches feature + fetch sketches from database in admin panel
-11. Customized emails that look better than the default Laravel emails
+6. Suggestions for posts based on tags (two max, only on post page)
+7. New comment notification to admin (timed, once per day). Notification to registered users when someone replies to their comment.
+8. Scheduled uploads feature would be nice
+9. Save sketches feature + fetch sketches from database in admin panel
+10. Customized emails that look better than the default Laravel emails
+11. Show previously used tags in post editor
 
 I deployed this app on Railway with three different services or containers, one for app (both frontend and backend use the same url), one for database (PostgreSQL) and one for queue worker which takes care of notifications (comment and blog post notifications). Railway uses a volume to store the images so they are not lost after a new deployment.
 

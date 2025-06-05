@@ -26,7 +26,24 @@ export function CreatePost({ onPreviewChange }: CreatePostProps) {
   const [imageUrl, setImageUrl] = useState<string>("");
   const [editorContent, setEditorContent] = useState(data.content);
   const [tagInput, setTagInput] = useState(""); // Individual tag being typed
-const { showAlert } = useAlert();
+  const [allTags, setAllTags] = useState<string[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+  const { showAlert } = useAlert();
+
+  const fetchTags = async () => {
+  const response = await fetch('/api/tags');
+  const data = await response.json();
+  return data;
+};
+
+  useEffect(() => {
+    const fetchTagsData = async () => {
+      const tags = await fetchTags();
+      setAllTags(tags);
+      setLoading(false);
+    };
+    fetchTagsData();
+  }, []);
 
   const editorOptions = useMemo(
     () => ({
@@ -183,6 +200,29 @@ const { showAlert } = useAlert();
         {/* Tags */}
         <div className="!w-full">
           <label className="!block !mb-1 !font-medium">Tags</label>
+
+        {/* Previously used tags - can be added to tags array with a click */}
+        {loading ? (
+            <p className="!mb-2">Loading tags...</p>
+          ) : (
+            allTags && allTags.length > 0 && (
+              <div className="!mb-2 !flex !flex-wrap !gap-2">
+                {allTags
+                  .filter(tag => !data.tags.includes(tag))
+                  .map(tag => (
+                    <button
+                      key={tag}
+                      type="button"
+                      className="!bg-gray-200 !text-[#5800FF] !rounded !px-3 !py-1 !text-sm hover:!bg-[#5800FF] hover:!text-white transition"
+                      onClick={() => setData("tags", [...data.tags, tag])}
+                    >
+                      {tag}
+                    </button>
+                  ))}
+              </div>
+            )
+          )}
+
           <div className="!flex !gap-2">
             <input
               type="text"
@@ -227,7 +267,7 @@ const { showAlert } = useAlert();
         <button
           type="submit"
           disabled={!data.title || !editorContent || !data.topic || processing}
-          className="!w-full !px-4 !py-2 !bg-[#5800FF] !text-white !rounded !hover:bg-[#E900FF] !disabled:opacity-50"
+          className="!w-full !px-4 !py-2 !mb-10 !bg-[#5800FF] !text-white !rounded !hover:bg-[#E900FF] !disabled:opacity-50"
         >
           {processing ? "Creating..." : "Create Post"}
         </button>
