@@ -13,7 +13,7 @@
         "format:check": "prettier --check resources/",
         "lint": "eslint . --fix",
         "types": "tsc --noEmit",
-        "railway-build": "./start.sh"
+        "railway-build": "bash start.sh"
     },
     "devDependencies": {
         "@eslint/js": "^9.19.0",
