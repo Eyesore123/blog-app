@@ -132,9 +132,9 @@ export default function MainPage() {
         <Navbar />
         <Header />
         <main className="!p-4 md:!p-8 !gap-1">
-          <div className="flex flex-col lg:flex-row gap-4 md:gap-6 custom-2xl-gap">
-            <aside className="w-full lg:!w-120 lg:!ml-20 xl:!ml-30 !mr-10 !mb-8 lg:!mb-0">
-              <div className="lg:top-24 !space-y-4 md:!space-y-6 w-full lg:!w-80 xl:!w-120 flexcontainer">
+          <div className="flex flex-col lg:flex-row gap-4 md:gap-6 custom-2xl-gap items-center lg:items-start">
+            <aside className="w-full sm:!w-2/3 lg:!w-120 lg:!ml-20 xl:!ml-30 lg:!mr-10 !mb-8 lg:!mb-0 mx-auto">
+              <div className="lg:top-24 !space-y-4 md:!space-y-6 flexcontainer w-full lg:!w-80 xl:!w-120">
                 <div className="rounded-lg bg-[#5800FF]/10 !p-4">
                   <h3 className="font-semibold !mb-2">About</h3>
                   <p className="opacity-80">
