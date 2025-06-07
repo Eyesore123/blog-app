@@ -50,7 +50,7 @@ class NewPostNotification extends Mailable
             </html>
         ";
 
-        return $this->subject('Joni&#39;s Blog: ' . $this->post->title)
+        return $this->subject("Joni's Blog: " . $this->post->title)
                     ->html($emailHtml);
     }
 }

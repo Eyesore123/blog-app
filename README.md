@@ -37,7 +37,7 @@ Blog still needs some work, though, including:
 7. New comment notification to admin (timed, once per day). Notification to registered users when someone replies to their comment.
 8. Scheduled uploads feature would be nice
 9. Save sketches feature + fetch sketches from database in admin panel
-10. Customized emails that look better than the default Laravel emails
+10. Customized emails that look better than the default Laravel emails + unsub link in each mail
 
 ## Deployment
 
