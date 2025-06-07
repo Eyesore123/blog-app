@@ -38,7 +38,7 @@ export function PortfolioLink() {
             <img
               src={imageUrl}
               alt="Portfolio hero"
-              className="w-full md:w-50 lg:w-50 h-auto cursor-pointer"
+              className="w-50 md:w-50 lg:w-50 h-auto cursor-pointer"
               style={{ display: imageLoading ? 'none' : 'block' }}
               onClick={handleImageClick}
               onLoad={() => {
