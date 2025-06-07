@@ -23,7 +23,7 @@ export default function SuggestedPosts({ slug }: { slug: string }) {
   return (
     <div className="w-full flex flex-col items-center md:items-start !mt-6 md:!mt-8 !pt-4 md:!pt-6 border-t border-[#5800FF]/20 2xl:!ml-32 xl:w-4/5">
         {/* Apply theme colors to h3 */}
-      <h3 className="{`font-semibold text-base md:text-lg ${theme === 'white' ? 'text-black' : 'text-white'}`} !mb-14 sm:!pl-10">Suggested posts for you:</h3>
+      <h3 className="{`font-semibold !text-base md:!text-lg lg:!text-2xl xl:!text-3xl ${theme === 'white' ? 'text-black' : 'text-white'}`} !mb-14 sm:!pl-10">Suggested posts for you:</h3>
       <ul className="flex flex-col !gap-4 w-full">
         {suggested.map(post => (
           <li
