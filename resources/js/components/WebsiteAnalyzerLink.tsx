@@ -28,7 +28,7 @@ export function WebsiteAnalyzerLink(): React.ReactElement {
 
       {hasValidImageUrl && (
         <div
-          className="!w-2/3 flex flex-row justify-center items-center lg:justify-start lg:items-start !mt-4"
+          className="relative w-2/3 md:!w-full lg:!w-2/3 flex flex-row justify-center items-center lg:justify-start lg:items-start !mt-4"
           style={{ width: '100%', maxWidth: '40rem', minHeight: '11rem' }}
         >
           {imageLoading && !imageError && (
@@ -77,7 +77,7 @@ export function WebsiteAnalyzerLink(): React.ReactElement {
           href={analyzerUrl}
           target="_blank"
           rel="noopener noreferrer"
-          className="scale-115 md:scale-100 !pt-0 md:!mt-0 text-[#E900FF] md:text-[#5800FF] hover:text-[#E900FF] transition-colors"
+          className="scale-115 md:scale-100 !pt-0 !mt-6 lg:!mt-0 text-[#E900FF] md:text-[#5800FF] hover:text-[#E900FF] transition-colors"
         >
           → Analyze a Website
         </a>

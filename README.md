@@ -60,6 +60,22 @@ Portgres admin panel looks nice:
 
 ![admindashboard](https://github.com/user-attachments/assets/0530e3cf-617f-4e1a-974d-68bf35c829f2)
 
+## Issues
+
+- Markdown editor needs some work.
+- First post on the landing page has two loading spinners for some reason.
+- Flash messages are not working properly so I made a workaround for pop-ups. Pop-ups work fine but they are not really flash messages.
+
+## Testing
+
+- This repo doesn't include a test suite.
+- Set more lenient cors policy before testing to avoid errors.
+- "npm install" - installs all npm dependencies.
+- "composer install" - installs composer dependencies.
+- "php artisan migrate" - runs migrations.
+- "npm run dev" - runs vite dev server.
+- "php artisan serve" - runs laravel server.
+
 
 ## What I've learned during this project
 
@@ -78,9 +94,3 @@ Portgres admin panel looks nice:
 - It is quite painful to get all the routes and controllers working without hiccups. One subtle change anywhere can break the whole thing. For example, I decided to make changes to account removal logic and suddenly I had to make changes not only to frontend but also to user model, comment model, Accountcontroller, Commentcontroller and to user table with additional migrations. 
 - Deploying can also be a pain if you don't know all the ins and outs of the deployment process. I've never deployed a Laravel app before so I had to learn a lot about it. How Laravel caching works, how images should be loaded (and stored), how to set cors policies properly etc.
 - Vite was causing more issues than usual in my Laravel setup. I had to add bash scripts and other scripts, a Vite helper, and an htaccess file, and then I had to make some extra changes to providers and vite config file just to get the vite build to work.
-
-## Issues
-
-- Markdown editor needs some work.
-- First post on the landing page has two loading spinners for some reason.
-- Flash messages are not working properly so I made a workaround for pop-ups. Pop-ups work fine but they are not really flash messages.
