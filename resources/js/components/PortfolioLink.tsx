@@ -25,7 +25,7 @@ export function PortfolioLink() {
 
       {hasValidImageUrl && (
         <div
-          className="relative w-full flex flex-row justify-center items-center lg:justify-start lg:items-start !mt-4"
+          className="relative w-full flex flex-row justify-center items-center md:justify-start md:items-start !mt-4"
           style={{ width: '100%', maxWidth: '40rem', minHeight: '14rem' }}
         >
           {imageLoading && !imageError && (
@@ -57,7 +57,7 @@ export function PortfolioLink() {
           )}
 
           {imageError && (
-            <div className="w-full flex flex-col items-center lg:items-start">
+            <div className="w-full flex flex-col items-center md:items-start">
               <img
                 src={fallbackImageUrl}
                 alt="Fallback placeholder"
@@ -69,7 +69,7 @@ export function PortfolioLink() {
           )}
         </div>
       )}
-      <div className='w-full inline-flex justify-center lg:justify-start'>
+      <div className='w-full inline-flex justify-center md:justify-start'>
         <a
           href={portfolioUrl}
           target="_blank"

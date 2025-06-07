@@ -204,6 +204,10 @@ Route::get('/posts/tag/{tag}', [PostController::class, 'filterByTag'])->name('po
 Route::get('/posts/tag/{tag}', [PostController::class, 'filterByTag'])
      ->name('posts.byTag');
 
+// Route that shows suggested posts using tags
+
+Route::get('/posts/{slug}/suggested', [PostController::class, 'suggested']);
+
 // Routes for forgot password and reset password
 
 // Show form to request reset link

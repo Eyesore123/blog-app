@@ -298,4 +298,20 @@ class PostController extends Controller
         return response()->json(['success' => true]);
     }
 
+    public function suggested($slug)
+    {
+        $post = Post::where('slug', $slug)->firstOrFail();
+        $tagIds = $post->tags->pluck('id');
+
+        $suggested = Post::where('id', '!=', $post->id)
+            ->whereHas('tags', function ($query) use ($tagIds) {
+                $query->whereIn('tags.id', $tagIds);
+            })
+            ->limit(2)
+            ->get([
+                'id', 'title', 'slug', 'image_path'
+            ]);
+
+        return response()->json($suggested);
+    }
 }
