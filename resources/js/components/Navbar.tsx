@@ -38,14 +38,14 @@ export function Navbar() {
           <Link href="/privacy-policy" className="hover:text-purple-400">
             Privacy Policy
           </Link>
+          <Link href="/" className="hover:text-purple-400">
+                Main Page
+          </Link>
 
           {isAdmin && (
             <>
               <Link href="/admin" className="hover:text-purple-400">
                 Admin Dashboard
-              </Link>
-              <Link href="/" className="hover:text-purple-400">
-                Main Page
               </Link>
             </>
           )}

@@ -13,7 +13,7 @@ export default function PrivacyPolicy() {
         <Header />
         <main className="!p-4 md:!p-8 flex flex-col items-center">
           <div className="w-full max-w-2xl bg-[#5800FF]/10 rounded-lg shadow !p-6 md:!p-10 !mt-8">
-            <h1 className="text-2xl md:text-3xl font-bold !mb-16 text-[#5800FF]">
+            <h1 className="text-2xl md:text-3xl font-bold !mb-16 text-[#5800FF] md:!text-center">
               Privacy Policy
             </h1>
             <p className="!mb-4 text-base md:text-lg opacity-90">

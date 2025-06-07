@@ -39,7 +39,6 @@ Blog still needs some work, though, including:
 7. Scheduled uploads feature would be nice
 8. Save sketches feature + fetch sketches from database in admin panel
 9. Customized emails that look better than the default Laravel emails + unsub link in each mail
-10. Add privacy policy page
 
 ## Deployment
 
