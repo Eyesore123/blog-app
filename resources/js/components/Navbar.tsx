@@ -35,6 +35,10 @@ export function Navbar() {
             </span>
           )}
 
+          <Link href="/privacy-policy" className="hover:text-purple-400">
+            Privacy Policy
+          </Link>
+
           {isAdmin && (
             <>
               <Link href="/admin" className="hover:text-purple-400">

@@ -198,6 +198,12 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/account/unsubscribe-newsletter', [SubscriptionController::class, 'unsubscribe'])->name('account.unsubscribe');
 });
 
+// Privacy policy route
+
+Route::get('/privacy-policy', function () {
+    return Inertia::render('PrivacyPolicy');
+})->name('privacy');
+
 // Tag filter
 
 Route::get('/posts/tag/{tag}', [PostController::class, 'filterByTag'])->name('posts.byTag');

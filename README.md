@@ -16,6 +16,8 @@ Admin can add new posts, edit posts and delete comments. Admin can also deactiva
 
 Logged in users have a My Account page where they can change their password, delete their account and subscribe to a newsletter. Subscribed users get the latest blogpost sent to them automatically. Login view has a "forgot password" section so user can reset their password using email. When a user deletes account, user can decide to keep the comments or delete them from blog posts. If user chooses to keep comments, comments are kept but name is changed to "anonymous", because deleted users can't be identified and is no longer attached to any comment. I think it's nice to offer the option to either keep or delete comments.
 
+Comments are hidden on the landing page but revealed by default on the post page. Users see two suggested posts based on the tags of the current post (post page only).
+
 Providers are used for themes, alerts and confirmations. I added a markdown editor for posts. Perhaps I could add one for comments, but it was quite bothersome to get it work without errors for posts so I'm not sure if I'll add new editors.
 
 Loading spinners are used for images and log-in. Custom alerts pop up to notify user of successful logout. Login doesn't include popup, because it would feel a bit intrusive towards regular users. Admin gets a pop up notification when a new post is added. Custom dialogue window in used for verifying important actions (like deleting a post or a user account). Admin can use Google Cloud Translation API to translate posts to other languages.
@@ -33,11 +35,11 @@ Blog still needs some work, though, including:
 3. Advanced features for admin (image size adjustments? etc.)
 4. Email subscription options in admin panel + an improved template for blog post email
 5. Profile images? - would be a nice addition
-6. Suggestions for posts based on tags (two max, only on post page)
-7. New comment notification to admin (timed, once per day). Notification to registered users when someone replies to their comment.
-8. Scheduled uploads feature would be nice
-9. Save sketches feature + fetch sketches from database in admin panel
-10. Customized emails that look better than the default Laravel emails + unsub link in each mail
+6. New comment notification to admin (timed, once per day). Notification to registered users when someone replies to their comment.
+7. Scheduled uploads feature would be nice
+8. Save sketches feature + fetch sketches from database in admin panel
+9. Customized emails that look better than the default Laravel emails + unsub link in each mail
+10. Add privacy policy page
 
 ## Deployment
 
@@ -81,4 +83,5 @@ Portgres admin panel looks nice:
 ## Issues
 
 - Markdown editor needs some work.
+- First post on the landing page has two loading spinners for some reason.
 - Flash messages are not working properly so I made a workaround for pop-ups. Pop-ups work fine but they are not really flash messages.
