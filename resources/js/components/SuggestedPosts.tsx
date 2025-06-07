@@ -32,7 +32,7 @@ export default function SuggestedPosts({ slug }: { slug: string }) {
           >
             <Link href={`/posts/${post.slug}`} className="flex items-center w-full">
               <img
-                src={post.image_path ? `/storage/uploads/${post.image_path}` : "/fallbackimage.jpg"}
+                src={post.image_path ? `/storage/${post.image_path}` : "/fallbackimage.jpg"}
                 alt={post.title}
                 onError={handleImgError}
                 className="!w-14 !h-14 md:!w-16 md:!h-16 object-cover rounded-full bg-white/20 !mr-4"
