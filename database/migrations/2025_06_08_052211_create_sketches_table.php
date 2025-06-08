@@ -7,15 +7,17 @@ return new class extends Migration
 {
     public function up()
     {
-        Schema::create('sketches', function (Blueprint $table) {
-            $table->id();
-            $table->unsignedBigInteger('user_id');
-            $table->string('title');
-            $table->text('content')->nullable();
-            $table->timestamps();
+        if (!Schema::hasTable('sketches')) {
+            Schema::create('sketches', function (Blueprint $table) {
+                $table->id();
+                $table->unsignedBigInteger('user_id');
+                $table->string('title');
+                $table->text('content')->nullable();
+                $table->timestamps();
 
-            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
-        });
+                $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
+            });
+        }
     }
 
     public function down()
