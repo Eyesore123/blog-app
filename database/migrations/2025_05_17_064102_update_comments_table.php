@@ -26,9 +26,11 @@ return new class extends Migration
 
     public function down(): void
     {
-        Schema::table('comments', function ($table) {
-            $table->foreignId('user_id')->change();
-            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
-        });
+        if (Schema::hasColumn('comments', 'user_id')) {
+            Schema::table('comments', function ($table) {
+                $table->foreignId('user_id')->change();
+                $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
+            });
+        }
     }
 };

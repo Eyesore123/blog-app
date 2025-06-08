@@ -13,9 +13,11 @@ return new class extends Migration
     }
 
     public function down()
-    {
+{
+    if (Schema::hasColumn('posts', 'sent_at')) {
         Schema::table('posts', function (Blueprint $table) {
             $table->dropColumn('sent_at');
         });
     }
+}
 };
