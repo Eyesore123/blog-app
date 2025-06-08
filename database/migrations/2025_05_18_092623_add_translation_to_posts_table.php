@@ -13,11 +13,13 @@ return new class extends Migration
     });
 }
 
-public function down()
-{
-    Schema::table('posts', function (Blueprint $table) {
-        $table->dropColumn('translations');
-    });
-}
+    public function down()
+    {
+        if (Schema::hasColumn('posts', 'translations')) {
+            Schema::table('posts', function (Blueprint $table) {
+                $table->dropColumn('translations');
+                });
+            };
+    }
 
 };
