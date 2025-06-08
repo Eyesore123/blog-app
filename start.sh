@@ -21,5 +21,8 @@ php artisan config:clear
 # 6. Fix Laravel storage symlink
 php artisan storage:link
 
-# 7. Start PHP server
+# 7. Run migrations
+php artisan migrate --force
+
+# 8. Start PHP server
 php -S 0.0.0.0:8080 -t public
