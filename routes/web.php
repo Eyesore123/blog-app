@@ -17,6 +17,7 @@ use App\Models\User;
 use App\Http\Controllers\Auth\PasswordResetLinkController;
 use App\Http\Controllers\Auth\NewPasswordController;
 use App\Http\Controllers\TranslationController;
+use App\Http\Controllers\SketchController;
 use App\Http\Middleware\AdminMiddleware;
 use Illuminate\Support\Facades\DB;
 
@@ -257,3 +258,11 @@ Route::put('/posts/{post}/translation', [PostController::class, 'storeTranslatio
 // Tag fetch route
 
 Route::get('api/tags', [TagController::class, 'index']);
+
+// Sketch routes
+
+Route::middleware(['auth', \App\Http\Middleware\AdminMiddleware::class])->group(function () {
+    Route::get('/admin/sketches', [SketchController::class, 'index']);
+});
+Route::middleware('auth')->post('/sketches', [SketchController::class, 'store']);
+Route::middleware('auth')->delete('/sketches/{sketch}', [SketchController::class, 'destroy']);

@@ -4,6 +4,8 @@ import SimpleMDE from "react-simplemde-editor";
 import "easymde/dist/easymde.min.css";
 // import { router } from '@inertiajs/react';
 import { useAlert } from '../context/AlertContext';
+import SketchForm from "./SketchForm";
+import SketchList from "./SketchList";
 
 type CreatePostProps = {
   onPreviewChange?: (preview: {
@@ -35,6 +37,12 @@ export function CreatePost({ onPreviewChange }: CreatePostProps) {
   const data = await response.json();
   return data;
 };
+
+function handleLoadSketch(sketch: { title: string; content: string }) {
+    setData("title", sketch.title);
+    setEditorContent(sketch.content);
+    setData("content", sketch.content);
+  }
 
   useEffect(() => {
     const fetchTagsData = async () => {
@@ -272,6 +280,8 @@ export function CreatePost({ onPreviewChange }: CreatePostProps) {
           {processing ? "Creating..." : "Create Post"}
         </button>
       </form>
+      <SketchForm />
+      <SketchList onLoadSketch={handleLoadSketch} />
     </>
   );
 }

@@ -37,8 +37,7 @@ Blog still needs some work, though, including:
 5. Profile images? - would be a nice addition
 6. New comment notification to admin (timed, once per day). Notification to registered users when someone replies to their comment.
 7. Scheduled uploads feature would be nice
-8. Save sketches feature + fetch sketches from database in admin panel
-9. Customized emails that look better than the default Laravel emails + unsub link in each mail
+8. Customized emails that look better than the default Laravel emails + unsub link in each mail
 
 ## Deployment
 
@@ -60,21 +59,32 @@ Portgres admin panel looks nice:
 
 ![admindashboard](https://github.com/user-attachments/assets/0530e3cf-617f-4e1a-974d-68bf35c829f2)
 
-## Issues
+## Issues and improvements
 
 - Markdown editor needs some work.
 - First post on the landing page has two loading spinners for some reason.
 - Flash messages are not working properly so I made a workaround for pop-ups. Pop-ups work fine but they are not really flash messages.
+- Admin can create and fetch sketches of posts, but currently sketches include only title and content. Sketch data can be loaded to the post form, but some of the data fields are not yet included in the sketch.
 
 ## Testing
 
 - This repo doesn't include a test suite.
-- Set more lenient cors policy before testing to avoid errors.
+
+Preparations:
+- Set suitable cors policy before testing to avoid errors.
+- Make sure you're using sqlite database for testing and you've set the right database connection and set it up correctly.
 - "npm install" - installs all npm dependencies.
 - "composer install" - installs composer dependencies.
 - "php artisan migrate" - runs migrations.
+
+Running a server (use two different terminals):
 - "npm run dev" - runs vite dev server.
 - "php artisan serve" - runs laravel server.
+
+-->
+
+After that server runs on port 8000 by default:
+http://127.0.0.1:8000
 
 
 ## What I've learned during this project

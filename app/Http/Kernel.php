@@ -30,7 +30,7 @@ class Kernel extends HttpKernel
         ],
         
         'api' => [
-            HandleCors::class, // Add CORS to API middleware group
+            HandleCors::class,
             EnsureFrontendRequestsAreStateful::class,
             'throttle:api',
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
