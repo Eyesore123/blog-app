@@ -2,7 +2,6 @@ import { useEffect, useState, useMemo } from "react";
 import { useForm } from "@inertiajs/react";
 import SimpleMDE from "react-simplemde-editor";
 import "easymde/dist/easymde.min.css";
-// import { router } from '@inertiajs/react';
 import { useAlert } from '../context/AlertContext';
 import SketchForm from "./SketchForm";
 import SketchList from "./SketchList";
@@ -21,38 +20,48 @@ export function CreatePost({ onPreviewChange }: CreatePostProps) {
     content: "",
     topic: "",
     published: true,
-    image: null as File | null,
+    image: null as File | string | null,
     tags: [] as string[],
   });
 
   const [imageUrl, setImageUrl] = useState<string>("");
   const [editorContent, setEditorContent] = useState(data.content);
-  const [tagInput, setTagInput] = useState(""); // Individual tag being typed
+  const [tagInput, setTagInput] = useState("");
   const [allTags, setAllTags] = useState<string[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const { showAlert } = useAlert();
 
-  const fetchTags = async () => {
-  const response = await fetch('/api/tags');
-  const data = await response.json();
-  return data;
-};
-
-function handleLoadSketch(sketch: { title: string; content: string }) {
-    setData("title", sketch.title);
-    setEditorContent(sketch.content);
-    setData("content", sketch.content);
-  }
-
+  // Fetch all tags
   useEffect(() => {
-    const fetchTagsData = async () => {
-      const tags = await fetchTags();
+    const fetchTags = async () => {
+      const response = await fetch('/api/tags');
+      const tags = await response.json();
       setAllTags(tags);
       setLoading(false);
     };
-    fetchTagsData();
+    fetchTags();
   }, []);
 
+  // Handle loading a sketch into the post form
+  function handleLoadSketch(sketch: {
+    title: string;
+    content: string;
+    topic?: string;
+    tags?: string[];
+    image?: string;
+    published?: true | boolean;
+  }) {
+    setData("title", sketch.title);
+    setEditorContent(sketch.content);
+    setData("content", sketch.content);
+    setData("topic", sketch.topic || "");
+    setData("tags", sketch.tags || []);
+    setData("image", sketch.image || "");
+    setData("published", sketch.published || true);
+    setImageUrl(sketch.image || "");
+  }
+
+  // Editor options
   const editorOptions = useMemo(
     () => ({
       spellChecker: false,
@@ -61,6 +70,7 @@ function handleLoadSketch(sketch: { title: string; content: string }) {
     []
   );
 
+  // Handle editor content change
   function handleEditorChange(value: string) {
     setEditorContent(value);
     setData('content', value);
@@ -71,39 +81,47 @@ function handleLoadSketch(sketch: { title: string; content: string }) {
     });
   }
 
+  // Handle image input change
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      setData("image", e.target.files[0]);
+      setImageUrl(""); // Will be set in useEffect below
+    }
+  };
+
+  // Show image preview for both file and URL
   useEffect(() => {
-    if (data.image) {
+    if (data.image instanceof File) {
       const reader = new FileReader();
       reader.onload = () => {
         const result = reader.result as string;
-        setImageUrl(result); // Set the data URL
+        setImageUrl(result);
         onPreviewChange?.({
           title: data.title,
           content: editorContent,
-          image_url: result, // Trigger preview update immediately
+          image_url: result,
         });
       };
-      reader.readAsDataURL(data.image); // Read the file as a data URL
+      reader.readAsDataURL(data.image);
+    } else if (typeof data.image === "string" && data.image) {
+      setImageUrl(data.image);
+      onPreviewChange?.({
+        title: data.title,
+        content: editorContent,
+        image_url: data.image,
+      });
     } else {
       setImageUrl('');
       onPreviewChange?.({
         title: data.title,
         content: editorContent,
-        image_url: '', // Clear the preview image
+        image_url: '',
       });
     }
+    // eslint-disable-next-line
   }, [data.image]);
 
-  function handleImageChange(e: React.ChangeEvent<HTMLInputElement>) {
-    const file = e.target.files?.[0];
-    if (!file) return setData('image', null);
-    if (!file.type.startsWith('image/')) {
-      console.error('Selected file is not an image');
-      return;
-    }
-    setData('image', file);
-  }
-
+  // Tag handling
   function handleAddTag() {
     const name = tagInput.trim();
     if (name && !data.tags.includes(name)) {
@@ -123,16 +141,17 @@ function handleLoadSketch(sketch: { title: string; content: string }) {
     }
   }
 
+  // Handle form submit
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setData("content", editorContent);
 
     if (!data.title || !editorContent || !data.topic) {
-      console.error("Missing required fields");
+      showAlert("Missing required fields", "error");
       return;
     }
-    if (data.image && !data.image.type.startsWith("image/")) {
-      console.error("Image must be an image file");
+    if (data.image && data.image instanceof File && !data.image.type.startsWith("image/")) {
+      showAlert("Image must be an image file", "error");
       return;
     }
 
@@ -142,10 +161,10 @@ function handleLoadSketch(sketch: { title: string; content: string }) {
         setEditorContent("");
         setTagInput("");
         setImageUrl("");
-        // router.visit('/'), { replace : true };
         showAlert("Post created successfully!", "success");
       },
       onError: (error: any) => {
+        showAlert("Error creating post", "error");
         console.error("Error creating post:", error.response?.data || error);
       },
     });
@@ -201,6 +220,9 @@ function handleLoadSketch(sketch: { title: string; content: string }) {
           onChange={handleImageChange}
           className="!w-full !p-2 !rounded !border !border-[#5800FF] !bg-[var(--bg-primary)]"
         />
+        {imageUrl && (
+          <img src={imageUrl} alt="Preview" className="!max-w-xs !my-2 !rounded" />
+        )}
         {errors.image && (
           <p className="!text-red-600 !text-sm">{errors.image}</p>
         )}
@@ -208,9 +230,7 @@ function handleLoadSketch(sketch: { title: string; content: string }) {
         {/* Tags */}
         <div className="!w-full">
           <label className="!block !mb-1 !font-medium">Tags</label>
-
-        {/* Previously used tags - can be added to tags array with a click */}
-        {loading ? (
+          {loading ? (
             <p className="!mb-2">Loading tags...</p>
           ) : (
             allTags && allTags.length > 0 && (

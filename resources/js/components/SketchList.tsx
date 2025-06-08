@@ -2,7 +2,14 @@ import React, { useEffect, useState } from "react";
 import axiosInstance from "./axiosInstance";
 
 type SketchListProps = {
-  onLoadSketch?: (sketch: { title: string; content: string }) => void;
+  onLoadSketch?: (sketch: {
+    title: string;
+    content: string;
+    topic?: string;
+    tags?: string[];
+    image?: string;
+    published?: boolean;
+  }) => void;
 };
 
 export default function SketchList({ onLoadSketch }: SketchListProps) {
@@ -54,7 +61,14 @@ export default function SketchList({ onLoadSketch }: SketchListProps) {
               <div className="text-xs text-gray-400 !m-4">By: {sketch.user?.name}</div>
               <button
                 className="!px-2 !py-1 !m-4 bg-blue-500 text-white rounded text-xs hover:bg-blue-700"
-                onClick={() => onLoadSketch?.({ title: sketch.title, content: sketch.content })}
+                onClick={() => onLoadSketch?.({
+                title: sketch.title,
+                content: sketch.content,
+                topic: sketch.topic,
+                tags: sketch.tags || [],
+                image: sketch.image || "",
+                published: sketch.published ?? true,
+              })}
               >
                 Load to Post
               </button>

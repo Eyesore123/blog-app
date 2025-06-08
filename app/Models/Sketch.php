@@ -9,9 +9,17 @@ class Sketch extends Model
         'user_id',
         'title',
         'content',
+        'topic',
+        'published',
+        'image',
+        'tags',
     ];
 
-    // Add this relationship:
+    protected $casts = [
+        'tags' => 'array',
+        'published' => 'boolean',
+    ];
+
     public function user()
     {
         return $this->belongsTo(User::class);

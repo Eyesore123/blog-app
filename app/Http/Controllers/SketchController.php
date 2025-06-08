@@ -18,20 +18,29 @@ class SketchController extends Controller
     }
 
     public function store(Request $request)
-    {
-        $request->validate([
-            'title' => 'required|string|max:255',
-            'content' => 'nullable|string',
-        ]);
+{
+    $request->validate([
+        'title' => 'required|string|max:255',
+        'content' => 'nullable|string',
+        'topic' => 'nullable|string|max:255',
+        'published' => 'boolean',
+        'image' => 'nullable|string|max:255',
+        'tags' => 'nullable|array',
+        'tags.*' => 'string|max:255',
+    ]);
 
-        $sketch = Sketch::create([
-            'user_id' => Auth::id(),
-            'title' => $request->title,
-            'content' => $request->content,
-        ]);
+    $sketch = Sketch::create([
+        'user_id' => Auth::id(),
+        'title' => $request->title,
+        'content' => $request->content,
+        'topic' => $request->topic,
+        'published' => $request->published ?? true,
+        'image' => $request->image,
+        'tags' => $request->tags,
+    ]);
 
-        return response()->json($sketch, 201);
-    }
+    return response()->json($sketch, 201);
+}
 
     public function destroy(Sketch $sketch)
     {

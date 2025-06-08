@@ -14,6 +14,7 @@ use App\Http\Controllers\TagController;
 use Inertia\Inertia;
 use Illuminate\Support\Str;
 use App\Models\User;
+use Illuminate\Support\Facades\Storage;
 use App\Http\Controllers\Auth\PasswordResetLinkController;
 use App\Http\Controllers\Auth\NewPasswordController;
 use App\Http\Controllers\TranslationController;
@@ -266,3 +267,7 @@ Route::middleware(['auth', \App\Http\Middleware\AdminMiddleware::class])->group(
 });
 Route::middleware('auth')->post('/sketches', [SketchController::class, 'store']);
 Route::middleware('auth')->delete('/sketches/{sketch}', [SketchController::class, 'destroy']);
+Route::post('/upload', function (\Illuminate\Http\Request $request) {
+    $path = $request->file('image')->store('public/sketch-images');
+    return ['url' => Storage::url($path)];
+})->middleware('auth');
