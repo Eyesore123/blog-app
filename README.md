@@ -100,6 +100,7 @@ http://127.0.0.1:8000
 - How to use sqlite db in test environment and then switch to Postgres in production.
 - How to use Railway services, Railway CLI and how connect app to db in Railway.
 - How to use several services or container in tandem in Railway and connect them to each other.
+- How to use pgAdmin and connect to db in Railway.
 - I was thinking of sending my blog posts automatically to LinkedIn, but because LinkedIn has become so heavy-handed and frustrating with its unnecessary security measures, I will not support it. Blog users can still share posts on LinkedIn but I won't be adding mine there.
 - It is quite painful to get all the routes and controllers working without hiccups. One subtle change anywhere can break the whole thing. For example, I decided to make changes to account removal logic and suddenly I had to make changes not only to frontend but also to user model, comment model, Accountcontroller, Commentcontroller and to user table with additional migrations. 
 - Deploying can also be a pain if you don't know all the ins and outs of the deployment process. I've never deployed a Laravel app before so I had to learn a lot about it. How Laravel caching works, how images should be loaded (and stored), how to set cors policies properly etc.
