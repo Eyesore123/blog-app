@@ -104,6 +104,23 @@ try {
         )
     ");
     echo "<p>Posts table created.</p>";
+
+    // Create sketches table
+    $pdo->exec("
+        CREATE TABLE IF NOT EXISTS sketches (
+            id SERIAL PRIMARY KEY,
+            user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+            title VARCHAR(255) NOT NULL,
+            content TEXT,
+            topic VARCHAR(255),
+            published BOOLEAN DEFAULT TRUE,
+            image VARCHAR(255),
+            tags JSONB,
+            created_at TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
+            updated_at TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP
+        )
+    ");
+    echo "<p>Sketches table created.</p>";
     
     // Create comments table (if your app has comments)
     $pdo->exec("
