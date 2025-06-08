@@ -22,7 +22,7 @@ php artisan config:clear
 php artisan storage:link
 
 # 7. Run migrations
-php artisan migrate:reset --force
+# php artisan migrate:reset --force
 php artisan migrate --force
 
 # 8. Start PHP server
