@@ -11,7 +11,7 @@ if (!$validToken || $providedToken !== $validToken) {
 // Get the requested backup file
 $fileName = $_GET['file'] ?? '';
 
-if (empty($fileName) || !preg_match('/^backup_\d{4}-\d{2}-\d{2}_\d{2}-\d{2}-\d{2}\.sql$/', $fileName)) {
+if (empty($fileName) || !preg_match('/^backup_.*\.sql$/', $fileName)) {
     echo "Invalid backup file name.";
     exit(1);
 }

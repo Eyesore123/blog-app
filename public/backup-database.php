@@ -1,4 +1,5 @@
 <?php
+<?php
 
 $validToken = getenv('ADMIN_SETUP_TOKEN');
 $providedToken = $_GET['token'] ?? '';
