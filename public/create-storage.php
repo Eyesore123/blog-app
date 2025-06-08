@@ -1,4 +1,11 @@
 <?php
+
+$validToken = getenv('ADMIN_SETUP_TOKEN');
+if (($_GET['token'] ?? '') !== $validToken) { 
+    http_response_code(404); 
+    exit; 
+}
+
 echo "<h1>Creating Storage Directories</h1>";
 
 // Define the base storage path
