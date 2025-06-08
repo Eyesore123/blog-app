@@ -66,6 +66,9 @@ if ($return_var !== 0) {
         $pdo = new PDO($dsn);
         $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
+        // Start the SQL file
+        file_put_contents($backupFile, "-- Database backup generated on " . date('Y-m-d H:i:s') . "\n\n");
+
         // Get all tables
         $stmt = $pdo->query("
             SELECT table_name 
@@ -73,11 +76,7 @@ if ($return_var !== 0) {
             WHERE table_schema = 'public'
             ORDER BY table_name
         ");
-
         $tables = $stmt->fetchAll(PDO::FETCH_COLUMN);
-
-        // Start the SQL file
-        $sql = "-- Database backup generated on " . date('Y-m-d H:i:s') . "\n\n";
 
         // Add table creation and data for each table
         foreach ($tables as $table) {
@@ -127,44 +126,33 @@ if ($return_var !== 0) {
                 GROUP BY 
                     table_name
             ");
-
             $createTableSql = $stmt->fetchColumn();
-            $sql .= "-- Table structure for table $table\n";
-            $sql .= "DROP TABLE IF EXISTS $table CASCADE;\n";
-            $sql .= $sequenceSql; // Add sequence creation before table
-            $sql .= "$createTableSql\n\n";
+
+            file_put_contents($backupFile, "-- Table structure for table $table\nDROP TABLE IF EXISTS $table CASCADE;\n$sequenceSql$createTableSql\n\n", FILE_APPEND);
 
             // Get table data
             $stmt = $pdo->query("SELECT * FROM $table");
             $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
             if (!empty($rows)) {
-                $sql .= "-- Data for table $table\n";
-
+                file_put_contents($backupFile, "-- Data for table $table\n", FILE_APPEND);
                 foreach ($rows as $row) {
                     $columns = array_keys($row);
                     $values = array_map(function($value) use ($pdo) {
                         if ($value === null) {
                             return 'NULL';
                         } else {
-                            return $pdo->quote($value); // Always quote, even for numbers, to avoid truncation
+                            return $pdo->quote($value);
                         }
                     }, array_values($row));
-
-                    $sql .= "INSERT INTO $table (" . implode(', ', $columns) . ") VALUES (" . implode(', ', $values) . ");\n";
+                    $insert = "INSERT INTO $table (" . implode(', ', $columns) . ") VALUES (" . implode(', ', $values) . ");\n";
+                    file_put_contents($backupFile, $insert, FILE_APPEND);
                 }
-
-                $sql .= "\n";
+                file_put_contents($backupFile, "\n", FILE_APPEND);
             }
         }
 
-        // Write the SQL to the backup file
-        if (file_put_contents($backupFile, $sql)) {
-            echo "PHP-based backup completed successfully.\n";
-        } else {
-            echo "Failed to write PHP-based backup to file.\n";
-        }
-
+        echo "PHP-based backup completed successfully.\n";
     } catch (PDOException $e) {
         echo "Database error: " . $e->getMessage() . "\n";
     }
