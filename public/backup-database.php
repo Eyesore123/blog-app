@@ -78,11 +78,30 @@ if ($return_var !== 0) {
         
         // Start the SQL file
         $sql = "-- Database backup generated on " . date('Y-m-d H:i:s') . "\n\n";
-        
+
         // Add table creation and data for each table
         foreach ($tables as $table) {
             echo "Processing table: $table\n";
-            
+
+            // Detect sequences for serial/auto-increment columns
+            $sequenceSql = '';
+            $stmt = $pdo->query("
+                SELECT column_name, column_default
+                FROM information_schema.columns
+                WHERE table_schema = 'public' AND table_name = '$table'
+            ");
+            $columnsInfo = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+            foreach ($columnsInfo as $col) {
+                if (
+                    $col['column_default'] &&
+                    preg_match("/nextval\\('([^']+)'::regclass\\)/", $col['column_default'], $matches)
+                ) {
+                    $seqName = $matches[1];
+                    $sequenceSql .= "CREATE SEQUENCE IF NOT EXISTS $seqName;\n";
+                }
+            }
+
             // Get table creation SQL
             $stmt = $pdo->query("
                 SELECT 
@@ -110,37 +129,37 @@ if ($return_var !== 0) {
                 GROUP BY 
                     table_name
             ");
-            
+
             $createTableSql = $stmt->fetchColumn();
             $sql .= "-- Table structure for table $table\n";
             $sql .= "DROP TABLE IF EXISTS $table CASCADE;\n";
+            $sql .= $sequenceSql; // Add sequence creation before table
             $sql .= "$createTableSql\n\n";
-            
+
             // Get table data
             $stmt = $pdo->query("SELECT * FROM $table");
             $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
-            
+
             if (!empty($rows)) {
                 $sql .= "-- Data for table $table\n";
-                
+
                 foreach ($rows as $row) {
                     $columns = array_keys($row);
                     $values = array_map(function($value) use ($pdo) {
                         if ($value === null) {
                             return 'NULL';
-                        } elseif (is_numeric($value)) {
-                            return $value;
                         } else {
-                            return $pdo->quote($value);
+                            return $pdo->quote($value); // Always quote, even for numbers, to avoid truncation
                         }
                     }, array_values($row));
-                    
+
                     $sql .= "INSERT INTO $table (" . implode(', ', $columns) . ") VALUES (" . implode(', ', $values) . ");\n";
                 }
-                
+
                 $sql .= "\n";
             }
         }
+
         
         // Write the SQL to the backup file
         if (file_put_contents($backupFile, $sql)) {
