@@ -274,7 +274,7 @@ Route::post('/upload', function (\Illuminate\Http\Request $request) {
 
 // Temporary
 
-// Route::get('/drop-sketches-table', function () {
-//     DB::statement('DROP TABLE IF EXISTS sketches');
-//     return 'sketches table dropped';
-// });
+Route::get('/drop-sketches-table', function () {
+    DB::statement('DROP TABLE IF EXISTS sketches');
+    return 'sketches table dropped';
+});
