@@ -1,32 +1,32 @@
 <?php
 
 use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up()
     {
-        if (Schema::hasColumn('comments', 'user_id')) {
-            Schema::table('comments', function (Blueprint $table) {
-                if (Schema::hasColumn('comments', 'user_id')) {
-                    $table->dropForeign('comments_user_id_foreign');
-                }
-            });
-        }
+        // Only drop the constraint if it exists (PostgreSQL)
+        DB::statement("
+            DO $$
+            BEGIN
+                IF EXISTS (
+                    SELECT 1 FROM information_schema.table_constraints
+                    WHERE constraint_name = 'comments_user_id_foreign'
+                    AND table_name = 'comments'
+                ) THEN
+                    ALTER TABLE comments DROP CONSTRAINT comments_user_id_foreign;
+                END IF;
+            END
+            $$;
+        ");
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
-        Schema::table('comments', function (Blueprint $table) {
-            $table->dropForeign(['user_id']);
+        Schema::table('comments', function ($table) {
             $table->foreignId('user_id')->change();
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
         });
