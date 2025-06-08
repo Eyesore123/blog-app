@@ -1,5 +1,5 @@
 <?php
-// Simple security check - you should change this token
+
 $validToken = getenv('ADMIN_SETUP_TOKEN');
 $providedToken = $_GET['token'] ?? '';
 
@@ -56,16 +56,16 @@ if ($return_var !== 0) {
     echo "Error executing pg_dump command:\n";
     print_r($output);
     echo "</pre>";
-    
+
     echo "<h2>Alternative Backup Method</h2>";
     echo "<p>Trying PHP-based backup method...</p>";
-    
+
     try {
         // Connect to the database
         $dsn = "pgsql:host=$host;port=$port;dbname=$database;user=$username;password=$password";
         $pdo = new PDO($dsn);
         $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-        
+
         // Get all tables
         $stmt = $pdo->query("
             SELECT table_name 
@@ -73,16 +73,14 @@ if ($return_var !== 0) {
             WHERE table_schema = 'public'
             ORDER BY table_name
         ");
-        
+
         $tables = $stmt->fetchAll(PDO::FETCH_COLUMN);
-        
+
         // Start the SQL file
         $sql = "-- Database backup generated on " . date('Y-m-d H:i:s') . "\n\n";
 
         // Add table creation and data for each table
         foreach ($tables as $table) {
-            echo "Processing table: $table\n";
-
             // Detect sequences for serial/auto-increment columns
             $sequenceSql = '';
             $stmt = $pdo->query("
@@ -160,18 +158,17 @@ if ($return_var !== 0) {
             }
         }
 
-        
         // Write the SQL to the backup file
         if (file_put_contents($backupFile, $sql)) {
             echo "PHP-based backup completed successfully.\n";
         } else {
             echo "Failed to write PHP-based backup to file.\n";
         }
-        
+
     } catch (PDOException $e) {
         echo "Database error: " . $e->getMessage() . "\n";
     }
-    
+
     echo "</pre>";
 } else {
     echo "Backup completed successfully.\n";
@@ -188,17 +185,17 @@ putenv("PGPASSWORD");
 if (file_exists($backupFile)) {
     $fileSize = filesize($backupFile);
     $fileSizeFormatted = $fileSize > 1024 ? round($fileSize / 1024, 2) . " KB" : $fileSize . " bytes";
-    
+
     echo "<p>Backup file created: $backupFile ($fileSizeFormatted)</p>";
-    
+
     // Provide a download link
     $downloadUrl = "/download-backup.php?file=" . basename($backupFile) . "&token=$validToken";
     echo "<p><a href='$downloadUrl' class='px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600'>Download Backup</a></p>";
-    
+
     // List existing backups
     echo "<h2>Existing Backups</h2>";
     $backups = glob($backupDir . "/backup_*.sql");
-    
+
     if (empty($backups)) {
         echo "<p>No previous backups found.</p>";
     } else {
@@ -209,7 +206,7 @@ if (file_exists($backupFile)) {
             $fileSize = filesize($backup);
             $fileSizeFormatted = $fileSize > 1024 ? round($fileSize / 1024, 2) . " KB" : $fileSize . " bytes";
             $fileDate = date("F j, Y, g:i a", filemtime($backup));
-            
+
             $downloadUrl = "/download-backup.php?file=$fileName&token=$validToken";
             echo "<li><a href='$downloadUrl'>$fileName</a> - $fileSizeFormatted - $fileDate</li>";
         }
