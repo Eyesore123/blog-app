@@ -11,11 +11,13 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::table('comments', function (Blueprint $table) {
-            $table->dropForeign(['user_id']);
-            $table->foreignId('user_id')->nullable()->change();
-            $table->foreign('user_id')->references('id')->on('users')->onDelete('set null');
-        });
+        if (Schema::hasColumn('comments', 'user_id')) {
+            Schema::table('comments', function (Blueprint $table) {
+                if (Schema::hasColumn('comments', 'user_id')) {
+                    $table->dropForeign('comments_user_id_foreign');
+                }
+            });
+        }
     }
 
     /**
