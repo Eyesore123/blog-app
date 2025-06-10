@@ -336,6 +336,11 @@ const handleDeleteAccount = async () => {
 
             <div>
               <p className="text-gray-600">Newsletter Subscription:</p>
+              <p className="text-xs text-gray-500 mb-1">
+                {isSubscribed
+                  ? 'You are currently subscribed to receive blog newsletters by email.'
+                  : 'Subscribe to receive blog newsletters and updates by email.'}
+              </p>
               <button
                 onClick={handleSubscriptionChange}
                 disabled={loading}
@@ -347,6 +352,11 @@ const handleDeleteAccount = async () => {
 
             <div>
               <p className="text-gray-600">Comment Notifications:</p>
+              <p className="text-xs text-gray-500 mb-1">
+                {notifyComments
+                  ? 'You will receive an email when someone replies to your comments.'
+                  : 'Enable to get notified by email when someone replies to your comments.'}
+              </p>
               <button
                 onClick={handleToggleCommentNotifications}
                 disabled={loading}
@@ -357,6 +367,9 @@ const handleDeleteAccount = async () => {
             </div>
 
             <div>
+              <p className="text-xs text-gray-500 mb-1">
+                Deleting your account will remove your profile and (optionally) your comments. This action cannot be undone.
+              </p>
               <button
                 onClick={handleDeleteAccount}
                 disabled={loading}
