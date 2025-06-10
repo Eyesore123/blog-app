@@ -42,7 +42,7 @@ Blog still needs some work, though, including:
 4. Email subscription options in admin panel + an improved template for blog post email
 5. Profile images? - would be a nice addition
 6. Scheduled uploads feature would be nice
-7. Customized emails that look better than the default Laravel emails + unsub link in each mail
+7. Customized emails that look better than the default Laravel emails in comment notiifications
 
 ## Deployment
 
