@@ -42,8 +42,8 @@ if (loading) return <p className="text-gray-500 !mt-4">Loading comments...</p>;
 if (error) return <p className="text-red-500 !mt-4">{error}</p>;
 
 return (
-  <div className="!mt-10 w-3/5 md:min-h-204">
-    <h2 className="text-xl font-bold !mb-4">My Comments</h2>
+  <div className="!mt-8 xl:!mt-6">
+    <h2 className="text-xl font-bold !mb-8">My Comments</h2>
     {comments.length === 0 ? (
       <p className="text-gray-500">You haven't posted any comments yet.</p>
     ) : (

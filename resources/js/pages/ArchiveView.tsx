@@ -85,7 +85,7 @@ export default function ArchiveView() {
       <Header />
       <main className="!p-4 md:!p-8 !gap-1">
           <div className="flex flex-col lg:flex-row gap-4 md:gap-6 xl:gap-10 custom-2xl-gap">
-            <aside className="hidden lg:block w-full lg:!w-120 lg:!ml-20 xl:!ml-30 !mr-10 !mb-8 lg:!mb-0">
+            <aside className="hidden lg:block w-full sm:!w-1/3 xl:!w-2/3 xl:!ml-20 2xl:!ml-30 xl:max-w-120 xl:!mr-10 !mb-8 lg:!mb-0 mx-auto">
               <div className="lg:top-24 !space-y-4 md:!space-y-6 w-full lg:!w-80 xl:!w-120">
                 <div className="rounded-lg bg-[#5800FF]/10 !p-4">
                 <h3 className="font-semibold !mb-2">About</h3>
@@ -137,7 +137,7 @@ export default function ArchiveView() {
           {/* Add: lg:-translate-x-2? */}
           <div className="flex flex-col items-center w-full lg:-translate-x-14">
             <div className="!space-y-8">
-              <h2 className="text-2xl font-bold w-full !mb-10 lg:!ml-10 xl:!ml-42 text-center lg:text-left xl:!mt-6">
+              <h2 className="text-2xl font-bold w-full !mb-10 lg:!ml-20 xl:!ml-42 text-center lg:text-left xl:!mt-6">
               Archive — Posts from {archiveYear}:
             </h2>
               {posts.data.length === 0 ? (

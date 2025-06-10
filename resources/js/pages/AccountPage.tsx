@@ -254,8 +254,8 @@ const handleDeleteAccount = async () => {
       <Header />
       <div className="min-h-160 bg-[var(--bg-primary)] text-[var(--text-primary)]">
   <main className="!p-4 md:!p-8">
-   <div className="flex flex-col lg:flex-row gap-4 md:gap-6 custom-2xl-gap items-center lg:items-start">
-            <aside className="hidden lg:block w-full sm:!w-2/3 lg:!w-120 lg:!ml-20 xl:!ml-30 lg:!mr-10 !mb-8 lg:!mb-0 mx-auto">
+   <div className="flex flex-col lg:flex-row gap-4 md:gap-6 custom-2xl-gap items-center lg:!items-start">
+            <aside className="hidden lg:block w-full sm:!w-1/3 xl:!w-2/3 xl:!ml-20 2xl:!ml-30 xl:max-w-120 xl:!mr-10 !mb-8 lg:!mb-0 mx-auto">
               <div className="lg:top-24 !space-y-4 md:!space-y-6 flexcontainer w-full lg:!w-80 xl:!w-120">
           <div className="rounded-lg !p-4">
             <h3 className="font-semibold !mb-2">Account</h3>
@@ -275,10 +275,10 @@ const handleDeleteAccount = async () => {
       </aside>
 
       {/* Main content container */}
-      <div className="flex flex-col items-center justify-center lg:flex-row lg:gap-0 w-full lg:w-2/3">
+      <div className="flex flex-col items-center lg:items-start justify-start lg:flex-row lg:gap-6 w-full lg:w-2/3">
         {/* My Account Section */}
         <div className="flex flex-col items-center w-4/5 lg:!w-1/2 bg-[var(--bg-primary)] text-[var(--text-primary)]">
-          <h2 className="text-3xl font-bold !mb-4 md:!mb-10 !mt-10 text-center">My Account</h2>
+          <h2 className="text-3xl font-bold !mt-6 !mb-10 lg:!mt-8 xl:!mt-6 text-center">My Account</h2>
 
           <div className="bg-white rounded-lg border-2 border-[#5800FF] shadow-md shadow-[#5800FF] !p-6 !space-y-4 w-full max-w-md mx-auto">
             <div>
@@ -381,8 +381,8 @@ const handleDeleteAccount = async () => {
           </div>
         </div>
 
-        {/* Comments Section */}
-        <div className="w-full lg:w-1/2 flex flex-col items-center justify-start">
+       {/* Comments Section */}
+        <div className="w-full lg:w-1/2 lg:!min-h-[140vh] flex flex-col lg:justify-start items-start">
           <Comments userId={user.id} />
         </div>
       </div>
