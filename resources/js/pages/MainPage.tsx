@@ -133,7 +133,7 @@ export default function MainPage() {
         <Header />
         <main className="!p-4 md:!p-8 !gap-1">
           <div className="flex flex-col lg:flex-row gap-4 md:gap-6 custom-2xl-gap items-center lg:items-start">
-            <aside className="hidden lg:block w-full sm:!w-1/3 xl:!w-2/3 xl:!ml-20 2xl:!ml-30 xl:max-w-120 xl:!mr-10 !mb-8 lg:!mb-0 mx-auto">
+            <aside className="lg:!block !w-full md:!max-w-2/3 xl:!w-2/3 xl:!ml-20 2xl:!ml-30 xl:max-w-120 xl:!mr-10 !mb-8 lg:!mb-0 mx-auto">
               <div className="lg:top-24 !space-y-4 md:!space-y-6 flexcontainer w-full lg:!w-80 xl:!w-120">
                 <div className="rounded-lg bg-[#5800FF]/10 !p-4">
                   <h3 className="font-semibold !mb-2">About</h3>
