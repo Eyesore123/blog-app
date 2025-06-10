@@ -9,6 +9,7 @@ use App\Http\Controllers\AccountController;
 use App\Http\Controllers\CommentController;
 use App\Http\Controllers\ArchiveController;
 use App\Http\Controllers\SubscriptionController;
+use App\Http\Controllers\UnsubscribeController;
 use App\Http\Controllers\RssFeedController;
 use App\Http\Controllers\TagController;
 use Inertia\Inertia;
@@ -21,6 +22,7 @@ use App\Http\Controllers\TranslationController;
 use App\Http\Controllers\SketchController;
 use App\Http\Middleware\AdminMiddleware;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Http\Request;
 
 // For production to clear 
 // use Illuminate\Support\Facades\Artisan;
@@ -278,3 +280,13 @@ Route::post('/upload', function (\Illuminate\Http\Request $request) {
 //     DB::statement('DROP TABLE IF EXISTS sketches');
 //     return 'sketches table dropped';
 // });
+
+// Unsub route and comment notification toggle
+
+Route::get('/unsubscribe', [UnsubscribeController::class, 'unsubscribe'])->name('unsubscribe');
+Route::post('/account/toggle-comment-notifications', function (Request $request) {
+    $user = auth()->user();
+    $user->notify_comments = $request->input('notify_comments') ? true : false;
+    $user->save();
+    return back();
+});

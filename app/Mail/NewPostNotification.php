@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Mail;
 
 use App\Models\Post;
@@ -6,21 +7,25 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
 use League\CommonMark\CommonMarkConverter;
+use Illuminate\Support\Facades\URL;
 
 class NewPostNotification extends Mailable
 {
     use Queueable, SerializesModels;
 
     public $post;
+    public $recipientEmail;
 
     /**
      * Create a new message instance.
      *
      * @param Post $post
+     * @param string $recipientEmail
      */
-    public function __construct(Post $post)
+    public function __construct(Post $post, string $recipientEmail)
     {
         $this->post = $post;
+        $this->recipientEmail = $recipientEmail;
     }
 
     /**
@@ -28,7 +33,6 @@ class NewPostNotification extends Mailable
      *
      * @return $this
      */
-
     public function build()
     {
         $converter = new CommonMarkConverter([
@@ -47,6 +51,14 @@ class NewPostNotification extends Mailable
             ? "<img src=\"{$imageUrl}\" alt=\"Post image\" style=\"max-width:100%;margin-bottom:1rem;\" />"
             : "";
 
+        // Generate unsubscribe link (valid for 7 days)
+        $unsubscribeUrl = URL::temporarySignedRoute(
+            'unsubscribe', now()->addDays(7), [
+                'email' => $this->recipientEmail,
+                'type' => 'post'
+            ]
+        );
+
         $emailHtml = "
             <html>
                 <body>
@@ -57,6 +69,9 @@ class NewPostNotification extends Mailable
                         {$htmlContent}
                     </div>
                     <a href='" . url('/posts/' . $this->post->slug) . "' style='color:#5800FF;'>Read more</a>
+                    <p style='margin-top:2rem;'>
+                        <a href='{$unsubscribeUrl}' style='color:#888;font-size:13px;'>Unsubscribe from these emails</a>
+                    </p>
                 </body>
             </html>
         ";

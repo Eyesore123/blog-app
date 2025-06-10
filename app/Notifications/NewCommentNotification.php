@@ -21,7 +21,7 @@ class NewCommentNotification extends Notification implements ShouldQueue
 
     public function via($notifiable)
     {
-        return ['mail'];
+        return $notifiable->notify_comments ? ['mail'] : [];
     }
 
     public function toMail($notifiable)

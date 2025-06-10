@@ -20,6 +20,7 @@ interface User {
   created_at: string;
   is_subscribed: boolean;
   is_anonymous: boolean;
+  notify_comments?: boolean;
 }
 
 interface AccountPageProps {
@@ -86,6 +87,7 @@ const pageUser = usePage().props.user as User;
   const currentPasswordRef = useRef<HTMLInputElement>(null);
   const newPasswordRef = useRef<HTMLInputElement>(null);
   const confirmPasswordRef = useRef<HTMLInputElement>(null);
+  const [notifyComments, setNotifyComments] = useState(pageUser.notify_comments ?? false);
 
   const { showAlert } = useAlert();
   const { confirm } = useConfirm();
@@ -158,6 +160,23 @@ const handleSubscriptionChange = () => {
     },
   });
 };
+
+  const handleToggleCommentNotifications = () => {
+    setLoading(true);
+    router.post('/account/toggle-comment-notifications', {
+      notify_comments: !notifyComments,
+    }, {
+      onSuccess: () => {
+        setNotifyComments((prev) => !prev);
+        showAlert('Comment notification preference updated!', 'success');
+        setLoading(false);
+      },
+      onError: () => {
+        showAlert('Failed to update preference', 'error');
+        setLoading(false);
+      },
+    });
+  };
 
   // const handleDeleteAccount = async () => {
   //   const confirmed = await confirm({
@@ -323,6 +342,17 @@ const handleDeleteAccount = async () => {
                 className={`!mt-2 ${isSubscribed ? 'bg-red-500' : 'bg-green-500'} hover:opacity-80 text-white font-bold !py-2 !px-4 rounded w-full`}
               >
                 {isSubscribed ? 'Unsubscribe' : 'Subscribe to Newsletters'}
+              </button>
+            </div>
+
+            <div>
+              <p className="text-gray-600">Comment Notifications:</p>
+              <button
+                onClick={handleToggleCommentNotifications}
+                disabled={loading}
+                className={`!mt-2 ${notifyComments ? 'bg-red-500' : 'bg-green-500'} hover:opacity-80 text-white font-bold !py-2 !px-4 rounded w-full`}
+              >
+                {notifyComments ? 'Disable Comment Notifications' : 'Enable Comment Notifications'}
               </button>
             </div>
 

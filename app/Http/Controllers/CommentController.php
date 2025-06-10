@@ -41,7 +41,6 @@ class CommentController extends Controller
         return response()->json($comments);
     }
 
-    // POST /api/comments
     public function store(Request $request)
     {
         $request->validate([
@@ -74,7 +73,7 @@ class CommentController extends Controller
             'edited' => false,
         ]);
 
-        // Notify admin BEFORE returning response
+        // Notify admin for every comment
         try {
         $admin = User::where('is_admin', true)->first();
         if ($admin) {
@@ -83,6 +82,22 @@ class CommentController extends Controller
         }
         } catch (\Exception $e) {
             Log::error('Failed to send comment notification: ' . $e->getMessage());
+        }
+
+        // Notify parent comment author if it is a reply and they want notifications
+        
+        if ($comment->parent_id) {
+            $parentComment = Comment::find($comment->parent_id);
+            if ($parentComment && $parentComment->user_id) {
+                $parentUser = User::find($parentComment->user_id);
+                if ($parentUser && $parentUser->notify_comments) {
+                    try {
+                        $parentUser->notify(new NewCommentNotification($comment));
+                    } catch (\Exception $e) {
+                        Log::error('Failed to send reply notification to user: ' . $e->getMessage());
+                    }
+                }
+            }
         }
 
         return response()->json([
