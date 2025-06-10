@@ -37,11 +37,22 @@ class NewPostNotification extends Mailable
         ]);
         $htmlContent = $converter->convert($this->post->content);
 
+        // Ensure image_url is absolute
+        $imageUrl = $this->post->image_url;
+        if ($imageUrl && !preg_match('/^https?:\/\//', $imageUrl)) {
+            $imageUrl = url($imageUrl);
+        }
+
+        $imageHtml = $imageUrl
+            ? "<img src=\"{$imageUrl}\" alt=\"Post image\" style=\"max-width:100%;margin-bottom:1rem;\" />"
+            : "";
+
         $emailHtml = "
             <html>
                 <body>
                     <h2>Here's the latest blog post from Joni&#39;s blog:</h2>
                     <h1>{$this->post->title}</h1>
+                    {$imageHtml}
                     <div style='font-size:16px;line-height:1.6;max-width:700px;margin-bottom:2rem;'>
                         {$htmlContent}
                     </div>
