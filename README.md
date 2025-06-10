@@ -20,7 +20,11 @@ Comments are hidden on the landing page but revealed by default on the post page
 
 Providers are used for themes, alerts and confirmations. I added a markdown editor for posts. Perhaps I could add one for comments, but it was quite bothersome to get it work without errors for posts so I'm not sure if I'll add new editors.
 
-Loading spinners are used for images and log-in. Custom alerts pop up to notify user of successful logout. Login doesn't include popup, because it would feel a bit intrusive towards regular users. Admin gets a pop up notification when a new post is added. Custom dialogue window in used for verifying important actions (like deleting a post or a user account). Admin can use Google Cloud Translation API to translate posts to other languages.
+Loading spinners are used for images and log-in. Custom alerts pop up to notify user of successful logout. Login doesn't include popup, because it would feel a bit intrusive towards regular users. Admin gets a pop up notification when a new post is added. Custom dialogue window in used for verifying important actions (like deleting a post or a user account).
+
+Admin can use Google Cloud Translation API to translate posts to other languages.
+
+Registered users have toggle option in account page: they can choose to receive email notifications when a new post is added (showing the post content). There's also a separate option to get a notification when someone has replied to their comment. Admin gets notifications of all new comments and a post notification to email when a new post is added.
 
 Errors are mostly handled with custom error pages. Images use a fallback image in case the image is not found.
 
@@ -35,9 +39,8 @@ Blog still needs some work, though, including:
 3. Advanced features for admin (image size adjustments? etc.)
 4. Email subscription options in admin panel + an improved template for blog post email
 5. Profile images? - would be a nice addition
-6. New comment notification to admin (timed, once per day). Notification to registered users when someone replies to their comment.
-7. Scheduled uploads feature would be nice
-8. Customized emails that look better than the default Laravel emails + unsub link in each mail
+6. Scheduled uploads feature would be nice
+7. Customized emails that look better than the default Laravel emails + unsub link in each mail
 
 ## Deployment
 

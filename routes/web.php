@@ -285,8 +285,10 @@ Route::post('/upload', function (\Illuminate\Http\Request $request) {
 
 Route::get('/unsubscribe', [UnsubscribeController::class, 'unsubscribe'])->name('unsubscribe');
 Route::post('/account/toggle-comment-notifications', function (Request $request) {
-    $user = auth()->user();
-    $user->notify_comments = $request->input('notify_comments') ? true : false;
-    $user->save();
+    $user = Auth::user();
+    if ($user instanceof \App\Models\User) {
+        $user->notify_comments = $request->input('notify_comments') ? true : false;
+        $user->save();
+    }
     return back();
 });
