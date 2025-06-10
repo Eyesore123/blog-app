@@ -14,7 +14,11 @@ RSS Feed component is also included. I added custom API endpoint for recent acti
 
 Admin can add new posts, edit posts and delete comments. Admin can also deactivate and - as an ultimate solution - delete accounts. Logged in users can add comments, edit their comments and delete comments when there are no replies. Comments are rate limited by IP address (10 comments per day), and there are no Captchas because IP address guarantees that the limiter applies to many users from the same IP address. Rate limiter is done using custom RateLimitService class. Likewise SEO is done using a custom SEO class and then provided for the app using react-helmet-async package (it was the easiest solution considering I'm not using blade views).
 
-Logged in users have a My Account page where they can change their password, delete their account and subscribe to a newsletter. Subscribed users get the latest blogpost sent to them automatically. Login view has a "forgot password" section so user can reset their password using email. When a user deletes account, user can decide to keep the comments or delete them from blog posts. If user chooses to keep comments, comments are kept but name is changed to "anonymous", because deleted users can't be identified and is no longer attached to any comment. I think it's nice to offer the option to either keep or delete comments.
+Registered users (not anonymous) have a My Account page where they can change their password and delete their account. When an account is deleted, user can decide to keep the comments or delete them from blog posts. If user chooses to keep comments, comments are kept but name is changed to "anonymous", because deleted users can't be identified and is no longer attached to any comment. I think it's nice to offer the option to either keep or delete comments.
+
+Registered users have a toggle option My Account page: they can choose to receive email notifications when a new post is added (showing the post content). There's also a separate option to get a notification when someone has replied to their comment. Admin gets notifications of all new comments and a post notification to email when a new post is added.
+
+Login view has a "forgot password" section so user can reset their password using email.
 
 Comments are hidden on the landing page but revealed by default on the post page. Users see two suggested posts based on the tags of the current post (post page only).
 
@@ -23,8 +27,6 @@ Providers are used for themes, alerts and confirmations. I added a markdown edit
 Loading spinners are used for images and log-in. Custom alerts pop up to notify user of successful logout. Login doesn't include popup, because it would feel a bit intrusive towards regular users. Admin gets a pop up notification when a new post is added. Custom dialogue window in used for verifying important actions (like deleting a post or a user account).
 
 Admin can use Google Cloud Translation API to translate posts to other languages.
-
-Registered users have toggle option in account page: they can choose to receive email notifications when a new post is added (showing the post content). There's also a separate option to get a notification when someone has replied to their comment. Admin gets notifications of all new comments and a post notification to email when a new post is added.
 
 Errors are mostly handled with custom error pages. Images use a fallback image in case the image is not found.
 
