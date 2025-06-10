@@ -24,7 +24,7 @@ php artisan storage:link
 # 7. Run migrations
 # php artisan migrate:reset --force
 # php artisan migrate --force
-php artisan migrate --path=database/migrations/2025_06_10_084327_add_notify_comments_to_users_table.php
+php artisan migrate --env=local --path=database/migrations/2025_06_10_084327_add_notify_comments_to_users_table.php
 
 # 8. Start PHP server
 php -S 0.0.0.0:8080 -t public
