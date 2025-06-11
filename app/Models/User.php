@@ -24,6 +24,7 @@ class User extends Authenticatable
         'password',
         'anonymous_id',
         'is_subscribed',
+        'profile_photo_path'
     ];
 
     /**

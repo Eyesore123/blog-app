@@ -292,3 +292,10 @@ Route::post('/account/toggle-comment-notifications', function (Request $request)
     }
     return back();
 });
+
+// Route to update user profile photo
+// Add verification middleware to ensure the user is authenticated if you add verification email later
+
+Route::middleware(['auth'])->group(function () {
+    Route::post('/account/upload-profile-image', [AccountController::class, 'uploadProfileImage'])->name('account.uploadProfileImage');
+});

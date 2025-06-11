@@ -13,6 +13,7 @@ use App\Models\Comment;
 use App\Http\Controllers\CommentController;
 use Illuminate\Support\Facades\Log;
 use App\Services\RateLimitService;
+use Illuminate\Support\Facades\Storage;
 
 class AccountController extends Controller
 {
@@ -138,4 +139,30 @@ public function updatePassword(Request $request)
 
         return back()->with('success', 'Unsubscribed from newsletters');
     }
+
+    
+ public function uploadProfileImage(Request $request)
+    {
+        $request->validate([
+            'profile_photo' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
+        ]);
+
+        $user = auth()->user();
+
+        // Delete old profile image if it exists
+        if ($user->profile_photo_path && Storage::disk('public')->exists($user->profile_photo_path)) {
+            Storage::disk('public')->delete($user->profile_photo_path);
+        }
+
+        // Store new image
+        $path = $request->file('profile_photo')->store('profile_images', 'public');
+
+        // Update DB column
+        $user->profile_photo_path = $path;
+        $user->save(); // <- This is what you're missing
+
+        return redirect()->back()->with('success', 'Profile image updated successfully!');
+    }
+
+
 }

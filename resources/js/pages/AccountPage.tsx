@@ -21,6 +21,7 @@ interface User {
   is_subscribed: boolean;
   is_anonymous: boolean;
   notify_comments?: boolean;
+  profile_photo_path?: string | null;
 }
 
 interface AccountPageProps {
@@ -88,6 +89,9 @@ const pageUser = usePage().props.user as User;
   const newPasswordRef = useRef<HTMLInputElement>(null);
   const confirmPasswordRef = useRef<HTMLInputElement>(null);
   const [notifyComments, setNotifyComments] = useState(pageUser.notify_comments ?? false);
+  const [profileImagePreview, setProfileImagePreview] = useState<string | null>(null);
+  const profileImageRef = useRef<HTMLInputElement>(null);
+
 
   const { showAlert } = useAlert();
   const { confirm } = useConfirm();
@@ -178,30 +182,39 @@ const handleSubscriptionChange = () => {
     });
   };
 
-  // const handleDeleteAccount = async () => {
-  //   const confirmed = await confirm({
-  //     title: 'Delete Account',
-  //     message: 'Are you sure you want to delete your account? This action cannot be undone.',
-  //     confirmText: 'Delete',
-  //     cancelText: 'Cancel',
-  //     type: 'danger',
-  //   });
+  const handleProfileImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const file = e.target.files?.[0];
+  if (file) {
+    setProfileImagePreview(URL.createObjectURL(file));
+  }
+};
 
-  //   if (!confirmed) return;
+const handleUploadProfileImage = () => {
+  const file = profileImageRef.current?.files?.[0];
+  if (!file) {
+    showAlert('Please select a file to upload.', 'error');
+    return;
+  }
 
-  //   setLoading(true);
-  //   router.post('/delete-account', { user_id: user.id }, {
-  //     onSuccess: () => {
-  //       showAlert('Account deleted successfully!', 'success');
-  //       setLoading(false);
-  //       router.get('/');
-  //     },
-  //     onError: () => {
-  //       showAlert('Failed to delete account', 'error');
-  //       setLoading(false);
-  //     },
-  //   });
-  // };
+  const formData = new FormData();
+  formData.append('profile_photo', file);
+
+  setLoading(true);
+  router.post('/account/upload-profile-image', formData, {
+    forceFormData: true,
+    onSuccess: () => {
+      showAlert('Profile image updated successfully!', 'success');
+      setLoading(false);
+      if (profileImageRef.current) profileImageRef.current.value = '';
+      setProfileImagePreview(null);
+    },
+    onError: () => {
+      showAlert('Failed to update profile image', 'error');
+      setLoading(false);
+    },
+  });
+};
+
 
 const handleDeleteAccount = async () => {
   console.log('handleDeleteAccount started');
@@ -366,8 +379,54 @@ const handleDeleteAccount = async () => {
               </button>
             </div>
 
+            <div className="!mb-4 flex flex-col items-center gap-3">
+              {user.profile_photo_path && (
+                <img
+                  src={`/storage/${user.profile_photo_path}`}
+                  alt="Current Profile"
+                  className="w-32 h-32 object-cover rounded-full border"
+                />
+              )}
+
+              <label htmlFor="profile_photo" className="text-sm text-slate-500 italic">
+                Profile photo
+              </label>
+
+              <input
+                id="profile_photo"
+                name="profile_photo"
+                type="file"
+                accept="image/*"
+                ref={profileImageRef}
+                onChange={handleProfileImageChange}
+                disabled={loading}
+                className="file-input block w-60 md:w-80 border-2 border-dashed rounded-lg !p-2 cursor-pointer bg-white hover:bg-slate-50 dark:bg-slate-900 dark:hover:bg-slate-800 transition
+                  border-gray-400 text-sm text-slate-700 dark:text-slate-200 file:!mr-4 file:!py-2 file:!px-4
+                  file:rounded-full file:border-0 file:text-sm file:font-semibold
+                  file:bg-indigo-50 file:text-indigo-700
+                  hover:file:bg-indigo-100"
+              />
+
+              {profileImagePreview && (
+                <img
+                  src={profileImagePreview}
+                  alt="Preview"
+                  className="w-32 h-32 object-cover rounded-full border"
+                />
+              )}
+
+              <button
+                onClick={handleUploadProfileImage}
+                disabled={loading}
+                className="!mt-2 bg-[#5800FF] text-white !px-4 !py-2 rounded hover:bg-[#4700cc] disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {loading ? 'Uploading...' : 'Upload Image'}
+              </button>
+            </div>
+
             <div>
-              <p className="text-xs text-gray-500 mb-1">
+              <p className="text-gray-600">Delete Account:</p>
+              <p className="text-xs text-gray-500 !mb-1">
                 Deleting your account will remove your profile and (optionally) your comments. This action cannot be undone.
               </p>
               <button

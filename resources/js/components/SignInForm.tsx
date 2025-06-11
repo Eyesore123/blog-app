@@ -103,6 +103,27 @@ export default function SignInForm({ flow, setFlow }: SignInFormProps) {
               </div>
             )}
 
+            {flow === "signUp" && (
+              <div className="flex flex-col items-center !gap-3">
+                <label htmlFor="profile_photo" className="text-sm text-slate-500 italic">
+                  Profile photo (optional)
+                </label>
+                <input
+                  id="profile_photo"
+                  name="profile_photo"
+                  type="file"
+                  accept="image/*"
+                  disabled={submitting}
+                  className="file-input block w-60 md:w-80 border-2 border-dashed rounded-lg !p-2 cursor-pointer bg-white hover:bg-slate-50 transition
+                    border-gray-400 text-sm text-slate-700 file:!mr-4 file:!py-2 file:!px-4
+                    file:rounded-full file:border-0 file:text-sm file:font-semibold
+                    file:bg-indigo-50 file:text-indigo-700
+                    hover:file:bg-indigo-100"
+                />
+                <InputError message={errors.profile_photo} />
+              </div>
+            )}
+
             <div className="input-container">
               <input
                 className="input-field border border-white !p-2 !w-60 md:!w-80"

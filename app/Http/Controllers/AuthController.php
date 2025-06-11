@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Storage;
 
 class AuthController extends Controller
 {
@@ -56,16 +57,24 @@ class AuthController extends Controller
     $request->validate([
         'email' => ['required', 'email', 'unique:users,email'],
         'password' => ['required', 'confirmed', 'min:6'],
+        'name' => ['nullable', 'string', 'max:255'],
+        'profile_photo' => ['nullable', 'image', 'max:2048'],
     ]);
 
     // Check if this is an anonymous registration
     $isAnonymous = $request->has('anonymous');
+
+    $profilePhotoPath = null;
+    if ($request->hasFile('profile_photo')) {
+        $profilePhotoPath = $request->file('profile_photo')->store('profile_photos', 'public');
+    }
 
     $user = User::create([
         'email' => $request->email,
         'password' => bcrypt($request->password),
         'name' => $isAnonymous ? 'Anonymous' . Str::random(14) : 'Default Name',  // Assign the anonymous name
         'anonymous_id' => $isAnonymous ? Str::uuid() : null,  // Assign anonymous ID only if it's an anonymous user
+        'profile_photo_path' => $profilePhotoPath,
     ]);
 
     Auth::login($user);
