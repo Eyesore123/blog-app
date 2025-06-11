@@ -164,5 +164,17 @@ public function updatePassword(Request $request)
         return redirect()->back()->with('success', 'Profile image updated successfully!');
     }
 
+    public function deleteProfileImage(Request $request)
+    {
+        $user = $request->user();
+
+        if ($user->profile_photo_path) {
+            Storage::disk('public')->delete($user->profile_photo_path);
+            $user->profile_photo_path = null;
+            $user->save();
+        }
+
+        return back()->with('success', 'Profile image deleted successfully.');
+    }
 
 }

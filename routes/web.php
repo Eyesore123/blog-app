@@ -298,4 +298,5 @@ Route::post('/account/toggle-comment-notifications', function (Request $request)
 
 Route::middleware(['auth'])->group(function () {
     Route::post('/account/upload-profile-image', [AccountController::class, 'uploadProfileImage'])->name('account.uploadProfileImage');
+    Route::post('/account/delete-profile-image', [AccountController::class, 'deleteProfileImage'])->name('account.deleteProfileImage');
 });

@@ -215,6 +215,30 @@ const handleUploadProfileImage = () => {
   });
 };
 
+const handleDeleteProfileImage = async () => {
+  const confirmed = await confirm({
+    title: 'Delete Profile Image',
+    message: 'Are you sure you want to delete your profile image? This action cannot be undone.',
+    confirmText: 'Delete',
+    cancelText: 'Cancel',
+    type: 'danger',
+  });
+
+  if (!confirmed) return;
+
+  setLoading(true);
+  router.post('/account/delete-profile-image', {}, {
+    onSuccess: () => {
+      showAlert('Profile image deleted successfully!', 'success');
+      setLoading(false);
+    },
+    onError: () => {
+      showAlert('Failed to delete profile image', 'error');
+      setLoading(false);
+    },
+  });
+};
+
 
 const handleDeleteAccount = async () => {
   console.log('handleDeleteAccount started');
@@ -379,19 +403,33 @@ const handleDeleteAccount = async () => {
               </button>
             </div>
 
-            <div className="!mb-4 flex flex-col items-center gap-3">
+            {/* Image Upload Section */}
+            <div className="!mb-4 flex flex-col items-center !gap-3">
+              {/* Current Profile Image with label and delete button */}
               {user.profile_photo_path && (
-                <img
-                  src={`/storage/${user.profile_photo_path}`}
-                  alt="Current Profile"
-                  className="w-32 h-32 object-cover rounded-full border"
-                />
+                <div className="flex flex-col items-center">
+                  <label className="text-sm font-semibold !mb-3">Current Profile Image</label>
+                  <img
+                    src={`/storage/${user.profile_photo_path}`}
+                    alt="Current Profile"
+                    className="w-32 h-32 object-cover rounded-full border"
+                  />
+                  <button
+                    onClick={handleDeleteProfileImage}
+                    disabled={loading}
+                    className="!mt-2 bg-red-600 hover:bg-red-700 text-white font-bold !py-2 !px-4 rounded"
+                  >
+                    {loading ? 'Deleting...' : 'Delete Profile Image'}
+                  </button>
+                </div>
               )}
 
-              <label htmlFor="profile_photo" className="text-sm text-slate-500 italic">
-                Profile photo
+              {/* File Input Label */}
+              <label htmlFor="profile_photo" className="text-sm text-slate-500 italic !mt-4">
+                Upload New Profile Photo
               </label>
 
+              {/* File Input */}
               <input
                 id="profile_photo"
                 name="profile_photo"
@@ -407,14 +445,19 @@ const handleDeleteAccount = async () => {
                   hover:file:bg-indigo-100"
               />
 
+              {/* Preview Image with label */}
               {profileImagePreview && (
-                <img
-                  src={profileImagePreview}
-                  alt="Preview"
-                  className="w-32 h-32 object-cover rounded-full border"
-                />
+                <div className="flex flex-col items-center !mt-4">
+                  <label className="text-sm font-semibold !mb-1">Preview</label>
+                  <img
+                    src={profileImagePreview}
+                    alt="Preview"
+                    className="w-32 h-32 object-cover rounded-full border"
+                  />
+                </div>
               )}
 
+              {/* Upload Button */}
               <button
                 onClick={handleUploadProfileImage}
                 disabled={loading}
@@ -424,6 +467,8 @@ const handleDeleteAccount = async () => {
               </button>
             </div>
 
+
+            {/* Delete Account Section */}
             <div>
               <p className="text-gray-600">Delete Account:</p>
               <p className="text-xs text-gray-500 !mb-1">

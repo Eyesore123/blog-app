@@ -29,24 +29,28 @@ export function Navbar() {
       const isAdmin = user ? Boolean(user.is_admin) : false;
 
       const profileUrl = user?.profile_photo_path
-        ? `/storage/${user.profile_photo_path}`
-        : user?.is_anonymous
-        ? '/anon-icon.svg'
-        : '/default-user-icon.svg';
+  ? `/storage/${user.profile_photo_path}`
+  : user?.is_anonymous
+  ? '/anon-icon.svg'
+  : '/default-user-icon.svg';
 
-      return (
-        <div className="flex flex-col md:flex-row items-center gap-4 md:!gap-6">
-          {user && (
-            <div className="flex items-center gap-2">
-              <span className="text-[#FFC600] font-semibold">
-                Welcome, {user.name}!
-              </span>
-              <img
-                src={profileUrl}
-                alt="Profile"
-                className="w-10 h-10 !ml-4 rounded-full object-cover"
-              />
-            </div>
+const isDefaultIcon = profileUrl === '/default-user-icon.svg';
+
+  return (
+    <div className="flex flex-col md:flex-row items-center gap-4 md:!gap-6">
+      {user && (
+        <div className="flex items-center gap-2">
+          <span className="text-[#FFC600] font-semibold">
+            Welcome, {user.name}!
+          </span>
+          <img
+            src={profileUrl}
+            alt="Profile"
+            className={`w-10 h-10 !ml-4 rounded-full object-cover ${
+              isDefaultIcon && theme === 'dark' ? 'filter invert' : ''
+            }`}
+          />
+        </div>
           )}
 
           <Link href="/privacy-policy" className="hover:text-purple-400">
