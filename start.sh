@@ -25,7 +25,7 @@ php artisan storage:link
 # php artisan migrate:reset --force
 # php artisan migrate --force
 # Uncomment the following line to run a specific migration
-php artisan migrate --env=local --path=database/migrations/2025_06_11_054839_add_profile_photo_path_to_users_table.php
+# php artisan migrate --env=local --path=database/migrations/2025_06_11_054839_add_profile_photo_path_to_users_table.php
 
 # 8. Start PHP server
 php -S 0.0.0.0:8080 -t public
