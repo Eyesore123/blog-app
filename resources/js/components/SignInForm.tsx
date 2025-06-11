@@ -1,19 +1,22 @@
 import React, { useState } from "react";
 import { usePage, router } from "@inertiajs/react";
 import InputError from "../components/input-error";
-import { getCsrfToken } from '../components/auth'; // Adjust path if needed
-import Spinner4 from './Spinner4'; // Adjust path if needed
-import '../../css/app.css';
-import { useTheme } from '../context/ThemeContext';
+import { getCsrfToken } from "../components/auth";
+import Spinner4 from "./Spinner4";
+import "../../css/app.css";
+import { useTheme } from "../context/ThemeContext";
 
 type SignInFormProps = {
   flow: "signIn" | "signUp";
   setFlow: React.Dispatch<React.SetStateAction<"signIn" | "signUp">>;
 };
 
-// Helper function to store token
 function storeAuthToken(token: string) {
-  localStorage.setItem('auth_token', token);
+  localStorage.setItem("auth_token", token);
+}
+
+function removeAuthToken() {
+  localStorage.removeItem("auth_token");
 }
 
 export default function SignInForm({ flow, setFlow }: SignInFormProps) {
@@ -21,78 +24,82 @@ export default function SignInForm({ flow, setFlow }: SignInFormProps) {
   const [submitting, setSubmitting] = useState(false);
   const { theme } = useTheme();
 
-  // Handle successful login/signup
-  const handleSuccess = (page: any) => {
-    const token = (page?.props?.auth_token as string) || null;
-    if (token) {
+const handleSuccess = (page: any, currentFlow: "signIn" | "signUp") => {
+  const token = (page?.props?.auth_token as string) || null;
+  if (token) {
+    if (currentFlow === "signUp") {
+      // Remove auth token from local storage when signing up, not in use in the current flow
+      // removeAuthToken();
+      // Log out the user
+      // router.post("/logout");
+    } else {
       storeAuthToken(token);
     }
-    router.get("/");  // Redirect to home page
-  };
-
-  // Anonymous sign-in logic
-  async function handleAnonymousSignIn() {
-    setSubmitting(true);
-    await getCsrfToken();
-    router.post("/anonymous-login", {}, {
-      onFinish: () => setSubmitting(false),
-      onSuccess: (page) => handleSuccess(page),
-    });
   }
 
-  // Form submit handler
-  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+  if (currentFlow === "signUp" && !page.props.verified) {
+    setFlow("signIn"); // Update flow state to "signIn" after sign-up
+    router.visit("/verifyemailnotice", {
+  data: {
+    email: page.props.email,
+  },
+});
+  }
+  // signIn and anonymous users: let Laravel middleware handle the redirect
+};
+
+  const handleAnonymousSignIn = async () => {
+    setSubmitting(true);
+    await getCsrfToken();
+
+    router.post("/anonymous-login", {}, {
+      onFinish: () => setSubmitting(false),
+      onSuccess: (page) => handleSuccess(page, "signIn"), // Anonymous treated as signIn
+    });
+  };
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setSubmitting(true);
     await getCsrfToken();
 
     const form = e.target as HTMLFormElement;
-    if (!(form instanceof HTMLFormElement)) {
-      console.error("handleSubmit: target is not a form");
-      setSubmitting(false);
-      return;
-    }
-
     const formData = new FormData(form);
     const action = flow === "signIn" ? "/login" : "/register";
 
     router.post(action, formData, {
       forceFormData: true,
       onFinish: () => setSubmitting(false),
-      onSuccess: (page) => handleSuccess(page),
+      onSuccess: (page) => handleSuccess(page, flow),
     });
-  }
+  };
 
   return (
-    <div className="w-full !mt-10 !mb-10">
-      {submitting ? (
-        <><h3 className="w-full flex justify-center items-center !mb-10 font-bold">Signing in...</h3>
+  <div className="w-full !mt-10 !mb-10">
+    {submitting ? (
+      <>
+        <h3 className="w-full flex justify-center items-center !mb-10 font-bold">
+          {flow === "signIn" ? "Signing in..." : "Signing up..."}
+        </h3>
         <div className="flex justify-center !py-10 !mb-20">
-          <Spinner4 />
-        </div>
-        </>)
-      : (
+            <Spinner4 />
+          </div>
+        </>
+      ) : (
         <>
           <h3 className="text-2xl font-bold !mb-8 text-center">
             {flow === "signIn" ? "Sign In to Joni's Blog" : "Sign Up for Joni's Blog"}
           </h3>
-          <form className="flex flex-col gap-4 justify-center items-center" onSubmit={handleSubmit}>
-            <input
-              className="input-field border border-white !p-2 !w-60 md:!w-80"
-              style={{ borderColor: theme === 'dark' ? '#fff' : '#000' }}
-              type="email"
-              name="email"
-              placeholder="Email"
-              required
-              disabled={submitting}
-            />
-            <InputError message={errors.email} />
 
+          <form
+            onSubmit={handleSubmit}
+            className="flex flex-col gap-4 justify-center items-center"
+          >
             {flow === "signUp" && (
               <div className="input-container">
                 <input
                   className="input-field border border-white !p-2 !w-60 md:!w-80"
-                  style={{ borderColor: theme === 'dark' ? '#fff' : '#000' }}
+                  style={{ borderColor: theme === "dark" ? "#fff" : "#000" }}
                   type="text"
                   name="name"
                   placeholder="Name"
@@ -103,9 +110,25 @@ export default function SignInForm({ flow, setFlow }: SignInFormProps) {
               </div>
             )}
 
+            <div className="input-container">
+              <input
+                className="input-field border border-white !p-2 !w-60 md:!w-80"
+                style={{ borderColor: theme === "dark" ? "#fff" : "#000" }}
+                type="email"
+                name="email"
+                placeholder="Email"
+                required
+                disabled={submitting}
+              />
+              <InputError message={errors.email} />
+            </div>
+
             {flow === "signUp" && (
               <div className="flex flex-col items-center !gap-3">
-                <label htmlFor="profile_photo" className="text-sm text-slate-500 italic">
+                <label
+                  htmlFor="profile_photo"
+                  className="text-sm text-slate-500 italic"
+                >
                   Profile photo (optional)
                 </label>
                 <input
@@ -114,11 +137,10 @@ export default function SignInForm({ flow, setFlow }: SignInFormProps) {
                   type="file"
                   accept="image/*"
                   disabled={submitting}
-                  className="file-input block w-60 md:w-80 border-2 border-dashed rounded-lg !p-2 cursor-pointer bg-white hover:bg-slate-50 transition
-                    border-gray-400 text-sm text-slate-700 file:!mr-4 file:!py-2 file:!px-4
+                  className="file-input block w-60 md:w-80 border-2 border-dashed rounded-lg !p-2 cursor-pointer bg-transparent hover:bg-slate-50 transition
+                    border-gray-400 text-sm text-slate-500 file:!mr-4 file:!py-2 file:!px-4
                     file:rounded-full file:border-0 file:text-sm file:font-semibold
-                    file:bg-indigo-50 file:text-indigo-700
-                    hover:file:bg-indigo-100"
+                    file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100"
                 />
                 <InputError message={errors.profile_photo} />
               </div>
@@ -127,7 +149,7 @@ export default function SignInForm({ flow, setFlow }: SignInFormProps) {
             <div className="input-container">
               <input
                 className="input-field border border-white !p-2 !w-60 md:!w-80"
-                style={{ borderColor: theme === 'dark' ? '#fff' : '#000' }}
+                style={{ borderColor: theme === "dark" ? "#fff" : "#000" }}
                 type="password"
                 name="password"
                 placeholder="Password"
@@ -141,7 +163,7 @@ export default function SignInForm({ flow, setFlow }: SignInFormProps) {
               <div className="input-container">
                 <input
                   className="input-field border border-white !p-2 !w-60 md:!w-80"
-                  style={{ borderColor: theme === 'dark' ? '#fff' : '#000' }}
+                  style={{ borderColor: theme === "dark" ? "#fff" : "#000" }}
                   type="password"
                   name="password_confirmation"
                   placeholder="Confirm Password"
@@ -154,7 +176,10 @@ export default function SignInForm({ flow, setFlow }: SignInFormProps) {
 
             <div className="text-sm text-center !mb-4">
               {flow === "signIn" && (
-                <a href="/forgot-password" className="text-blue-600 font-semibold hover:underline">
+                <a
+                  href="/forgot-password"
+                  className="text-blue-600 font-semibold hover:underline"
+                >
                   Forgot your password?
                 </a>
               )}

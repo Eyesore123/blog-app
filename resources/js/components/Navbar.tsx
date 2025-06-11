@@ -39,29 +39,29 @@ const isDefaultIcon = profileUrl === '/default-user-icon.svg';
   return (
     <div className="flex flex-col md:flex-row items-center gap-4 md:!gap-6">
       {user && (
-        <div className="flex items-center gap-2">
-          <span className="text-[#FFC600] font-semibold">
+        <div className="flex items-center !gap-2">
+          <span className="text-[#FFC600] font-semibold min-w-[150px]">
             Welcome, {user.name}!
           </span>
           <img
             src={profileUrl}
             alt="Profile"
-            className={`w-10 h-10 !ml-4 rounded-full object-cover ${
+            className={`w-10 h-10 !ml-4 !mr-10 rounded-full object-cover ${
               isDefaultIcon && theme === 'dark' ? 'filter invert' : ''
             }`}
           />
         </div>
           )}
 
-          <Link href="/privacy-policy" className="hover:text-purple-400">
+          <Link href="/privacy-policy" className="hover:text-purple-400 min-w-[100px]">
             Privacy Policy
           </Link>
-          <Link href="/" className="hover:text-purple-400">
+          <Link href="/" className="hover:text-purple-400 min-w-[100px]">
             Main Page
           </Link>
 
           {isAdmin && (
-            <Link href="/admin" className="hover:text-purple-400">
+            <Link href="/admin" className="hover:text-purple-400 min-w-[100px]">
               Admin Dashboard
             </Link>
           )}
@@ -80,7 +80,7 @@ const isDefaultIcon = profileUrl === '/default-user-icon.svg';
         <div className="flex flex-col md:flex-row items-center !gap-4 md:!gap-6">
           <button
             onClick={toggleTheme}
-            className="!p-2 hover:text-[#FFC600] transition-colors"
+            className="!p-2 !mt-2 sm:!mt-0 hover:text-[#FFC600] transition-colors scale-125"
           >
             {theme === 'dark' ? '🌞' : '🌙'}
           </button>

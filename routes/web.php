@@ -1,9 +1,13 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Inertia\Inertia;
+use Illuminate\Support\Str;
+use App\Models\User;
+use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\PostController;
-use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\AccountController;
 use App\Http\Controllers\CommentController;
@@ -12,14 +16,12 @@ use App\Http\Controllers\SubscriptionController;
 use App\Http\Controllers\UnsubscribeController;
 use App\Http\Controllers\RssFeedController;
 use App\Http\Controllers\TagController;
-use Inertia\Inertia;
-use Illuminate\Support\Str;
-use App\Models\User;
 use Illuminate\Support\Facades\Storage;
 use App\Http\Controllers\Auth\PasswordResetLinkController;
 use App\Http\Controllers\Auth\NewPasswordController;
 use App\Http\Controllers\TranslationController;
 use App\Http\Controllers\SketchController;
+use App\Http\Controllers\AuthNoticeController;
 use App\Http\Middleware\AdminMiddleware;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
@@ -63,7 +65,7 @@ Route::middleware('throttle:5,1')->post('/anonymous-login', function () {
 
 Route::get('api/archives/years', [ArchiveController::class, 'getYears']);
 Route::get('/', [PostController::class, 'index'])->name('home');
-Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
+// Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/posts', [PostController::class, 'store'])
 ->middleware(['auth']);
@@ -299,4 +301,26 @@ Route::post('/account/toggle-comment-notifications', function (Request $request)
 Route::middleware(['auth'])->group(function () {
     Route::post('/account/upload-profile-image', [AccountController::class, 'uploadProfileImage'])->name('account.uploadProfileImage');
     Route::post('/account/delete-profile-image', [AccountController::class, 'deleteProfileImage'])->name('account.deleteProfileImage');
+});
+
+// Verify email routes
+
+Route::get('/verifyemailnotice', function (Request $request) {
+    return Inertia::render('auth/verifyemailnotice', [
+        'email' => $request->query('email', ''),
+    ]);
+})->name('verification.notice');
+
+// Update user name route
+
+Route::post('/update-name', function (Request $request) {
+    $request->validate([
+        'name' => 'required|string|max:255',
+    ]);
+
+    $user = auth()->user();
+    $user->name = $request->name;
+    $user->save();
+
+    return back()->with('success', 'Name updated.');
 });

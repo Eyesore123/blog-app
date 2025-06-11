@@ -20,6 +20,7 @@ abstract class Controller
                     'anonymous_id' => auth()->user()->anonymous_id,
                     'is_admin' => auth()->user()->is_admin ?? false,
                     'is_anonymous' => !empty(auth()->user()->anonymous_id),
+                    'profile_photo_path' => auth()->user()->profile_photo_path,
                 ] : null,
             ],
             'flash' => [

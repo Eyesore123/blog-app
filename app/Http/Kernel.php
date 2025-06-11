@@ -16,18 +16,18 @@ use App\Http\Middleware\HandleCors;
 class Kernel extends HttpKernel
 {
     protected $middlewareGroups = [
-        'web' => [
-            EncryptCookies::class,
-            \Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse::class,
-            \Illuminate\Session\Middleware\StartSession::class,
-            \Illuminate\View\Middleware\ShareErrorsFromSession::class,
-            HandleInertiaRequests::class,
-            \Illuminate\Routing\Middleware\SubstituteBindings::class,
-            \App\Http\Middleware\AssignAnonId::class,
-            ContentSecurityPolicy::class,
-            HttpsRedirect::class,
-            RewriteAssetUrls::class,
-        ],
+    'web' => [
+        EncryptCookies::class,
+        \Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse::class,
+        \Illuminate\Session\Middleware\StartSession::class,
+        \Illuminate\View\Middleware\ShareErrorsFromSession::class,
+        \App\Http\Middleware\HandleInertiaRequests::class,
+        \Illuminate\Routing\Middleware\SubstituteBindings::class,
+        \App\Http\Middleware\AssignAnonId::class,
+        ContentSecurityPolicy::class,
+        HttpsRedirect::class,
+        RewriteAssetUrls::class,
+    ],
         
         'api' => [
             HandleCors::class,

@@ -91,6 +91,7 @@ const pageUser = usePage().props.user as User;
   const [notifyComments, setNotifyComments] = useState(pageUser.notify_comments ?? false);
   const [profileImagePreview, setProfileImagePreview] = useState<string | null>(null);
   const profileImageRef = useRef<HTMLInputElement>(null);
+  const [newName, setNewName] = useState(pageUser.name);
 
 
   const { showAlert } = useAlert();
@@ -239,6 +240,24 @@ const handleDeleteProfileImage = async () => {
   });
 };
 
+const handleUpdateName = () => {
+  if (!newName.trim()) {
+    showAlert('Name cannot be empty', 'error');
+    return;
+  }
+
+  setLoading(true);
+  router.post('/update-name', { name: newName }, {
+    onSuccess: () => {
+      showAlert('Name updated successfully!', 'success');
+      setLoading(false);
+    },
+    onError: () => {
+      showAlert('Failed to update name', 'error');
+      setLoading(false);
+    },
+  });
+};
 
 const handleDeleteAccount = async () => {
   console.log('handleDeleteAccount started');
@@ -322,6 +341,23 @@ const handleDeleteAccount = async () => {
               <p className="text-gray-600 !pb-2">Name:</p>
               <p className="text-lg font-semibold !pb-2 text-black">{user.name}</p>
             </div>
+
+            <div className="w-full !mb-6 text-black">
+            <input
+              type="text"
+              id="name"
+              className="!mt-1 !p-2 border rounded border-gray-900 w-full text-black"
+              value={newName}
+              onChange={(e) => setNewName(e.target.value)}
+            />
+            <button
+              className="!mt-2 bg-[#5800FF] hover:bg-[#E900FF] text-white font-bold !py-2 !px-4 rounded w-full"
+              onClick={handleUpdateName}
+              disabled={loading}
+            >
+              Update Name
+            </button>
+          </div>
 
             <div>
               <p className="text-gray-600">Email:</p>

@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Auth\Events\Registered;
 
 class AuthController extends Controller
 {
@@ -24,6 +25,13 @@ class AuthController extends Controller
         ]);
 
         if (Auth::attempt($credentials)) {
+            $user = Auth::user();
+
+            if (! $user->hasVerifiedEmail()) {
+                Auth::logout();
+                return redirect('/verifyemailnotice')->with('email', $user->email);
+            }
+
             $request->session()->regenerate();
             return redirect()->intended('/');
         }
@@ -33,19 +41,22 @@ class AuthController extends Controller
         ]);
     }
 
+
     public function loginAsAnonymous()
     {
         $anonymousUser = User::create([
-            'name' => 'Anonymous' . Str::random(14), // create a unique anonymous name
+            'name' => 'Anonymous' . Str::random(14),
             'email' => 'anonymous@example.com',
-            'password' => bcrypt(Str::random(10)), // create a random password
-            'anonymous_id' => Str::uuid(), // generate a unique anonymous ID
+            'password' => bcrypt(Str::random(10)),
+            'anonymous_id' => Str::uuid(),
         ]);
 
-        Auth::login($anonymousUser);  // Log the anonymous user in
+        Auth::login($anonymousUser);
+        session()->regenerate(); // regenerate session after login for safety
 
-        return redirect()->route('home');  // Redirect the user to the home page
+        return redirect()->route('home');
     }
+
 
     public function showRegister()
     {
@@ -77,8 +88,10 @@ class AuthController extends Controller
         'profile_photo_path' => $profilePhotoPath,
     ]);
 
-    Auth::login($user);
-    return redirect('/');
+    event(new Registered($user));
+
+    return redirect('/verifyemailnotice')->with('email', $user->email);
+
 }
 
 
