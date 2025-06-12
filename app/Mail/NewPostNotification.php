@@ -16,23 +16,12 @@ class NewPostNotification extends Mailable
     public $post;
     public $recipientEmail;
 
-    /**
-     * Create a new message instance.
-     *
-     * @param Post $post
-     * @param string $recipientEmail
-     */
     public function __construct(Post $post, string $recipientEmail)
     {
         $this->post = $post;
         $this->recipientEmail = $recipientEmail;
     }
 
-    /**
-     * Build the message.
-     *
-     * @return $this
-     */
     public function build()
     {
         $converter = new CommonMarkConverter([
@@ -41,17 +30,15 @@ class NewPostNotification extends Mailable
         ]);
         $htmlContent = $converter->convert($this->post->content);
 
-        // Ensure image_url is absolute
         $imageUrl = $this->post->image_url;
         if ($imageUrl && !preg_match('/^https?:\/\//', $imageUrl)) {
-            $imageUrl = url($imageUrl);
+            $imageUrl = asset($imageUrl);
         }
 
         $imageHtml = $imageUrl
             ? "<img src=\"{$imageUrl}\" alt=\"Post image\" style=\"max-width:100%;margin-bottom:1rem;\" />"
             : "";
 
-        // Generate unsubscribe link (valid for 7 days)
         $unsubscribeUrl = URL::temporarySignedRoute(
             'unsubscribe', now()->addDays(7), [
                 'email' => $this->recipientEmail,

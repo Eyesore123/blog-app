@@ -12,13 +12,21 @@ So currently app works like a basic blog app: it shows posts and comments. Posts
 
 RSS Feed component is also included. I added custom API endpoint for recent activity, which is used in recent activity component in landing page. I also created "the latest post" endpoint which can be used to fetch the latest post. It's an alternative to rss feed (I plan to use it for my portfolio site).
 
-Admin can add new posts, edit posts and delete comments. Admin can also deactivate and - as an ultimate solution - delete accounts. Logged in users can add comments, edit their comments and delete comments when there are no replies. Comments are rate limited by IP address (10 comments per day), and there are no Captchas because IP address guarantees that the limiter applies to many users from the same IP address. Rate limiter is done using custom RateLimitService class. Likewise SEO is done using a custom SEO class and then provided for the app using react-helmet-async package (it was the easiest solution considering I'm not using blade views).
+Admin can add new posts, edit posts and delete comments. Admin can also deactivate and - as an ultimate solution - delete accounts. Logged in users can add comments, edit their comments and delete comments when there are no replies. 
+
+Comments are rate limited by IP address (10 comments per day), and there are no Captchas because IP address guarantees that the limiter applies to many users from the same IP address. Rate limiter is done using custom RateLimitService class. Likewise SEO is done using a custom SEO class and then provided for the app using react-helmet-async package (it was the easiest solution considering I'm not using blade views).
+
+All registered users need to very email address via a link sent to their email address. This is done using Laravel's built-in email verification feature.
 
 Registered users (not anonymous) have a My Account page where they can change their password and delete their account. When an account is deleted, user can decide to keep the comments or delete them from blog posts. If user chooses to keep comments, comments are kept but name is changed to "anonymous", because deleted users can't be identified and is no longer attached to any comment. I think it's nice to offer the option to either keep or delete comments.
 
-Registered users have a toggle option My Account page: they can choose to receive email notifications when a new post is added (showing the post content). There's also a separate option to get a notification when someone has replied to their comment. Admin gets notifications of all new comments and a post notification to email when a new post is added.
+Registered users have a toggle option My Account page: they can choose to receive email notifications when a new post is added (showing the post content). There's also a separate option to get a notification when someone has replied to their comment.
 
-Login view has a "forgot password" section so user can reset their password using email.
+Registered users can add or change their profile image that's shown in the navbar. Anon users have a Guy Fawkes mask as their profile picture, and registered users who don't have a profile image have a default user icon image.
+
+Admin gets notifications of all new comments and a post notification to email when a new post is added.
+
+Login page view has a "forgot password" section so user can reset their password using email.
 
 Comments are hidden on the landing page but revealed by default on the post page. Users see two suggested posts based on the tags of the current post (post page only).
 
@@ -40,9 +48,9 @@ Blog still needs some work, though, including:
 2. Language toggle to navbar (global translations and post translations)
 3. Advanced features for admin (image size adjustments? etc.)
 4. Email subscription options in admin panel + an improved template for blog post email
-5. Profile images? - would be a nice addition
-6. Scheduled uploads feature would be nice
-7. Customized emails that look better than the default Laravel emails in comment notiifications
+5. Scheduled uploads feature would be nice
+6. Customized emails that look better than the default Laravel emails in comment notiifications and email verifications. Default emails are not bad but could be better.
+7. Profile image features. I added profile image upload as an extra feature, but noticed that image compression would speed up the site a lot, and so it would be nice to add a feature to compress images. It would also be nice to have a feature to crop images, and use images in the comment section. Without compression I might have to offer images from a selection of smaller size icons.
 
 ## Deployment
 
@@ -67,9 +75,9 @@ Portgres admin panel looks nice:
 ## Issues and improvements
 
 - Markdown editor needs some work.
-- First post on the landing page has two loading spinners for some reason.
+- First post on the landing page has two loading spinners for some reason. Not a big issue, because most spinners work properly and loading times are short.
 - Flash messages are not working properly so I made a workaround for pop-ups. Pop-ups work fine but they are not really flash messages.
-- Admin can create and fetch sketches of posts, but currently sketches include only title and content. Sketch data can be loaded to the post form, but some of the data fields are not yet included in the sketch.
+- Admin can create and fetch sketches of posts, but sketches are separate from upload panel so the UI is not the most intuitive.
 
 ## Testing
 
@@ -108,6 +116,8 @@ http://127.0.0.1:8000
 - How to use pgAdmin and connect to db in Railway.
 - How to make backups. I had written nearly 20 posts to my blog when I had to restore data from a backup, because I messed up the migrations and had to start migrations from scratch. I had backups set up, but noticed that I had to make some adjustments to sql file before I could use the query tool in pgAdmin to insert the data from the backup. In the future I will make sure to test the backup features properly before I move to production. It's important to ensure that backups can be restored without having to make any manual changes to data and that the backed up data is correct (not truncated or corrupted).
 - I was thinking of sending my blog posts automatically to LinkedIn, but because LinkedIn has become so heavy-handed and frustrating with its unnecessary security measures, I will not support it. Blog users can still share posts on LinkedIn but I won't be adding mine there.
-- It is quite painful to get all the routes and controllers working without hiccups. One subtle change anywhere can break the whole thing. For example, I decided to make changes to account removal logic and suddenly I had to make changes not only to frontend but also to user model, comment model, Accountcontroller, Commentcontroller and to user table with additional migrations. 
+- It is quite painful to get all the routes and controllers working without hiccups. One subtle change anywhere can break the whole thing. For example, I decided to make changes to account removal logic and suddenly I had to make changes not only to frontend but also to user model, comment model, Accountcontroller, Commentcontroller and to user table with additional migrations.
 - Deployment can also be a pain if you don't know all the ins and outs of the deployment process. I've never deployed a Laravel app before so I had to learn a lot about it. How Laravel caching works, how images should be loaded (and stored), how to set cors policies properly etc.
+- Laravel has some default behaviour that can be extremely hard to override. For example, I spent a lot of time trying to figure out why I can't redirect a user from email link to /login/success route (it went to /login every time). I was trying to keep the user signed out during the email verification process, but it was not working. I tried everything. Eventually I decided to keep the user signed in and redirect to /login/success route after the email verification, and it worked. Lesson learned: it's usually a good idea to follow Laravel's default behaviour. You can't tweak everything even if you wanted to.
+- Laravel + React + Inertia combo would not be very practical to work with for a large team. That's because making even small changes requires intricate knowledge of the project structure. Frontend and backend are tightly intertwined; it's hard to make even slight changes without changing both frontend code and backend code at the same time. Blade views are the default Laravel way of creating templates for the frontend, so using React components instead of blade views can be a bit tricky at times and not for the faint of heart.
 - Vite was causing more issues than usual in my Laravel setup. I had to add bash scripts and other scripts, a Vite helper, and an htaccess file, and then I had to make some extra changes to providers and vite config file just to get the vite build to work.

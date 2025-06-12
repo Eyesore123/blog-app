@@ -29,14 +29,14 @@ export function Navbar() {
       const isAdmin = user ? Boolean(user.is_admin) : false;
 
       const profileUrl = user?.profile_photo_path
-  ? `/storage/${user.profile_photo_path}`
+  ? `/storage/${user.profile_photo_path}?w=40&h=40`
   : user?.is_anonymous
   ? '/anon-icon.svg'
   : '/default-user-icon.svg';
 
 const isDefaultIcon = profileUrl === '/default-user-icon.svg';
 
-  return (
+    return (
     <div className="flex flex-col md:flex-row items-center gap-4 md:!gap-6">
       {user && (
         <div className="flex items-center !gap-2">
@@ -51,7 +51,7 @@ const isDefaultIcon = profileUrl === '/default-user-icon.svg';
             }`}
           />
         </div>
-          )}
+      )}
 
           <Link href="/privacy-policy" className="hover:text-purple-400 min-w-[100px]">
             Privacy Policy
