@@ -32,7 +32,7 @@ class NewPostNotification extends Mailable
         ]);
         $htmlContent = $converter->convert($this->post->content);
 
-        $imageUrl = $this->post->image_url;
+        $imageUrl = $this->post->image_path;
         if ($imageUrl && !preg_match('/^https?:\/\//', $imageUrl)) {
             $imageUrl = asset('storage/' . str_replace('\\', '', $imageUrl));
         }
