@@ -29,7 +29,7 @@ class SendNewPostEmails extends Command
 
     foreach ($posts as $post) {
         foreach ($subscribers as $subscriber) {
-            Mail::to($subscriber->email)->send(new NewPostNotification($post));
+            Mail::to($subscriber->email)->send(new NewPostNotification($post, $subscriber->email));
         }
     }
 
