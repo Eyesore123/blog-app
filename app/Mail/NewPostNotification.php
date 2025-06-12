@@ -40,8 +40,8 @@ class NewPostNotification extends Mailable
         }
 
         $imageHtml = $imageUrl
-            ? "<img src=\"{$imageUrl}\" alt=\"Post image\" style=\"max-width:100%;margin-bottom:1rem;\" />"
-            : "";
+    ? "<img src=\"{$imageUrl}\" alt=\"Post image\" style=\"max-width: 500px; margin-bottom: 1rem;\" />"
+    : "";
 
         $unsubscribeUrl = URL::temporarySignedRoute(
         'unsubscribe', now()->addDays(7), [
