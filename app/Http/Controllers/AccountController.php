@@ -142,27 +142,27 @@ public function updatePassword(Request $request)
 
     
  public function uploadProfileImage(Request $request)
-    {
-        $request->validate([
-            'profile_photo' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
-        ]);
+{
+    $request->validate([
+        'profile_photo' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
+    ]);
 
-        $user = auth()->user();
+    $user = auth()->user();
 
-        // Delete old profile image if it exists
-        if ($user->profile_photo_path && Storage::disk('public')->exists($user->profile_photo_path)) {
-            Storage::disk('public')->delete($user->profile_photo_path);
-        }
-
-        // Store new image
-        $path = $request->file('profile_photo')->store('profile_images', 'public');
-
-        // Update DB column
-        $user->profile_photo_path = $path;
-        $user->save(); // <- This is what you're missing
-
-        return redirect()->back()->with('success', 'Profile image updated successfully!');
+    // Delete old profile image if it exists
+    if ($user->profile_photo_path && Storage::disk('public')->exists($user->profile_photo_path)) {
+        Storage::disk('public')->delete($user->profile_photo_path);
     }
+
+    // Store new image
+    $path = $request->file('profile_photo')->store('uploads', 'public');
+
+    // Update DB column
+    $user->profile_photo_path = $path;
+    $user->save();
+
+    return redirect()->back()->with('success', 'Profile image updated successfully!');
+}
 
     public function deleteProfileImage(Request $request)
     {
