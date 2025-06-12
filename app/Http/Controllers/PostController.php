@@ -31,7 +31,7 @@ class PostController extends Controller
             'slug'       => $post->slug,
             'created_at' => $post->created_at,
             'updated_at' => $post->updated_at,
-            'image_url'  => $post->image_path ? Storage::url($post->image_path) : null,
+            'image_url'  => $post->image_path ? str_replace('\\', '', Storage::url($post->image_path)) : null,
             'tags'       => $post->tags->map(fn($t) => ['id' => $t->id, 'name' => $t->name]),
         ];
     }

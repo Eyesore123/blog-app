@@ -7,6 +7,7 @@ use App\Models\Post;
 use App\Models\User;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\NewPostNotification;
+use Illuminate\Support\Facades\Log;
 
 class SendNewPostEmails extends Command
 {
@@ -15,12 +16,14 @@ class SendNewPostEmails extends Command
 
     public function handle()
     {
+        Log::info('Retrieving post data');
         $posts = Post::where('created_at', '>=', now()->subHour())->get();
+        Log::info('Post data retrieved: ' . json_encode($posts));
 
-        if ($posts->isEmpty()) {
-        $this->info('No new posts to send.');
-        return 0;
-    }
+            if ($posts->isEmpty()) {
+            $this->info('No new posts to send.');
+            return 0;
+        }
 
     $subscribers = User::where('is_subscribed', 1)->get();
 

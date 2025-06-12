@@ -8,6 +8,7 @@ use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
 use League\CommonMark\CommonMarkConverter;
 use Illuminate\Support\Facades\URL;
+use Illuminate\Support\Facades\Log;
 
 class NewPostNotification extends Mailable
 {
@@ -21,7 +22,10 @@ class NewPostNotification extends Mailable
     }
 
     public function build()
+    
     {
+        Log::info('Building email HTML');
+
         $converter = new CommonMarkConverter([
             'html_input' => 'escape',
             'allow_unsafe_links' => false,
@@ -30,7 +34,7 @@ class NewPostNotification extends Mailable
 
         $imageUrl = $this->post->image_url;
         if ($imageUrl && !preg_match('/^https?:\/\//', $imageUrl)) {
-            $imageUrl = asset($imageUrl);
+            $imageUrl = asset('storage/' . str_replace('\\', '', $imageUrl));
         }
 
         $imageHtml = $imageUrl
