@@ -14,12 +14,10 @@ class NewPostNotification extends Mailable
     use Queueable, SerializesModels;
 
     public $post;
-    public $recipientEmail;
 
-    public function __construct(Post $post, string $recipientEmail)
+    public function __construct(Post $post)
     {
         $this->post = $post;
-        $this->recipientEmail = $recipientEmail;
     }
 
     public function build()
@@ -41,7 +39,7 @@ class NewPostNotification extends Mailable
 
         $unsubscribeUrl = URL::temporarySignedRoute(
             'unsubscribe', now()->addDays(7), [
-                'email' => $this->recipientEmail,
+                'email' => $this->to->email,
                 'type' => 'post'
             ]
         );

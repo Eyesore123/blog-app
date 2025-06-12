@@ -18,19 +18,19 @@ class SendNewPostEmails extends Command
         $posts = Post::where('created_at', '>=', now()->subHour())->get();
 
         if ($posts->isEmpty()) {
-            $this->info('No new posts to send.');
-            return 0;
-        }
-
-        $subscribers = User::where('is_subscribed', 1)->get();
-
-        foreach ($posts as $post) {
-            foreach ($subscribers as $subscriber) {
-                Mail::to($subscriber->email)->send(new NewPostNotification($post));
-            }
-        }
-
-        $this->info('Emails sent for ' . $posts->count() . ' new post(s).');
+        $this->info('No new posts to send.');
         return 0;
+    }
+
+    $subscribers = User::where('is_subscribed', 1)->get();
+
+    foreach ($posts as $post) {
+        foreach ($subscribers as $subscriber) {
+            Mail::to($subscriber->email)->send(new NewPostNotification($post));
+        }
+    }
+
+    $this->info('Emails sent for ' . $posts->count() . ' new post(s).');
+    return 0;
     }
 }
