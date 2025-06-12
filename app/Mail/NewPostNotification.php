@@ -39,7 +39,7 @@ class NewPostNotification extends Mailable
 
         $unsubscribeUrl = URL::temporarySignedRoute(
             'unsubscribe', now()->addDays(7), [
-                'email' => $this->to->email,
+                'email' => $this->to['email'],
                 'type' => 'post'
             ]
         );
