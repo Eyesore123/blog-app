@@ -638,7 +638,7 @@ const postUrl = `/posts/${post.id}`;
 
 {hasValidImageUrl && post.image_url && (
   <div
-    className="relative w-full flex flex-row justify-center items-center lg:justify-start lg:items-start !mb-6 md:!mb-20 !mt-4"
+    className="relative w-full flex flex-row justify-center items-center md:justify-start lg:items-start !mb-6 md:!mb-20 !mt-4"
     style={{ width: '100%', maxWidth: '40rem', minHeight: '16rem' }}
   >
     {/* Show spinner while image is loading */}

@@ -1,6 +1,39 @@
+<!-- Not in use anymore -->
+
+<!-- If you want to use this, you need to change this block to commentcontroller.php:
+ 
+// Notify admin for every comment
+        try {
+        $admin = User::where('is_admin', true)->first();
+        if ($admin) {
+            Log::info('Admin for notification:', ['admin' => $admin]);
+            $admin->notify(new NewCommentNotification($comment));
+        }
+        } catch (\Exception $e) {
+            Log::error('Failed to send comment notification: ' . $e->getMessage());
+        }
+
+        // Notify parent comment author if it is a reply and they want notifications
+        
+        if ($comment->parent_id) {
+            $parentComment = Comment::find($comment->parent_id);
+            if ($parentComment && $parentComment->user_id) {
+                $parentUser = User::find($parentComment->user_id);
+                if ($parentUser && $parentUser->notify_comments) {
+                    try {
+                        $parentUser->notify(new NewCommentNotification($comment));
+                    } catch (\Exception $e) {
+                        Log::error('Failed to send reply notification to user: ' . $e->getMessage());
+                    }
+                }
+            }
+        }
+
+-->
+
 <?php
 
-namespace App\Notifications;
+// namespace App\Notifications;
 
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Notification;
