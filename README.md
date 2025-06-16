@@ -6,7 +6,7 @@
 
 ## Introduction
 
-- This is a blog app that is used in conjunction with portfolio site. Work in progress!
+- This is a blog app that is used in conjunction with my portfolio site. Work in progress!
 
 So currently app works like a basic blog app: it shows posts and comments. Posts can be searched by title and topic. Posts also can be searched using the dropdown menu. There are archive pages which show all the posts for each year (paginated). Posts use tags (optional) and posts can be filtered by tags just by clicking a tag on the post.
 
@@ -40,7 +40,7 @@ Errors are mostly handled with custom error pages. Images use a fallback image i
 
 Automated backups - Php scripts are used for controlling backups. Cron jobs are set up with GitHub Actions to back up the db in regular intervals.
 
-Postgres admin panel is added to make the backend adjustments easier. Backend admin can run scripts, make changes to users and tables, create new admins etc. Only admin has access to the admin panel and scripts. Symlink is recreated via script after each deployment. Currently Vite assets need also rebuilding after a new deployment.
+Postgres admin panel is added to make the backend adjustments easier. Backend admin can run scripts, make changes to users and tables, create new admins etc. Only admin has access to the admin panel and scripts. 
 
 Blog still needs some work, though, including:
 
