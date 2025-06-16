@@ -37,7 +37,7 @@ export function Navbar() {
 const isDefaultIcon = profileUrl === '/default-user-icon.svg';
 
     return (
-    <div className="flex flex-col md:flex-row items-center gap-4 md:!gap-6">
+    <div className="flex flex-col md:flex-row items-center gap-4 md:!gap-6 2xl:!pl-40">
       {user && (
         <div className="flex items-center !gap-2">
           <span className="text-[#FFC600] font-semibold min-w-[150px]">
