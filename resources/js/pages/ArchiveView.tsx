@@ -87,14 +87,14 @@ export default function ArchiveView() {
           <div className="flex flex-col lg:flex-row gap-4 md:gap-6 xl:gap-10 custom-2xl-gap">
             <aside className="hidden lg:block w-full sm:!w-1/3 xl:!w-2/3 xl:!ml-20 2xl:!ml-30 xl:max-w-120 xl:!mr-10 !mb-8 lg:!mb-0 mx-auto">
               <div className="lg:top-24 !space-y-4 md:!space-y-6 w-full lg:!w-80 xl:!w-120">
-                <div className="rounded-lg bg-[#5800FF]/10 !p-4">
+                <div className="rounded-lg bg-[#5800FF]/10 !p-4 2xl:!pl-6">
                 <h3 className="font-semibold !mb-2">About</h3>
                 <p className="opacity-80">
                   Viewing posts from <strong>{archiveYear}</strong>. Browse other years or topics to explore more.
                 </p>
               </div>
 
-              <div className="rounded-lg bg-[#5800FF]/10 !p-4">
+              <div className="rounded-lg bg-[#5800FF]/10 !p-4 2xl:!pl-6 ">
                 <h3 className="font-semibold !mb-2">Topics</h3>
                 <ul className="!space-y-1">
                   <li>
@@ -126,7 +126,7 @@ export default function ArchiveView() {
                 </ul>
               </div>
 
-              <div className="rounded-lg bg-[#5800FF]/10 !p-4">
+              <div className="rounded-lg bg-[#5800FF]/10 !p-4 2xl:!pl-6">
                 <SearchComponent posts={allPosts} />
                 <YearFilterComponent posts={allPosts} />
               </div>

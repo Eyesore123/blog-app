@@ -150,14 +150,14 @@ const PostPage: React.FC<PostPageProps> = ({ post }) => {
           <div className="flex flex-col lg:flex-row gap-4 md:gap-6 custom-2xl-gap items-center lg:items-start">
             <aside className="hidden lg:block w-full sm:!w-1/3 xl:!w-2/3 xl:!ml-20 2xl:!ml-30 xl:max-w-120 xl:!mr-10 !mb-8 lg:!mb-0 mx-auto">
               <div className="lg:top-24 !space-y-4 md:!space-y-6 flexcontainer w-full lg:!w-80 xl:!w-120">
-                <div className="rounded-lg bg-[#5800FF]/10 !p-4">
+                <div className="rounded-lg bg-[#5800FF]/10 !p-4 2xl:!pl-6">
                   <h3 className="font-semibold !mb-2">About This Post</h3>
                   <p className="opacity-80">
                     This is a blog post about {post.topic || 'various topics'}.
                   </p>
                 </div>
 
-                <div className="rounded-lg bg-[#5800FF]/10 !p-4">
+                <div className="rounded-lg bg-[#5800FF]/10 !p-4 2xl:!pl-6">
                   <h3 className="font-semibold !mb-2">Actions</h3>
                   <ul className="!space-y-1">
                     <li>
@@ -181,7 +181,7 @@ const PostPage: React.FC<PostPageProps> = ({ post }) => {
                   </ul>
                 </div>
 
-                <div className="rounded-lg bg-[#5800FF]/10 !p-4">
+                <div className="rounded-lg bg-[#5800FF]/10 !p-4 2xl:!pl-6">
                   {topics && (
                     <div className="!mb-4">
                       <h3 className="font-semibold !mb-2">Topics</h3>
