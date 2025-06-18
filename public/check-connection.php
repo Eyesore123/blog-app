@@ -2,6 +2,14 @@
 
 use Illuminate\Support\Facades\DB;
 
+$validToken = getenv('ADMIN_SETUP_TOKEN');
+$providedToken = $_GET['token'] ?? '';
+
+if (!$validToken || $providedToken !== $validToken) {
+    echo "Unauthorized";
+    exit(1);
+}
+
 echo "<h1>Database Connection Check</h1>";
 
 // Get the current database connection

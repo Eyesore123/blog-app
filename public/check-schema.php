@@ -1,4 +1,13 @@
 <?php
+
+$validToken = getenv('ADMIN_SETUP_TOKEN');
+$providedToken = $_GET['token'] ?? '';
+
+if (!$validToken || $providedToken !== $validToken) {
+    echo "Unauthorized";
+    exit(1);
+}
+
 echo "<h1>Database Schema Check</h1>";
 
 // Get the DATABASE_URL

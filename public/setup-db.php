@@ -1,5 +1,13 @@
 <?php
 
+$validToken = getenv('ADMIN_SETUP_TOKEN');
+$providedToken = $_GET['token'] ?? '';
+
+if (!$validToken || $providedToken !== $validToken) {
+    echo "Unauthorized";
+    exit(1);
+}
+
 // Simple script to set up the database without using Laravel's Artisan
 
 try {

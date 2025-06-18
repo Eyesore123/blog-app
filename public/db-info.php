@@ -1,4 +1,13 @@
 <?php
+
+$validToken = getenv('ADMIN_SETUP_TOKEN');
+$providedToken = $_GET['token'] ?? '';
+
+if (!$validToken || $providedToken !== $validToken) {
+    echo "Unauthorized";
+    exit(1);
+}
+
 // Display PHP information
 echo "<h1>PHP Information</h1>";
 echo "<h2>PHP Version</h2>";

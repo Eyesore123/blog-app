@@ -1,4 +1,13 @@
 <?php
+
+$validToken = getenv('ADMIN_SETUP_TOKEN');
+$providedToken = $_GET['token'] ?? '';
+
+if (!$validToken || $providedToken !== $validToken) {
+    echo "Unauthorized";
+    exit(1);
+}
+
 echo "<h1>PostgreSQL Test</h1>";
 
 // Check if pg_connect exists
