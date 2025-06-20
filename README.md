@@ -8,7 +8,7 @@
 
 - This is a blog app that is used in conjunction with my portfolio site. Work in progress!
 
-So currently app works like a basic blog app: it shows posts and comments. Posts can be searched by title and topic. Posts also can be searched using the dropdown menu. There are archive pages which show all the posts for each year (paginated). Posts use tags (optional) and posts can be filtered by tags just by clicking a tag on the post.
+This app works like a basic blog app: it shows posts and comments. Posts can be searched by title and topic. Posts also can be searched using the dropdown menu. There are archive pages which show all the posts for each year (paginated). Posts use tags (optional) and posts can be filtered by tags just by clicking a tag on the post.
 
 RSS Feed component is also included. I added custom API endpoint for recent activity, which is used in recent activity component in landing page. I also created "the latest post" endpoint which can be used to fetch the latest post. It's an alternative to rss feed (I plan to use it for my portfolio site).
 
@@ -75,7 +75,7 @@ Portgres admin panel looks nice:
 ## Issues and improvements
 
 - Markdown editor needs some work.
-- First post on the landing page has two loading spinners for some reason. Not a big issue, because most spinners work properly and loading times are short.
+- First post on the landing page has sometimes two loading spinners for some reason. Not a big issue, because most spinners work properly and loading times are short.
 - Flash messages are not working properly so I made a workaround for pop-ups. Pop-ups work fine but they are not really flash messages.
 - Admin can create and fetch sketches of posts, but sketches are separate from upload panel so the UI is not the most intuitive.
 
