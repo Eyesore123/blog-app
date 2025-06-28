@@ -52,17 +52,19 @@ class NewPostNotification extends Mailable
 
         $emailHtml = "
             <html>
-                <body>
-                    <h2>Here's the latest blog post from Joni&#39;s blog:</h2>
-                    <h1>{$this->post->title}</h1>
-                    {$imageHtml}
-                    <div style='font-size:16px;line-height:1.6;max-width:700px;margin-bottom:2rem;'>
-                        {$htmlContent}
+                <body style='text-align:center;'>
+                    <div style='max-width: 700px; margin: auto; padding: 20px;'>
+                        <h2>Here's the latest blog post from Joni&#39;s blog:</h2>
+                        <h1>{$this->post->title}</h1>
+                        {$imageHtml}
+                        <div style='font-size:16px;line-height:1.6;max-width:700px;margin-bottom:2rem;'>
+                            {$htmlContent}
+                        </div>
+                        <a href='" . url('/posts/' . $this->post->slug) . "' style='color:#5800FF;'>Read more</a>
+                        <p style='margin-top:2rem;'>
+                            <a href='{$unsubscribeUrl}' style='color:#888;font-size:13px;'>Unsubscribe from these emails</a>
+                        </p>
                     </div>
-                    <a href='" . url('/posts/' . $this->post->slug) . "' style='color:#5800FF;'>Read more</a>
-                    <p style='margin-top:2rem;'>
-                        <a href='{$unsubscribeUrl}' style='color:#888;font-size:13px;'>Unsubscribe from these emails</a>
-                    </p>
                 </body>
             </html>
         ";
