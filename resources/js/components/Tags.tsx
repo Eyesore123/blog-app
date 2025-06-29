@@ -14,7 +14,7 @@ const TagComponent: React.FC<TagProps> = ({ tags, onTagClick }) => {
           <button
             key={tag}
             type="button"
-            className="bg-gray-200 text-[#5800FF] rounded !px-3 !py-1 text-sm hover:bg-[#5800FF] hover:text-white"
+            className="bg-[#5800FF] text-white rounded !px-3 !py-1 text-sm hover:bg-white hover:text-[#5800FF]"
             onClick={() => onTagClick(tag)}
           >
             {tag}
