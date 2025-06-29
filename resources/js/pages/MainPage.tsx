@@ -9,11 +9,13 @@ import SearchComponent from '@/components/SearchComponent';
 import YearFilterComponent from '@/components/YearFilterComponent';
 import ArchivesComponent from '@/components/ArchiveComponent';
 import RecentActivityFeed from '@/components/RecentActivityFeed';
+import TagComponent from '@/components/Tags';
 import { WebsiteAnalyzerLink } from '@/components/WebsiteAnalyzerLink';
 import { PortfolioLink } from '@/components/PortfolioLink';
 import { RssSubscribeLink } from '@/components/RssSubscribeLink';
 import { useTheme } from '../context/ThemeContext';
 import { useEffect } from 'react';
+import { useState } from 'react';
 
 interface BlogPostType {
   id: number;
@@ -62,6 +64,7 @@ interface PageProps {
 export default function MainPage() {
   const { props } = usePage<PageProps>();
   const { theme } = useTheme();
+  const [allTags, setAllTags] = useState<string[]>([]);
   const {
     posts,
     allPosts,
@@ -75,6 +78,15 @@ export default function MainPage() {
   } = props;
 
   const isAdmin = !!props.auth?.user?.is_admin;
+
+  useEffect(() => {
+  const fetchTags = async () => {
+    const response = await fetch('/api/tags');
+    const tags = await response.json();
+    setAllTags(tags);
+  };
+  fetchTags();
+}, []);
 
   useEffect(() => {
     if (flash?.alert) {
@@ -125,6 +137,28 @@ export default function MainPage() {
       router.get('/', Object.fromEntries(params));
     });
   };
+
+  // Experimental
+
+  // Helper function to handle first page button click
+const handleFirstPage = () => {
+  handlePageChange(0);
+};
+
+// Helper function to handle last page button click
+const handleLastPage = () => {
+  handlePageChange(Math.ceil(total / 6) - 1);
+};
+
+// Helper function to handle input field navigation
+const handlePageInput = (e) => {
+  const pageNumber = parseInt(e.target.value);
+  if (pageNumber >= 1 && pageNumber <= Math.ceil(total / 6)) {
+    handlePageChange(pageNumber - 1);
+  }
+};
+
+console.log(allTags);
 
   return (
     <div className={`min-h-160 ${theme}`}>
@@ -178,6 +212,10 @@ export default function MainPage() {
                   <SearchComponent posts={allPostsForFilter} />
                   <YearFilterComponent posts={allPostsForFilter} />
                   <ArchivesComponent />
+                  <TagComponent
+                    tags={allTags}
+                    onTagClick={(tag) => router.visit(`/posts/tag/${tag}`)}
+                  />
                   <RssSubscribeLink />
                   <RecentActivityFeed key="recent-activity-feed" />
                   <PortfolioLink />
@@ -197,7 +235,16 @@ export default function MainPage() {
                         <BlogPost post={{ ...post, _id: post.id.toString(), postUrl: '/posts/' + post.slug }} />
                       </div>
                     ))}
-                    <div className="flex justify-center items-center !gap-4 md:!gap-10 !mt-8 md:!mt-18 customdiv">
+                    
+                    
+                    <div className="flex justify-center items-center lg:!ml-10 !gap-4 md:!gap-4 !mt-8 md:!mt-18 customdiv">
+                      <button
+                        onClick={handleFirstPage}
+                        disabled={currentPage === 0}
+                        className="paginationbutton !px-3 !py-1 md:!px-4 md:!py-2 bg-[#5800FF] text-white rounded hover:bg-[#E900FF] disabled:opacity-50 transition-colors text-sm md:text-base"
+                      >
+                        <img src="/first.svg" alt="First" />
+                      </button>
                       <button
                         onClick={() => handlePageChange(currentPage - 1)}
                         disabled={currentPage === 0}
@@ -208,6 +255,12 @@ export default function MainPage() {
                       <span className="text-sm md:text-base">
                         Page {currentPage + 1} of {Math.ceil(total / 6)}
                       </span>
+                      <input
+                        type="number"
+                        value={currentPage + 1}
+                        onChange={handlePageInput}
+                        className={`w-10 md:w-12 !h-8 text-sm !pr-1 md:text-base text-center ${theme === 'dark' ? 'bg-primary' : 'bg-white'} border border-gray-300 rounded`}
+                      />
                       <button
                         onClick={() => handlePageChange(currentPage + 1)}
                         disabled={!hasMore}
@@ -215,7 +268,15 @@ export default function MainPage() {
                       >
                         Next
                       </button>
+                      <button
+                        onClick={handleLastPage}
+                        disabled={currentPage === Math.ceil(total / 6) - 1}
+                        className="paginationbutton !px-3 !py-1 md:!px-4 md:!py-2 bg-[#5800FF] text-white rounded hover:bg-[#E900FF] disabled:opacity-50 transition-colors text-sm md:text-base"
+                      >
+                        <img src="/last.svg" alt="Last" />
+                      </button>
                     </div>
+
                   </>
                 )}
               </div>
