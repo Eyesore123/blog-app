@@ -57,7 +57,7 @@ class NewPostNotification extends Mailable
                         <h2>Here's the latest blog post from Joni&#39;s blog:</h2>
                         <h1>{$this->post->title}</h1>
                         {$imageHtml}
-                        <div style='font-size:16px;line-height:1.6;max-width:700px;margin-bottom:2rem;'>
+                        <div style='font-size:16px;line-height:1.6;max-width:700px;margin-bottom:2rem;text-align:left;'>
                             {$htmlContent}
                         </div>
                         <a href='" . url('/posts/' . $this->post->slug) . "' style='color:#5800FF;'>Read more</a>
