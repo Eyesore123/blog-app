@@ -172,7 +172,7 @@ console.log(allTags);
                 <div className="rounded-lg bg-[#5800FF]/10 !p-4 2xl:!pl-6">
                   <h3 className="font-semibold !mb-2">About</h3>
                   <p className="opacity-80">
-                    Welcome to my personal blog where I share my thoughts and experiments with web development, design, and technology.
+                    Hi there! This is my personal blog where I explore web development, design, tech, business, and marketing — along with the occasional reflection on life and what it means to live in society.
                   </p>
                 </div>
 
