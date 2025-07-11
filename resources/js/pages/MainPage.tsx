@@ -152,9 +152,11 @@ const handleLastPage = () => {
 
 // Helper function to handle input field navigation
 const handlePageInput = (e) => {
-  const pageNumber = parseInt(e.target.value);
-  if (pageNumber >= 1 && pageNumber <= Math.ceil(total / 6)) {
-    handlePageChange(pageNumber - 1);
+  if (e.key === 'Enter') {
+    const pageNumber = parseInt(e.target.value);
+    if (pageNumber >= 1 && pageNumber <= Math.ceil(total / 6)) {
+      handlePageChange(pageNumber - 1);
+    }
   }
 };
 
@@ -237,7 +239,7 @@ console.log(allTags);
                     ))}
                     
                     
-                    <div className="flex justify-center items-center lg:!ml-10 !gap-4 md:!gap-4 !mt-8 md:!mt-18 customdiv">
+                    <div className="flex justify-center items-center lg:!ml-10 !gap-2 md:!gap-4 !mt-8 md:!mt-18 customdiv">
                       <button
                         onClick={handleFirstPage}
                         disabled={currentPage === 0}
@@ -255,12 +257,14 @@ console.log(allTags);
                       <span className="text-sm md:text-base">
                         Page {currentPage + 1} of {Math.ceil(total / 6)}
                       </span>
+                      
                       <input
                         type="number"
                         value={currentPage + 1}
                         onChange={handlePageInput}
                         className={`w-10 md:w-12 !h-8 text-sm !pr-1 md:text-base text-center ${theme === 'dark' ? 'bg-primary' : 'bg-white'} border border-gray-300 rounded`}
                       />
+
                       <button
                         onClick={() => handlePageChange(currentPage + 1)}
                         disabled={!hasMore}

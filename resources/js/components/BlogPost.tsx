@@ -652,7 +652,7 @@ const postUrl = `/posts/${post.id}`;
     {!imageError && (
       <img
         src={post.image_url}
-        className={`w-full !max-w-[400px] sm:w-75 md:!max-w-none md:w-100 lg:w-150 h-auto cursor-pointer transition-opacity duration-300 ${
+        className={`w-full !max-w-[360px] sm:w-65 md:!max-w-none md:w-100 lg:w-150 h-auto cursor-pointer transition-opacity duration-300 ${
           imageLoading ? 'opacity-0' : 'opacity-100'
         }`}
         onClick={handleImageClick}
