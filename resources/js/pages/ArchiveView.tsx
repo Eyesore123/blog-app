@@ -68,7 +68,7 @@ export default function ArchiveView() {
   } = props;
 
   const isAdmin = auth?.user?.is_admin ?? false;
-
+  const [inputValue, setInputValue] = useState(currentPage + 1);
 
     useEffect(() => {
     const fetchTags = async () => {
@@ -107,7 +107,7 @@ const handleLastPage = () => {
 // Helper function to handle input field navigation
 const handlePageInput = (e) => {
   if (e.key === 'Enter') {
-    const pageNumber = parseInt(e.target.value);
+    const pageNumber = inputValue;
     if (pageNumber >= 1 && pageNumber <= Math.ceil(total / 6)) {
       handlePageChange(pageNumber - 1);
     }
@@ -229,12 +229,15 @@ const handlePageInput = (e) => {
                       <span className="text-sm md:text-base">
                         Page {currentPage + 1} of {Math.ceil(total / 6)}
                       </span>
+
                       <input
                         type="number"
-                        value={currentPage + 1}
-                        onChange={handlePageInput}
+                        value={inputValue}
+                        onChange={(e) => setInputValue(parseInt(e.target.value))}
+                        onKeyDown={handlePageInput}
                         className={`w-10 md:w-12 !h-8 text-sm !pr-1 md:text-base text-center ${theme === 'dark' ? 'bg-primary' : 'bg-white'} border border-gray-300 rounded`}
                       />
+
                       <button
                         onClick={() => handlePageChange(currentPage + 1)}
                         disabled={!hasMore}
