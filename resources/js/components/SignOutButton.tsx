@@ -9,7 +9,6 @@ const SignOutButton = () => {
   const handleLogout = async () => {
     await getCsrfToken();
     router.post('/logout', {}, {
-      onFinish: () => console.log('Logged out'),
       onSuccess: () => {
         showAlert('You have signed out!', 'success');
       },

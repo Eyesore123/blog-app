@@ -161,8 +161,6 @@ const handlePageInput = (e) => {
   }
 };
 
-console.log(allTags);
-
   return (
     <div className={`min-h-160 ${theme}`}>
       <div className="min-h-160 bg-[var(--bg-primary)] text-[var(--text-primary)]">

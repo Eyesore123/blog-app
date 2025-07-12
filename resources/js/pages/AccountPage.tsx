@@ -260,7 +260,6 @@ const handleUpdateName = () => {
 };
 
 const handleDeleteAccount = async () => {
-  console.log('handleDeleteAccount started');
 
   const confirmed = await confirm({
     title: 'Delete Account',
@@ -269,8 +268,6 @@ const handleDeleteAccount = async () => {
     cancelText: 'Cancel',
     type: 'danger',
   });
-
-  console.log('Delete account confirmed:', confirmed);
 
   if (!confirmed) return;
 
@@ -282,22 +279,17 @@ const handleDeleteAccount = async () => {
     type: 'warning',
   });
 
-  console.log('Remove comments confirmed:', removeCommentsConfirmed);
-
   setLoading(true);
-  console.log('Sending request to delete account with remove_comments:', removeCommentsConfirmed ? 'yes' : 'no');
   router.post('/account/delete', {
     user_id: user.id,
     remove_comments: removeCommentsConfirmed ? 'yes' : 'no',
   }, {
     onSuccess: () => {
-      console.log('Account deleted successfully!');
       showAlert('Account deleted successfully!', 'success');
       setLoading(false);
       router.get('/');
     },
     onError: () => {
-      console.log('Failed to delete account');
       showAlert('Failed to delete account', 'error');
       setLoading(false);
     },

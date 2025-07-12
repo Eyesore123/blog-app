@@ -95,16 +95,12 @@ const [imageError, setImageError] = useState(false);
 
 // Image loading and error handling
 const handleImageLoad = () => {
-    console.log('Image loaded successfully'); // Debug log
     setImageLoading(false);
 };
 
 const handleImageError = () => {
-    console.log('Image failed to load'); // Debug log
     setImageLoading(false);
     setImageError(true);
-    console.error('Image failed to load:', post.image_url);
-};
 
   // Refs for uncontrolled inputs
   const replyInputRef = useRef<HTMLTextAreaElement>(null);
@@ -144,7 +140,6 @@ const handleDeletePost = async (postId: number) => {
   if (confirmed) {
     router.delete(`/posts/${postId}`, {
       onSuccess: () => {
-        console.log(`Post ${postId} deleted`);
         showAlert('Post deleted successfully', 'success');
         router.visit('/'); // Redirect to homepage
       },
@@ -323,8 +318,6 @@ const handleImageClick = (e: React.MouseEvent<HTMLImageElement>) => {
   try {
     const response = await axiosInstance.delete(`/api/comments/${commentId}`)
       
-      console.log(`Comment ${commentId} deleted`, response.data);
-      
       const updatedComments = comments.map(c => 
         c._id === commentId 
           ? { ...c, deleted: true, content: "[Message removed by moderator]" } 
@@ -363,7 +356,6 @@ const handleImageClick = (e: React.MouseEvent<HTMLImageElement>) => {
     } else {
       // Use the post ID as a fallback when slug is missing
       router.visit(`/post/${post.id}`);
-      console.log('Using post ID for navigation since slug is missing');
     }
   }
   
@@ -457,21 +449,6 @@ const renderComment = (comment: Comment, level = 0) => {
       showAlert('Error deleting comment. Please try again.', 'error');
     }
   }
-
-  // Helper function for meta description, use in production:
-
-  // const plainTextContent = post.content.replace(/<[^>]+>/g, '');
-  // const description = plainTextContent.length > 150
-  // ? plainTextContent.slice(0, 147) + '...'
-  // : plainTextContent;
-
-//   console.log('isDeleted:', isDeleted);
-// console.log('level:', level);
-// console.log('maxNestingLevel:', maxNestingLevel);
-// console.log('isSignedIn:', isSignedIn);
-// console.log('isCommentOwner:', isCommentOwner);
-// console.log('isEditing:', isEditing);
-// console.log('isAdmin:', isAdmin);
   
   return (
     <div key={comment._id} className={`bg-[#5800FF]/${10 - Math.min(level, 5) * 2} rounded !p-2 md:!p-3 ${indentClass}`}>

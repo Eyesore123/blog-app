@@ -232,11 +232,11 @@ const PostPage: React.FC<PostPageProps> = ({ post }) => {
                   comments={comments}
                   isAdmin={isAdmin}
                   onReply={(commentId: string) => {
-                    console.log(`Reply to comment ${commentId}`);
+               
                     // Add reply logic here
                   }}
                   onEdit={(commentId: string, newContent: string) => {
-                    console.log(`Edit comment ${commentId} with new content: ${newContent}`);
+        
                   }}
                   onDelete={handleDeleteComment}
                   isPostPage={true}

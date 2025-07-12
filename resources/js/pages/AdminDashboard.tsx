@@ -27,9 +27,6 @@ export default function AdminDashboard() {
     props: AdminDashboardProps;
   }>().props;
 
-  console.log('users:', users);
-  console.log('posts:', posts);
-
   const [currentView, setCurrentView] = useState<'create' | 'users' | 'posts'>('create');
   const [previewPost, setPreviewPost] = useState<Post | null>(null);
 
