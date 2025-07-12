@@ -101,6 +101,7 @@ const handleImageLoad = () => {
 const handleImageError = () => {
     setImageLoading(false);
     setImageError(true);
+};
 
   // Refs for uncontrolled inputs
   const replyInputRef = useRef<HTMLTextAreaElement>(null);
