@@ -11,13 +11,28 @@ interface SearchComponentProps {
 }
 
 function getMatchScore(post: Post, query: string): number {
-  const q = query.toLowerCase();
+  const q = query.trim().toLowerCase();
+  if (!q) return 0;
   const title = post.title.toLowerCase();
   const topic = post.topic.toLowerCase();
 
+  // Exact match
   if (title === q || topic === q) return 100;
+
+  // Starts with query
   if (title.startsWith(q) || topic.startsWith(q)) return 80;
+
+  // Any word starts with query
+  const titleWords = title.split(/\s+/);
+  const topicWords = topic.split(/\s+/);
+  if (
+    titleWords.some(word => word.startsWith(q)) ||
+    topicWords.some(word => word.startsWith(q))
+  ) return 70;
+
+  // Includes query
   if (title.includes(q) || topic.includes(q)) return 50;
+
   return 0;
 }
 
