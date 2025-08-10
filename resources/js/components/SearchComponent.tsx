@@ -10,11 +10,20 @@ interface SearchComponentProps {
   posts: Post[];
 }
 
+// Normalize string: lowercase, remove punctuation, collapse whitespace
+function normalize(str: string): string {
+  return str
+    .toLowerCase()
+    .replace(/[\p{P}$+<=>^`|~]/gu, '') // Remove punctuation
+    .replace(/\s+/g, ' ') // Collapse whitespace
+    .trim();
+}
+
 function getMatchScore(post: Post, query: string): number {
-  const q = query.trim().toLowerCase();
+  const q = normalize(query);
   if (!q) return 0;
-  const title = post.title.toLowerCase();
-  const topic = post.topic.toLowerCase();
+  const title = normalize(post.title);
+  const topic = normalize(post.topic);
 
   // Exact match
   if (title === q || topic === q) return 100;
@@ -23,8 +32,8 @@ function getMatchScore(post: Post, query: string): number {
   if (title.startsWith(q) || topic.startsWith(q)) return 80;
 
   // Any word starts with query
-  const titleWords = title.split(/\s+/);
-  const topicWords = topic.split(/\s+/);
+  const titleWords = title.split(' ');
+  const topicWords = topic.split(' ');
   if (
     titleWords.some(word => word.startsWith(q)) ||
     topicWords.some(word => word.startsWith(q))
