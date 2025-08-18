@@ -13,10 +13,10 @@ import TagComponent from '@/components/Tags';
 import { WebsiteAnalyzerLink } from '@/components/WebsiteAnalyzerLink';
 import { PortfolioLink } from '@/components/PortfolioLink';
 import { RssSubscribeLink } from '@/components/RssSubscribeLink';
-import { BookComponent } from '@/components/BookComponent';
 import { useTheme } from '../context/ThemeContext';
 import { useEffect } from 'react';
 import { useState } from 'react';
+import { BookComponent } from '@/components/BookComponent';
 
 interface BlogPostType {
   id: number;
@@ -140,8 +140,6 @@ export default function MainPage() {
     });
   };
 
-  // Experimental
-
   // Helper function to handle first page button click
 const handleFirstPage = () => {
   handlePageChange(0);
@@ -167,6 +165,7 @@ const handlePageInput = (e) => {
       <div className="min-h-160 bg-[var(--bg-primary)] text-[var(--text-primary)]">
         <Navbar />
         <Header />
+        
         <main className="!p-4 md:!p-8 !gap-1">
           <div className="flex flex-col lg:flex-row gap-4 md:gap-6 custom-2xl-gap items-center lg:items-start">
             <aside className="lg:block w-full md:!w-2/3 xl:!w-2/3 xl:!ml-20 2xl:!ml-30 xl:max-w-120 xl:!mr-10 !mb-8 lg:!mb-0 mx-auto">
