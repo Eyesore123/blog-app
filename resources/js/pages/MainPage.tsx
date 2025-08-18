@@ -13,6 +13,7 @@ import TagComponent from '@/components/Tags';
 import { WebsiteAnalyzerLink } from '@/components/WebsiteAnalyzerLink';
 import { PortfolioLink } from '@/components/PortfolioLink';
 import { RssSubscribeLink } from '@/components/RssSubscribeLink';
+import { BookComponent } from '@/components/BookComponent';
 import { useTheme } from '../context/ThemeContext';
 import { useEffect } from 'react';
 import { useState } from 'react';
@@ -221,6 +222,7 @@ const handlePageInput = (e) => {
                   <RecentActivityFeed key="recent-activity-feed" />
                   <PortfolioLink />
                   <WebsiteAnalyzerLink />
+                  <BookComponent />
                 </div>
               </div>
             </aside>
