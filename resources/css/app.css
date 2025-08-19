@@ -176,9 +176,9 @@ small {
         margin-left: 10rem;
     }
 
-    .headerstyles {
-        margin-bottom: 2rem;
-    }
+    /* .headerstyles {
+        padding-bottom: 3rem;
+    } */
 
     section,
     .flexcontainer,
@@ -196,13 +196,78 @@ small {
     }
 }
 
-/* .bg-effect::before {
+/* Image background effect */
+
+/* .main::before {
     content: '';
     position: absolute;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background-image: linear-gradient(to bottom, #f7f7f7, #ffffff);
-    opacity: 0.5;
+    background-image: url('/fallbackimage.jpg') !important;
+    background-size: cover !important;
+    background-position: center !important;
+    background-repeat: repeat !important;
+    opacity: 0.18 !important;
+    z-index: -1 !important;
 } */
+
+/* Line bg effect */
+
+/* Stylish bg, need to add theme color change to div and article so those parts won't be covered by bg pattern, static style */
+
+/* .main::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: repeating-linear-gradient(45deg, #ffc5c5, #ffa07a 15px, #ffffe0 10px) !important;
+    background-size: cover !important;
+    background-position: center !important;
+    background-repeat: no-repeat !important;
+    opacity: 0.1 !important;
+    z-index: -1 !important;
+}
+
+.main.relative {
+    opacity: 0.99 !important;
+} */
+
+/* Experimental style: */
+
+.main::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 200%;
+    height: 100%;
+
+    background-image: repeating-linear-gradient(45deg, #ffc5c5, #ffa07a 15px, #ffffe0 10px) !important;
+
+    background-size: 400px 400px !important;
+    background-position: 0px 0px !important;
+    background-repeat: repeat !important;
+
+    opacity: 0.09 !important;
+    z-index: -1 !important;
+
+    animation: moveGradient 40s linear infinite !important;
+}
+
+.main.relative {
+    opacity: 0.98 !important;
+}
+
+@keyframes moveGradient {
+    0% {
+        transform: translateX(0);
+    }
+
+    100% {
+        transform: translateX(-1200px);
+    }
+}

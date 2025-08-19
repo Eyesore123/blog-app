@@ -7,6 +7,7 @@ import { getCsrfToken } from "../components/auth";
 import '../../css/app.css';
 import { useAlert } from "../context/AlertContext";
 import { useConfirm } from "@/context/ConfirmationContext";
+import { useTheme } from "@/context/ThemeContext";
 import ShareButtons from "./ShareButtons";
 import { Helmet } from "react-helmet-async";
 import ReactMarkdown from 'react-markdown';
@@ -92,6 +93,7 @@ export function BlogPost({ post, isPostPage = false }: BlogPostProps) {
 const editCommentRef = useRef<HTMLTextAreaElement>(null);
 const [imageLoading, setImageLoading] = useState(true);
 const [imageError, setImageError] = useState(false);
+const { theme } = useTheme();
 
 // Image loading and error handling
 const handleImageLoad = () => {
@@ -604,10 +606,10 @@ const postUrl = `/posts/${post.id}`;
         <meta property="og:image" content={seoProps.image || '/default-image.jpg'} />
         <meta property="og:url" content={seoProps.url} />
       </Helmet>
-
-    <article className="article-container flex flex-col justify-center items-center lg:items-start lg:justify-start rounded-lg bg-[#5800FF]/5 !p-4 md:!pl-10 w-full md:!w-150 xl:!w-220 2xl:!w-260 !mb-6 md:!mb-10 lg:!ml-10 2xl:!ml-32">
+    <div className={`bg-[var(--bg-primary)] rounded-lg`}>
+    <article className={`article-container flex flex-col justify-center items-center lg:items-start lg:justify-start rounded-lg bg-[#5800FF]/10 !p-4 md:!pl-10 w-full md:!w-150 xl:!w-220 2xl:!w-260 !pb-6 md:!pb-10 lg:!pl-10 2xl:!pl-32`}>
       <h2
-        className="text-xl md:text-2xl font-bold flex justify-start !mb-4 md:!mb-10 cursor-pointer hover:underline max-w-[360px] md:max-w-[500px] xl:max-w-[600px] 2xl:max-w-[800px]"
+        className="text-xl md:text-2xl font-bold flex justify-start !mb-4 lg:!mt-4 md:!mb-10 cursor-pointer hover:underline max-w-[360px] md:max-w-[500px] xl:max-w-[600px] 2xl:max-w-[800px]"
         onClick={goToPostPage}
       >
         {post.title}
@@ -655,40 +657,10 @@ const postUrl = `/posts/${post.id}`;
     )}
   </div>
 )}
-  {/* xl:!max-w-[1000px] */}
-    {/* <div className="markdown-text whitespace-pre-wrap break-words overflow-auto !max-w-[300px] md:!max-w-[500px] xl:!max-w-[700px] 2xl:!max-w-[900px]" style={{ whiteSpace: 'pre-wrap' }}>
-      <ReactMarkdown
-        children={(post.content || '(No content)')}
-        components={{
-          p: ({ node, ...props }) => <p className="mb-4 !max-w-[300px] md:!max-w-[500px] xl:!max-w-[700px] 2xl:!max-w-[900px]" {...props} />,
-          ul: ({ node, ...props }) => <ul className="list-disc !ml-6 !mb-4" {...props} />,
-          ol: ({ node, ...props }) => <ol className="list-decimal !ml-6 !mb-4" {...props} />,
-          li: ({ node, ...props }) => <li className="!mb-2 !ml-6 !max-w-[300px] md:!max-w-[500px] xl:!max-w-[700px] 2xl:!max-w-[900px]" {...props} />,
-          strong: ({ node, ...props }) => <strong className="font-bold !max-w-[300px] md:!max-w-[500px] xl:!max-w-[700px] 2xl:!max-w-[900px]" {...props} />,
-          em: ({ node, ...props }) => <em className="italic" {...props} />,
-          blockquote: ({ node, ...props }) => (
-            <blockquote className="border-l-4 border-gray-300 !pl-4 italic text-gray-600 !mb-4 !max-w-[300px] md:!max-w-[500px] xl:!max-w-[700px] 2xl:!max-w-[900px]" {...props} />
-          ),
-        }}
-      />
-    </div> */}
 
     <ReactMarkdown
   children={post.content || '(No content)'}
-  components={{
-    p: ({ node, ...props }) => (
-      <p className="!text-sm md:!text-base xl:!text-lg !mb-4 !mt-2 min-w-[340px] max-w-[340px] md:max-w-[500px] xl:max-w-[700px] 2xl:max-w-[900px]" {...props} />
-    ),
-    ul: ({ node, ...props }) => <ul className="list-disc !ml-6 !mb-4" {...props} />,
-    ol: ({ node, ...props }) => <ol className="list-decimal !ml-6 !mb-4" {...props} />,
-    li: ({ node, ...props }) => (
-      <li className="!mb-2 !ml-6 max-w-[340px] md:max-w-[500px] xl:max-w-[700px] 2xl:max-w-[900px]" {...props} />
-    ),
-     a: ({ node, ...props }) => (
-      <a
-        className="text-purple-400 hover:text-white transition-colors"
-        {...props}
-      />
+  components={{ p: ({ node, ...props }) => ( <p className="!text-sm md:!text-base xl:!text-lg !mb-4 !mt-2 min-w-[340px] max-w-[340px] md:max-w-[500px] xl:max-w-[700px] 2xl:max-w-[900px]" {...props} /> ), ul: ({ node, ...props }) => <ul className="list-disc !ml-6 !mb-4" {...props} />, ol: ({ node, ...props }) => <ol className="list-decimal !ml-6 !mb-4 max-w-[280px] md:max-w-[400px] xl:max-w-[600px] 2xl:max-w-[800px]" {...props} />, li: ({ node, ...props }) => ( <li className="!mb-2 !ml-6 max-w-[280px] md:max-w-[400px] xl:max-w-[600px] 2xl:max-w-[800px]" {...props} /> ), a: ({ node, ...props }) => ( <a className="text-purple-400 hover:text-white transition-colors" {...props} />
     ),
     strong: ({ node, ...props }) => (
       <strong className="!mt-4 font-bold max-w-[340px] md:max-w-[500px] xl:max-w-[700px] 2xl:max-w-[900px]" {...props} />
@@ -823,6 +795,7 @@ const postUrl = `/posts/${post.id}`;
         )}
       </div>
     </article>
+    </div>
   </>
 );
 

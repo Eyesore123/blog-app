@@ -166,18 +166,18 @@ const handlePageInput = (e) => {
         <Navbar />
         <Header />
         
-        <main className="!p-4 md:!p-8 !gap-1">
-          <div className="flex flex-col lg:flex-row gap-4 md:gap-6 custom-2xl-gap items-center lg:items-start">
+        <main className="!p-4 md:!p-8 !gap-1 main relative">
+          <div className="flex flex-col lg:flex-row gap-4 md:gap-6 custom-2xl-gap items-center lg:items-start lg:!pt-6">
             <aside className="lg:block w-full md:!w-2/3 xl:!w-2/3 xl:!ml-20 2xl:!ml-30 xl:max-w-120 xl:!mr-10 !mb-8 lg:!mb-0 mx-auto">
-              <div className="lg:top-24 !space-y-4 md:!space-y-6 flexcontainer w-full lg:!w-80 xl:!w-120">
-                <div className="rounded-lg bg-[#5800FF]/10 !p-4 2xl:!pl-6">
-                  <h3 className="font-semibold !mb-2">About</h3>
+              <div className={`lg:top-24 !space-y-4 md:!space-y-6 flexcontainer w-full lg:!w-80 xl:!w-120 bg-[var(--bg-primary)] lg:!mt-0 rounded-t-lg`}>
+                <div className=" bg-[#5800FF]/10 !pl-6 !mb-0 !pr-4 !pb-10 2xl:!pl-6bg-solid rounded-t-lg">
+                  <h3 className="font-semibold !mb-4 lg:!pt-8">About</h3>
                   <p className="opacity-80">
                     Hi there! This is my personal blog where I explore web development, design, tech, business, and marketing — along with the occasional reflection on life and what it means to live in society.
                   </p>
                 </div>
 
-                <div className="rounded-lg bg-[#5800FF]/10 !p-4 2xl:!pl-6">
+                <div className="bg-[#5800FF]/10 !pl-4 !mb-0 !pr-4 !pb-8 2xl:!pl-6">
                   <h3 className="font-semibold !mb-2">Topics</h3>
                   <ul className="!space-y-1">
                     <li>
@@ -209,7 +209,7 @@ const handlePageInput = (e) => {
                   </ul>
                 </div>
 
-                <div className="rounded-lg bg-[#5800FF]/10 !p-4 2xl:!pl-6">
+                <div className="bg-[#5800FF]/10 !p-4 2xl:!pl-6">
                   <SearchComponent posts={allPostsForFilter} />
                   <YearFilterComponent posts={allPostsForFilter} />
                   <ArchivesComponent />
