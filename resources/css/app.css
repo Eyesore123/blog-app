@@ -274,6 +274,6 @@ small {
 
 @media only screen and (max-width: 768px) {
     .main::before {
-        animation: none !important;
+        display: none !important;
     }
 }
