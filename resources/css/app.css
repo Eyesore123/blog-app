@@ -164,7 +164,7 @@ small {
 
 @media (min-width: 2200px) {
     .custom-2xl-gap {
-        gap: 16rem;
+        gap: 20rem;
         padding-left: 10rem;
     }
 
