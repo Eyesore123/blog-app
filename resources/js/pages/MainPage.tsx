@@ -171,7 +171,7 @@ const handlePageInput = (e) => {
             <aside className="lg:block w-full md:!w-2/3 xl:!w-2/3 xl:!ml-20 2xl:!ml-30 xl:max-w-120 xl:!mr-10 !mb-8 lg:!mb-0 mx-auto">
               <div className={`lg:top-24 !space-y-4 md:!space-y-6 flexcontainer w-full lg:!w-80 xl:!w-120 bg-[var(--bg-primary)] lg:!mt-0 rounded-t-lg`}>
                 <div className=" bg-[#5800FF]/10 !pl-6 !mb-0 !pr-4 !pb-10 2xl:!pl-6bg-solid rounded-t-lg">
-                  <h3 className="font-semibold !mb-4 lg:!pt-8">About</h3>
+                  <h3 className="font-semibold !mb-4 !pt-2 lg:!pt-8">About</h3>
                   <p className="opacity-80">
                     Hi there! This is my personal blog where I explore web development, design, tech, business, and marketing — along with the occasional reflection on life and what it means to live in society.
                   </p>
@@ -243,14 +243,14 @@ const handlePageInput = (e) => {
                       <button
                         onClick={handleFirstPage}
                         disabled={currentPage === 0}
-                        className="paginationbutton !px-3 !py-1 md:!px-4 md:!py-2 bg-[#5800FF] text-white rounded hover:bg-[#E900FF] disabled:opacity-50 transition-colors text-sm md:text-base"
+                        className="paginationbutton !px-2 !py-1 md:!px-4 md:!py-2 bg-[#5800FF] text-white rounded hover:bg-[#E900FF] disabled:opacity-50 transition-colors text-sm md:text-base"
                       >
                         <img src="/first.svg" alt="First" />
                       </button>
                       <button
                         onClick={() => handlePageChange(currentPage - 1)}
                         disabled={currentPage === 0}
-                        className="paginationbutton !px-3 !py-1 md:!px-4 md:!py-2 bg-[#5800FF] text-white rounded hover:bg-[#E900FF] disabled:opacity-50 transition-colors text-sm md:text-base"
+                        className="paginationbutton !px-2 !py-1 md:!px-4 md:!py-2 bg-[#5800FF] text-white rounded hover:bg-[#E900FF] disabled:opacity-50 transition-colors text-sm md:text-base"
                       >
                         Previous
                       </button>
@@ -269,14 +269,14 @@ const handlePageInput = (e) => {
                       <button
                         onClick={() => handlePageChange(currentPage + 1)}
                         disabled={!hasMore}
-                        className="paginationbutton !px-3 !py-1 md:!px-4 md:!py-2 bg-[#5800FF] text-white rounded hover:bg-[#E900FF] disabled:opacity-50 transition-colors text-sm md:text-base"
+                        className="paginationbutton !px-2 !py-1 md:!px-4 md:!py-2 bg-[#5800FF] text-white rounded hover:bg-[#E900FF] disabled:opacity-50 transition-colors text-sm md:text-base"
                       >
                         Next
                       </button>
                       <button
                         onClick={handleLastPage}
                         disabled={currentPage === Math.ceil(total / 6) - 1}
-                        className="paginationbutton !px-3 !py-1 md:!px-4 md:!py-2 bg-[#5800FF] text-white rounded hover:bg-[#E900FF] disabled:opacity-50 transition-colors text-sm md:text-base"
+                        className="paginationbutton !px-2 !py-1 md:!px-4 md:!py-2 bg-[#5800FF] text-white rounded hover:bg-[#E900FF] disabled:opacity-50 transition-colors text-sm md:text-base"
                       >
                         <img src="/last.svg" alt="Last" />
                       </button>
