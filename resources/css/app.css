@@ -271,3 +271,9 @@ small {
         transform: translateX(-1200px);
     }
 }
+
+@media only screen and (max-width: 768px) {
+    .main::before {
+        animation: none !important;
+    }
+}
