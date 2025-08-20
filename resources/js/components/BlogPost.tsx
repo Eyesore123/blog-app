@@ -618,7 +618,7 @@ const postUrl = `/posts/${post.id}`;
 
 {hasValidImageUrl && post.image_url && (
   <div
-    className="relative w-full flex flex-row justify-center items-center md:justify-start lg:items-start !mb-6 md:!mb-20 !mt-4"
+    className="relative w-full flex flex-row justify-center items-center lg:justify-start lg:items-start !mb-6 md:!mb-20 !mt-4"
     style={{ width: '100%', maxWidth: '40rem', minHeight: '16rem' }}
   >
     {/* Show spinner while image is loading */}
@@ -632,7 +632,7 @@ const postUrl = `/posts/${post.id}`;
     {!imageError && (
       <img
         src={post.image_url}
-        className={`w-full !max-w-[360px] sm:w-65 md:!max-w-none md:w-100 lg:w-150 h-auto cursor-pointer transition-opacity duration-300 ${
+        className={`w-full !max-w-[360px] sm:w-65 md:w-120 lg:max-w-120 xl:!max-w-none lg:w-150 h-auto cursor-pointer transition-opacity duration-300 ${
           imageLoading ? 'opacity-0' : 'opacity-100'
         }`}
         onClick={handleImageClick}

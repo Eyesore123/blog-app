@@ -312,3 +312,7 @@ background-position: center;
   0%   { background-position: 0 0; }
   100% { background-position: 2000px 0; }
 } */
+
+h3 {
+  @apply text-2xl md:text-3xl lg:!text-4xl !pb-2;
+}
