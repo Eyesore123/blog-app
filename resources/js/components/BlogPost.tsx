@@ -658,7 +658,7 @@ const postUrl = `/posts/${post.id}`;
   </div>
 )}
 
-    <ReactMarkdown children={post.content || '(No content)'} components={{ p: ({ node, ...props }) => ( <p className="!text-sm md:!text-base xl:!text-lg !mb-4 !mt-2 md:!min-w-[340px] max-w-[340px] md:max-w-[500px] xl:max-w-[700px] 2xl:max-w-[900px]" {...props} /> ), ul: ({ node, ...props }) => <ul className="list-disc !ml-4 !mb-4" {...props} />, ol: ({ node, ...props }) => <ol className="list-decimal !ml-4 !mb-4" {...props} />, li: ({ node, ...props }) => ( <li className="!mb-2 !ml-4 max-w-[280px] md:max-w-[500px] xl:max-w-[700px] 2xl:max-w-[900px]" {...props} /> ), a: ({ node, ...props }) => ( <a className="text-purple-400 hover:text-white transition-colors" {...props} 
+    <ReactMarkdown children={post.content || '(No content)'} components={{ p: ({ node, ...props }) => ( <p className="!text-sm md:!text-base xl:!text-lg !mb-4 !mt-2 md:!min-w-[340px] max-w-[340px] md:max-w-[500px] xl:max-w-[600px] 2xl:max-w-[900px] break-words" {...props} /> ), ul: ({ node, ...props }) => <ul className="list-disc !ml-4 !mb-4" {...props} />, ol: ({ node, ...props }) => <ol className="list-decimal !ml-4 !mb-4" {...props} />, li: ({ node, ...props }) => ( <li className="!mb-2 !ml-4 max-w-[280px] md:max-w-[500px] xl:max-w-[700px] 2xl:max-w-[900px]" {...props} /> ), a: ({ node, ...props }) => ( <a className="text-purple-400 hover:text-white transition-colors" {...props} 
       />
     ),
     strong: ({ node, ...props }) => (

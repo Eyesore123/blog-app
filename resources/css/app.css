@@ -187,9 +187,6 @@ small {
     }
 
     .article-container {
-          max-width: calc(100% - 10rem) !important; /* subtract the gap between aside and blogpost content */
-            box-sizing: border-box;
-        padding: 0 2rem; /* add some padding to make the text more readable */
         margin-left: 0;
         padding-left: 0%;
         word-break: break-word;
