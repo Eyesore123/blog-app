@@ -75,11 +75,9 @@ Portgres admin panel looks nice:
 ## Issues and improvements
 
 - Markdown editor needs some work.
-- First post on the landing page has sometimes two loading spinners for some reason. Not a big issue, because most spinners work properly and loading times are short.
 - Flash messages are not working properly so I made a workaround for pop-ups. Pop-ups work fine but they are not really flash messages.
 - Admin can create and fetch sketches of posts, but sketches are separate from upload panel so the UI is not the most intuitive.
-- Mobile styles could use some improvement.
-- Search doesn't show the best match on top - usually the best match is at the bottom of the list.
+- Search doesn't show the best match on top - usually the best match is at the bottom of the list. But it works fairly well considering that it's searching both topic and name
 
 ## Testing
 

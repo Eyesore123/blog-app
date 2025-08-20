@@ -189,6 +189,7 @@ small {
     .article-container {
         margin-left: 0;
         padding-left: 0%;
+        word-break: break-word;
     }
 
     .custompadding {
