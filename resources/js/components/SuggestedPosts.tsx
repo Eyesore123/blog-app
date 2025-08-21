@@ -26,8 +26,11 @@ export default function SuggestedPosts({ slug }: { slug: string }) {
           [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
         }
 
+        // Remove duplicates by id
+        const unique = Array.from(new Map(shuffled.map(p => [p.id, p])).values());
+
         // Only take up to 3
-        setSuggested(shuffled.slice(0, 3));
+        setSuggested(unique.slice(0, 3));
       } catch (error) {
         console.error("Error fetching suggested posts:", error);
       }

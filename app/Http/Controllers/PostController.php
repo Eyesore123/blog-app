@@ -307,11 +307,9 @@ class PostController extends Controller
             ->whereHas('tags', function ($query) use ($tagIds) {
                 $query->whereIn('tags.id', $tagIds);
             })
-            ->limit(2)
-            ->get([
-                'id', 'title', 'slug', 'image_path'
-            ]);
-
+            ->inRandomOrder()
+            ->limit(12)
+            ->get(['id', 'title', 'slug', 'image_path']);
         return response()->json($suggested);
     }
 }
