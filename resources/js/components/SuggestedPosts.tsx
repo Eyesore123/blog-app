@@ -2,20 +2,38 @@ import React, { useEffect, useState } from "react";
 import { Link } from "@inertiajs/react";
 import { useTheme } from "@/context/ThemeContext";
 
+type SuggestedPost = {
+  id: number;
+  title: string;
+  slug: string;
+  image_path: string;
+};
+
 export default function SuggestedPosts({ slug }: { slug: string }) {
-  const [suggested, setSuggested] = useState<
-    { id: number; title: string; slug: string; image_path: string }[]
-  >([]);
+  const [suggested, setSuggested] = useState<SuggestedPost[]>([]);
   const { theme } = useTheme();
 
   useEffect(() => {
-    fetch(`/posts/${slug}/suggested`)
-      .then((res) => res.json())
-      .then((data) => {
-        const shuffledData = data.sort(() => Math.random() - 0.5);
-        setSuggested(shuffledData);
-      })
-      .catch((error) => console.error(error));
+    const fetchSuggested = async () => {
+      try {
+        const res = await fetch(`/posts/${slug}/suggested`);
+        const data: SuggestedPost[] = await res.json();
+
+        // Shuffle using Fisher–Yates
+        const shuffled = [...data];
+        for (let i = shuffled.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+        }
+
+        // Only take up to 3
+        setSuggested(shuffled.slice(0, 3));
+      } catch (error) {
+        console.error("Error fetching suggested posts:", error);
+      }
+    };
+
+    fetchSuggested();
   }, [slug]);
 
   const handleImgError = (e: React.SyntheticEvent<HTMLImageElement, Event>) => {
@@ -23,11 +41,10 @@ export default function SuggestedPosts({ slug }: { slug: string }) {
     e.currentTarget.src = "/fallbackimage.jpg";
   };
 
-  if (!suggested.length) return null;
+  if (!suggested.length) return null; // parent handles the fallback message
 
   return (
     <div className="w-full flex flex-col items-center md:items-start !mt-6 md:!mt-8 !pt-4 md:!pt-6 border-t border-[#5800FF]/20 2xl:!ml-32 xl:w-4/5">
-      {/* Apply theme colors to h3 */}
       <h3
         className={`font-semibold !text-lg lg:!text-2xl xl:!text-3xl ${
           theme === "light" ? "text-black" : "text-white"
@@ -36,7 +53,7 @@ export default function SuggestedPosts({ slug }: { slug: string }) {
         Suggested posts for you:
       </h3>
       <ul className="flex flex-col !gap-4 w-full">
-        {suggested.slice(0, 3).map((post) => (
+        {suggested.map((post) => (
           <li
             key={post.id}
             className="flex items-center bg-[#5800FF]/10 rounded-lg shadow !p-3 !pl-10 hover:shadow-lg transition-shadow w-full"
