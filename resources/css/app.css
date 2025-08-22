@@ -162,10 +162,16 @@ small {
     box-shadow: inset 0 -5px 10px rgba(88, 0, 255, 0.1);
 } */
 
+@media (min-width: 1920px) and (max-width: 2559px) {
+    .custom-right-links {
+        margin-left: -17rem;
+    }
+}
+
 @media (min-width: 2200px) {
     .custom-2xl-gap {
-        gap: 20rem;
-        padding-left: 10rem;
+        gap: 10rem;
+        padding-left: 20rem;
     }
 
     .customdiv {
@@ -193,7 +199,10 @@ small {
     }
 
     .custompadding {
-        margin-left: 10rem !important;
+        margin-left: 20rem !important;
+    }
+    .custom-right-links {
+        margin-left: -34rem;
     }
 }
 
@@ -243,7 +252,7 @@ small {
     overflow: hidden;
 }
 
- .main::before {
+.main::before {
     content: '';
     position: absolute;
     top: 0;
@@ -252,7 +261,7 @@ small {
     height: 100%;
 
     background-image: repeating-linear-gradient(45deg, #ffc5f7, #ffa07a 15px, #ffffe0 10px) !important;
-    
+
     background-size: 400px 400px !important;
     background-position: 0px 0px !important;
     background-repeat: repeat !important;
@@ -315,5 +324,5 @@ background-position: center;
 } */
 
 h3 {
-  @apply text-2xl md:text-3xl lg:!text-4xl !pb-2;
+    @apply !pb-2 text-2xl md:text-3xl lg:!text-4xl;
 }

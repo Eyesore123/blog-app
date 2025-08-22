@@ -77,7 +77,7 @@ const isDefaultIcon = profileUrl === '/default-user-icon.svg';
       const user = props.auth?.user;
 
       return (
-        <div className="flex flex-col md:flex-row items-center !gap-4 md:!gap-6">
+        <div className="flex flex-col md:flex-row items-center !gap-4 md:!gap-6 custom-right-links">
           <button
             onClick={toggleTheme}
             className="!p-2 !mt-2 sm:!mt-0 hover:text-[#FFC600] transition-colors scale-125"
