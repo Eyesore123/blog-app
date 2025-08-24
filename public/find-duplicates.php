@@ -70,13 +70,12 @@ echo "</p>";
 if ($action === 'fix') {
     echo "<h2>Fixing duplicates...</h2><ul>";
 
-    // Get the sequence name automatically
-    $seqQuery = "SELECT pg_get_serial_sequence('posts', 'id') as seqname";
-    $seqName = $pdo->query($seqQuery)->fetchColumn();
-
+    // Get or create sequence
+    $seqName = $pdo->query("SELECT pg_get_serial_sequence('posts','id')")->fetchColumn();
     if (!$seqName) {
-        echo "<li style='color:red;'>Could not detect sequence for posts.id!</li>";
-        exit;
+        $seqName = 'posts_id_seq';
+        $pdo->exec("CREATE SEQUENCE IF NOT EXISTS $seqName");
+        $pdo->exec("ALTER TABLE posts ALTER COLUMN id SET DEFAULT nextval('$seqName')");
     }
 
     foreach ($duplicates as $dup) {
@@ -104,33 +103,8 @@ if ($action === 'fix') {
 
     echo "</ul><p>All duplicates fixed ✅</p>";
 
-    // --- Step 3: Reseed sequence ---
+    // Reseed sequence
     $pdo->exec("SELECT setval('$seqName', (SELECT MAX(id) FROM posts)+1)");
-
     echo "<p>Sequence <code>$seqName</code> reset to max(id)+1</p>";
     echo "<p><a href='?token=$validToken&action=repair'>🛠 Now Repair Schema</a></p>";
-}
-
-if ($action === 'repair') {
-    echo "<h2>Repairing Schema...</h2><ul>";
-
-    // Step 1: Ensure sequence exists
-    $pdo->exec("CREATE SEQUENCE IF NOT EXISTS posts_id_seq");
-    echo "<li>Ensured sequence <code>posts_id_seq</code> exists</li>";
-
-    // Step 2: Attach sequence to posts.id
-    $pdo->exec("ALTER TABLE posts ALTER COLUMN id SET DEFAULT nextval('posts_id_seq')");
-    echo "<li>Attached sequence to <code>posts.id</code></li>";
-
-    // Step 3: Drop and recreate PK
-    $pdo->exec("ALTER TABLE posts DROP CONSTRAINT IF EXISTS posts_pkey");
-    $pdo->exec("ALTER TABLE posts ADD CONSTRAINT posts_pkey PRIMARY KEY (id)");
-    echo "<li>Primary Key enforced on <code>posts.id</code></li>";
-
-    // Step 4: Reset sequence
-    $pdo->exec("SELECT setval('posts_id_seq', (SELECT MAX(id) FROM posts)+1)");
-    echo "<li>Sequence reseeded to MAX(id)+1</li>";
-
-    echo "</ul><p>Schema repair complete ✅</p>";
-    echo "<p><a href='?token=$validToken&action=check'>🔍 Re-check</a></p>";
 }
