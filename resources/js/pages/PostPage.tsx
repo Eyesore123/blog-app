@@ -153,7 +153,7 @@ const PostPage: React.FC<PostPageProps> = ({ post }) => {
                 <div className="rounded-lg bg-[#5800FF]/10 !p-4 2xl:!pl-6">
                   <h3 className="font-semibold !mb-2">About This Post</h3>
                   <p className="opacity-80">
-                    This is a blog post about {post.topic || 'various topics'}. You can find more posts on similar topics by using the search (type the name of the topic). You can also browse posts using the dropdown menu, archive page or the recommended posts section below each post. Clicking a tag on post returns all posts with the same tag.
+                    This is a blog post about {(post.topic || 'various topics').toLowerCase()}. You can find more posts on similar topics by using the search (type the name of the topic). You can also browse posts using the dropdown menu, archive page or the recommended posts section below each post. Clicking a tag on post returns all posts with the same tag.
                   </p>
                 </div>
 
