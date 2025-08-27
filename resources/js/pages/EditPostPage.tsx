@@ -34,6 +34,8 @@ const EditPostPage: React.FC<EditPostPageProps> = ({ post }) => {
   const [content, setContent] = useState(post.content);
   const [topic, setTopic] = useState(post.topic);
   const [tags, setTags] = useState<string[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [allTags, setAllTags] = useState<string[]>([]); // For autocomplete (not implemented yet)
   const [tagInput, setTagInput] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const [imageFile, setImageFile] = useState<File | null>(null);
@@ -44,6 +46,7 @@ const EditPostPage: React.FC<EditPostPageProps> = ({ post }) => {
     title: '',
     content: '',
     topic: '',
+    published: true,
     image: null as File | null,
     tags: [] as string[],
   });
@@ -64,6 +67,16 @@ const EditPostPage: React.FC<EditPostPageProps> = ({ post }) => {
     }
     setPreviewUrl(null);
   }, [imageFile]);
+
+    useEffect(() => {
+    const fetchTags = async () => {
+      const response = await axiosInstance.get('/api/tags');
+      const tags = await response.data;
+      setAllTags(tags);
+      setLoading(false);
+    };
+    fetchTags();
+  }, []);
 
   const handleAddTag = () => {
     const trimmed = tagInput.trim();
@@ -189,7 +202,7 @@ const EditPostPage: React.FC<EditPostPageProps> = ({ post }) => {
                 )}
               </div>
 
-              {/* TAGS */}
+               {/* TAGS */}
               <div>
                 <label className="block !mb-3 font-medium">Tags</label>
                 <div className="flex gap-4 !mb-2">
@@ -215,6 +228,31 @@ const EditPostPage: React.FC<EditPostPageProps> = ({ post }) => {
                   </button>
                 </div>
 
+                {loading ? (
+                  <p className="!mb-2">Loading tags...</p>
+                ) : (
+                  allTags && allTags.length > 0 && (
+                    <div className="!mb-2 !flex !flex-wrap !gap-2">
+                      {allTags
+                        .filter(tag => !tags.includes(tag))
+                        .map(tag => (
+                          <button
+                            key={tag}
+                            type="button"
+                            className="!bg-gray-200 !text-[#5800FF] !rounded !px-3 !py-1 !text-sm hover:!bg-[#5800FF] hover:!text-white transition"
+                            onClick={() => {
+                              const next = [...tags, tag];
+                              setTags(next);
+                              setData('tags', next);
+                            }}
+                          >
+                            {tag}
+                          </button>
+                        ))}
+                    </div>
+                  )
+                )}
+
                 <div className="!mt-2 flex flex-wrap gap-4">
                   {tags.map((tag) => (
                     <div
@@ -225,10 +263,9 @@ const EditPostPage: React.FC<EditPostPageProps> = ({ post }) => {
                       <button
                         type="button"
                         onClick={() => handleRemoveTag(tag)}
-                        className="!ml-2 text-white hover:text-gray-300 font-bold"
-                        aria-label={`Remove tag ${tag}`}
+                        className="!ml-2 !text-sm !text-white"
                       >
-                        ×
+                        x
                       </button>
                     </div>
                   ))}
