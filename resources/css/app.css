@@ -246,7 +246,7 @@ small {
     opacity: 0.99 !important;
 } */
 
-/* Experimental style: */
+/* Experimental style for landing page background that's under everything else: */
 
 .main {
     overflow: hidden;
@@ -292,6 +292,8 @@ small {
     }
 }
 
+/* Used for testing image bg effect */
+
 /* .main {
   position: relative;
   overflow: hidden;
@@ -325,4 +327,18 @@ background-position: center;
 
 h3 {
     @apply !pb-2 text-2xl md:text-3xl lg:!text-4xl;
+}
+
+/* Styles for editpostpage component's textarea so the text adjusts itself automatically to full height */
+
+.edittextarea {
+  resize: none;
+  overflow-y: hidden;
+  height: auto;
+  transition: height 0.2s ease-in-out;
+}
+
+.edittextarea:focus {
+  height: auto;
+  overflow-y: hidden;
 }

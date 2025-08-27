@@ -162,8 +162,8 @@ const EditPostPage: React.FC<EditPostPageProps> = ({ post }) => {
                 <textarea
                   value={content}
                   onChange={(e) => setContent(e.target.value)}
-                  className="w-full !p-2 rounded border border-[#5800FF] bg-[var(--bg-primary)]"
-                  rows={8}
+                  className="edittextarea w-full !p-2 rounded border border-[#5800FF] bg-[var(--bg-primary)]"
+                  rows={1}
                 />
               </div>
 
