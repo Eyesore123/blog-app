@@ -140,9 +140,38 @@ export function CreatePost({ onPreviewChange }: CreatePostProps) {
       handleAddTag();
     }
   }
+  // Handle form submit, original version with onSuccess and onError, remove after testing
 
-  // Handle form submit
-  function handleSubmit(e: React.FormEvent) {
+  // function handleSubmit(e: React.FormEvent) {
+  //   e.preventDefault();
+  //   setData("content", editorContent);
+
+  //   if (!data.title || !editorContent || !data.topic) {
+  //     showAlert("Missing required fields", "error");
+  //     return;
+  //   }
+  //   if (data.image && data.image instanceof File && !data.image.type.startsWith("image/")) {
+  //     showAlert("Image must be an image file", "error");
+  //     return;
+  //   }
+
+  //   post("/posts", {
+  //     onSuccess: () => {
+  //       reset("title", "content", "topic", "image", "tags");
+  //       setEditorContent("");
+  //       setTagInput("");
+  //       setImageUrl("");
+  //       showAlert("Post created successfully!", "success");
+  //     },
+  //     onError: (error: any) => {
+  //       showAlert("Error creating post", "error");
+  //       console.error("Error creating post:", error.response?.data || error);
+  //     },
+  //   });
+  // }
+
+  // Handle form submit, experimental with async and try/catch
+  async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setData("content", editorContent);
 
@@ -155,19 +184,17 @@ export function CreatePost({ onPreviewChange }: CreatePostProps) {
       return;
     }
 
-    post("/posts", {
-      onSuccess: () => {
-        reset("title", "content", "topic", "image", "tags");
-        setEditorContent("");
-        setTagInput("");
-        setImageUrl("");
-        showAlert("Post created successfully!", "success");
-      },
-      onError: (error: any) => {
-        showAlert("Error creating post", "error");
-        console.error("Error creating post:", error.response?.data || error);
-      },
-    });
+    try {
+      post("/posts");
+      reset("title", "content", "topic", "image", "tags");
+      setEditorContent("");
+      setTagInput("");
+      setImageUrl("");
+      showAlert("Post created successfully!", "success");
+    } catch (error: any) {
+      showAlert("Error creating post", "error");
+      console.error("Error creating post:", error.response?.data || error);
+    }
   }
 
   return (
