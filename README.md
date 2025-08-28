@@ -12,7 +12,7 @@ This app works like a basic blog app: it shows posts and comments. Posts can be 
 
 RSS Feed component is also included. I added custom API endpoint for recent activity, which is used in recent activity component in landing page. I also created "the latest post" endpoint which can be used to fetch the latest post. It's an alternative to rss feed (I plan to use it for my portfolio site).
 
-Admin can add new posts, edit posts and delete comments. Admin can also deactivate and - as an ultimate solution - delete accounts. Logged in users can add comments, edit their comments and delete comments when there are no replies. 
+Admin can add new posts, edit posts and delete comments. Admin can also deactivate and - as an ultimate solution - delete accounts. Logged in users can add comments, edit their comments and delete comments when there are no replies.
 
 Comments are rate limited by IP address (10 comments per day), and there are no Captchas because IP address guarantees that the limiter applies to many users from the same IP address. Rate limiter is done using custom RateLimitService class. Likewise SEO is done using a custom SEO class and then provided for the app using react-helmet-async package (it was the easiest solution considering I'm not using blade views).
 
@@ -40,17 +40,17 @@ Errors are mostly handled with custom error pages. Images use a fallback image i
 
 Automated backups - Php scripts are used for controlling backups. Cron jobs are set up with GitHub Actions to back up the db in regular intervals.
 
-Postgres admin panel is added to make the backend adjustments easier. Backend admin can run scripts, make changes to users and tables, create new admins etc. Only admin has access to the admin panel and scripts. 
+Postgres admin panel is added to make the backend adjustments easier. Backend admin can run scripts, make changes to users and tables, create new admins etc. Only admin has access to the admin panel and scripts.
 
 Blog still needs some work, though, including:
 
-1. Post translation save to database and fetch for translated posts
-2. Language toggle to navbar (global translations and post translations)
-3. Advanced features for admin (image size adjustments? etc.)
-4. Email subscription options in admin panel + an improved template for blog post email
-5. Scheduled uploads feature would be nice
-6. Customized emails that look better than the default Laravel emails in comment notiifications and email verifications. Default emails are not bad but could be better.
-7. Profile image features. I added profile image upload as an extra feature, but noticed that image compression would speed up the site a lot, and so it would be nice to add a feature to compress images. It would also be nice to have a feature to crop images, and use images in the comment section. Without compression I might have to offer images from a selection of smaller size icons.
+1. Post translation save to database and fetch for translated posts (partially done)
+2. Advanced features for admin (image size adjustments? etc.)
+3. A new tab for image management inside admin dashboard. Purpose is to create an image library window and manage images that are used inside blog text. Now admin can add text images to db only by using the image-browser script, but on the long term it would be nice to control post and text images separately.
+4. Scheduled uploads feature would be nice
+5. Customized emails that look better than the default Laravel emails in comment notiifications and email verifications. Default emails are not bad but could be better.
+6. Profile image features. I added profile image upload as an extra feature, but noticed that image compression would speed up the site a lot, and so it would be nice to add a feature to compress images. It would also be nice to have a feature to crop images, and use images in the comment section. Without compression I might have to offer images from a selection of smaller size icons.
+   Language toggle to navbar (global translations and post translations).
 
 ## Deployment
 
@@ -74,16 +74,17 @@ Portgres admin panel looks nice:
 
 ## Issues and improvements
 
-- Markdown editor needs some work.
+- Markdown editor needs work.
 - Flash messages are not working properly so I made a workaround for pop-ups. Pop-ups work fine but they are not really flash messages.
 - Admin can create and fetch sketches of posts, but sketches are separate from upload panel so the UI is not the most intuitive.
-- Search doesn't show the best match on top - usually the best match is at the bottom of the list. But it works fairly well considering that it's searching both topic and name
+- Image management needs some more work.
 
 ## Testing
 
 - This repo doesn't include a test suite.
 
 Preparations:
+
 - Set suitable cors policy before testing to avoid errors.
 - Make sure you're using sqlite database for testing and you've set the right database connection and set it up correctly.
 - "npm install" - installs all npm dependencies.
@@ -91,6 +92,7 @@ Preparations:
 - "php artisan migrate" - runs migrations.
 
 Running a server (use two different terminals):
+
 - "npm run dev" - runs vite dev server.
 - "php artisan serve" - runs laravel server.
 
@@ -98,7 +100,6 @@ Running a server (use two different terminals):
 
 After that server runs on port 8000 by default:
 http://127.0.0.1:8000
-
 
 ## What I've learned during this project
 
