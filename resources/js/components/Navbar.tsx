@@ -132,7 +132,7 @@ const isDefaultIcon = profileUrl === '/default-user-icon.svg';
   return (
     <nav className="sticky top-0 z-10 bg-[var(--nav-bg)] text-[var(--nav-text)] !p-4 flex items-center">
       {/* Left Links */}
-      <div className="hidden md:flex flex-1 justify-start items-center">
+      <div className="hidden md:flex md:!ml-6 2xl:!ml-0 flex-1 justify-start items-center">
         {renderLeftLinks()}
       </div>
 

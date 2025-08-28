@@ -176,7 +176,7 @@ const handlePageInput = (e) => {
           {/* Add: lg:-translate-x-2? */}
           <div className="flex flex-col items-center w-full lg:-translate-x-14">
             <div className="!space-y-8">
-              <h2 className="text-2xl font-bold w-full !mb-10 lg:!ml-20 xl:!ml-42 text-center lg:text-left xl:!mt-6">
+              <h2 className="text-2xl font-bold w-full !mb-10 lg:!ml-20 xl:!ml-14 text-center lg:text-left xl:!mt-6">
               Archive — Posts from {archiveYear}:
             </h2>
               {posts.data.length === 0 ? (

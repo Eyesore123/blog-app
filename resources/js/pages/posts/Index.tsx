@@ -136,7 +136,7 @@ export default function PostsIndex() {
               <div className="!space-y-6 md:!space-y-8 w-full max-w-2xl">
                 {/* Tag header */}
                 {activeTag && (
-                  <h2 className="text-2xl font-bold !mt-4 !mb-8 xl:!ml-42">
+                  <h2 className="text-2xl font-bold w-full !mb-10 lg:!ml-20 xl:!ml-14 text-center lg:text-left !mt-2">
                     Posts tagged <span className="text-[#5800FF]">#{activeTag}:</span>
                   </h2>
                 )}
