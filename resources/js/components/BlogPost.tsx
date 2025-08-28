@@ -153,22 +153,6 @@ const handleDeletePost = async (postId: number) => {
   }
 };
 
-//     useEffect(() => {
-//   async function fetchRemainingComments() {
-//     try {
-//       const response = await axiosInstance.get('/api/comments/remaining');
-//       setRemainingComments(response.data.remaining);
-//     } catch (error) {
-//       console.error('Failed to fetch remaining comments count', error);
-//     }
-//   }
-
-//   if (isSignedIn) {
-//     fetchRemainingComments();
-//   }
-// }, [isSignedIn]);
-
-
   async function handleSubmitComment(e: React.FormEvent) {
   e.preventDefault();
 
@@ -259,7 +243,6 @@ const handleImageClick = (e: React.MouseEvent<HTMLImageElement>) => {
       showAlert('Error posting reply', 'error');
     } finally {
       setSubmitting(false);
-      // setRemainingComments(prev => prev !== null ? Math.max(prev - 1, 0) : prev);
     }
   }
 
@@ -717,8 +700,6 @@ const postUrl = `/posts/${post.id}`;
         </div>
       )}
 
-
-
         <ShareButtons postUrl={postUrl} postTitle={post.title} />
         {isAdmin && (
           <button
@@ -764,12 +745,6 @@ const postUrl = `/posts/${post.id}`;
                 </button>
               </form>
             )}
-
-            {/* {isSignedIn && remainingComments !== null && (
-              <p className="text-xs text-gray-500 !mt-6">
-                You can post {remainingComments} more comment{remainingComments !== 1 ? 's' : ''} today.
-              </p>
-            )} */}
 
             {/* Display the message from backend */}
                 {message && (
