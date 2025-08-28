@@ -333,8 +333,8 @@ h3 {
 
 .edittextarea {
   height: 100%; /* add this line */
-  min-height: 100px; /* add this line */
-  resize: none;
+  min-height: 800px; /* add this line */
+  resize: vertical;
   overflow-y: hidden;
   transition: height 0.2s ease-in-out;
 }

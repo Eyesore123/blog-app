@@ -187,16 +187,17 @@ const EditPostPage: React.FC<EditPostPageProps> = ({ post }) => {
                     <img src={previewUrl} alt="Preview" className="max-w-xs rounded shadow" />
                   </div>
                 ) : post.image_url ? (
-                  <div className="!mt-2">
-                    <p className="text-sm !mb-3">Current Image:</p>
-                    <a
-                       href={`storage/${post.image_url.replace(/^\/uploads\//, '')}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      <img src={post.image_url} alt="Current" className="max-w-xs rounded shadow" />
-                    </a>
-                  </div>
+                    <div className="!mt-2">
+                      <p className="text-sm !mb-3">Current Image:</p>
+                      <a
+                        href={`https://blog-app-production-16c2.up.railway.app${post.image_url}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        <img src={`https://blog-app-production-16c2.up.railway.app${post.image_url}`} alt="Current" className="max-w-xs rounded shadow" />
+                      </a>
+                    </div>
+
                 ) : (
                   <p className="text-sm mt-1 text-gray-500">No image uploaded.</p>
                 )}
@@ -232,7 +233,7 @@ const EditPostPage: React.FC<EditPostPageProps> = ({ post }) => {
                   <p className="!mb-2">Loading tags...</p>
                 ) : (
                   allTags && allTags.length > 0 && (
-                    <div className="!mb-2 !flex !flex-wrap !gap-2">
+                    <div className="!mb-2 !mt-2 !flex !flex-wrap !gap-2">
                       {allTags
                         .filter(tag => !tags.includes(tag))
                         .map(tag => (
@@ -253,7 +254,7 @@ const EditPostPage: React.FC<EditPostPageProps> = ({ post }) => {
                   )
                 )}
 
-                <div className="!mt-2 flex flex-wrap gap-4">
+                <div className="!mt-4 flex flex-wrap gap-4">
                   {tags.map((tag) => (
                     <div
                       key={tag}
