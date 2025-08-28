@@ -332,9 +332,10 @@ h3 {
 /* Styles for editpostpage component's textarea so the text adjusts itself automatically to full height */
 
 .edittextarea {
+  height: 100%; /* add this line */
+  min-height: 100px; /* add this line */
   resize: none;
   overflow-y: hidden;
-  height: auto;
   transition: height 0.2s ease-in-out;
 }
 

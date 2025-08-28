@@ -141,7 +141,7 @@ const EditPostPage: React.FC<EditPostPageProps> = ({ post }) => {
         <Navbar />
         <Header />
         <div className="w-full mx-auto flex justify-center items-center gap-4 md:gap-10 xl:gap-18 !mt-20">
-          <main className="!p-8 mx-auto flex flex-col min-w-200 justify-center gap-8 xl:!max-w-3/4">
+          <main className="!p-8 mx-auto flex flex-col min-w-200 justify-center gap-8 xl:!max-w-2/3">
             <h1 className="text-3xl font-bold !mb-6">Edit Post</h1>
 
             <form onSubmit={handleSubmit} encType="multipart/form-data" className="!space-y-4">
@@ -190,7 +190,7 @@ const EditPostPage: React.FC<EditPostPageProps> = ({ post }) => {
                   <div className="!mt-2">
                     <p className="text-sm !mb-3">Current Image:</p>
                     <a
-                       href={`storage/${post.image_url.replace(/^uploads\//, '')}`}
+                       href={`storage/${post.image_url.replace(/^\/uploads\//, '')}`}
                       target="_blank"
                       rel="noopener noreferrer"
                     >
