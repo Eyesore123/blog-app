@@ -1,6 +1,6 @@
 # Blog App
 
-![Capture2](https://github.com/user-attachments/assets/d7b27022-45c0-47f7-b1b8-70adfe710f4f)
+<img width="2542" height="1309" alt="blogimage2" src="https://github.com/user-attachments/assets/51e2f9db-f480-43a2-8b49-b0e1772c4501" />
 
 # Made with: Laravel + React + Vite + Tailwind CSS + Inertia
 
@@ -67,6 +67,7 @@ Check start.sh for more details. There are some scripts included in this repo th
 Comment section looks like this when user is not signed in. Signed in users can reply to comments and edit/delete comments.
 
 ![blog3](https://github.com/user-attachments/assets/9b47ad5c-13f9-4858-9291-1eb1d2397d96)
+<img width="1898" height="949" alt="blogimage" src="https://github.com/user-attachments/assets/c65fca2e-b3de-4d7c-901d-c4c18be86df0" />
 
 Portgres admin panel looks nice:
 
