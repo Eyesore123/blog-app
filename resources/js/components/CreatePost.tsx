@@ -176,46 +176,53 @@ export function CreatePost({ onPreviewChange }: CreatePostProps) {
   // prevent issues when upload doesn't work (rarely happens)
 
   function handleSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    setData("content", editorContent);
+  e.preventDefault();
+  setData("content", editorContent);
 
-    if (!data.title || !editorContent || !data.topic) {
-      showAlert("Missing required fields", "error");
-      return;
-    }
-
-    if (data.image && data.image instanceof File && !data.image.type.startsWith("image/")) {
-      showAlert("Image must be an image file", "error");
-      return;
-    }
-
-    // optional watchdog timeout
-    const timeoutId = setTimeout(() => {
-      showAlert("Request timed out, please try again", "error");
-    }, 15000); // 15s
-
-    post("/posts", {
-      forceFormData: true,
-      onSuccess: () => {
-        clearTimeout(timeoutId);
-        reset("title", "content", "topic", "image", "tags");
-        setEditorContent("");
-        setTagInput("");
-        setImageUrl("");
-        showAlert("Post created successfully!", "success");
-      },
-      onError: (errors) => {
-        clearTimeout(timeoutId);
-        showAlert("Error creating post", "error");
-        console.error("Error creating post:", errors);
-        // don't reset -> user keeps data to retry
-      },
-      onFinish: () => {
-        clearTimeout(timeoutId);
-        // runs always -> ensures processing = false so no "stuck" button
-      },
-    });
+  if (!data.title || !editorContent || !data.topic) {
+    showAlert("Missing required fields", "error");
+    return;
   }
+
+  if (data.image && data.image instanceof File && !data.image.type.startsWith("image/")) {
+    showAlert("Image must be an image file", "error");
+    return;
+  }
+
+  let finished = false;
+
+  const timeoutId = setTimeout(() => {
+    if (!finished) {
+      showAlert("Request timed out, please try again", "error");
+      // 🔑 force unlock form even if Inertia doesn't
+      (data as any).processing = false;
+    }
+  }, 15000);
+
+  post("/posts", {
+    forceFormData: true,
+    onSuccess: () => {
+      finished = true;
+      clearTimeout(timeoutId);
+      reset("title", "content", "topic", "image", "tags");
+      setEditorContent("");
+      setTagInput("");
+      setImageUrl("");
+      showAlert("Post created successfully!", "success");
+    },
+    onError: (errors) => {
+      finished = true;
+      clearTimeout(timeoutId);
+      showAlert("Error creating post", "error");
+      console.error("Error creating post:", errors);
+    },
+    onFinish: () => {
+      finished = true;
+      clearTimeout(timeoutId);
+    },
+  });
+}
+
 
   return (
     <>

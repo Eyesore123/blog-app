@@ -154,7 +154,8 @@ class PostController extends Controller
                 Mail::to($subscriber->email)->send(new NewPostNotification($post, $subscriber->email));
             }
 
-            return redirect()->back()->with('success', 'Post created successfully.');
+            // return redirect()->back()->with('success', 'Post created successfully.');
+            return back(303)->with('success', 'Post created successfully.');
         } catch (\Throwable $e) {
             DB::rollBack();
             if ($imagePath) {
@@ -162,7 +163,8 @@ class PostController extends Controller
                 Log::warning("Rolled back image upload: {$imagePath}");
             }
             Log::error("Post creation failed: {$e->getMessage()}");
-            return redirect()->back()->with('error', 'Failed to create post.');
+            // return redirect()->back()->with('error', 'Failed to create post.');
+            return back(303)->with('error', 'Failed to create post.');
         }
     }
 
