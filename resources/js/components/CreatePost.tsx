@@ -223,7 +223,6 @@ export function CreatePost({ onPreviewChange }: CreatePostProps) {
   });
 }
 
-
   return (
     <>
       <h3 className="!mb-6">Create New Post:</h3>
