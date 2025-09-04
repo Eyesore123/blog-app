@@ -1,5 +1,6 @@
 import { useEffect, useState, useMemo } from "react";
-import axios from "axios";
+import axiosInstance from "../components/axiosInstance";
+import { getCsrfToken } from "../components/auth";
 import SimpleMDE from "react-simplemde-editor";
 import "easymde/dist/easymde.min.css";
 import { useAlert } from '../context/AlertContext';
@@ -136,7 +137,6 @@ export function CreatePost({ onPreviewChange }: CreatePostProps) {
     }
   }
 
-  // Handle form submit (manual axios like EditPost)
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
 
@@ -161,7 +161,11 @@ export function CreatePost({ onPreviewChange }: CreatePostProps) {
 
     try {
       setSubmitting(true);
-      await axios.post("/posts", formData, {
+
+      // important for Laravel Sanctum/CSRF
+      await getCsrfToken();
+
+      await axiosInstance.post("/posts", formData, {
         headers: { "Content-Type": "multipart/form-data" },
       });
 
@@ -179,7 +183,7 @@ export function CreatePost({ onPreviewChange }: CreatePostProps) {
       console.error("Error creating post:", error.response?.data || error);
       showAlert("Error creating post", "error");
     } finally {
-      setSubmitting(false); // always resets
+      setSubmitting(false); // always returns UI to normal
     }
   }
 
