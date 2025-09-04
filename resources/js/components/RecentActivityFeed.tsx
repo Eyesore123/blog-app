@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { router } from '@inertiajs/react';
 
 type PostActivity = {
   type: 'post';
@@ -87,8 +88,11 @@ const RecentActivityFeed: React.FC = () => {
             <li key={index}>
               <a
                 href={activity.type === 'post' ? activity.url : activity.postUrl || '#'}
-                target="_blank"
-                rel="noopener noreferrer"
+                onClick={(e) => {
+                  e.preventDefault();
+                  router.visit(activity.type === 'post' ? activity.url : activity.postUrl || '#');
+                  window.scrollTo({ top: 0, behavior: 'smooth' });
+                }}
                 className="block w-full text-left !px-2 !py-1 rounded hover:bg-[#5800FF]/20"
               >
                 <span className="font-medium">
