@@ -343,6 +343,7 @@ const handleImageClick = (e: React.MouseEvent<HTMLImageElement>) => {
       // Use the post ID as a fallback when slug is missing
       router.visit(`/post/${post.id}`);
     }
+    window.scrollTo({ top: 0, behavior: 'smooth' })
   }
   
   const hasValidImageUrl = Boolean(
