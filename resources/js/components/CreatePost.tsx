@@ -1,10 +1,11 @@
 import { useEffect, useState, useMemo } from "react";
-import { useForm } from "@inertiajs/react";
 import SimpleMDE from "react-simplemde-editor";
 import "easymde/dist/easymde.min.css";
 import { useAlert } from '../context/AlertContext';
 import SketchForm from "./SketchForm";
 import SketchList from "./SketchList";
+import axiosInstance from "../components/axiosInstance";
+import { getCsrfToken } from "../components/auth";
 
 type CreatePostProps = {
   onPreviewChange?: (preview: {
@@ -15,26 +16,25 @@ type CreatePostProps = {
 };
 
 export function CreatePost({ onPreviewChange }: CreatePostProps) {
-  const { data, setData, post, processing, errors, reset } = useForm({
-    title: "",
-    content: "",
-    topic: "",
-    published: true,
-    image: null as File | string | null,
-    tags: [] as string[],
-  });
+  const { showAlert } = useAlert();
 
+  // State
+  const [title, setTitle] = useState("");
+  const [topic, setTopic] = useState("");
+  const [editorContent, setEditorContent] = useState("");
+  const [published, setPublished] = useState(true);
+  const [imageFile, setImageFile] = useState<File | null>(null);
   const [imageUrl, setImageUrl] = useState<string>("");
-  const [editorContent, setEditorContent] = useState(data.content);
+  const [tags, setTags] = useState<string[]>([]);
   const [tagInput, setTagInput] = useState("");
   const [allTags, setAllTags] = useState<string[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
-  const { showAlert } = useAlert();
+  const [loading, setLoading] = useState(true);
+  const [submitting, setSubmitting] = useState(false);
 
   // Fetch all tags
   useEffect(() => {
     const fetchTags = async () => {
-      const response = await fetch('/api/tags');
+      const response = await fetch("/api/tags");
       const tags = await response.json();
       setAllTags(tags);
       setLoading(false);
@@ -42,7 +42,7 @@ export function CreatePost({ onPreviewChange }: CreatePostProps) {
     fetchTags();
   }, []);
 
-  // Handle loading a sketch into the post form
+  // Handle loading a sketch into the form
   function handleLoadSketch(sketch: {
     title: string;
     content: string;
@@ -51,14 +51,13 @@ export function CreatePost({ onPreviewChange }: CreatePostProps) {
     image?: string;
     published?: true | boolean;
   }) {
-    setData("title", sketch.title);
+    setTitle(sketch.title);
     setEditorContent(sketch.content);
-    setData("content", sketch.content);
-    setData("topic", sketch.topic || "");
-    setData("tags", sketch.tags || []);
-    setData("image", sketch.image || "");
-    setData("published", sketch.published || true);
+    setTopic(sketch.topic || "");
+    setTags(sketch.tags || []);
+    setPublished(sketch.published ?? true);
     setImageUrl(sketch.image || "");
+    setImageFile(null); // reset file input
   }
 
   // Editor options
@@ -70,105 +69,125 @@ export function CreatePost({ onPreviewChange }: CreatePostProps) {
     []
   );
 
-  // Handle editor content change
+  // Editor content change
   function handleEditorChange(value: string) {
     setEditorContent(value);
-    setData('content', value);
     onPreviewChange?.({
-      title: data.title,
+      title,
       content: value,
       image_url: imageUrl,
     });
   }
 
-  // Handle image input change
+  // Image input change
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
-      setData("image", e.target.files[0]);
-      setImageUrl(""); // Will be set in useEffect below
+      setImageFile(e.target.files[0]);
+      setImageUrl(""); // will be set in useEffect below
     }
   };
 
-  // Show image preview for both file and URL
+  // Show image preview
   useEffect(() => {
-    if (data.image instanceof File) {
+    if (imageFile) {
       const reader = new FileReader();
       reader.onload = () => {
         const result = reader.result as string;
         setImageUrl(result);
         onPreviewChange?.({
-          title: data.title,
+          title,
           content: editorContent,
           image_url: result,
         });
       };
-      reader.readAsDataURL(data.image);
-    } else if (typeof data.image === "string" && data.image) {
-      setImageUrl(data.image);
+      reader.readAsDataURL(imageFile);
+    } else if (imageUrl) {
       onPreviewChange?.({
-        title: data.title,
+        title,
         content: editorContent,
-        image_url: data.image,
+        image_url: imageUrl,
       });
     } else {
-      setImageUrl('');
       onPreviewChange?.({
-        title: data.title,
+        title,
         content: editorContent,
-        image_url: '',
+        image_url: "",
       });
     }
-    // eslint-disable-next-line
-  }, [data.image]);
+  }, [imageFile]);
 
   // Tag handling
-  function handleAddTag() {
-    const name = tagInput.trim();
-    if (name && !data.tags.includes(name)) {
-      setData("tags", [...data.tags, name]);
+  const handleAddTag = () => {
+    const trimmed = tagInput.trim();
+    if (trimmed && !tags.includes(trimmed)) {
+      setTags([...tags, trimmed]);
     }
     setTagInput("");
-  }
+  };
 
-  function handleRemoveTag(tag: string) {
-    setData("tags", data.tags.filter((t) => t !== tag));
-  }
+  const handleRemoveTag = (tag: string) => {
+    setTags(tags.filter((t) => t !== tag));
+  };
 
-  function handleTagKeyDown(e: React.KeyboardEvent<HTMLInputElement>) {
+  const handleTagKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") {
       e.preventDefault();
       handleAddTag();
     }
-  }
-  // Handle form submit, original version with onSuccess and onError, without Axios
+  };
 
-  function handleSubmit(e: React.FormEvent) {
+  // Handle form submission
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setData("content", editorContent);
 
-    if (!data.title || !editorContent || !data.topic) {
+    if (!title || !editorContent || !topic) {
       showAlert("Missing required fields", "error");
       return;
     }
-    if (data.image && data.image instanceof File && !data.image.type.startsWith("image/")) {
+
+    if (imageFile && !imageFile.type.startsWith("image/")) {
       showAlert("Image must be an image file", "error");
       return;
     }
 
-    post("/posts", {
-      onSuccess: () => {
-        reset("title", "content", "topic", "image", "tags");
-        setEditorContent("");
-        setTagInput("");
-        setImageUrl("");
-        showAlert("Post created successfully!", "success");
-      },
-      onError: (error: any) => {
-        showAlert("Error creating post", "error");
-        console.error("Error creating post:", error.response?.data || error);
-      },
-    });
-  }
+    setSubmitting(true);
+
+    try {
+      await getCsrfToken();
+
+      const formData = new FormData();
+      formData.append("title", title);
+      formData.append("content", editorContent);
+      formData.append("topic", topic);
+      formData.append("published", published ? "1" : "0");
+
+      if (imageFile) {
+        formData.append("image", imageFile);
+      }
+
+      tags.forEach((tag, i) => formData.append(`tags[${i}]`, tag));
+
+      await axiosInstance.post("/posts", formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+
+      // Reset form
+      setTitle("");
+      setTopic("");
+      setEditorContent("");
+      setTags([]);
+      setTagInput("");
+      setImageFile(null);
+      setImageUrl("");
+
+      showAlert("Post created successfully!", "success");
+    } catch (error: any) {
+      console.error("Error creating post:", error.response?.data || error);
+      showAlert("Error creating post", "error");
+    } finally {
+      setSubmitting(false);
+    }
+  };
 
   return (
     <>
@@ -182,25 +201,19 @@ export function CreatePost({ onPreviewChange }: CreatePostProps) {
         <input
           type="text"
           placeholder="Post title"
-          value={data.title}
-          onChange={(e) => setData("title", e.target.value)}
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
           className="!w-full !p-2 !rounded !border !border-[#5800FF] !bg-[var(--bg-primary)]"
         />
-        {errors.title && (
-          <p className="!text-red-600 !text-sm">{errors.title}</p>
-        )}
 
         {/* Topic */}
         <input
           type="text"
           placeholder="Topic (e.g., Web Development)"
-          value={data.topic}
-          onChange={(e) => setData("topic", e.target.value)}
+          value={topic}
+          onChange={(e) => setTopic(e.target.value)}
           className="!w-full !p-2 !rounded !border !border-[#5800FF] !bg-[var(--bg-primary)]"
         />
-        {errors.topic && (
-          <p className="!text-red-600 !text-sm">{errors.topic}</p>
-        )}
 
         {/* Content */}
         <SimpleMDE
@@ -209,9 +222,6 @@ export function CreatePost({ onPreviewChange }: CreatePostProps) {
           options={editorOptions}
           className="!w-full !p-2 !rounded !border !border-[#5800FF] !bg-[var(--bg-primary)]"
         />
-        {errors.content && (
-          <p className="!text-red-600 !text-sm">{errors.content}</p>
-        )}
 
         {/* Image Upload */}
         <input
@@ -221,10 +231,11 @@ export function CreatePost({ onPreviewChange }: CreatePostProps) {
           className="!w-full !p-2 !rounded !border !border-[#5800FF] !bg-[var(--bg-primary)]"
         />
         {imageUrl && (
-          <img src={imageUrl} alt="Preview" className="!max-w-xs !my-2 !rounded" />
-        )}
-        {errors.image && (
-          <p className="!text-red-600 !text-sm">{errors.image}</p>
+          <img
+            src={imageUrl}
+            alt="Preview"
+            className="!max-w-xs !my-2 !rounded"
+          />
         )}
 
         {/* Tags */}
@@ -233,16 +244,16 @@ export function CreatePost({ onPreviewChange }: CreatePostProps) {
           {loading ? (
             <p className="!mb-2">Loading tags...</p>
           ) : (
-            allTags && allTags.length > 0 && (
+            allTags.length > 0 && (
               <div className="!mb-2 !flex !flex-wrap !gap-2">
                 {allTags
-                  .filter(tag => !data.tags.includes(tag))
-                  .map(tag => (
+                  .filter((tag) => !tags.includes(tag))
+                  .map((tag) => (
                     <button
                       key={tag}
                       type="button"
                       className="!bg-gray-200 !text-[#5800FF] !rounded !px-3 !py-1 !text-sm hover:!bg-[#5800FF] hover:!text-white transition"
-                      onClick={() => setData("tags", [...data.tags, tag])}
+                      onClick={() => setTags([...tags, tag])}
                     >
                       {tag}
                     </button>
@@ -268,11 +279,9 @@ export function CreatePost({ onPreviewChange }: CreatePostProps) {
               Add
             </button>
           </div>
-          {errors.tags && (
-            <p className="!text-red-600 !text-sm">{errors.tags}</p>
-          )}
+
           <div className="!mt-2 !flex !flex-wrap !gap-2">
-            {data.tags.map((tag) => (
+            {tags.map((tag) => (
               <div
                 key={tag}
                 className="!flex !items-center !bg-[#5800FF] !text-white !rounded !px-3 !py-1 !text-sm"
@@ -294,12 +303,13 @@ export function CreatePost({ onPreviewChange }: CreatePostProps) {
         {/* Submit */}
         <button
           type="submit"
-          disabled={!data.title || !editorContent || !data.topic || processing}
+          disabled={!title || !editorContent || !topic || submitting}
           className="!w-full !px-4 !py-2 !mb-10 !bg-[#5800FF] !text-white !rounded !hover:bg-[#E900FF] !disabled:opacity-50"
         >
-          {processing ? "Creating..." : "Create Post"}
+          {submitting ? "Creating..." : "Create Post"}
         </button>
       </form>
+
       <SketchForm />
       <SketchList onLoadSketch={handleLoadSketch} />
     </>
