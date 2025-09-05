@@ -111,15 +111,18 @@ class PostController extends Controller
         ]);
 
         $imagePath = null;
+
         DB::beginTransaction();
 
         try {
+            // Save image first
             if ($request->hasFile('image')) {
                 $file      = $request->file('image');
                 $imagePath = $file->store('uploads', 'public');
                 Log::info("Image saved at: {$imagePath}");
             }
 
+            // Generate unique slug
             $baseSlug = Str::slug($validated['title']);
             $slug     = $baseSlug;
             $counter  = 1;
@@ -128,6 +131,7 @@ class PostController extends Controller
                 $counter++;
             }
 
+            // Create post
             $post = Post::create([
                 'title'      => $validated['title'],
                 'content'    => $validated['content'],
@@ -138,6 +142,7 @@ class PostController extends Controller
                 'slug'       => $slug,
             ]);
 
+            // Sync tags
             if (!empty($validated['tags'])) {
                 $tagIds = collect($validated['tags'])
                     ->map(fn($name) => Tag::firstOrCreate(['name' => $name])->id)
@@ -145,17 +150,10 @@ class PostController extends Controller
                 $post->tags()->sync($tagIds);
             }
 
+            // Commit transaction — post and image are safe now
             DB::commit();
             Log::info("Post created with ID: {$post->id}", ['post_data' => $post->toArray()]);
 
-            $subscribers = User::where('is_subscribed', 1)->get();
-
-            foreach ($subscribers as $subscriber) {
-                Mail::to($subscriber->email)->send(new NewPostNotification($post, $subscriber->email));
-            }
-
-            return redirect()->back()->with('success', 'Post created successfully.');
-            // return back(303)->with('success', 'Post created successfully.');
         } catch (\Throwable $e) {
             DB::rollBack();
             if ($imagePath) {
@@ -164,9 +162,22 @@ class PostController extends Controller
             }
             Log::error("Post creation failed: {$e->getMessage()}");
             return redirect()->back()->with('error', 'Failed to create post.');
-            // return back(303)->with('error', 'Failed to create post.');
         }
+
+        // Send emails **after** committing the post
+        try {
+            $subscribers = User::where('is_subscribed', 1)->get();
+            foreach ($subscribers as $subscriber) {
+                Mail::to($subscriber->email)->send(new NewPostNotification($post, $subscriber->email));
+            }
+        } catch (\Throwable $e) {
+            // Log email errors, but do NOT rollback post or delete image
+            Log::error("Email sending failed: {$e->getMessage()}");
+        }
+
+        return redirect()->back()->with('success', 'Post created successfully.');
     }
+
 
     /**
      * Display a single post (by ID or slug).
