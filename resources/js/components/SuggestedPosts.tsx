@@ -61,7 +61,7 @@ export default function SuggestedPosts({ slug }: { slug: string }) {
             key={post.id}
             className="flex items-center bg-[#5800FF]/10 rounded-lg shadow !p-3 !pl-10 hover:shadow-lg transition-shadow w-full"
           >
-            <Link href={`/posts/${post.slug}`} className="flex items-center w-full">
+            <Link href={`/posts/${post.slug}`} className="flex items-center w-full" onClick={(e) => window.scrollTo({ top: 0, behavior: 'smooth' })}>
               <img
                 src={post.image_path ? `/storage/${post.image_path}` : "/fallbackimage.jpg"}
                 alt={post.title}
