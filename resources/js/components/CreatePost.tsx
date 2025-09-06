@@ -167,20 +167,24 @@ export function CreatePost({ onPreviewChange }: CreatePostProps) {
 
       tags.forEach((tag, i) => formData.append(`tags[${i}]`, tag));
 
-      await axiosInstance.post("/posts", formData, {
+      const response = await axiosInstance.post("/posts", formData, {
         headers: { "Content-Type": "multipart/form-data" },
       });
 
-      // Reset form
-      setTitle("");
-      setTopic("");
-      setEditorContent("");
-      setTags([]);
-      setTagInput("");
-      setImageFile(null);
-      setImageUrl("");
+      if (response.data?.success) {
+        // Reset form
+        setTitle("");
+        setTopic("");
+        setEditorContent("");
+        setTags([]);
+        setTagInput("");
+        setImageFile(null);
+        setImageUrl("");
 
-      showAlert("Post created successfully!", "success");
+        showAlert(response.data.message, "success");
+      } else {
+        showAlert("Unexpected response from server", "error");
+      }
     } catch (error: any) {
       console.error("Error creating post:", error.response?.data || error);
       showAlert("Error creating post", "error");
