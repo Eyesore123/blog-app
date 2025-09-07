@@ -167,9 +167,7 @@ export function CreatePost({ onPreviewChange }: CreatePostProps) {
 
       tags.forEach((tag, i) => formData.append(`tags[${i}]`, tag));
 
-      const response = await axiosInstance.post("/posts", formData, {
-        headers: { "Content-Type": "multipart/form-data" },
-      });
+      const response = await axiosInstance.post("/posts", formData, { timeout: 10000 });
 
       if (response.data?.success) {
         // Reset form

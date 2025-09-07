@@ -80,15 +80,10 @@ class PostController extends Controller
     return Inertia::render('MainPage', $props);
 }
 
-
-    /**
-     * Show form to create a new post — omitted here if you handle that on the front end.
-     */
-
     /**
      * Store a newly created post, resolving tag names to IDs.
      */
-    public function store(Request $request)
+     public function store(Request $request)
     {
         Log::info('Post creation request received', [
             'has_file'  => $request->hasFile('image'),
@@ -114,15 +109,18 @@ class PostController extends Controller
         ]);
 
         $imagePath = null;
+
         DB::beginTransaction();
 
         try {
+            // Save image
             if ($request->hasFile('image')) {
                 $file      = $request->file('image');
                 $imagePath = $file->store('uploads', 'public');
                 Log::info("Image saved at: {$imagePath}");
             }
 
+            // Generate unique slug
             $baseSlug = Str::slug($validated['title']);
             $slug     = $baseSlug;
             $counter  = 1;
@@ -131,6 +129,7 @@ class PostController extends Controller
                 $counter++;
             }
 
+            // Create post
             $post = Post::create([
                 'title'      => $validated['title'],
                 'content'    => $validated['content'],
@@ -141,6 +140,7 @@ class PostController extends Controller
                 'slug'       => $slug,
             ]);
 
+            // Sync tags
             if (!empty($validated['tags'])) {
                 $tagIds = collect($validated['tags'])
                     ->map(fn($name) => Tag::firstOrCreate(['name' => $name])->id)
@@ -150,7 +150,6 @@ class PostController extends Controller
 
             DB::commit();
             Log::info("Post created with ID: {$post->id}", ['post_data' => $post->toArray()]);
-
         } catch (\Throwable $e) {
             DB::rollBack();
             if ($imagePath) {
@@ -166,10 +165,11 @@ class PostController extends Controller
             return redirect()->back()->with('error', 'Failed to create post.');
         }
 
+        // Queue emails after DB commit
         try {
             $subscribers = User::where('is_subscribed', 1)->get();
             foreach ($subscribers as $subscriber) {
-                Mail::to($subscriber->email)->send(new NewPostNotification($post, $subscriber->email));
+                Mail::to($subscriber->email)->queue(new NewPostNotification($post, $subscriber->email));
             }
         } catch (\Throwable $e) {
             Log::error("Email sending failed: {$e->getMessage()}");
