@@ -18,7 +18,7 @@ echo "<!DOCTYPE html>
 <div class='max-w-5xl mx-auto'>
     <h1 class='text-2xl font-bold mb-6'>🗓 Update Post Dates</h1>";
 
-// Get database connection from DATABASE_URL
+// Parse DATABASE_URL for PostgreSQL
 $databaseUrl = getenv('DATABASE_URL');
 if (!$databaseUrl) {
     echo "<p class='text-red-600'>DATABASE_URL is not set!</p></div></body></html>";
@@ -27,14 +27,15 @@ if (!$databaseUrl) {
 
 $dbParts = parse_url($databaseUrl);
 $host = $dbParts['host'] ?? '';
-$port = $dbParts['port'] ?? 3306;
+$port = $dbParts['port'] ?? 5432;
 $database = ltrim($dbParts['path'] ?? '', '/');
 $username = $dbParts['user'] ?? '';
 $password = $dbParts['pass'] ?? '';
 
 try {
-    $pdo = new PDO("mysql:host=$host;port=$port;dbname=$database;charset=utf8", $username, $password, [
+    $pdo = new PDO("pgsql:host=$host;port=$port;dbname=$database", $username, $password, [
         PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+        PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
     ]);
 
     // Handle form submission
@@ -54,9 +55,9 @@ try {
               </div>";
     }
 
-    // Fetch all posts
+    // Fetch posts
     $stmt = $pdo->query("SELECT id, title, created_at, updated_at FROM posts ORDER BY id DESC");
-    $posts = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    $posts = $stmt->fetchAll();
 
     echo "<form method='POST' class='bg-white p-6 rounded-lg shadow'>
             <table class='w-full table-auto'>
@@ -70,7 +71,10 @@ try {
                 <tbody>";
 
     foreach ($posts as $post) {
-        $displayValue = ($post['updated_at'] !== $post['created_at']) ? $post['updated_at'] : '';
+        // Format for datetime-local input
+        $displayValue = ($post['updated_at'] !== $post['created_at']) 
+                        ? date('Y-m-d\TH:i', strtotime($post['updated_at'])) 
+                        : '';
         echo "<tr class='hover:bg-gray-50'>
                 <td class='p-2 border'>{$post['id']}</td>
                 <td class='p-2 border'>{$post['title']}</td>
@@ -86,7 +90,7 @@ try {
     </form>";
 
 } catch (PDOException $e) {
-    echo "<p class='text-red-600'>Database error: " . $e->getMessage() . "</p>";
+    echo "<p class='text-red-600'>Database error: " . htmlspecialchars($e->getMessage()) . "</p>";
 }
 
 echo "<div class='mt-6'>
