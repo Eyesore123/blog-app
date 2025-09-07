@@ -15,7 +15,7 @@ echo "<!DOCTYPE html>
     <link href='https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css' rel='stylesheet'>
 </head>
 <body class='bg-gray-100 p-8'>
-<div class='max-w-5xl mx-auto'>
+<div class='max-w-6xl mx-auto'>
     <h1 class='text-2xl font-bold mb-6'>🗓 Update Post Dates</h1>";
 
 // Parse DATABASE_URL for PostgreSQL
@@ -42,12 +42,16 @@ try {
     if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['updated_at'])) {
         foreach ($_POST['updated_at'] as $id => $newDate) {
             $id = intval($id);
-            if ($newDate) {
-                $stmt = $pdo->prepare("UPDATE posts SET updated_at = :updated_at WHERE id = :id");
-                $stmt->execute([
-                    ':updated_at' => $newDate,
-                    ':id' => $id,
-                ]);
+            if (!empty($newDate)) {
+                // Convert from dd/mm/yyyy, HH.MM.SS to PostgreSQL timestamp
+                $dt = DateTime::createFromFormat('d/m/Y, H.i.s', $newDate);
+                if ($dt) {
+                    $stmt = $pdo->prepare("UPDATE posts SET updated_at = :updated_at WHERE id = :id");
+                    $stmt->execute([
+                        ':updated_at' => $dt->format('Y-m-d H:i:s'),
+                        ':id' => $id,
+                    ]);
+                }
             }
         }
         echo "<div class='bg-green-100 border border-green-400 p-4 rounded mb-4'>
@@ -59,27 +63,33 @@ try {
     $stmt = $pdo->query("SELECT id, title, created_at, updated_at FROM posts ORDER BY id DESC");
     $posts = $stmt->fetchAll();
 
-    echo "<form method='POST' class='bg-white p-6 rounded-lg shadow'>
+    echo "<form method='POST' class='bg-white p-6 rounded-lg shadow overflow-x-auto'>
             <table class='w-full table-auto'>
                 <thead>
                     <tr class='bg-gray-200'>
                         <th class='p-2 border'>ID</th>
                         <th class='p-2 border'>Title</th>
+                        <th class='p-2 border'>Created At</th>
                         <th class='p-2 border'>Updated At</th>
                     </tr>
                 </thead>
                 <tbody>";
 
     foreach ($posts as $post) {
-        // Format for datetime-local input
-        $displayValue = ($post['updated_at'] !== $post['created_at']) 
-                        ? date('Y-m-d\TH:i', strtotime($post['updated_at'])) 
-                        : '';
+        $createdFmt = date('d/m/Y, H.i.s', strtotime($post['created_at']));
+        $updatedFmt = ($post['updated_at'] !== $post['created_at'])
+                      ? date('d/m/Y, H.i.s', strtotime($post['updated_at']))
+                      : $createdFmt;
+
         echo "<tr class='hover:bg-gray-50'>
                 <td class='p-2 border'>{$post['id']}</td>
                 <td class='p-2 border'>{$post['title']}</td>
                 <td class='p-2 border'>
-                    <input type='datetime-local' name='updated_at[{$post['id']}]' value='{$displayValue}' class='border p-1 rounded w-full' />
+                    <input type='text' value='{$createdFmt}' readonly class='border p-1 rounded w-full bg-gray-100' />
+                </td>
+                <td class='p-2 border'>
+                    <input type='text' name='updated_at[{$post['id']}]' value='{$updatedFmt}' class='border p-1 rounded w-full' />
+                    <p class='text-xs text-gray-500'>Format: dd/mm/yyyy, HH.MM.SS</p>
                 </td>
               </tr>";
     }
