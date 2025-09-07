@@ -13,6 +13,7 @@ import { HelmetProvider } from 'react-helmet-async';
 // import { ErrorBoundary } from './pages/errors/ErrorBoundary';
 import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
 import  { router } from '@inertiajs/react';
+import CookieConsent from './components/CookieConsent';
 
 router.on('error', (error) => {
   console.error('Inertia Error:', error);
@@ -31,6 +32,7 @@ createInertiaApp({
         <AlertProvider>
           <ConfirmProvider>
         {/* <ErrorBoundary> */}
+        <CookieConsent />
           <App {...props} />
         {/* </ErrorBoundary> */}
         </ConfirmProvider>

@@ -12,6 +12,7 @@ use App\Http\Middleware\CustomThrottleRequests;
 use App\Http\Middleware\RewriteAssetUrls;
 use App\Http\Middleware\HttpsRedirect;
 use App\Http\Middleware\HandleCors;
+use App\Http\Middleware\CheckCookieContent;
 
 class Kernel extends HttpKernel
 {
@@ -27,6 +28,7 @@ class Kernel extends HttpKernel
         ContentSecurityPolicy::class,
         HttpsRedirect::class,
         RewriteAssetUrls::class,
+        CheckCookieContent::class,
     ],
         
         'api' => [

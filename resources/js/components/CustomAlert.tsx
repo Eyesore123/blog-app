@@ -93,7 +93,7 @@ const CustomAlert: React.FC<AlertProps> = ({
           </div>
         </div>
 
-        {/* Close button, in case  you want to use it */}
+        {/* Close button, in case you want to use it */}
         {/* <button
           onClick={() => {
             setIsVisible(false);

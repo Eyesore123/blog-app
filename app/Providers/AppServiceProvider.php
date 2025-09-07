@@ -33,6 +33,7 @@ class AppServiceProvider extends ServiceProvider
                     'alert' => session('alert'),
                 ];
             },
+            // 'cookieConsent' => fn () => app('cookieConsent'),
         ]);
 
         // Register custom Blade directive

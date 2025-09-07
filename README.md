@@ -50,7 +50,7 @@ Blog still needs some work, though, including:
 4. Scheduled uploads feature would be nice
 5. Customized emails that look better than the default Laravel emails in comment notiifications and email verifications. Default emails are not bad but could be better.
 6. Profile image features. I added profile image upload as an extra feature, but noticed that image compression would speed up the site a lot, and so it would be nice to add a feature to compress images. It would also be nice to have a feature to crop images, and use images in the comment section. Without compression I might have to offer images from a selection of smaller size icons.
-   Language toggle to navbar (global translations and post translations).
+7. Backend scripts need organizing
 
 ## Deployment
 
@@ -76,7 +76,8 @@ Portgres admin panel looks nice:
 ## Issues and improvements
 
 - Markdown editor needs work.
-- Flash messages are not working properly so I made a workaround for pop-ups. Pop-ups work fine but they are not really flash messages.
+- Cookie popup is missing - I plan to add it and use a similar layout in my portfolio site
+- Flash messages are not working properly so I made a workaround for pop-ups.
 - Admin can create and fetch sketches of posts, but sketches are separate from upload panel so the UI is not the most intuitive.
 - Image management needs some more work.
 
@@ -105,6 +106,7 @@ http://127.0.0.1:8000
 ## What I've learned during this project
 
 - How to use Laravel with Inertia. It's a great way to use React with Laravel. Blade views are not used (app.blade.php is the only blade file), but react components are used and coupled with Laravel classes, models, controllers and routing. This is great for performance and SEO. Laravel backend works normally and React frontend works normally. Inertia is used to render the React components on the client side with backend data, with the classic server-side routing that still has the SPA feel and features (React).
+- How to pass data from backend to frontend via Inertia
 - How to add custom API endpoints to Laravel.
 - How to use models, controllers, routes and views in Laravel (views that are rendered with Inertia).
 - How to add and use a markdown editor.
@@ -121,5 +123,5 @@ http://127.0.0.1:8000
 - It is quite painful to get all the routes and controllers working without hiccups. One subtle change anywhere can break the whole thing. For example, I decided to make changes to account removal logic and suddenly I had to make changes not only to frontend but also to user model, comment model, Accountcontroller, Commentcontroller and to user table with additional migrations.
 - Deployment can also be a pain if you don't know all the ins and outs of the deployment process. I've never deployed a Laravel app before so I had to learn a lot about it. How Laravel caching works, how images should be loaded (and stored), how to set cors policies properly etc.
 - Laravel has some default behaviour and structuring that can be extremely hard to override. For example, I spent a lot of time trying to figure out why I can't redirect a user from email link to /login/success route (it went to /login every time). I was trying to keep the user signed out during the email verification process, but it was not working. I tried everything. Eventually I decided to keep the user signed in and redirect to /login/success route after the email verification, and it worked. Lesson learned: it's usually a good idea to follow Laravel's default behaviour. You can't tweak everything. Even if you could, it would require dismantling the Laravel default structure and rebuilding some of the features from scratch.
-- Laravel + React + Inertia combo would not be very practical to work with for a large team. That's because making even small changes requires intricate knowledge of the project structure. Frontend and backend are tightly intertwined; it's hard to make even slight changes without changing both frontend code and backend code at the same time. Blade views are the default Laravel way of creating templates for the frontend, so using React components instead of blade views can be a bit tricky at times and not for the faint of heart.
+- Laravel + React + Inertia combo would not be very practical to work with for a large team. That's because making even small changes requires intricate knowledge of the project structure. It's hard to make even slight changes without changing both frontend code and backend code at the same time. Blade views are the default Laravel way of creating templates for the frontend, so using React components instead of blade views can be a bit tricky at times and not for the faint of heart.
 - Vite was causing more issues than usual in my Laravel setup. I had to add bash scripts and other scripts, a Vite helper, and an htaccess file, and then I had to make some extra changes to providers and vite config file just to get the vite build to work.
