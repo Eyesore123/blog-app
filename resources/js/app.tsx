@@ -14,6 +14,7 @@ import { HelmetProvider } from 'react-helmet-async';
 import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
 import  { router } from '@inertiajs/react';
 import CookieConsent from './components/CookieConsent';
+import BackToTopButton from './components/BackToTopButton';
 
 router.on('error', (error) => {
   console.error('Inertia Error:', error);
@@ -33,6 +34,7 @@ createInertiaApp({
           <ConfirmProvider>
         {/* <ErrorBoundary> */}
         <CookieConsent />
+        <BackToTopButton />
           <App {...props} />
         {/* </ErrorBoundary> */}
         </ConfirmProvider>
