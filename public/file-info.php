@@ -13,13 +13,19 @@ try {
         exit;
     }
     
-    // Sanitize filename to prevent directory traversal
     $filename = basename($filename);
     $filePath = __DIR__ . '/storage/' . $filename;
     
     if (!file_exists($filePath)) {
         http_response_code(404);
         echo json_encode(['error' => 'File not found']);
+        exit;
+    }
+    
+    // Additional check to ensure the file is a valid file in the storage directory
+    if (!is_file($filePath)) {
+        http_response_code(400);
+        echo json_encode(['error' => 'Invalid file']);
         exit;
     }
     

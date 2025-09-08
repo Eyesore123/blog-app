@@ -37,6 +37,8 @@ $categories = [
         'check-schema.php' => '📊 Check database schema structure',
         'check-tables.php' => '📋 List and verify database tables',
         'create-tables.php' => '🏗️ Create missing database tables',
+        'create-tags-tables.php' => '🏷️ Create tags and post_tag tables if missing',
+        'create-sketches-table.php' => '🎨 Create sketches table if missing',
         'pg-create-tables.php' => '🐘 Create PostgreSQL specific tables',
         'create-cache-table.php' => '💾 Create cache table for sessions',
         'setup-db.php' => '⚙️ Complete database setup and initialization'
@@ -90,7 +92,13 @@ $categories = [
         'debug-post-creation.php' => '🐞 Debug post creation issues',
         'fix-all-post-issues.php' => '🔧 Fix all known post-related issues',
         'find-duplicates.php' => '🔍 Find and manage duplicate id:s',
-        'edit-tags.php' => '🏷️ Edit and manage post tags directly'
+        'edit-tags.php' => '🏷️ Edit and manage post tags directly',
+        'data-updates.php' => 'Change post update dates in bulk'
+    ],
+    'Storage Management' => [
+        'checkstorage.php' => '📁 Check storage directories',
+        'degug-image-access.php' => '🐞 Debug image access issues',
+        'image-browser.php' => '🖼️ Browse and manage uploaded images'
     ]
 ];
 
@@ -422,16 +430,14 @@ foreach ($categories as $scripts) {
                     const infoDiv = document.getElementById('fileInfo');
                     infoDiv.innerHTML = `
                         <div class="grid grid-cols-2 gap-4">
-                            <div><strong>Filename:</strong> ${data.filename}</div>
+                            <div><strong>Filename:</strong> ${data.name}</div>
                             <div><strong>Size:</strong> ${data.size} bytes</div>
                             <div><strong>Modified:</strong> ${data.modified}</div>
-                            <div><strong>Permissions:</strong> ${data.permissions}</div>
                             <div><strong>Type:</strong> ${data.type}</div>
-                            <div><strong>Lines:</strong> ${data.lines}</div>
                         </div>
                         <div class="mt-4">
                             <strong>Full Path:</strong><br>
-                            <code class="bg-gray-100 p-2 rounded block">${data.path}</code>
+                            <code class="bg-gray-100 p-2 rounded block">${filename}</code>
                         </div>
                     `;
                     document.getElementById('infoModal').classList.remove('hidden');
