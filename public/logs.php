@@ -14,7 +14,7 @@ $logFile = '/app/storage/logs/laravel.log';
 if (file_exists($logFile)) {
     $logs = file_get_contents($logFile);
     
-    // Get last 50 lines
+    // Get last 100 lines
     $lines = explode("\n", $logs);
     $recentLines = array_slice($lines, -100);
     

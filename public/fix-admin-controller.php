@@ -1,5 +1,5 @@
 <?php
-// Simple security check - you should change this token
+// Security check
 $validToken = getenv('ADMIN_SETUP_TOKEN');
 $providedToken = $_GET['token'] ?? '';
 
@@ -40,7 +40,7 @@ foreach ($iterator as $file) {
 if (empty($foundControllers)) {
     echo "<p>No controllers found that use the 'is_active' column.</p>";
     
-    // Let's check for admin controllers or user management controllers
+    // Check for admin controllers or user management controllers
     echo "<h2>Searching for Admin or User Management Controllers</h2>";
     
     $iterator = new RecursiveIteratorIterator(

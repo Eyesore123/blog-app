@@ -19,7 +19,7 @@ foreach ($allPhpFiles as $file) {
     $discoveredFiles[] = $filename;
 }
 
-// Comprehensive categorization of all your scripts
+// Comprehensive categorization of all scripts
 $categories = [
     'Database Backup & Management' => [
         'backup-database.php' => '📦 Create a new PostgreSQL database backup',
@@ -35,13 +35,15 @@ $categories = [
     ],
     'Database Schema & Tables' => [
         'check-schema.php' => '📊 Check database schema structure',
+        'import-schema.php' => '📋 Import database schema from SQL file',
         'check-tables.php' => '📋 List and verify database tables',
         'create-tables.php' => '🏗️ Create missing database tables',
         'create-tags-tables.php' => '🏷️ Create tags and post_tag tables if missing',
         'create-sketches-table.php' => '🎨 Create sketches table if missing',
         'pg-create-tables.php' => '🐘 Create PostgreSQL specific tables',
         'create-cache-table.php' => '💾 Create cache table for sessions',
-        'setup-db.php' => '⚙️ Complete database setup and initialization'
+        'setup-db.php' => '⚙️ Complete database setup and initialization',
+        'dump_sqlite.php' => '📦 Dump SQLite database to SQL file'
     ],
     'User Management' => [
         'create-admin.php' => '👑 Create a new admin user account',
@@ -60,7 +62,12 @@ $categories = [
         'railway-env.php' => '🚂 Check and configure Railway environment variables',
         'railway-cache-env.php' => '💾 Configure Railway cache environment',
         'update-env.php' => '🔄 Update environment variables',
-        'check-code.php' => '🔍 Check code configuration and setup'
+        'check-code.php' => '🔍 Check code configuration and setup',
+        'file-info.php' => 'ℹ️ Get file related info, used in admindashboard.php',
+        'fix-app-files.php' => '🔧 Make changes to security checks',
+        'secure-all-scripts.php' => '🔒 Secure all scripts in public directory',
+        'logs.php' => '📋 View recent application logs and errors',
+        'final-fix.php' => '🔧 Fixes issues'
     ],
     'Cache Management' => [
         'direct-cache-fix.php' => '💾 Direct cache configuration fixes',
@@ -81,24 +88,30 @@ $categories = [
     'Development Tools' => [
         'scan-public-files.php' => '🔍 Scan and list all files in public directory',
         'phpinfo.php' => '🐘 Display PHP configuration and environment info',
-        'admin-dashboard.php' => '🎛️ This comprehensive admin dashboard'
+        'admin-dashboard.php' => '🎛️ This comprehensive admin dashboard',
+        'debug-vite.php' => '🐞 Debug Vite asset loading issues',
     ],
     'Core Application' => [
         'index.php' => '🏠 Main application entry point (Laravel public/index.php)'
     ],
     'Post Fixes & Validations' => [
         'check-recent-uploads.php' => '🆕 Check for recently uploaded files',
+        'debug-laravel-uploads.php' => '🐞 Debug Laravel file upload issues',
+        'debug-posts.php' => '🐞 Debug post-related issues',
         'complete-post-fix.php' => 'Complete all post fixes and validations',
         'debug-post-creation.php' => '🐞 Debug post creation issues',
         'fix-all-post-issues.php' => '🔧 Fix all known post-related issues',
         'find-duplicates.php' => '🔍 Find and manage duplicate id:s',
         'edit-tags.php' => '🏷️ Edit and manage post tags directly',
-        'data-updates.php' => 'Change post update dates in bulk'
+        'date-updates.php' => 'Change post update dates in bulk',
+        'remove-tags.php' => '🏷️ Remove unused or faulty tags',
     ],
     'Storage Management' => [
         'checkstorage.php' => '📁 Check storage directories',
-        'degug-image-access.php' => '🐞 Debug image access issues',
-        'image-browser.php' => '🖼️ Browse and manage uploaded images'
+        'debug-image-access.php' => '🐞 Debug image access issues',
+        'image-browser.php' => '🖼️ Browse and manage uploaded images',
+        'fix-symlink.php' => '🔗 Fix symbolic link issues in storage',
+        'migrate-images.php' => '📦 Migrate images from old directory'
     ]
 ];
 
