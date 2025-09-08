@@ -83,6 +83,14 @@ $categories = [
     ],
     'Core Application' => [
         'index.php' => '🏠 Main application entry point (Laravel public/index.php)'
+    ],
+    'Post Fixes & Validations' => [
+        'check-recent-uploads.php' => '🆕 Check for recently uploaded files',
+        'complete-post-fix.php' => 'Complete all post fixes and validations',
+        'debug-post-creation.php' => '🐞 Debug post creation issues',
+        'fix-all-post-issues.php' => '🔧 Fix all known post-related issues',
+        'find-duplicates.php' => '🔍 Find and manage duplicate id:s',
+        'edit-tags.php' => '🏷️ Edit and manage post tags directly'
     ]
 ];
 
