@@ -38,6 +38,7 @@ $categories = [
         'import-schema.php' => '📋 Import database schema from SQL file',
         'check-tables.php' => '📋 List and verify database tables',
         'create-tables.php' => '🏗️ Create missing database tables',
+        'fix-posts-table.php' => '📝 Fix posts table structure',
         'create-tags-tables.php' => '🏷️ Create tags and post_tag tables if missing',
         'create-sketches-table.php' => '🎨 Create sketches table if missing',
         'pg-create-tables.php' => '🐘 Create PostgreSQL specific tables',
@@ -49,7 +50,7 @@ $categories = [
         'create-admin.php' => '👑 Create a new admin user account',
         'pg-create-admin.php' => '🐘 Create admin user in PostgreSQL',
         'fix-user-model.php' => '🔧 Fix User model configuration and relationships',
-        'fix-users-table.php' => '👥 Fix users table structure and constraints'
+        'fix-users-table.php' => '👥 Fix users table structure'
     ],
     'Configuration Management' => [
         'check-config.php' => '⚙️ Check Laravel configuration files',
@@ -67,7 +68,8 @@ $categories = [
         'fix-app-files.php' => '🔧 Make changes to security checks',
         'secure-all-scripts.php' => '🔒 Secure all scripts in public directory',
         'logs.php' => '📋 View recent application logs and errors',
-        'final-fix.php' => '🔧 Fixes issues'
+        'final-fix.php' => '🔧 Fixes issues',
+        'view-source.php' => '📄 View source code of any script, used in admindashboard',
     ],
     'Cache Management' => [
         'direct-cache-fix.php' => '💾 Direct cache configuration fixes',
@@ -90,13 +92,14 @@ $categories = [
         'phpinfo.php' => '🐘 Display PHP configuration and environment info',
         'admin-dashboard.php' => '🎛️ This comprehensive admin dashboard',
         'debug-vite.php' => '🐞 Debug Vite asset loading issues',
+        'fix-manifest.php' => '🔧 Fix Vite manifest file issues'
     ],
     'Core Application' => [
         'index.php' => '🏠 Main application entry point (Laravel public/index.php)'
     ],
     'Post Fixes & Validations' => [
         'check-recent-uploads.php' => '🆕 Check for recently uploaded files',
-        'debug-laravel-uploads.php' => '🐞 Debug Laravel file upload issues',
+        'debug-laravel-upload.php' => '🐞 Debug Laravel file upload issues',
         'debug-posts.php' => '🐞 Debug post-related issues',
         'complete-post-fix.php' => 'Complete all post fixes and validations',
         'debug-post-creation.php' => '🐞 Debug post creation issues',
@@ -111,7 +114,9 @@ $categories = [
         'debug-image-access.php' => '🐞 Debug image access issues',
         'image-browser.php' => '🖼️ Browse and manage uploaded images',
         'fix-symlink.php' => '🔗 Fix symbolic link issues in storage',
-        'migrate-images.php' => '📦 Migrate images from old directory'
+        'migrate-images.php' => '📦 Migrate images from old directory',
+        'fix-storage.php' => '🔧 Fix storage',
+        'storage-fix.php' => '🔧 Fix storage issues'
     ]
 ];
 
