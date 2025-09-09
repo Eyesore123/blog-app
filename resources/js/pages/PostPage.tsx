@@ -77,7 +77,8 @@ const PostPage: React.FC<PostPageProps> = ({ post }) => {
   const { props } = usePage<PostPageProps>();
   const { theme } = useTheme();
   const allPosts: Post[] | AllPosts = props.allPosts ?? {};
-  const { auth, topics, currentTopic, flash } = props;
+  const { auth, currentTopic, topics, flash } = props;
+  const [topicsState, setTopicsState] = useState<string[]>(topics || []);
   const user = auth?.user;
   const { confirm } = useConfirm();
 
@@ -122,7 +123,6 @@ const PostPage: React.FC<PostPageProps> = ({ post }) => {
   }
 }, [flash]);
 
-
   const handleTopicChange = (topic: string | null) => {
     const params = new URLSearchParams();
     if (topic) params.append('topic', topic);
@@ -140,6 +140,9 @@ const PostPage: React.FC<PostPageProps> = ({ post }) => {
       toast.error('Failed to delete comment. Please try again.');
     }
   };
+
+  console.log(topics);
+  console.log(props);
 
   return (
     <div className={`min-h-160 ${theme}`}>
@@ -181,9 +184,10 @@ const PostPage: React.FC<PostPageProps> = ({ post }) => {
                   </ul>
                 </div>
 
-                <div className="rounded-lg bg-[#5800FF]/10 !p-4 2xl:!pl-6">
+                <div className="bg-[#5800FF]/10 !pl-4 !pr-4 !pb-10 2xl:!pl-6 !mb-4 !pt-4 md:!pt-6">
+                
                   {topics && (
-                    <div className="!mb-4">
+                    <div className="!mb-6">
                       <h3 className="font-semibold !mb-2">Topics</h3>
                       <ul className="!space-y-1">
                         <li>

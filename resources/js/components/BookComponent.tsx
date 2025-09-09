@@ -69,12 +69,12 @@ export function BookComponent() {
         </div>
       )}
 
-      <div className='w-full inline-flex flex-col md:flex-row gap-2 justify-center md:justify-start !mt-8 !mb-4'>
+      <div className='w-full inline-flex gap-2 justify-center md:justify-start !mt-8 !mb-4'>
         <a
           href={amazonUrl}
           target="_blank"
           rel="noopener noreferrer"
-          className="scale-115 md:scale-100 text-[#E900FF] md:text-[#5800FF] hover:text-[#E900FF] transition-colors font-semibold"
+          className="scale-115 md:scale-100 text-[#E900FF] hover:text-[#E900FF] transition-colors font-semibold"
         >
           → Buy on Amazon
         </a>

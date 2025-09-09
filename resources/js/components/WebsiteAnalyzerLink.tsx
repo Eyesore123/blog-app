@@ -77,7 +77,7 @@ export function WebsiteAnalyzerLink(): React.ReactElement {
           href={analyzerUrl}
           target="_blank"
           rel="noopener noreferrer"
-          className="scale-115 md:scale-100 !pt-0 !mt-6 lg:!mt-0 text-[#E900FF] md:text-[#5800FF] hover:text-[#E900FF] transition-colors"
+          className="scale-115 md:scale-100 font-semibold !pt-0 !mt-6 lg:!mt-0 text-[#E900FF] hover:text-[#E900FF] transition-colors"
         >
           → Analyze a Website
         </a>

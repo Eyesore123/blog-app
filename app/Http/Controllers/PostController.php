@@ -196,13 +196,29 @@ class PostController extends Controller
             ? $postQuery->findOrFail($identifier)
             : $postQuery->where('slug', $identifier)->firstOrFail();
 
-        $seo      = SeoService::forPost($post);
-        $allPosts = Post::all();
+        $seo    = SeoService::forPost($post);
+        $topics = Post::distinct()->pluck('topic')->filter()->values();
+
+        // just the essentials for sidebar/filters
+        $allPosts = Post::select('id', 'title', 'topic', 'slug', 'created_at')
+            ->with('tags:id,name') // tags but only id+name
+            ->get()
+            ->map(function ($p) {
+                return [
+                    'id'         => $p->id,
+                    'title'      => $p->title,
+                    'topic'      => $p->topic,
+                    'slug'       => $p->slug,
+                    'created_at' => $p->created_at,
+                    'tags'       => $p->tags->map(fn($t) => ['id' => $t->id, 'name' => $t->name]),
+                ];
+            });
 
         return Inertia::render('PostPage', [
-            'post'     => $this->transformPost($post),
-            'comments' => $post->comments,
-            'allPosts' => $allPosts,
+            'post'     => $this->transformPost($post), // full details for the main post
+            'topics'   => $topics,                     // all topics
+            'comments' => $post->comments,             // comments for the post
+            'allPosts' => $allPosts,                   // lightweight list of all posts
             'user'     => $this->getUserInfo(),
             'seo'      => $seo,
         ]);

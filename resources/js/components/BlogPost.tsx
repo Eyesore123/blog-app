@@ -593,7 +593,7 @@ const postUrl = `/posts/${post.id}`;
     <div className={`bg-[var(--bg-primary)] rounded-lg`}>
     <article className={`article-container flex flex-col justify-center items-center lg:items-start lg:justify-start rounded-lg bg-[#5800FF]/10 !p-4 md:!pl-10 w-full md:!w-150 xl:!w-220 2xl:!w-260 !pb-6 md:!pb-10 lg:!pl-10 2xl:!pl-14`}>
       <h2
-        className="text-xl md:text-2xl font-bold flex justify-start !mb-4 lg:!mt-4 md:!mb-10 cursor-pointer hover:underline max-w-[360px] md:max-w-[500px] xl:max-w-[600px] 2xl:max-w-[800px]"
+        className="text-xl md:text-2xl font-bold flex justify-start !mb-4 md:!mt-4 md:!mb-10 cursor-pointer hover:underline max-w-[360px] md:max-w-[500px] xl:max-w-[600px] 2xl:max-w-[800px]"
         onClick={goToPostPage}
       >
         {post.title}
