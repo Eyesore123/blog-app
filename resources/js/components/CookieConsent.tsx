@@ -41,7 +41,7 @@ export default function CookieConsent() {
       <button
         onClick={() => setVisible(true)}
         className="fixed !bottom-4 !left-4 !z-40 bg-[#5800FF] text-white 
-                   !px-4 !py-2 rounded-lg shadow-md border-none
+                   !px-4 !py-2 md:!py-3 rounded-lg shadow-md border-none
                    hover:opacity-80 transition flex items-center gap-2"
       >
         🍪 <span className="hidden sm:inline">Settings</span>
