@@ -250,6 +250,8 @@ small {
 
 .main {
     overflow: hidden;
+    position: relative;
+    min-height: 600px;
 }
 
 .main::before {
@@ -266,14 +268,14 @@ small {
     background-position: 0px 0px !important;
     background-repeat: repeat !important;
 
-    opacity: 0.1 !important;
+    opacity: 0.08 !important;
     z-index: -1 !important;
-
-    animation: moveGradient 40s linear infinite !important;
+    filter: blur(2px);
+    animation: moveGradient 50s linear infinite !important;
 }
 
 .main.relative {
-    opacity: 0.98 !important;
+    opacity: 0.99 !important;
 }
 
 @keyframes moveGradient {

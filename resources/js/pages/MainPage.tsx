@@ -166,7 +166,7 @@ const handlePageInput = (e) => {
         <Navbar />
         <Header />
         
-        <main className="!p-4 md:!p-8 !gap-1 main relative">
+        <main className="main !p-4 md:!p-8 !gap-1 main relative">
           <div className="flex flex-col lg:flex-row gap-4 md:gap-30 custom-2xl-gap items-center lg:items-start lg:!pt-1 2xl:!pt-1">
             <aside className="lg:block w-full md:!w-2/3 xl:!w-2/3 xl:!ml-10 2xl:!ml-30 xl:max-w-120 xl:!mr-10 !mb-8 lg:!mb-0 mx-auto">
               <div className={`lg:top-24 !space-y-4 md:!space-y-6 flexcontainer w-full lg:!w-80 xl:!w-120 bg-[var(--bg-primary)] lg:!mt-0 rounded-t-lg`}>
