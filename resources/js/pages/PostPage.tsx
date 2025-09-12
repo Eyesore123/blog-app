@@ -141,9 +141,6 @@ const PostPage: React.FC<PostPageProps> = ({ post }) => {
     }
   };
 
-  console.log(topics);
-  console.log(props);
-
   return (
     <div className={`min-h-160 ${theme}`}>
       <div className="min-h-160 bg-[var(--bg-primary)] text-[var(--text-primary)]">
