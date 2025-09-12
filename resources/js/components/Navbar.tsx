@@ -53,7 +53,10 @@ const isDefaultIcon = profileUrl === '/default-user-icon.svg';
         </div>
       )}
 
-          <Link href="/privacy-policy" className="hover:text-purple-400 min-w-[100px]">
+          <Link href="/privacy-policy"
+          className="hover:text-purple-400 min-w-[100px]"
+          onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+          >
             Privacy Policy
           </Link>
           <Link href="/" className="hover:text-purple-400 min-w-[100px]">
