@@ -204,6 +204,18 @@ small {
     .custom-right-links {
         margin-left: -34rem;
     }
+    
+}
+
+/* Custom breakpoint for medium-large screens */
+@media (min-width: 1500px) and (max-width: 1800px) {
+    .article-container p,
+    .article-container li,
+    .article-container blockquote,
+    .article-container pre,
+    .article-container strong {
+        max-width: 720px;
+    }
 }
 
 /* Image background effect */
