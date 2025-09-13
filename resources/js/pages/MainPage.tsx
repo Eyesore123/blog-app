@@ -17,6 +17,7 @@ import { useTheme } from '../context/ThemeContext';
 import { useEffect } from 'react';
 import { useState } from 'react';
 import { BookComponent } from '@/components/BookComponent';
+import { InfoBanner } from '@/components/InfoBanner';
 
 interface BlogPostType {
   id: number;
@@ -164,6 +165,7 @@ const handlePageInput = (e) => {
     <div className={`min-h-160 ${theme}`}>
       <div className="min-h-160 bg-[var(--bg-primary)] text-[var(--text-primary)]">
         <Navbar />
+        {/* <InfoBanner /> */}
         <Header />
         
         <main className="!p-4 md:!p-8 !gap-1 main relative">
@@ -239,7 +241,7 @@ const handlePageInput = (e) => {
                     ))}
                     
                     
-                    <div className="flex justify-center items-center lg:!ml-10 !gap-2 md:!gap-4 !mt-8 md:!mt-18 customdiv">
+                    <div className="flex justify-center items-center lg:!ml-10 !gap-2 md:!gap-4 !mt-8 md:!mt-18 md:!mb-10 customdiv">
                       <button
                         onClick={handleFirstPage}
                         disabled={currentPage === 0}

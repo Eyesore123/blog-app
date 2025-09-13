@@ -141,9 +141,6 @@ const PostPage: React.FC<PostPageProps> = ({ post }) => {
     }
   };
 
-  console.log(topics);
-  console.log(props);
-
   return (
     <div className={`min-h-160 ${theme}`}>
       <div className="min-h-160 bg-[var(--bg-primary)] text-[var(--text-primary)]">
@@ -151,7 +148,7 @@ const PostPage: React.FC<PostPageProps> = ({ post }) => {
         <Header />
         <main className="!p-4 md:!p-8 !gap-1">
           <div className="flex flex-col lg:flex-row gap-4 md:gap-30 custom-2xl-gap items-center lg:items-start lg:!pt-3">
-          <aside className="hidden lg:block w-full md:!w-2/3 xl:!w-2/3 xl:!ml-10 2xl:!ml-30 xl:max-w-120 xl:!mr-10 !mb-8 lg:!mb-0 mx-auto">
+          <aside className="hidden lg:block w-full md:!w-2/3 xl:!w-2/3 xl:!ml-10 2xl:!ml-30 xl:max-w-120 xl:!mr-10 !mb-8 lg:!mb-0 mx-auto 2xl:!-mt-4">
               <div className={`lg:top-24 !space-y-4 md:!space-y-6 flexcontainer w-full lg:!w-80 xl:!w-120 bg-[var(--bg-primary)] lg:!mt-0 rounded-t-lg 2xl:!pt-4`}>
                 <div className="rounded-lg bg-[#5800FF]/10 !p-4 2xl:!pl-6">
                   <h3 className="font-semibold !mb-2">About This Post</h3>

@@ -29,6 +29,10 @@ const YearFilterComponent: React.FC<YearFilterComponentProps> = ({ posts = [] })
   }, {});
 
   const years = Object.keys(groupedByYearAndMonth).sort((a, b) => Number(b) - Number(a));
+  const monthOrder = [
+  "January", "February", "March", "April", "May", "June",
+  "July", "August", "September", "October", "November", "December"
+];
 
   return (
     <div className="rounded-lg !pb-4 !mt-8">
@@ -62,7 +66,9 @@ const YearFilterComponent: React.FC<YearFilterComponentProps> = ({ posts = [] })
 
             {selectedYear === year && (
               <ul className="!ml-4 !mt-2 !space-y-1">
-                {Object.keys(groupedByYearAndMonth[year]).map((month) => (
+                {Object.keys(groupedByYearAndMonth[year])
+                .sort((a, b) => monthOrder.indexOf(a) - monthOrder.indexOf(b))
+                .map((month) => (
                   <li key={month}>
                     <button
                       onClick={() => setSelectedMonth(selectedMonth === month ? null : month)}

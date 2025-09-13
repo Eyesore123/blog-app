@@ -211,7 +211,7 @@ const handlePageInput = (e) => {
                     );
                   })}
 
-                  <div className="flex justify-center items-center lg:!ml-10 !gap-2 md:!gap-4 !mt-8 md:!mt-18 customdiv">
+                  <div className="flex justify-center items-center lg:!ml-10 !gap-2 md:!gap-4 !mt-8 md:!mt-18 md:!mb-10 customdiv">
                       <button
                         onClick={handleFirstPage}
                         disabled={currentPage === 0}

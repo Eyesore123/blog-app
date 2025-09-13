@@ -15,6 +15,7 @@ import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
 import  { router } from '@inertiajs/react';
 import CookieConsent from './components/CookieConsent';
 import BackToTopButton from './components/BackToTopButton';
+import { FooterComponent } from './components/FooterComponent';
 
 router.on('error', (error) => {
   console.error('Inertia Error:', error);
@@ -36,6 +37,7 @@ createInertiaApp({
         <CookieConsent />
         <BackToTopButton />
           <App {...props} />
+          <FooterComponent />
         {/* </ErrorBoundary> */}
         </ConfirmProvider>
         </AlertProvider>

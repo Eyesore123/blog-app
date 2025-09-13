@@ -161,7 +161,7 @@ export default function PostsIndex() {
                 )}
 
                 {allPosts && (
-                  <div className="flex justify-center items-center !gap-4 md:!gap-10 !mt-8 md:!mt-18">
+                  <div className="flex justify-center items-center !gap-4 md:!gap-10 !mt-8 md:!mt-18 md:!mb-10 ">
                     <button
                       ref={paginationButtonRef}
                       onClick={() => router.get('/', { page: (currentPage || 0) })}
