@@ -168,7 +168,7 @@ const handlePageInput = (e) => {
         
         <main className="!p-4 md:!p-8 !gap-1 main relative">
           <div className="flex flex-col lg:flex-row gap-4 md:gap-30 custom-2xl-gap items-center lg:items-start lg:!pt-1 2xl:!pt-1">
-            <aside className="lg:block w-full md:!w-2/3 xl:!w-2/3 xl:!ml-10 2xl:!ml-30 xl:max-w-120 xl:!mr-10 !mb-8 lg:!mb-0 mx-auto">
+            <aside className="lg:block w-full md:!w-2/3 xl:!w-2/3 xl:!ml-10  xl:max-w-120 2xl:!ml-30 xl:!mr-10 !mb-8 lg:!mb-0 mx-auto">
               <div className={`lg:top-24 !space-y-4 md:!space-y-6 flexcontainer w-full lg:!w-80 xl:!w-120 bg-[var(--bg-primary)] lg:!mt-0 rounded-t-lg`}>
                 <div className=" bg-[#5800FF]/10 !pl-4 md:!pl-10 !mb-0 !pr-4 !pb-10 2xl:!pl-6 bg-solid rounded-t-lg">
                   <h3 className="font-semibold !mb-4 !pt-4 md:!pt-8">About</h3>
