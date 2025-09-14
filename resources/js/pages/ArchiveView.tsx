@@ -132,35 +132,40 @@ const handlePageInput = (e) => {
 
               <div className="rounded-lg bg-[#5800FF]/10 !p-4 2xl:!pl-6 ">
                 <h3 className="font-semibold !mb-2">Topics</h3>
-                <ul className="!space-y-1">
-                  <li>
-                    <button
-                      onClick={() => handleTopicChange(null)}
-                      className={`w-full text-left !px-2 !py-1 rounded ${
-                        currentTopic === null ? 'bg-[#5800FF] text-white' : 'hover:bg-[#5800FF]/20'
-                      }`}
-                    >
-                      All Topics
-                    </button>
-                  </li>
-                  {topics && topics.length > 0 ? (
-                    topics.map((topic) => (
-                      <li key={topic}>
+                {/* Full width All Topics button */}
+                      <div className="!mb-2">
                         <button
-                          onClick={() => handleTopicChange(topic)}
-                          className={`w-full text-left !px-2 !py-1 rounded ${
-                            currentTopic === topic ? 'bg-[#5800FF] text-white' : 'hover:bg-[#5800FF]/20'
+                          onClick={() => handleTopicChange(null)}
+                          className={`w-full text-left !px-2 !mb-1 !py-1 rounded ${
+                            currentTopic === null
+                              ? 'bg-[#5800FF] text-white'
+                              : 'hover:bg-[#5800FF]/20'
                           }`}
                         >
-                          {topic}
+                          All Topics
                         </button>
-                      </li>
-                    ))
-                  ) : (
-                    <li className="!ml-2">No topics available</li>
-                  )}
-                </ul>
-              </div>
+                      </div>
+
+                      {/* 3-column grid for other topics */}
+                      <div className="grid grid-cols-3 gap-2">
+                        {topics
+                          .slice() // copy so original isn't mutated
+                          .sort((a, b) => a.localeCompare(b)) // alphabetical order
+                          .map((topic) => (
+                            <button
+                              key={topic}
+                              onClick={() => handleTopicChange(topic)}
+                              className={`text-center !px-2 !py-1 rounded border text-sm border-[#5800FF]/30 ${
+                                currentTopic === topic
+                                  ? 'bg-[#5800FF] text-white'
+                                  : 'hover:bg-[#5800FF]/20'
+                              }`}
+                            >
+                              {topic}
+                            </button>
+                          ))}
+                      </div>
+                    </div>
 
               <div className="rounded-lg bg-[#5800FF]/10 !p-4 2xl:!pl-6">
                 <SearchComponent posts={allPosts} />

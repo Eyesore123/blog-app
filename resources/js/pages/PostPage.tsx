@@ -184,26 +184,68 @@ const PostPage: React.FC<PostPageProps> = ({ post }) => {
                 <div className="bg-[#5800FF]/10 !pl-4 !pr-4 !pb-10 2xl:!pl-6 !mb-4 !pt-4 md:!pt-6">
                 
                   {topics && (
-                    <div className="!mb-6">
-                      <h3 className="font-semibold !mb-2">Topics</h3>
-                      <ul className="!space-y-1">
-                        <li>
-                          <button
-                            onClick={() => handleTopicChange(null)}
-                            className={`w-full text-left !px-2 !py-1 rounded ${
-                              currentTopic === null
-                                ? 'bg-[#5800FF] text-white'
-                                : 'hover:bg-[#5800FF]/20'
-                            }`}
-                          >
-                            All Topics
-                          </button>
-                        </li>
-                        {topics.map((topic) => (
-                          <li key={topic}>
+
+                    // All topic list with each topic on its own line:
+
+                    // <div className="!mb-6">
+                    //   <h3 className="font-semibold !mb-2">Topics</h3>
+                    //   <ul className="!space-y-1">
+                    //     <li>
+                    //       <button
+                    //         onClick={() => handleTopicChange(null)}
+                    //         className={`w-full text-left !px-2 !py-1 rounded ${
+                    //           currentTopic === null
+                    //             ? 'bg-[#5800FF] text-white'
+                    //             : 'hover:bg-[#5800FF]/20'
+                    //         }`}
+                    //       >
+                    //         All Topics
+                    //       </button>
+                    //     </li>
+                    //     {topics.map((topic) => (
+                    //       <li key={topic}>
+                    //         <button
+                    //           onClick={() => handleTopicChange(topic)}
+                    //           className={`w-full text-left !px-2 !py-1 rounded ${
+                    //             currentTopic === topic
+                    //               ? 'bg-[#5800FF] text-white'
+                    //               : 'hover:bg-[#5800FF]/20'
+                    //           }`}
+                    //         >
+                    //           {topic}
+                    //         </button>
+                    //       </li>
+                    //     ))}
+                    //   </ul>
+                    // </div>
+
+                    <div className="!mb-8">
+                      <h3 className="font-semibold !mb-3">Topics</h3>
+
+                      {/* Full width All Topics button */}
+                      <div className="!mb-2">
+                        <button
+                          onClick={() => handleTopicChange(null)}
+                          className={`w-full text-left !px-2 !mb-1 !py-1 rounded ${
+                            currentTopic === null
+                              ? 'bg-[#5800FF] text-white'
+                              : 'hover:bg-[#5800FF]/20'
+                          }`}
+                        >
+                          All Topics
+                        </button>
+                      </div>
+
+                      {/* 3-column grid for other topics */}
+                      <div className="grid grid-cols-3 gap-2">
+                        {topics
+                          .slice() // copy so original isn't mutated
+                          .sort((a, b) => a.localeCompare(b)) // alphabetical order
+                          .map((topic) => (
                             <button
+                              key={topic}
                               onClick={() => handleTopicChange(topic)}
-                              className={`w-full text-left !px-2 !py-1 rounded ${
+                              className={`text-center !px-2 !py-1 rounded border text-sm border-[#5800FF]/30 ${
                                 currentTopic === topic
                                   ? 'bg-[#5800FF] text-white'
                                   : 'hover:bg-[#5800FF]/20'
@@ -211,10 +253,10 @@ const PostPage: React.FC<PostPageProps> = ({ post }) => {
                             >
                               {topic}
                             </button>
-                          </li>
-                        ))}
-                      </ul>
+                          ))}
+                      </div>
                     </div>
+
                   )}
                   <SearchComponent posts={normalizedPosts} />
                   <YearFilterComponent posts={normalizedPosts} />
