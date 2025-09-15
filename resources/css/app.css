@@ -206,6 +206,13 @@ small {
     }
     
 }
+/* Custom breakpoint for 4k and wider screens */
+@media (min-width: 2600px) {
+  .custom-2xl-gap.custom-2xl-gap {
+    padding-left: clamp(20rem, 25vw, 200rem) !important;
+    padding-right: clamp(8rem, 10vw, 20rem) !important;
+  }
+}
 
 /* Custom breakpoint for medium-large screens */
 @media (min-width: 1500px) and (max-width: 1800px) {
