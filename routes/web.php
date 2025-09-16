@@ -10,6 +10,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\AccountController;
+use App\Http\Controllers\AdminImageController;
 use App\Http\Controllers\CommentController;
 use App\Http\Controllers\ArchiveController;
 use App\Http\Controllers\SubscriptionController;
@@ -72,12 +73,19 @@ Route::post('/posts', [PostController::class, 'store'])
 Route::middleware('auth')->post('/logout', [AuthController::class, 'logout'])->name('logout');
 Route::get('/admin', [AdminController::class, 'index'])
     ->middleware(['auth', AdminMiddleware::class]);
+
+// Here a new admin route (group) for image control, hasn't been
+// tested yet
+
+// Route::middleware(['auth', 'admin'])->prefix('admin')->group(function () {
+//     Route::get('/images', [AdminImageController::class, 'index']);
+//     Route::delete('/images/{name}', [AdminImageController::class, 'destroy']);
+// });
+
 Route::get('api/comments/post/{post_id}', [CommentController::class, 'comments.index']);
 Route::get('/post/{identifier}', [PostController::class, 'show'])->name('post.show');
 Route::get('/post/{id}/edit', [AdminController::class, 'edit'])->name('admin.edit');
 
-
-// Route::post('/comments', 'CommentController@store')->middleware('comment-post');
 
 // Route::middleware(['auth', 'throttle:comment-post'])
 //     ->post('/api/comments', [CommentController::class, 'store']);
@@ -93,10 +101,6 @@ Route::middleware(['auth', 'throttle:10,1'])
 Route::delete('api/comments/{comment_id}', [CommentController::class, 'destroy'])
     ->middleware('auth')
     ->name('comments.destroy');
-
-    // Not needed anymore because of identifier:
-    
-// Route::delete('/posts/{post_id}', [PostController::class, 'destroy'])->middleware('auth')->name('posts.destroy');
 
 Route::get('/archives', function() {
     return redirect()->route('archives.show', ['year' => date('Y')]);
