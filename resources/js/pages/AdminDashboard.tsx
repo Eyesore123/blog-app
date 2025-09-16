@@ -5,9 +5,11 @@ import { Navbar } from '../components/Navbar';
 import Header from '@/components/Header';
 import AdminUserManagement from '@/components/AdminUserManagement';
 import AdminPostPreview from '@/components/AdminPostPreview';
+import AdminImageControl from '@/components/AdminImageControl';
 import PostPanel from '@/components/PostPanel';
 import axiosInstance from '../components/axiosInstance';
-import { Post } from '@/types/post'; // adjust path based on your structure
+import { Post } from '@/types/post';
+import { AdminImageInfo } from '@/components/AdminImageControl';
 
 
 interface User {
@@ -27,7 +29,7 @@ export default function AdminDashboard() {
     props: AdminDashboardProps;
   }>().props;
 
-  const [currentView, setCurrentView] = useState<'create' | 'users' | 'posts'>('create');
+  const [currentView, setCurrentView] = useState<'create' | 'users' | 'posts' | 'images'>('create');
   const [previewPost, setPreviewPost] = useState<Post | null>(null);
 
   useEffect(() => {
@@ -62,7 +64,7 @@ export default function AdminDashboard() {
 
         {/* Menu Navigation */}
         <div className="flex justify-center !mb-8 gap-4">
-          {(['create', 'users', 'posts'] as const).map((view) => (
+          {(['create', 'users', 'posts', 'images'] as const).map((view) => (
             <button
               key={view}
               onClick={() => setCurrentView(view)}
@@ -74,7 +76,9 @@ export default function AdminDashboard() {
                 ? 'Create Post'
                 : view === 'users'
                 ? 'User Management'
-                : 'Posts & Translations'}
+                : view === 'posts'
+                ? 'Posts & Translations'
+                : 'Images'}
             </button>
           ))}
         </div>
@@ -103,6 +107,13 @@ export default function AdminDashboard() {
               )}
             </div>
           )}
+
+          {currentView === 'images' && (
+            <div className="w-full max-w-6xl">
+              <AdminImageControl />
+            </div>
+          )}
+
         </div>
       </div>
     </>

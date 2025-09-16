@@ -40,19 +40,20 @@ export default function AdminImageControl() {
 
     // Image fetch function
     async function fetchImages(pageNum: number) {
-  setLoading(true);
-  setError(null);
-  try {
-    const res = await axiosInstance.get(`/admin/images?page=${pageNum}&per_page=${PAGE_SIZE}`);
-    if (pageNum === 1) setImages(res.data.data);
-    else setImages(prev => [...prev, ...res.data.data]);
-    setHasMore(res.data.next_page_url !== null);
-  } catch (err: any) {
-    setError(err?.response?.data?.message || err.message || "Unknown error");
-  } finally {
-    setLoading(false);
-  }
-}
+        setLoading(true);
+        setError(null);
+        try {
+            const res = await axiosInstance.get(`/admin/images?page=${pageNum}&per_page=${PAGE_SIZE}`);
+            if (pageNum === 1) setImages(res.data.data);
+            else setImages(prev => [...prev, ...res.data.data]);
+            setHasMore(res.data.next_page_url !== null);
+        } catch (err: any) {
+            setError(err?.response?.data?.message || err.message || "Unknown error");
+            setHasMore(false);
+        } finally {
+            setLoading(false);
+        }
+    }
 
 // Image delete function
 async function handleDelete(name: string) {
@@ -68,15 +69,32 @@ async function handleDelete(name: string) {
 
   return (
     <div>
-        <h2 className='text-xl font-bold !mb-4'>Image Control</h2>
+        <h2 className='text-xl font-bold w-full text-center !mb-16 !mt-4'>Image Control</h2>
         {error && (
-            <div className="bg-red-100 text-red-700 !px-4 !py-2 rounded mb-4">
-                Failed to fetch images: {error}
+            <div className="bg-red-100 text-red-700 !px-4 !py-2 rounded !mb-4 flex items-center !gap-4">
+                <span>Failed to fetch images: {error}</span>
+                <button
+                onClick={() => fetchImages(page)}
+                className="!px-2 !py-1 bg-blue-500 hover:opacity-80 text-white rounded text-xs"
+                >
+                Retry
+                </button>
             </div>
         )}
         {images.length === 0 && !loading && !error && (
             <div className="text-sm italic text-gray-500">No images found.</div>
         )}
+        <button
+        onClick={() => {
+            setPage(1);
+            setImages([]);
+            setHasMore(true);
+            fetchImages(1);
+        }}
+        className="!mb-4 !px-2 !py-1 bg-blue-500 hover:opacity-80 text-white rounded text-xs"
+        >
+        Refresh
+        </button>
         <div className="grid grid-cols-2 md:grid-cols-4 !gap-4">
             {images.map(img => (
                 <div key={img.name} className="border rounded !p-2 flex flex-col items-center">

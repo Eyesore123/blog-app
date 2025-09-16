@@ -77,10 +77,10 @@ Route::get('/admin', [AdminController::class, 'index'])
 // Here a new admin route (group) for image control, hasn't been
 // tested yet
 
-// Route::middleware(['auth', 'admin'])->prefix('admin')->group(function () {
-//     Route::get('/images', [AdminImageController::class, 'index']);
-//     Route::delete('/images/{name}', [AdminImageController::class, 'destroy']);
-// });
+Route::middleware(['auth', 'admin'])->prefix('admin')->group(function () {
+    Route::get('/images', [AdminImageController::class, 'index']);
+    Route::delete('/images/{name}', [AdminImageController::class, 'destroy']);
+});
 
 Route::get('api/comments/post/{post_id}', [CommentController::class, 'comments.index']);
 Route::get('/post/{identifier}', [PostController::class, 'show'])->name('post.show');
