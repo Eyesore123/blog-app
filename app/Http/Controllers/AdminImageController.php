@@ -14,7 +14,30 @@ class AdminImageController extends Controller
         $perPage = $request->input('per_page', 20);
         $page = $request->input('page', 1);
 
-        $files = collect(Storage::files('public/uploads'))
+        $images = $this->getImages($perPage, $page);
+
+        return response()->json([
+            'data' => $images['images'],
+            'current_page' => $images['current_page'],
+            'per_page' => $images['per_page'],
+            'total' => $images['total'],
+            'next_page_url' => $images['next_page_url'],
+        ]);
+    }
+
+    public function destroy($name)
+    {
+        $path = 'uploads/' . $name;
+        if (Storage::disk('public')->exists($path)) {
+            Storage::disk('public')->delete($path);
+            return response()->json(['success' => true]);
+        }
+        return response()->json(['error' => 'File not found'], 404);
+    }
+
+    private function getImages($perPage, $page)
+    {
+        $files = collect(Storage::disk('public')->files('uploads'))
             ->filter(fn($file) => Str::endsWith($file, ['.jpg', '.jpeg', '.png', '.gif', '.webp']))
             ->values();
 
@@ -23,34 +46,24 @@ class AdminImageController extends Controller
 
         $images = $files->map(function ($file) {
             $name = basename($file);
-            $url = Storage::url($file);
-            $size = Storage::size($file);
+            // Updated URL to use the new Laravel route
+            $url = url('/uploads/' . $name);
             $post = Post::where('image_path', 'uploads/' . $name)->first();
 
             return [
                 'name' => $name,
                 'url' => $url,
-                'size' => $size,
                 'postTitle' => $post ? $post->title : null,
             ];
         })->values();
 
-        return response()->json([
-            'data' => $images,
+        return [
+            'images' => $images,
             'current_page' => $page,
             'per_page' => $perPage,
             'total' => $total,
             'next_page_url' => ($page * $perPage < $total) ? url("/admin/images?page=" . ($page + 1) . "&per_page=$perPage") : null,
-        ]);
+        ];
     }
 
-    public function destroy($name)
-    {
-        $path = 'public/uploads/' . $name;
-        if (Storage::exists($path)) {
-            Storage::delete($path);
-            return response()->json(['success' => true]);
-        }
-        return response()->json(['error' => 'File not found'], 404);
-    }
 }

@@ -9,8 +9,6 @@ import AdminImageControl from '@/components/AdminImageControl';
 import PostPanel from '@/components/PostPanel';
 import axiosInstance from '../components/axiosInstance';
 import { Post } from '@/types/post';
-import { AdminImageInfo } from '@/components/AdminImageControl';
-
 
 interface User {
   id: number;

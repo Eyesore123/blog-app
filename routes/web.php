@@ -77,10 +77,17 @@ Route::get('/admin', [AdminController::class, 'index'])
 // Here a new admin route (group) for image control, hasn't been
 // tested yet
 
-Route::middleware(['auth', 'admin'])->prefix('admin')->group(function () {
-    Route::get('/images', [AdminImageController::class, 'index']);
-    Route::delete('/images/{name}', [AdminImageController::class, 'destroy']);
+Route::get('/admin/images', [AdminImageController::class, 'index']);
+Route::delete('/admin/images/{name}', [AdminImageController::class, 'destroy']);
+
+Route::get('/uploads/{filename}', function ($filename) {
+    $path = storage_path('app/public/uploads/' . $filename);
+    if (!file_exists($path)) {
+        abort(404);
+    }
+    return response()->file($path);
 });
+
 
 Route::get('api/comments/post/{post_id}', [CommentController::class, 'comments.index']);
 Route::get('/post/{identifier}', [PostController::class, 'show'])->name('post.show');

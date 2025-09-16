@@ -1,128 +1,103 @@
-import React, { useState, useEffect, useRef } from 'react'
+import React, { useState, useEffect } from 'react'
 import axiosInstance from './axiosInstance';
 
 export interface AdminImageInfo {
     name: string;
     url: string;
-    size?: number;
     postTitle?: string | null;
 }
 
 const PAGE_SIZE = 20;
 
 export default function AdminImageControl() {
-
     const [images, setImages] = useState<AdminImageInfo[]>([]);
-    const [page, setPage] = useState(1);
-    const [hasMore, setHasMore] = useState(true);
     const [loading, setLoading] = useState(false);
-    const loader = useRef<HTMLDivElement>(null);
     const [error, setError] = useState<string | null>(null);
 
-    useEffect(() => {
-        fetchImages(page);
-    }, [page]);
-
-     // Lazy loading: fetch next page when scrolled to bottom
-    useEffect(() => {
-        if (!hasMore || loading) return;
-        const observer = new IntersectionObserver(
-        entries => {
-            if (entries[0].isIntersecting) setPage(prev => prev + 1);
-        },
-        { threshold: 1 }
-        );
-        if (loader.current) observer.observe(loader.current);
-        return () => {
-        if (loader.current) observer.unobserve(loader.current);
-        };
-    }, [loader, hasMore, loading]);
-
-    // Image fetch function
-    async function fetchImages(pageNum: number) {
+    // Fetch images
+    async function fetchImages() {
         setLoading(true);
         setError(null);
         try {
-            const res = await axiosInstance.get(`/admin/images?page=${pageNum}&per_page=${PAGE_SIZE}`);
-            if (pageNum === 1) setImages(res.data.data);
-            else setImages(prev => [...prev, ...res.data.data]);
-            setHasMore(res.data.next_page_url !== null);
+            const res = await axiosInstance.get(`/admin/images?per_page=${PAGE_SIZE}`, {
+                withCredentials: true
+            });
+            setImages(res.data?.data || []);
         } catch (err: any) {
             setError(err?.response?.data?.message || err.message || "Unknown error");
-            setHasMore(false);
         } finally {
             setLoading(false);
         }
     }
 
-// Image delete function
-async function handleDelete(name: string) {
-  if (!window.confirm("Delete this image?")) return;
-  setError(null);
-  try {
-    await axiosInstance.delete(`/admin/images/${encodeURIComponent(name)}`);
-    setImages(prev => prev.filter(img => img.name !== name));
-  } catch (err: any) {
-    setError(err?.response?.data?.message || err.message || "Unknown error");
-  }
-}
+    useEffect(() => {
+        fetchImages();
+    }, []);
 
-  return (
-    <div>
-        <h2 className='text-xl font-bold w-full text-center !mb-16 !mt-4'>Image Control</h2>
-        {error && (
-            <div className="bg-red-100 text-red-700 !px-4 !py-2 rounded !mb-4 flex items-center !gap-4">
-                <span>Failed to fetch images: {error}</span>
-                <button
-                onClick={() => fetchImages(page)}
-                className="!px-2 !py-1 bg-blue-500 hover:opacity-80 text-white rounded text-xs"
-                >
-                Retry
-                </button>
-            </div>
-        )}
-        {images.length === 0 && !loading && !error && (
-            <div className="text-sm italic text-gray-500">No images found.</div>
-        )}
-        <button
-        onClick={() => {
-            setPage(1);
-            setImages([]);
-            setHasMore(true);
-            fetchImages(1);
-        }}
-        className="!mb-4 !px-2 !py-1 bg-blue-500 hover:opacity-80 text-white rounded text-xs"
-        >
-        Refresh
-        </button>
-        <div className="grid grid-cols-2 md:grid-cols-4 !gap-4">
-            {images.map(img => (
-                <div key={img.name} className="border rounded !p-2 flex flex-col items-center">
-                    <img
-                        src={img.url}
-                        alt={img.name}
-                        className="w-full h-32 object-cover !mb-2 rounded"
-                        loading="lazy"
-                        style={{ background: "#eee" }}
-                    />
-                    <div className="text-xs break-all">{img.name}</div>
-                    <div className="text-xs text-gray-500">
-                        {img.postTitle ? `Used in: ${img.postTitle}` : "Unused"}
-                    </div>
+    // Delete image
+    async function handleDelete(name: string) {
+        if (!window.confirm("Delete this image?")) return;
+        setError(null);
+        try {
+            await axiosInstance.delete(`/admin/images/${encodeURIComponent(name)}`);
+            setImages(prev => prev.filter(img => img.name !== name));
+        } catch (err: any) {
+            setError(err?.response?.data?.message || err.message || "Unknown error");
+        }
+    }
+
+    return (
+        <div>
+            <h2 className='text-xl font-bold w-full text-center !mb-16 !mt-4'>Image Control</h2>
+
+            {error && (
+                <div className="bg-red-100 text-red-700 !px-4 !py-2 rounded !mb-4 flex items-center !gap-4">
+                    <span>Failed to fetch images: {error}</span>
                     <button
-                        onClick={() => handleDelete(img.name)}
-                        className="!mt-2 !px-2 !py-1 bg-red-500 text-white rounded text-xs"
+                        onClick={fetchImages}
+                        className="!px-2 !py-1 bg-blue-500 hover:opacity-80 text-white rounded text-xs"
                     >
-                        Delete
+                        Retry
                     </button>
                 </div>
-            ))}
+            )}
+
+            {images.length === 0 && !loading && !error && (
+                <div className="text-sm italic text-gray-500 !mb-4">No images found.</div>
+            )}
+
+            <button
+                onClick={fetchImages}
+                className="!mb-4 !px-2 !py-1 bg-blue-500 hover:opacity-80 text-white rounded text-xs"
+            >
+                Refresh
+            </button>
+
+            <div className="grid grid-cols-2 md:grid-cols-4 !gap-4 !mb-10">
+                {images.map(img => (
+                    <div key={img.name} className="border rounded !p-2 flex flex-col items-center">
+                        <img
+                            src={img.url}
+                            alt={img.name}
+                            className="w-full h-32 object-cover !mb-2 rounded"
+                            loading="lazy"
+                            style={{ background: "#eee" }}
+                        />
+                        <div className="text-xs break-all">{img.name}</div>
+                        <div className="text-xs text-gray-500">
+                            {img.postTitle ? `Used in: ${img.postTitle}` : "Unused"}
+                        </div>
+                        <button
+                            onClick={() => handleDelete(img.name)}
+                            className="!mt-2 !px-2 !py-1 bg-red-500 text-white rounded text-xs"
+                        >
+                            Delete
+                        </button>
+                    </div>
+                ))}
+            </div>
+
+            {loading && <div className="text-center !my-4">Loading...</div>}
         </div>
-        {loading && <div className="text-center !my-4">Loading...</div>}
-        <div ref={loader} />
-        {!hasMore && !loading && (
-            <div className="text-center text-xs text-gray-400 !mt-4">No more images.</div>
-        )}
-    </div>
-  );
+    );
 }
