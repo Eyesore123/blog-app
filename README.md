@@ -48,9 +48,9 @@ Blog still needs some work, though, including:
 2. Advanced features for admin (image size adjustments? etc.)
 3. A new tab for image management inside admin dashboard. Purpose is to create an image library window and manage images that are used inside blog text. Now admin can add text images to db only by using the image-browser script, but on the long term it would be nice to control post and text images separately.
 4. Scheduled uploads feature would be nice
+5. An additional panel in admin dashboard that let's admin send emails to users. Options: subbed users and unsubbed users.
 5. Customized emails that look better than the default Laravel emails in comment notiifications and email verifications. Default emails are not bad but could be better.
 6. Profile image features. I added profile image upload as an extra feature, but noticed that image compression would speed up the site a lot, and so it would be nice to add a feature to compress images. It would also be nice to have a feature to crop images, and use images in the comment section. Without compression I might have to offer images from a selection of smaller size icons.
-7. Backend scripts need organizing
 
 ## Deployment
 
@@ -73,13 +73,11 @@ Portgres admin panel looks nice:
 
 ![admindashboard](https://github.com/user-attachments/assets/0530e3cf-617f-4e1a-974d-68bf35c829f2)
 
-## Issues and improvements
+## Issues
 
 - Markdown editor needs work.
-- Cookie popup is missing - I plan to add it and use a similar layout in my portfolio site
 - Flash messages are not working properly so I made a workaround for pop-ups.
 - Admin can create and fetch sketches of posts, but sketches are separate from upload panel so the UI is not the most intuitive.
-- Image management needs some more work.
 
 ## Testing
 
