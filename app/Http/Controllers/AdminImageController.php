@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Validator;
 use App\Models\Post;
 
 class AdminImageController extends Controller
@@ -66,4 +67,35 @@ class AdminImageController extends Controller
         ];
     }
 
+    public function upload(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'image' => 'required|image|max:5120', // Max 5MB
+            'name' => 'required|string|max:255',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['error' => $validator->errors()->first()], 422);
+        }
+
+        $name = $request->input('name');
+        $image = $request->file('image');
+        $path = 'uploads/' . $name;
+
+        try {
+            if (Storage::disk('public')->exists($path)) {
+                Storage::disk('public')->delete($path);
+            }
+
+            Storage::disk('public')->putFileAs('uploads', $image, $name);
+
+            return response()->json([
+                'success' => true,
+                'url' => url('/uploads/' . $name),
+                'name' => $name
+            ]);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Failed to upload image'], 500);
+        }
+    }
 }
