@@ -27,13 +27,13 @@ use App\Http\Middleware\AdminMiddleware;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 
-Route::get('/force404', function () {
-    return Inertia::render('errors/NotFound', [
-        'status' => 404,
-        'message' => 'Forced 404 test'
-    ])->toResponse(request())
-      ->setStatusCode(404);
-});
+// Route::get('/force404', function () {
+//     return Inertia::render('errors/NotFound', [
+//         'status' => 404,
+//         'message' => 'Forced 404 test'
+//     ])->toResponse(request())
+//       ->setStatusCode(404);
+// });
 
 // For production to clear 
 // use Illuminate\Support\Facades\Artisan;
