@@ -49,8 +49,8 @@ export default function AdminImageControl() {
 
     return (
         <div>
-            <AdminImageUpload onUploadSuccess={fetchImages} />
             <h2 className='text-xl font-bold w-full text-center !mb-16 !mt-4'>Image Control</h2>
+            <AdminImageUpload onUploadSuccess={fetchImages} />
 
             {error && (
                 <div className="bg-red-100 text-red-700 !px-4 !py-2 rounded !mb-4 flex items-center !gap-4">
@@ -79,7 +79,7 @@ export default function AdminImageControl() {
                 {images.map(img => (
                     <div key={img.name} className="border rounded !p-2 flex flex-col items-center">
                         <img
-                            src={img.url}
+                            src={`${img.url}?v=${Date.now()}`} // cache-busting to replace the image immediately when imageupload component makes a change
                             alt={img.name}
                             className="w-full h-32 object-cover !mb-2 rounded"
                             loading="lazy"

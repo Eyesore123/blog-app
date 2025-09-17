@@ -79,7 +79,7 @@ Route::get('/admin', [AdminController::class, 'index'])
 
 Route::get('/admin/images', [AdminImageController::class, 'index']);
 Route::delete('/admin/images/{name}', [AdminImageController::class, 'destroy']);
-Route::post('admin/images/upload', [AdminImageController::class, 'upload'])->middleware('admin');
+Route::post('admin/images/upload', [AdminImageController::class, 'upload'])->middleware(['auth', AdminMiddleware::class]);
 
 Route::get('/uploads/{filename}', function ($filename) {
     $path = storage_path('app/public/uploads/' . $filename);
