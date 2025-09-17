@@ -15,6 +15,7 @@ use App\Services\SeoService;
 use Illuminate\Support\Str;
 use App\Mail\NewPostNotification;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 class PostController extends Controller
 {
@@ -189,38 +190,44 @@ class PostController extends Controller
     /**
      * Display a single post (by ID or slug).
      */
-    public function show($identifier)
+    public function show(Request $request, $identifier)
     {
         $postQuery = Post::with(['comments.user', 'tags']);
+
         $post = is_numeric($identifier)
-            ? $postQuery->findOrFail($identifier)
-            : $postQuery->where('slug', $identifier)->firstOrFail();
+            ? $postQuery->find($identifier)
+            : $postQuery->where('slug', $identifier)->first();
+
+        if (!$post) {
+        
+        return Inertia::render('errors/NotFound', [
+            'status' => 404,
+            'message' => 'Post not found. Sorry about that.',
+        ])->toResponse($request)->setStatusCode(200);
+}
 
         $seo    = SeoService::forPost($post);
         $topics = Post::distinct()->pluck('topic')->filter()->values();
 
-        // just the essentials for sidebar/filters
         $allPosts = Post::select('id', 'title', 'topic', 'slug', 'created_at')
-            ->with('tags:id,name') // tags but only id+name
+            ->with('tags:id,name')
             ->get()
-            ->map(function ($p) {
-                return [
-                    'id'         => $p->id,
-                    'title'      => $p->title,
-                    'topic'      => $p->topic,
-                    'slug'       => $p->slug,
-                    'created_at' => $p->created_at,
-                    'tags'       => $p->tags->map(fn($t) => ['id' => $t->id, 'name' => $t->name]),
-                ];
-            });
+            ->map(fn($p) => [
+                'id' => $p->id,
+                'title' => $p->title,
+                'topic' => $p->topic,
+                'slug' => $p->slug,
+                'created_at' => $p->created_at,
+                'tags' => $p->tags->map(fn($t) => ['id' => $t->id, 'name' => $t->name]),
+            ]);
 
         return Inertia::render('PostPage', [
-            'post'     => $this->transformPost($post), // full details for the main post
-            'topics'   => $topics,                     // all topics
-            'comments' => $post->comments,             // comments for the post
-            'allPosts' => $allPosts,                   // lightweight list of all posts
-            'user'     => $this->getUserInfo(),
-            'seo'      => $seo,
+            'post' => $this->transformPost($post),
+            'topics' => $topics,
+            'comments' => $post->comments,
+            'allPosts' => $allPosts,
+            'user' => $this->getUserInfo(),
+            'seo' => $seo,
         ]);
     }
 
@@ -297,8 +304,16 @@ class PostController extends Controller
     /**
      * Show posts filtered by a tag name.
      */
-    public function filterByTag(Tag $tag)
+    public function filterByTag($tagName)
     {
+        $tag = Tag::where('name', $tagName)->first();
+        if (!$tag) {
+        return Inertia::render('errors/NotFound', [
+            'status' => 404,
+            'message' => "No posts found with tag '{$tagName}'",
+        ])->toResponse(request())->setStatusCode(404);
+    }
+
         $posts = $tag->posts()
             ->where('published', true)
             ->with('tags')
@@ -307,8 +322,9 @@ class PostController extends Controller
             ->map(fn($p) => $this->transformPost($p));
 
         return Inertia::render('posts/Index', [
-            'posts'     => $posts,
+            'posts' => $posts,
             'activeTag' => $tag->name,
+            'user' => $this->getUserInfo(),
         ]);
     }
 

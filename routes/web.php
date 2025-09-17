@@ -27,6 +27,14 @@ use App\Http\Middleware\AdminMiddleware;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 
+Route::get('/force404', function () {
+    return Inertia::render('errors/NotFound', [
+        'status' => 404,
+        'message' => 'Forced 404 test'
+    ])->toResponse(request())
+      ->setStatusCode(404);
+});
+
 // For production to clear 
 // use Illuminate\Support\Facades\Artisan;
 
@@ -115,55 +123,6 @@ Route::get('/archives', function() {
 })->name('archives.index');
 
 Route::get('/archives/{year}', [ArchiveController::class, 'show'])->name('archives.show');
-// Error handling
-
-// Direct render routes for error pages
-Route::get('/error/404', function () {
-    return Inertia::render('errors/Error', [
-        'status' => 404,
-        'message' => 'Page not found'
-    ])->toResponse(request())->setStatusCode(404);
-});
-
-Route::get('/error/403', function () {
-    return Inertia::render('errors/Error', [
-        'status' => 403,
-        'message' => 'Forbidden'
-    ])->toResponse(request())->setStatusCode(403);
-});
-
-Route::get('/error/500', function () {
-    return Inertia::render('errors/Error', [
-        'status' => 500,
-        'message' => 'Server error'
-    ])->toResponse(request())->setStatusCode(500);
-});
-
-Route::get('/error/{code}', function ($code) {
-    $code = (int)$code;
-    $messages = [
-        400 => 'Bad request',
-        401 => 'Unauthorized',
-        403 => 'Forbidden',
-        404 => 'Not found',
-        419 => 'Page expired',
-        429 => 'Too many requests',
-        500 => 'Server error',
-        503 => 'Service unavailable',
-    ];
-    
-    return Inertia::render('errors/Error', [
-        'status' => $code,
-        'message' => $messages[$code] ?? 'Error'
-    ])->toResponse(request())->setStatusCode($code);
-});
-
-Route::fallback(function () {
-    return Inertia::render('errors/Error', [
-        'status' => 404,
-        'message' => 'Page not found'
-    ]);
-});
 
 // Rss feed
 
@@ -171,6 +130,10 @@ Route::get('feed', [RssFeedController::class, 'index'])->name('rss.feed');
 
 require __DIR__.'/settings.php';
 require __DIR__.'/auth.php';
+
+// Tag filter
+
+Route::get('/posts/tag/{tag}', [PostController::class, 'filterByTag'])->name('posts.byTag');
 
 // Show single post
 
@@ -221,12 +184,6 @@ Route::middleware(['auth'])->group(function () {
 Route::get('/privacy-policy', function () {
     return Inertia::render('PrivacyPolicy');
 })->name('privacy');
-
-// Tag filter
-
-Route::get('/posts/tag/{tag}', [PostController::class, 'filterByTag'])->name('posts.byTag');
-Route::get('/posts/tag/{tag}', [PostController::class, 'filterByTag'])
-     ->name('posts.byTag');
 
 // Route that shows suggested posts using tags
 
@@ -335,4 +292,11 @@ Route::post('/update-name', function (Request $request) {
     $user->save();
 
     return back()->with('success', 'Name updated.');
+});
+
+Route::fallback(function () {
+    return Inertia::render('errors/NotFound', [
+        'status' => 404,
+        'message' => 'Page not found'
+    ]);
 });

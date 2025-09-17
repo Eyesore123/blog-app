@@ -36,17 +36,20 @@ Loading spinners are used for images and log-in. Custom alerts pop up to notify 
 
 Admin can use Google Cloud Translation API to translate posts to other languages.
 
-Errors are mostly handled with custom error pages. Images use a fallback image in case the image is not found.
+Errors are mostly handled with custom error pages. Errors are mainly handled via controllers: user is shown a custom error page with customized message in case request doesn't return anything with selected values. If a user requests a page that doesn't exist, default NotFound page is shown. 
+Images use a fallback image in case the image is not founds so there should be an image shown even when the requested resource is not available.
+Errorboundary is also used for error handling, but it's mostly decorative and shouldn't be triggered too often, and the same goes to exception handler.
 
 Automated backups - Php scripts are used for controlling backups. Cron jobs are set up with GitHub Actions to back up the db in regular intervals.
 
-Postgres admin panel is added to make the backend adjustments easier. Backend admin can run scripts, make changes to users and tables, create new admins etc. Only admin has access to the admin panel and scripts.
+Postgres admin panel is added to make the backend adjustments easier. Backend admin can run scripts, make changes to users and tables, create new admins etc. Only admins have access to admin panel and scripts.
 
 Blog still needs some work, though, including:
 
 1. Post translation save to database and fetch for translated posts (partially done)
 2. Advanced features for admin (image size adjustments? etc.)
-3. A new tab for image management inside admin dashboard. Purpose is to create an image library window and manage images that are used inside blog text. Now admin can add text images to db only by using the image-browser script, but on the long term it would be nice to control post and text images separately.
+3. A new tab for image management inside admin dashboard. Purpose is to create an image library window and manage images that are used inside blog text. Now admin can add text images to db only by using the image-browser script, but on the long term it would be nice to control post and text images separately. This feature has been recently added but needs to be
+tested to see how it plays together with react markdown.
 4. An additional panel in admin dashboard that let's admin send emails to users. Options: to everyone / admins / subbed users / unsubbed users.
 5. Scheduled uploads feature would be nice
 6. Customized emails that look better than the default Laravel emails in comment notiifications and email verifications. Default emails are not bad but could be better.
@@ -76,8 +79,6 @@ Portgres admin panel looks nice:
 ## Issues
 
 - Markdown editor needs work.
-- Error pages need work. Currently the error boundary is not utilized, which means that app gives user
-default 404 when, for example, tag doesn't have a post (when there's "a message" with the error). Stylized post is returned only when reqested page is actually missing.
 - Flash messages are not working properly so I made a workaround for pop-ups.
 - Admin can create and fetch sketches of posts, but sketches are separate from upload panel so the UI is not the most intuitive.
 - Annoying backend related issues: email sends do not always trigger etc.
