@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import axiosInstance from './axiosInstance';
+import AdminImageUpload from './AdminImageUpload';
 
 export interface AdminImageInfo {
     name: string;
@@ -48,6 +49,7 @@ export default function AdminImageControl() {
 
     return (
         <div>
+            <AdminImageUpload onUploadSuccess={fetchImages} />
             <h2 className='text-xl font-bold w-full text-center !mb-16 !mt-4'>Image Control</h2>
 
             {error && (
