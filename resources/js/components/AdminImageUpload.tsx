@@ -70,7 +70,7 @@ export default function AdminImageUpload({ onUploadSuccess }: AdminImageUploadPr
             <button
                 onClick={handleFileUpload}
                 disabled={loading}
-                className={`"px-3 "py-1 rounded text-white ${
+                className={`"!px-3 "!py-1 rounded text-white ${
                     loading ? 'bg-gray-400 cursor-not-allowed' : 'bg-blue-500 hover:opacity-80'
                 }`}
             >
