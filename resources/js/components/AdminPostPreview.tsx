@@ -61,7 +61,7 @@ export default function AdminPostPreview({
                 {...props}
                 className="max-w-full h-auto rounded-lg !mb-4"
                 onError={(e) => {
-                  e.currentTarget.src = "https://placehold.co/400x300?text=Image+not+found\nSorry!";
+                  e.currentTarget.src = '/placeholder_image.svg'; // fallback image
                 }}
               />
             ),

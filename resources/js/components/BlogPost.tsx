@@ -677,14 +677,13 @@ const postUrl = `/posts/${post.id}`;
         className="max-w-full h-auto rounded-lg !mb-4"
         alt={props.alt || "Image"}
         onError={(e) => {
-          e.currentTarget.src = "https://placehold.co/400x300?text=Image+not+found\nSorry!"; // fallback image
+          e.currentTarget.src = "'/placeholder_image.svg'; // fallback image"; // fallback image
         }}
       />
     ),
 
     }}
   />
-
       
       <div className="text-xs md:text-sm flex flex-col justify-center items-center  md:justify-start md:items-start text-gray-500 !mt-3 !pt-4 md:!pt-6 !space-y-1 border-t border-[#5800FF]/20">
         {post.created_at &&  (
