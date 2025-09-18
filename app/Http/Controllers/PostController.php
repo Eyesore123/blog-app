@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Http;
 use Inertia\Inertia;
 use App\Services\SeoService;
 use Illuminate\Support\Str;
@@ -235,51 +236,72 @@ class PostController extends Controller
      * Update an existing post, syncing tags by name.
      */
     public function update(Request $request, $id)
-    {
-        $validated = $request->validate([
-            'title'   => 'required|string|max:255',
-            'content' => 'required|string',
-            'topic'   => 'required|string|max:255',
-            'image'   => 'nullable|image|max:10000',
-            'tags'    => 'nullable|array',
-            'tags.*'  => 'string|max:255',
-        ]);
+{
+    $validated = $request->validate([
+        'title'     => 'required|string|max:255',
+        'content'   => 'required|string',
+        'topic'     => 'required|string|max:255',
+        'image'     => 'nullable|image|max:10000',
+        'image_url' => 'nullable|url',
+        'tags'      => 'nullable|array',
+        'tags.*'    => 'string|max:255',
+    ]);
 
-        DB::beginTransaction();
+    DB::beginTransaction();
 
-        try {
-            $post = Post::findOrFail($id);
-            $post->title   = $validated['title'];
-            $post->content = $validated['content'];
-            $post->topic   = $validated['topic'];
+    try {
+        $post = Post::findOrFail($id);
+        $post->title   = $validated['title'];
+        $post->content = $validated['content'];
+        $post->topic   = $validated['topic'];
 
-            if (isset($validated['tags'])) {
-                $tagIds = collect($validated['tags'])
-                    ->map(fn($name) => Tag::firstOrCreate(['name' => $name])->id)
-                    ->all();
-                $post->tags()->sync($tagIds);
-            }
-
-            if ($request->hasFile('image')) {
-                if ($post->image_path && str_starts_with($post->image_path, 'uploads/') 
-                    && file_exists(public_path("storage/{$post->image_path}"))) {
-                    unlink(public_path("storage/{$post->image_path}"));
-                }
-                $post->image_path = $request->file('image')->store('uploads', 'public');
-            } elseif (!empty($request->input('image_url'))) {
-                $post->image_path = $request->input('image_url'); // store full external URL
-            }
-
-            $post->save();
-            DB::commit();
-
-            return redirect()->back()->with('success', 'Post updated successfully.');
-        } catch (\Throwable $e) {
-            DB::rollBack();
-            Log::error("Post update failed: {$e->getMessage()}");
-            return response()->json(['error' => 'Update failed'], 500);
+        // Sync tags
+        if (isset($validated['tags'])) {
+            $tagIds = collect($validated['tags'])
+                ->map(fn($name) => Tag::firstOrCreate(['name' => $name])->id)
+                ->all();
+            $post->tags()->sync($tagIds);
         }
+
+        // Handle uploaded image
+        if ($request->hasFile('image')) {
+            if ($post->image_path && str_starts_with($post->image_path, 'uploads/') 
+                && Storage::disk('public')->exists($post->image_path)) {
+                Storage::disk('public')->delete($post->image_path);
+            }
+            $post->image_path = $request->file('image')->store('uploads', 'public');
+
+        // Handle external URL
+        } elseif (!empty($request->input('image_url')) && filter_var($request->input('image_url'), FILTER_VALIDATE_URL)) {
+            $url = $request->input('image_url');
+
+            // Remove old local image if exists
+            if ($post->image_path && str_starts_with($post->image_path, 'uploads/') 
+                && Storage::disk('public')->exists($post->image_path)) {
+                Storage::disk('public')->delete($post->image_path);
+            }
+
+            // Download external image
+            $ext = pathinfo(parse_url($url, PHP_URL_PATH), PATHINFO_EXTENSION) ?: 'jpg';
+            $filename = 'uploads/' . Str::random(40) . '.' . $ext;
+            $imageContents = Http::get($url)->body();
+            Storage::disk('public')->put($filename, $imageContents);
+
+            $post->image_path = $filename;
+        }
+
+        $post->save();
+        DB::commit();
+
+        return redirect()->back()->with('success', 'Post updated successfully.');
+
+    } catch (\Throwable $e) {
+        DB::rollBack();
+        Log::error("Post update failed: {$e->getMessage()}");
+        return response()->json(['error' => 'Update failed'], 500);
     }
+}
+
 
     /**
      * Delete a post (admin only).

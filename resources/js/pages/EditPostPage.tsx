@@ -39,6 +39,7 @@ const EditPostPage: React.FC<EditPostPageProps> = ({ post }) => {
   const [tagInput, setTagInput] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const [imageFile, setImageFile] = useState<File | null>(null);
+  const [imageUrl, setImageUrl] = useState<string>(post.image_url || '');
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
 
   // Inertia form (we only use it for image & tags sync)
@@ -58,16 +59,28 @@ const EditPostPage: React.FC<EditPostPageProps> = ({ post }) => {
     setData('tags', initialTagNames);
   }, [post.tags, setData]);
 
-  // Preview image when imageFile changes
+  // update preview when either file or url changes
   useEffect(() => {
-    if (imageFile) {
-      const url = URL.createObjectURL(imageFile);
-      setPreviewUrl(url);
-      return () => URL.revokeObjectURL(url);
-    }
-    setPreviewUrl(null);
-  }, [imageFile]);
+  if (imageFile) {
+    const url = URL.createObjectURL(imageFile);
+    setPreviewUrl(url);
+    return () => URL.revokeObjectURL(url);
+  } else if (imageUrl && (imageUrl.startsWith('http://') || imageUrl.startsWith('https://'))) {
+    // External URL
+    setPreviewUrl(imageUrl);
+  } else if (post.image_url) {
+    const isExternal = post.image_url.startsWith('http://') || post.image_url.startsWith('https://');
+    // Only prepend /storage/ if it's a local storage path
+    setPreviewUrl(isExternal ? post.image_url : `/storage/${post.image_url}`);
+  } else {
+    setPreviewUrl('');
+  }
+}, [imageFile, imageUrl, post.image_url]);
 
+
+  console.log(post.image_url, previewUrl);
+
+  // Fetch all tags for autocomplete
     useEffect(() => {
     const fetchTags = async () => {
       const response = await axiosInstance.get('/api/tags');
@@ -112,6 +125,8 @@ const EditPostPage: React.FC<EditPostPageProps> = ({ post }) => {
 
       if (imageFile) {
         formData.append('image', imageFile);
+      } else if (imageUrl && (imageUrl.startsWith('http://') || imageUrl.startsWith('https://'))) {
+        formData.append('image_url', imageUrl); // only proper URLs
       }
 
       await axiosInstance.post(`/api/posts/${post.id}`, formData);
@@ -167,7 +182,7 @@ const EditPostPage: React.FC<EditPostPageProps> = ({ post }) => {
                 />
               </div>
 
-              {/* Image Upload */}
+              {/* Image Upload or URL */}
               <div>
                 <label className="block !mb-3 font-medium">Image Upload</label>
                 <input
@@ -176,32 +191,71 @@ const EditPostPage: React.FC<EditPostPageProps> = ({ post }) => {
                   onChange={(e) => {
                     const file = e.target.files?.[0] || null;
                     setImageFile(file);
-                    setData('image', file);
+                    if (file) setImageUrl(""); // reset url if file chosen
+                    setData("image", file);
                   }}
                   className="w-full !p-2 rounded border border-[#5800FF] bg-[var(--bg-primary)]"
                 />
 
-                {previewUrl ? (
+                <label className="block !mt-4 !mb-2 font-medium">Or Image URL</label>
+                <input
+                  type="text"
+                  placeholder="https://example.com/myimage.jpg"
+                  value={imageUrl}
+                  onChange={(e) => {
+                    setImageUrl(e.target.value);
+                    setImageFile(null); // reset file if url given
+                  }}
+                  className="w-full !p-2 rounded border border-[#5800FF] bg-[var(--bg-primary)]"
+                />
+
+                {/* Preview */}
+                {imageFile ? (
                   <div className="!mt-2">
                     <p className="text-sm !mb-3">New Image Preview:</p>
-                    <img src={previewUrl} alt="Preview" className="max-w-xs rounded shadow" />
+                    <img
+                      src={previewUrl || ""}
+                      alt="Preview"
+                      className="max-w-xs rounded shadow"
+                      onError={(e) =>
+                        (e.currentTarget.src =
+                          "https://placehold.co/400x300?text=Image+not+found")
+                      }
+                    />
+                  </div>
+                ) : imageUrl ? (
+                  <div className="!mt-2">
+                    <p className="text-sm !mb-3">New Image Preview (URL):</p>
+                    <img
+                      src={imageUrl}
+                      alt="Preview"
+                      className="max-w-xs rounded shadow"
+                      onError={(e) =>
+                        (e.currentTarget.src =
+                          "https://placehold.co/400x300?text=Image+not+found")
+                      }
+                    />
                   </div>
                 ) : post.image_url ? (
-                    <div className="!mt-2">
-                      <p className="text-sm !mb-3">Current Image:</p>
-                      <a
-                        href={`https://blog-app-production-16c2.up.railway.app/storage${post.image_url}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                      >
-                        <img src={`https://blog-app-production-16c2.up.railway.app/storage${post.image_url}`} alt="Current" className="max-w-xs rounded shadow" />
-                      </a>
-                    </div>
-
+                  <div className="!mt-2">
+                    <p className="text-sm !mb-3">Current Image:</p>
+                    <a
+                      href={`https://blog-app-production-16c2.up.railway.app/storage${post.image_url}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      <img
+                        src={`https://blog-app-production-16c2.up.railway.app/storage${post.image_url}`}
+                        alt="Current"
+                        className="max-w-xs rounded shadow"
+                      />
+                    </a>
+                  </div>
                 ) : (
                   <p className="text-sm mt-1 text-gray-500">No image uploaded.</p>
                 )}
               </div>
+
 
                {/* TAGS */}
               <div>
