@@ -54,8 +54,23 @@ export default function AdminPostPreview({
       )}
 
       <div className="text-sm opacity-80 !mb-4 whitespace-pre-wrap">
-        <ReactMarkdown>{post.content || '(No content)'}</ReactMarkdown>
+        <ReactMarkdown
+          components={{
+            img: ({ node, ...props }) => (
+              <img
+                {...props}
+                className="max-w-full h-auto rounded-lg !mb-4"
+                onError={(e) => {
+                  e.currentTarget.src = "https://placehold.co/400x300?text=Image+not+found\nSorry!";
+                }}
+              />
+            ),
+          }}
+        >
+          {post.content || '(No content)'}
+        </ReactMarkdown>
       </div>
+
 
       {onDeletePost && post.id !== undefined && (
         <button

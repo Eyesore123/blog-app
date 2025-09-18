@@ -225,6 +225,23 @@ export function CreatePost({ onPreviewChange }: CreatePostProps) {
           className="!w-full !p-2 !rounded !border !border-[#5800FF] !bg-[var(--bg-primary)]"
         />
 
+        {/* Image URL */}
+        <input
+          type="text"
+          placeholder="Or paste an image URL"
+          value={imageUrl}
+          onChange={(e) => {
+            setImageUrl(e.target.value);
+            setImageFile(null); // reset file if URL is typed
+            onPreviewChange?.({
+              title,
+              content: editorContent,
+              image_url: e.target.value,
+            });
+          }}
+          className="!w-full !p-2 !rounded !border !border-[#5800FF] !bg-[var(--bg-primary)]"
+        />
+
         {/* Image Upload */}
         <input
           type="file"
@@ -232,11 +249,15 @@ export function CreatePost({ onPreviewChange }: CreatePostProps) {
           onChange={handleImageChange}
           className="!w-full !p-2 !rounded !border !border-[#5800FF] !bg-[var(--bg-primary)]"
         />
+        
         {imageUrl && (
           <img
             src={imageUrl}
             alt="Preview"
             className="!max-w-xs !my-2 !rounded"
+            onError={(e) => {
+              e.currentTarget.src = "https://placehold.co/400x300?text=Image+not+found\nSorry!";
+            }}
           />
         )}
 

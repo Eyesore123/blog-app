@@ -642,7 +642,7 @@ const postUrl = `/posts/${post.id}`;
   </div>
 )}
 
-    <ReactMarkdown children={post.content || '(No content)'} components={{ p: ({ node, ...props }) => ( <p className="!text-sm md:!text-base 2xl:!text-lg !mb-4 !mt-2 md:!min-w-[340px] max-w-[340px] md:max-w-[500px] xl:max-w-[600px] xl:!pr-8 2xl:!pr-0 2xl:max-w-[900px] break-words" {...props} /> ), ul: ({ node, ...props }) => <ul className="list-disc !ml-4 !mb-4" {...props} />, ol: ({ node, ...props }) => <ol className="list-decimal !ml-4 !mb-4" {...props} />, li: ({ node, ...props }) => ( <li className="!mb-2 !ml-4 max-w-[280px] md:max-w-[500px] xl:max-w-[700px] 2xl:max-w-[900px]" {...props} /> ), a: ({ node, ...props }) => ( <a className="text-purple-400 hover:text-white transition-colors" {...props} 
+  <ReactMarkdown children={post.content || '(No content)'} components={{ p: ({ node, ...props }) => ( <p className="!text-sm md:!text-base 2xl:!text-lg !mb-4 !mt-2 md:!min-w-[340px] max-w-[340px] md:max-w-[500px] xl:max-w-[600px] xl:!pr-8 2xl:!pr-0 2xl:max-w-[900px] break-words" {...props} /> ), ul: ({ node, ...props }) => <ul className="list-disc !ml-4 !mb-4" {...props} />, ol: ({ node, ...props }) => <ol className="list-decimal !ml-4 !mb-4" {...props} />, li: ({ node, ...props }) => ( <li className="!mb-2 !ml-4 max-w-[280px] md:max-w-[500px] xl:max-w-[700px] 2xl:max-w-[900px]" {...props} /> ), a: ({ node, ...props }) => ( <a className="text-purple-400 hover:text-white transition-colors" {...props} 
       />
     ),
     strong: ({ node, ...props }) => (
@@ -669,8 +669,21 @@ const postUrl = `/posts/${post.id}`;
         </pre>
       );
     },
-  }}
-/>
+
+    // Image support with fallback
+    img: ({ node, ...props }) => (
+      <img
+        {...props}
+        className="max-w-full h-auto rounded-lg !mb-4"
+        alt={props.alt || "Image"}
+        onError={(e) => {
+          e.currentTarget.src = "https://placehold.co/400x300?text=Image+not+found\nSorry!"; // fallback image
+        }}
+      />
+    ),
+
+    }}
+  />
 
       
       <div className="text-xs md:text-sm flex flex-col justify-center items-center  md:justify-start md:items-start text-gray-500 !mt-3 !pt-4 md:!pt-6 !space-y-1 border-t border-[#5800FF]/20">

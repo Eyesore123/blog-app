@@ -261,10 +261,13 @@ class PostController extends Controller
             }
 
             if ($request->hasFile('image')) {
-                if ($post->image_path && file_exists(public_path("storage/{$post->image_path}"))) {
+                if ($post->image_path && str_starts_with($post->image_path, 'uploads/') 
+                    && file_exists(public_path("storage/{$post->image_path}"))) {
                     unlink(public_path("storage/{$post->image_path}"));
                 }
                 $post->image_path = $request->file('image')->store('uploads', 'public');
+            } elseif (!empty($request->input('image_url'))) {
+                $post->image_path = $request->input('image_url'); // store full external URL
             }
 
             $post->save();
