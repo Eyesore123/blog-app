@@ -677,7 +677,7 @@ const postUrl = `/posts/${post.id}`;
         className="max-w-full h-auto rounded-lg !mb-4"
         alt={props.alt || "Image"}
         onError={(e) => {
-          e.currentTarget.src = "'/placeholder_image.svg'; // fallback image"; // fallback image
+          e.currentTarget.src = '/placeholder_image.svg'; // Fallback image
         }}
       />
     ),
