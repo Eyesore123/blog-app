@@ -14,6 +14,7 @@ export default function AdminImageControl() {
     const [images, setImages] = useState<AdminImageInfo[]>([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
+    const [selectedImage, setSelectedImage] = useState<AdminImageInfo | null>(null);
 
     // Fetch images
     async function fetchImages() {
@@ -81,9 +82,10 @@ export default function AdminImageControl() {
                         <img
                             src={`${img.url}?v=${Date.now()}`} // cache-busting to replace the image immediately when imageupload component makes a change
                             alt={img.name}
-                            className="w-full h-32 object-cover !mb-2 rounded"
+                            className="w-full h-32 object-cover !mb-2 rounded hover:cursor-pointer"
                             loading="lazy"
                             style={{ background: "#eee" }}
+                            onClick={() => setSelectedImage(img)}
                         />
                         <div className="text-xs break-all">{img.name}</div>
                         <div className="text-xs text-gray-500">
@@ -100,6 +102,20 @@ export default function AdminImageControl() {
             </div>
 
             {loading && <div className="text-center !my-4">Loading...</div>}
+
+            {/* Fullscreen image overlay */}
+            {selectedImage && (
+                <div
+                    className='fixed inset-0 bg-black bg-opacity-90 flex items-center justify-center z-50 cursor-pointer'
+                    onClick={() => setSelectedImage(null)}
+                >
+                    <img
+                    src={`${selectedImage.url}?v=${Date.now()}`}
+                    alt={selectedImage.name}
+                    className="max-w-full max-h-full object-contain"
+                    />
+                </div>
+            )}
         </div>
     );
 }
