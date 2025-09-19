@@ -48,12 +48,14 @@ Blog still needs some work, though, including:
 
 1. Post translation save to database and fetch for translated posts (partially done)
 2. Advanced features for admin (image size adjustments? etc.)
-3. A new tab for image management inside admin dashboard. Purpose is to create an image library window and manage images that are used inside blog text. Now admin can add text images to db only by using the image-browser script, but on the long term it would be nice to control post and text images separately. This feature has been recently added but needs to be
-tested to see how it plays together with react markdown.
+3. A new tab for image management inside admin dashboard. This feature has been recently added but needs to be tested to see how it plays together with react markdown.
 4. An additional panel in admin dashboard that let's admin send emails to users. Options: to everyone / admins / subbed users / unsubbed users.
 5. Scheduled uploads feature would be nice
 6. Customized emails that look better than the default Laravel emails in comment notiifications and email verifications. Default emails are not bad but could be better.
 7. Profile image features. I added profile image upload as an extra feature, but noticed that image compression would speed up the site a lot, and so it would be nice to add a feature to compress images. It would also be nice to have a feature to crop images, and use images in the comment section. Without compression I might have to offer images from a selection of smaller size icons.
+
+I'm also going to add more components and interesting stuff on the main page to increase user interaction
+but those will come later.
 
 ## Deployment
 
