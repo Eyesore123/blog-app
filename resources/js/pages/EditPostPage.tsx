@@ -28,21 +28,19 @@ interface EditPostPageProps {
 
 const EditPostPage: React.FC<EditPostPageProps> = ({ post }) => {
   const { theme } = useTheme();
-
-  // Local state
   const [title, setTitle] = useState(post.title);
   const [content, setContent] = useState(post.content);
   const [topic, setTopic] = useState(post.topic);
   const [tags, setTags] = useState<string[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
-  const [allTags, setAllTags] = useState<string[]>([]); // For autocomplete (not implemented yet)
+  const [allTags, setAllTags] = useState<string[]>([]);
   const [tagInput, setTagInput] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [imageUrl, setImageUrl] = useState<string>(post.image_url || '');
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
 
-  // Inertia form (we only use it for image & tags sync)
+  // Inertia form
   const { setData } = useForm({
     title: '',
     content: '',
