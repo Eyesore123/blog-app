@@ -120,11 +120,11 @@ export default function UnemploymentCounter() {
 
             <div className='!mt-6 text-sm opacity-90'>Total hugs received: {hasClicked ? hugs : '?'}</div>
 
-            {thankYouVisible && (
-                <div className="text-green-500 font-semibold text-sm !mt-2">
+            <div className="text-green-500 font-semibold text-sm !mt-2">
+                <span className={`${thankYouVisible ? 'opacity-100' : 'opacity-0'} transition-opacity`}>
                     Thank you! 💚
-                </div>
-            )}
+                </span>
+            </div>
 
             {/* Animated hearts */}
             <AnimatePresence>
