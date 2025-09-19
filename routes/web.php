@@ -23,6 +23,7 @@ use App\Http\Controllers\Auth\NewPasswordController;
 use App\Http\Controllers\TranslationController;
 use App\Http\Controllers\SketchController;
 use App\Http\Controllers\AuthNoticeController;
+use App\Http\Controllers\HugController;
 use App\Http\Middleware\AdminMiddleware;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
@@ -293,6 +294,13 @@ Route::post('/update-name', function (Request $request) {
 
     return back()->with('success', 'Name updated.');
 });
+
+// Hug routes
+
+Route::get('/hugs', [HugController::class, 'index']);
+Route::post('/hugs', [HugController::class, 'store']);
+
+// Fallback route for 404 after everything else fails
 
 Route::fallback(function () {
     return Inertia::render('errors/NotFound', [
