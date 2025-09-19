@@ -99,7 +99,7 @@ export default function UnemploymentCounter() {
         <div className={`rounded-lg !mt-8 !pb-4 text-left relative overflow-visible ${theme}`}>
             <h3 className='font-semibold !mb-2'>Unemployment Timer</h3>
             <p className='text-sm opacity-90 !mt-1'>Since June 1st, 2024:</p>
-            <p className='text-2xl font-bold !mt-4'>
+            <p className='text-3xl font-bold !mt-4'>
                 {elapsed.years}y {elapsed.days}d {elapsed.hours}h {elapsed.minutes}m {elapsed.seconds}s
             </p>
 
