@@ -24,7 +24,7 @@ class HugController extends Controller
     {
         $key = 'hug:' . $request->ip();
         $maxAttempts = 1;
-        $decaySeconds = 5;
+        $decaySeconds = 3;
 
         if (RateLimiter::tooManyAttempts($key, $maxAttempts)) {
             return response()->json([
