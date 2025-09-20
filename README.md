@@ -10,52 +10,62 @@
 
 This app works like a basic blog app: it shows posts and comments. Posts can be searched by title and topic. Posts also can be searched using the dropdown menu. There are archive pages which show all the posts for each year (paginated). Posts use tags (optional) and posts can be filtered by tags just by clicking a tag on the post.
 
-RSS Feed component is also included. I added custom API endpoint for recent activity, which is used in recent activity component in landing page. I also created "the latest post" endpoint which can be used to fetch the latest post. It's an alternative to rss feed (I plan to use it for my portfolio site).
+RSS Feed component is also included. Users see the recent activity on the main page (posts and comments).
 
-Admin can add new posts, edit posts and delete comments. Admin can also deactivate and - as an ultimate solution - delete accounts. Logged in users can add comments, edit their comments and delete comments when there are no replies.
-
-Comments are rate limited by IP address (10 comments per day), and there are no Captchas because IP address guarantees that the limiter applies to many users from the same IP address. Rate limiter is done using custom RateLimitService class. Likewise SEO is done using a custom SEO class and then provided for the app using react-helmet-async package (it was the easiest solution considering I'm not using blade views).
+Admin can add new posts, edit posts and delete comments. Admin can add new images to database from a link or from local storage and change post images. Admin can also deactivate and - as an ultimate solution - delete accounts. Logged in users can add comments, edit their comments and delete comments when there are no replies.
 
 All registered users need to very email address via a link sent to their email address. This is done using Laravel's built-in email verification feature.
 
 Registered users (not anonymous) have a My Account page where they can change their password and delete their account. When an account is deleted, user can decide to keep the comments or delete them from blog posts. If user chooses to keep comments, comments are kept but name is changed to "anonymous", because deleted users can't be identified and is no longer attached to any comment. I think it's nice to offer the option to either keep or delete comments.
 
-Registered users have a toggle option My Account page: they can choose to receive email notifications when a new post is added (showing the post content). There's also a separate option to get a notification when someone has replied to their comment.
+Registered users have a toggle option in My Account page: they can choose to receive email notifications when a new post is added (showing the post content). There's also a separate option to get a notification when someone has replied to their comment.
 
 Registered users can add or change their profile image that's shown in the navbar. Anon users have a Guy Fawkes mask as their profile picture, and registered users who don't have a profile image have a default user icon image.
 
 Admin gets notifications of all new comments and a post notification to email when a new post is added.
 
+Admin can use Google Cloud Translation API to translate posts to other languages.
+
 Login page view has a "forgot password" section so user can reset their password using email.
 
 Comments are hidden on the landing page but revealed by default on the post page. Users see two suggested posts based on the tags of the current post (post page only).
 
-Providers are used for themes, alerts and confirmations. I added a markdown editor for posts. Perhaps I could add one for comments, but it was quite bothersome to get it work without errors for posts so I'm not sure if I'll add new editors.
+## Styles
+
+App uses only a few colors that I've personally picked to match the colors of my portfolio site, including: #000000; #ffffff; #ffc600; #e900ff; transparent: rgba(255, 255, 255, 0.05); linear-gradient(to right, #e900ff, #ffc600); linear-gradient(to right, #5800ff, #e900ff);
+
+UseTheme hook is used to change the color consistently across the app. User clicks on the button and it changes the colors of texts and backgrounds.
 
 Loading spinners are used for images and log-in. Custom alerts pop up to notify user of successful logout. Login doesn't include popup, because it would feel a bit intrusive towards regular users. Admin gets a pop up notification when a new post is added. Custom dialogue window in used for verifying important actions (like deleting a post or a user account).
 
-Admin can use Google Cloud Translation API to translate posts to other languages.
+The fanciest stylistic decision is the use of framer-motion in the unemployment counter component. When a user gives a virtual hug, it sends hearts
+flying towards the top of the screen. 
+
+## Backend, error handling and planned improvements
 
 Errors are mostly handled with custom error pages. Errors are mainly handled via controllers: user is shown a custom error page with customized message in case request doesn't return anything with selected values. If a user requests a page that doesn't exist, default NotFound page is shown. 
 Images use a fallback image in case the image is not founds so there should be an image shown even when the requested resource is not available.
 Errorboundary is also used for error handling, but it's mostly decorative and shouldn't be triggered too often, and the same goes to exception handler.
 
+I added acustom API endpoint for recent activity, which is used in recent activity component in landing page. It fetches the latest data from the
+backend. I also created "the latest post" endpoint which can be used to fetch the latest post. It's an alternative to rss feed.
+
+Comments are rate limited by IP address (10 comments per day), and there are no Captchas because IP address guarantees that the limiter applies to many users from the same IP address. Rate limiter is done using custom RateLimitService class. Likewise SEO is done using a custom SEO class and then provided for the app using react-helmet-async package (it was the easiest solution considering I'm not using blade views).
+
 Automated backups - Php scripts are used for controlling backups. Cron jobs are set up with GitHub Actions to back up the db in regular intervals.
 
 Postgres admin panel is added to make the backend adjustments easier. Backend admin can run scripts, make changes to users and tables, create new admins etc. Only admins have access to admin panel and scripts.
+
+Providers are used for alerts and confirmations. I added a markdown editor for posts to improve the styling of the posts. Perhaps I could add another editor for comments, but it was quite bothersome to get markdown to work properly for posts alone so I probably won't be adding any new editors.
 
 Blog still needs some work, though, including:
 
 1. Post translation save to database and fetch for translated posts (partially done)
 2. Advanced features for admin (image size adjustments? etc.)
-3. A new tab for image management inside admin dashboard. This feature has been recently added but needs to be tested to see how it plays together with react markdown.
-4. An additional panel in admin dashboard that let's admin send emails to users. Options: to everyone / admins / subbed users / unsubbed users.
-5. Scheduled uploads feature would be nice
-6. Customized emails that look better than the default Laravel emails in comment notiifications and email verifications. Default emails are not bad but could be better.
-7. Profile image features. I added profile image upload as an extra feature, but noticed that image compression would speed up the site a lot, and so it would be nice to add a feature to compress images. It would also be nice to have a feature to crop images, and use images in the comment section. Without compression I might have to offer images from a selection of smaller size icons.
-
-I'm also going to add more components and interesting stuff on the main page to increase user interaction
-but those will come later.
+3. An additional panel in admin dashboard that let's admin send emails to users. Options: to everyone / admins / subbed users / unsubbed users.
+4. Scheduled uploads feature would be nice
+5. Customized emails that look better than the default Laravel emails in comment notiifications and email verifications. Default emails are not bad but could be better.
+6. Profile image features. I added profile image upload as an extra feature, but noticed that image compression would speed up the site a lot, and so it would be nice to add a feature to compress images. It would also be nice to have a feature to crop images, and use images in the comment section. Without compression I might have to offer images from a selection of smaller size icons.
 
 ## Deployment
 
