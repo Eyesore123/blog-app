@@ -86,7 +86,7 @@ export function BookComponent() {
           <span className="font-semibold">Or read the free PDF version of the book!</span>
           <div className="text-sm !mt-2">
           <button
-            onClick={() => window.open('/JoblessDiaries.pdf', '_blank', 'noopener,noreferrer')}
+            onClick={() => window.open('/joblessdiaries.pdf', '_blank', 'noopener,noreferrer')}
             className="bg-pink-500 hover:bg-pink-600 text-white font-bold text-[16px] !py-2 !px-4 rounded-full !mt-6 !mb-2 relative overflow-visible">Download
           </button>
           </div>
