@@ -39,11 +39,11 @@ UseTheme hook is used to change the color consistently across the app. User clic
 Loading spinners are used for images and log-in. Custom alerts pop up to notify user of successful logout. Login doesn't include popup, because it would feel a bit intrusive towards regular users. Admin gets a pop up notification when a new post is added. Custom dialogue window in used for verifying important actions (like deleting a post or a user account).
 
 The fanciest stylistic decision is the use of framer-motion in the unemployment counter component. When a user gives a virtual hug, it sends hearts
-flying towards the top of the screen. 
+flying towards the top of the screen.
 
 ## Backend, error handling and planned improvements
 
-Errors are mostly handled with custom error pages. Errors are mainly handled via controllers: user is shown a custom error page with customized message in case request doesn't return anything with selected values. If a user requests a page that doesn't exist, default NotFound page is shown. 
+Errors are mostly handled with custom error pages. Errors are mainly handled via controllers: user is shown a custom error page with customized message in case request doesn't return anything with selected values. If a user requests a page that doesn't exist, default NotFound page is shown.
 Images use a fallback image in case the image is not founds so there should be an image shown even when the requested resource is not available.
 Errorboundary is also used for error handling, but it's mostly decorative and shouldn't be triggered too often, and the same goes to exception handler.
 
@@ -106,6 +106,11 @@ Preparations:
 - "npm install" - installs all npm dependencies.
 - "composer install" - installs composer dependencies.
 - "php artisan migrate" - runs migrations.
+
+Additional:
+
+- Copy .env.example and paste values into a fresh .env. Use command "php artisan key:generate to" create a new encryption key, then paste that key to your .env-file. Also set the port number to the one you use. The other values can stay the same.
+- If migration causes errors, check the commands in start.sh and use them after adjustments on a terminal to run migrations one by one on your local dev server.
 
 Running a server (use two different terminals):
 
