@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useMemo } from 'react'
 import axiosInstance from './axiosInstance';
 import AdminImageUpload from './AdminImageUpload';
 
@@ -15,16 +15,32 @@ export default function AdminImageControl() {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [selectedImage, setSelectedImage] = useState<AdminImageInfo | null>(null);
+    const [searchTerm, setSearchTerm] = useState("");
+
+    // pagination
+    const [page, setPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(1);
 
     // Fetch images
-    async function fetchImages() {
+    async function fetchImages(currentPage = 1) {
         setLoading(true);
         setError(null);
         try {
-            const res = await axiosInstance.get(`/admin/images?per_page=${PAGE_SIZE}`, {
-                withCredentials: true
-            });
+            const res = await axiosInstance.get(
+                `/admin/images?page=${currentPage}&per_page=${PAGE_SIZE}`,
+                { withCredentials: true }
+            );
+
             setImages(res.data?.data || []);
+
+            // If your API provides total count, use it:
+            if (res.data?.total) {
+                setTotalPages(Math.ceil(res.data.total / PAGE_SIZE));
+            } else {
+                // fallback: assume only one page if not provided
+                setTotalPages(1);
+            }
+
         } catch (err: any) {
             setError(err?.response?.data?.message || err.message || "Unknown error");
         } finally {
@@ -33,8 +49,8 @@ export default function AdminImageControl() {
     }
 
     useEffect(() => {
-        fetchImages();
-    }, []);
+        fetchImages(page);
+    }, [page]);
 
     // Delete image
     async function handleDelete(name: string) {
@@ -48,16 +64,43 @@ export default function AdminImageControl() {
         }
     }
 
+    // Filter + sort images by search term
+    const filteredImages = useMemo(() => {
+        if (!searchTerm) return images;
+
+        const lower = searchTerm.toLowerCase();
+
+        return [...images].sort((a, b) => {
+            const aMatch = a.name.toLowerCase().includes(lower) || a.postTitle?.toLowerCase().includes(lower);
+            const bMatch = b.name.toLowerCase().includes(lower) || b.postTitle?.toLowerCase().includes(lower);
+
+            if (aMatch && !bMatch) return -1;
+            if (!aMatch && bMatch) return 1;
+            return a.name.localeCompare(b.name);
+        });
+    }, [images, searchTerm]);
+
     return (
         <div>
-            <h2 className='text-xl font-bold w-full text-center !mb-16 !mt-4'>Image Control</h2>
-            <AdminImageUpload onUploadSuccess={fetchImages} />
+            <h2 className='text-xl font-bold w-full text-center !mb-8 !mt-4'>Image Control</h2>
+            <AdminImageUpload onUploadSuccess={() => fetchImages(page)} />
+
+            {/* Search box */}
+            <div className="flex justify-center !mb-6">
+                <input
+                    type="text"
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    placeholder="Search images by name or post title..."
+                    className="border rounded !px-3 !py-2 w-full max-w-md"
+                />
+            </div>
 
             {error && (
                 <div className="bg-red-100 text-red-700 !px-4 !py-2 rounded !mb-4 flex items-center !gap-4">
                     <span>Failed to fetch images: {error}</span>
                     <button
-                        onClick={fetchImages}
+                        onClick={() => fetchImages(page)}
                         className="!px-2 !py-1 bg-blue-500 hover:opacity-80 text-white rounded text-xs"
                     >
                         Retry
@@ -65,22 +108,22 @@ export default function AdminImageControl() {
                 </div>
             )}
 
-            {images.length === 0 && !loading && !error && (
+            {filteredImages.length === 0 && !loading && !error && (
                 <div className="text-sm italic text-gray-500 !mb-4">No images found.</div>
             )}
 
             <button
-                onClick={fetchImages}
+                onClick={() => fetchImages(page)}
                 className="!mb-4 !px-2 !py-1 bg-blue-500 hover:opacity-80 text-white rounded text-xs"
             >
                 Refresh
             </button>
 
             <div className="grid grid-cols-2 md:grid-cols-4 !gap-4 !mb-10">
-                {images.map(img => (
+                {filteredImages.map(img => (
                     <div key={img.name} className="border rounded !p-2 flex flex-col items-center">
                         <img
-                            src={`${img.url}?v=${Date.now()}`} // cache-busting to replace the image immediately when imageupload component makes a change
+                            src={`${img.url}?v=${Date.now()}`}
                             alt={img.name}
                             className="w-full h-32 object-cover !mb-2 rounded hover:cursor-pointer"
                             loading="lazy"
@@ -103,6 +146,25 @@ export default function AdminImageControl() {
 
             {loading && <div className="text-center !my-4">Loading...</div>}
 
+            {/* Pagination */}
+            <div className="flex justify-center items-center !gap-4 !mb-10">
+                <button
+                    onClick={() => setPage(prev => Math.max(1, prev - 1))}
+                    disabled={page === 1}
+                    className="!px-3 !py-1 bg-[#5800FF] rounded disabled:opacity-50"
+                >
+                    Previous
+                </button>
+                <span>Page {page} of {totalPages}</span>
+                <button
+                    onClick={() => setPage(prev => Math.min(totalPages, prev + 1))}
+                    disabled={page === totalPages}
+                    className="!px-3 !py-1 bg-[#5800FF] rounded disabled:opacity-50"
+                >
+                    Next
+                </button>
+            </div>
+
             {/* Fullscreen image overlay */}
             {selectedImage && (
                 <div
@@ -110,9 +172,9 @@ export default function AdminImageControl() {
                     onClick={() => setSelectedImage(null)}
                 >
                     <img
-                    src={`${selectedImage.url}?v=${Date.now()}`}
-                    alt={selectedImage.name}
-                    className="max-w-full max-h-full object-contain"
+                        src={`${selectedImage.url}?v=${Date.now()}`}
+                        alt={selectedImage.name}
+                        className="max-w-full max-h-full object-contain"
                     />
                 </div>
             )}
