@@ -21,6 +21,16 @@ export default function AdminImageControl() {
     const [page, setPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
 
+    // Fetcf img url
+
+    function getImageUrl(url: string) {
+        if (import.meta.env.MODE === "production") {
+            return url.replace("/uploads/", "/storage/uploads/");
+        }
+        return url;
+    }
+
+
     // Fetch images
     async function fetchImages(currentPage = 1) {
         setLoading(true);
@@ -34,12 +44,14 @@ export default function AdminImageControl() {
             setImages(res.data?.data || []);
 
             // If your API provides total count, use it:
-            if (res.data?.total) {
-                setTotalPages(Math.ceil(res.data.total / PAGE_SIZE));
+            if (res.data?.last_page) {
+            setTotalPages(res.data.last_page);
+            } else if (res.data?.total) {
+            setTotalPages(Math.ceil(res.data.total / PAGE_SIZE));
             } else {
-                // fallback: assume only one page if not provided
-                setTotalPages(1);
+            setTotalPages(1);
             }
+
 
         } catch (err: any) {
             setError(err?.response?.data?.message || err.message || "Unknown error");
@@ -51,6 +63,12 @@ export default function AdminImageControl() {
     useEffect(() => {
         fetchImages(page);
     }, [page]);
+
+    // Go back to first page when search term changes
+    useEffect(() => {
+    setPage(1);
+    }, [searchTerm]);
+
 
     // Delete image
     async function handleDelete(name: string) {
@@ -71,8 +89,12 @@ export default function AdminImageControl() {
         const lower = searchTerm.toLowerCase();
 
         return [...images].sort((a, b) => {
-            const aMatch = a.name.toLowerCase().includes(lower) || a.postTitle?.toLowerCase().includes(lower);
-            const bMatch = b.name.toLowerCase().includes(lower) || b.postTitle?.toLowerCase().includes(lower);
+            const aMatch =
+                a.name.toLowerCase().includes(lower) ||
+                (a.postTitle?.toLowerCase().includes(lower) ?? false);
+            const bMatch =
+                b.name.toLowerCase().includes(lower) ||
+                (b.postTitle?.toLowerCase().includes(lower) ?? false);
 
             if (aMatch && !bMatch) return -1;
             if (!aMatch && bMatch) return 1;
@@ -123,7 +145,7 @@ export default function AdminImageControl() {
                 {filteredImages.map(img => (
                     <div key={img.name} className="border rounded !p-2 flex flex-col items-center">
                         <img
-                            src={`${img.url}?v=${Date.now()}`}
+                            src={`${getImageUrl(img.url)}?v=${Date.now()}`}
                             alt={img.name}
                             className="w-full h-32 object-cover !mb-2 rounded hover:cursor-pointer"
                             loading="lazy"
@@ -172,9 +194,9 @@ export default function AdminImageControl() {
                     onClick={() => setSelectedImage(null)}
                 >
                     <img
-                        src={`${selectedImage.url}?v=${Date.now()}`}
-                        alt={selectedImage.name}
-                        className="max-w-full max-h-full object-contain"
+                    src={`${getImageUrl(selectedImage.url)}?v=${Date.now()}`}
+                    alt={selectedImage.name}
+                    className="max-w-full max-h-full object-contain"
                     />
                 </div>
             )}
