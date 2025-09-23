@@ -27,7 +27,13 @@ if ($action === 'upload' && isset($_FILES['image'])) {
         $fileType = mime_content_type($file['tmp_name']);
         
         if (in_array($fileType, $allowedTypes)) {
-            $extension = pathinfo($file['name'], PATHINFO_EXTENSION);
+            $mimeToExt = [
+                'image/jpeg' => 'jpg',
+                'image/png' => 'png',
+                'image/gif' => 'gif',
+                'image/webp' => 'webp',
+            ];
+            $extension = $mimeToExt[$fileType] ?? strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
             $filename = 'upload-' . time() . '-' . uniqid() . '.' . $extension;
             $destination = $uploadDir . $filename;
             
@@ -68,24 +74,24 @@ if ($action === 'delete' && isset($_GET['file'])) {
     }
 }
 
-// Get all image files
-$images = [];
+// Get all image files w/ pagination
+$perPage = 20;
+$page = max(1, intval($_GET['page'] ?? 1));
+
+$images= [];
 $totalSize = 0;
-$imageCount = 0;
 
 if (is_dir($uploadDir)) {
     $files = scandir($uploadDir);
     foreach ($files as $file) {
         if ($file === '.' || $file === '..') continue;
-        
+
         $filepath = $uploadDir . $file;
         if (is_file($filepath)) {
             $size = filesize($filepath);
             $totalSize += $size;
-            
             $imageInfo = @getimagesize($filepath);
             if ($imageInfo !== false) {
-                $imageCount++;
                 $images[] = [
                     'name' => $file,
                     'size' => $size,
@@ -99,10 +105,16 @@ if (is_dir($uploadDir)) {
     }
 }
 
-// Sort by modification time (newest first)
-usort($images, function($a, $b) {
-    return $b['modified'] - $a['modified'];
-});
+// Sort newest first
+usort($images, fn($a, $b) => $b['modified'] - $a['modified']);
+
+// Pagination calculations
+$totalImages = count($images);
+$totalPages = max(1, ceil($totalImages / $perPage));
+$start = ($page - 1) * $perPage;
+$imagesPage = array_slice($images, $start, $perPage);
+
+// 
 
 echo "<h3>📊 Storage Stats:</h3>";
 echo "<p>" . count($images) . " images | " . formatBytes($totalSize) . " total size</p>";
@@ -120,12 +132,12 @@ echo "</div>";
 // Display images
 echo "<h3>🖼️ Images (" . count($images) . "):</h3>";
 
-if (empty($images)) {
+if (empty($imagesPage)) {
     echo "<p>No images found</p>";
 } else {
     echo "<div style='display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px;'>";
     
-    foreach ($images as $image) {
+    foreach ($imagesPage as $image) {
         // Changed from /storage/images/ to /storage/uploads/
         $imageUrl = "/storage/uploads/" . $image['name'];
         $fullUrl = "https://blog-app-production-16c2.up.railway.app" . $imageUrl;
@@ -160,6 +172,19 @@ if (empty($images)) {
     
     echo "</div>";
 }
+
+// Pagination controls
+echo "<div style='margin-top: 20px; text-align: center;'>";
+if ($page > 1) {
+    $prev = $page - 1;
+    echo "<a href='?token={$_GET['token']}&page=$prev' style='margin-right: 10px;'>⬅️ Previous</a>";
+}
+echo " Page $page of $totalPages ";
+if ($page < $totalPages) {
+    $next = $page + 1;
+    echo "<a href='?token={$_GET['token']}&page=$next' style='margin-left: 10px;'>Next ➡️</a>";
+}
+echo "</div>";
 
 function formatBytes($size, $precision = 2) {
     $units = ['B', 'KB', 'MB', 'GB'];
