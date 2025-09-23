@@ -672,7 +672,7 @@ const postUrl = `/posts/${post.id}`;
 
     // Image support with fallback
     img: ({ node, ...props }) => (
-    <figure className="!mb-8 !mt-8 text-center">
+    <figure className="!mt-2 !mb-2 md:!mb-8 md:!mt-8 text-center">
       <img
         {...props}
         className="max-w-full h-auto rounded-lg mx-auto"
