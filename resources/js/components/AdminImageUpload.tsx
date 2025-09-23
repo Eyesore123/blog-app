@@ -71,12 +71,16 @@ export default function AdminImageUpload({ onUploadSuccess }: AdminImageUploadPr
         type="file"
         accept="image/*"
         onChange={(e) => {
-          const selectedFile = e.target.files ? e.target.files[0] : null;
-          setFile(selectedFile);
-          if (selectedFile) {
-            setName(selectedFile.name.replace(/\s+/g, '_')); // autofill name
-          }
-        }}
+        const selectedFile = e.target.files ? e.target.files[0] : null;
+        setFile(selectedFile);
+        if (selectedFile) {
+          const lowercasedName = selectedFile.name
+            .replace(/\s+/g, '_')   // replace spaces with underscores
+            .toLowerCase();         // force lowercase
+          setName(lowercasedName);
+        }
+      }}
+
         className="!mb-4 w-full"
       />
 
