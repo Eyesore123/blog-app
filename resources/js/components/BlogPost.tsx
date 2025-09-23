@@ -672,15 +672,22 @@ const postUrl = `/posts/${post.id}`;
 
     // Image support with fallback
     img: ({ node, ...props }) => (
+    <figure className="!mb-8 !mt-8 text-center">
       <img
         {...props}
-        className="max-w-full h-auto rounded-lg !mb-4"
+        className="max-w-full h-auto rounded-lg mx-auto"
         alt={props.alt || "Image"}
         onError={(e) => {
-          e.currentTarget.src = '/placeholder_image.svg'; // Fallback image
+          e.currentTarget.src = '/placeholder_image.svg';
         }}
       />
-    ),
+      {props.alt && (
+        <figcaption className="text-sm text-gray-500 !mt-2 italic">
+          {props.alt}
+        </figcaption>
+      )}
+    </figure>
+  ),
 
     }}
   />
