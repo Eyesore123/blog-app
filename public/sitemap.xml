@@ -1,129 +1,70 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
-		<!--	created with www.mysitemapgenerator.com	-->
-		<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-<url>
-	<loc>https://blog-app-production-16c2.up.railway.app/</loc>
-	<lastmod>2025-09-26T08:48:16+01:00</lastmod>
-	<priority>1.0</priority>
-</url>
-<url>
-	<loc>https://blog-app-production-16c2.up.railway.app/?page=1%2F</loc>
-	<lastmod>2025-09-26T08:48:16+01:00</lastmod>
-	<priority>0.9</priority>
-</url>
-<url>
-	<loc>https://blog-app-production-16c2.up.railway.app/?page=22%2F</loc>
-	<lastmod>2025-09-26T08:48:16+01:00</lastmod>
-	<priority>0.9</priority>
-</url>
-<url>
-	<loc>https://blog-app-production-16c2.up.railway.app/?page=2%2F</loc>
-	<lastmod>2025-09-26T08:48:16+01:00</lastmod>
-	<priority>0.9</priority>
-</url>
-<url>
-	<loc>https://blog-app-production-16c2.up.railway.app/?page=3%2F</loc>
-	<lastmod>2025-09-26T08:48:16+01:00</lastmod>
-	<priority>0.9</priority>
-</url>
-<url>
-	<loc>https://blog-app-production-16c2.up.railway.app/?page=4%2F</loc>
-	<lastmod>2025-09-26T08:48:16+01:00</lastmod>
-	<priority>0.9</priority>
-</url>
-<url>
-	<loc>https://blog-app-production-16c2.up.railway.app/?page=5%2F</loc>
-	<lastmod>2025-09-26T08:48:16+01:00</lastmod>
-	<priority>0.9</priority>
-</url>
-<url>
-	<loc>https://blog-app-production-16c2.up.railway.app/?page=6%2F</loc>
-	<lastmod>2025-09-26T08:48:16+01:00</lastmod>
-	<priority>0.9</priority>
-</url>
-<url>
-	<loc>https://blog-app-production-16c2.up.railway.app/?page=7%2F</loc>
-	<lastmod>2025-09-26T08:48:16+01:00</lastmod>
-	<priority>0.9</priority>
-</url>
-<url>
-	<loc>https://blog-app-production-16c2.up.railway.app/?page=8%2F</loc>
-	<lastmod>2025-09-26T08:48:16+01:00</lastmod>
-	<priority>0.9</priority>
-</url>
-<url>
-	<loc>https://blog-app-production-16c2.up.railway.app/?page=9%2F</loc>
-	<lastmod>2025-09-26T08:48:16+01:00</lastmod>
-	<priority>0.9</priority>
-</url>
-<url>
-	<loc>https://blog-app-production-16c2.up.railway.app/?page=10%2F</loc>
-	<lastmod>2025-09-26T08:48:16+01:00</lastmod>
-	<priority>0.9</priority>
-</url>
-<url>
-	<loc>https://blog-app-production-16c2.up.railway.app/?page=21%2F</loc>
-	<lastmod>2025-09-26T08:48:16+01:00</lastmod>
-	<priority>0.9</priority>
-</url>
-<url>
-	<loc>https://blog-app-production-16c2.up.railway.app/?page=1%2F</loc>
-	<lastmod>2025-09-26T08:48:16+01:00</lastmod>
-	<priority>0.9</priority>
-</url>
-<url>
-	<loc>https://blog-app-production-16c2.up.railway.app/?page=22%2F</loc>
-	<lastmod>2025-09-26T08:48:18+01:00</lastmod>
-	<priority>0.9</priority>
-</url>
-<url>
-	<loc>https://blog-app-production-16c2.up.railway.app/?page=3%2F</loc>
-	<lastmod>2025-09-26T08:48:18+01:00</lastmod>
-	<priority>0.9</priority>
-</url>
-<url>
-	<loc>https://blog-app-production-16c2.up.railway.app/?page=6%2F</loc>
-	<lastmod>2025-09-26T08:48:19+01:00</lastmod>
-	<priority>0.9</priority>
-</url>
-<url>
-	<loc>https://blog-app-production-16c2.up.railway.app/?page=9%2F</loc>
-	<lastmod>2025-09-26T08:48:20+01:00</lastmod>
-	<priority>0.9</priority>
-</url>
-<url>
-	<loc>https://blog-app-production-16c2.up.railway.app/?page=2%2F</loc>
-	<lastmod>2025-09-26T08:48:20+01:00</lastmod>
-	<priority>0.9</priority>
-</url>
-<url>
-	<loc>https://blog-app-production-16c2.up.railway.app/?page=4%2F</loc>
-	<lastmod>2025-09-26T08:48:21+01:00</lastmod>
-	<priority>0.9</priority>
-</url>
-<url>
-	<loc>https://blog-app-production-16c2.up.railway.app/?page=7%2F</loc>
-	<lastmod>2025-09-26T08:48:22+01:00</lastmod>
-	<priority>0.9</priority>
-</url>
-<url>
-	<loc>https://blog-app-production-16c2.up.railway.app/?page=5%2F</loc>
-	<lastmod>2025-09-26T08:48:22+01:00</lastmod>
-	<priority>0.9</priority>
-</url>
-<url>
-	<loc>https://blog-app-production-16c2.up.railway.app/?page=8%2F</loc>
-	<lastmod>2025-09-26T08:48:23+01:00</lastmod>
-	<priority>0.9</priority>
-</url>
-<url>
-	<loc>https://blog-app-production-16c2.up.railway.app/?page=10%2F</loc>
-	<lastmod>2025-09-26T08:48:23+01:00</lastmod>
-	<priority>0.9</priority>
-</url>
-<url>
-	<loc>https://blog-app-production-16c2.up.railway.app/?page=21%2F</loc>
-	<lastmod>2025-09-26T08:48:23+01:00</lastmod>
-	<priority>0.9</priority>
-</url>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+
+  <url>
+    <loc>https://blog-app-production-16c2.up.railway.app/</loc>
+    <lastmod>2025-09-26T08:48:16+01:00</lastmod>
+    <priority>1.0</priority>
+  </url>
+
+  <url>
+    <loc>https://blog-app-production-16c2.up.railway.app/page/1</loc>
+    <lastmod>2025-09-26T08:48:16+01:00</lastmod>
+    <priority>0.9</priority>
+  </url>
+
+  <url>
+    <loc>https://blog-app-production-16c2.up.railway.app/page/2</loc>
+    <lastmod>2025-09-26T08:48:16+01:00</lastmod>
+    <priority>0.9</priority>
+  </url>
+
+  <url>
+    <loc>https://blog-app-production-16c2.up.railway.app/page/3</loc>
+    <lastmod>2025-09-26T08:48:16+01:00</lastmod>
+    <priority>0.9</priority>
+  </url>
+
+  <url>
+    <loc>https://blog-app-production-16c2.up.railway.app/page/4</loc>
+    <lastmod>2025-09-26T08:48:16+01:00</lastmod>
+    <priority>0.9</priority>
+  </url>
+
+  <url>
+    <loc>https://blog-app-production-16c2.up.railway.app/page/5</loc>
+    <lastmod>2025-09-26T08:48:16+01:00</lastmod>
+    <priority>0.9</priority>
+  </url>
+
+  <url>
+    <loc>https://blog-app-production-16c2.up.railway.app/page/6</loc>
+    <lastmod>2025-09-26T08:48:16+01:00</lastmod>
+    <priority>0.9</priority>
+  </url>
+
+  <url>
+    <loc>https://blog-app-production-16c2.up.railway.app/page/7</loc>
+    <lastmod>2025-09-26T08:48:16+01:00</lastmod>
+    <priority>0.9</priority>
+  </url>
+
+  <url>
+    <loc>https://blog-app-production-16c2.up.railway.app/page/8</loc>
+    <lastmod>2025-09-26T08:48:16+01:00</lastmod>
+    <priority>0.9</priority>
+  </url>
+
+  <url>
+    <loc>https://blog-app-production-16c2.up.railway.app/page/9</loc>
+    <lastmod>2025-09-26T08:48:16+01:00</lastmod>
+    <priority>0.9</priority>
+  </url>
+
+  <url>
+    <loc>https://blog-app-production-16c2.up.railway.app/page/10</loc>
+    <lastmod>2025-09-26T08:48:16+01:00</lastmod>
+    <priority>0.9</priority>
+  </url>
+
 </urlset>
