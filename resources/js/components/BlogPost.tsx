@@ -73,6 +73,28 @@ interface BlogPostProps {
 
 
 export function BlogPost({ post, isPostPage = false }: BlogPostProps) {
+  const schemaData = {
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  mainEntityOfPage: {
+    "@type": "WebPage",
+    "@id": `https://blog-app-production-16c2.up.railway.app/posts/${post.slug || post.id}`
+  },
+  headline: post.title,
+  description: post.content?.slice(0, 160),
+  image: post.image_url || "https://blog-app-production-16c2.up.railway.app/fallbackimage.jpg",
+  author: {
+    "@type": "Person",
+    "name": "Joni"
+  },
+  publisher: {
+    "@type": "Person",
+    "name": "Joni"
+  },
+  datePublished: post.created_at,
+  dateModified: post.updated_at
+};
+
   const { auth, seo } = usePage<PageProps>().props;
   const seoProps = { ...seo };
   const user = auth.user;
@@ -583,12 +605,16 @@ const postUrl = `/posts/${post.id}`;
   </Head>
     <Helmet>
         <title>{seoProps.title}</title>
+        <link rel="canonical" href={`https://blog-app-production-16c2.up.railway.app/post/${post.slug || post.id}`} />
         <meta name="description" content={seoProps.description} />
         <meta name="keywords" content={seoProps.keywords || 'blog, post'} />
         <meta property="og:title" content={seoProps.title} />
         <meta property="og:description" content={seoProps.description} />
         <meta property="og:image" content={seoProps.image || '/default-image.jpg'} />
         <meta property="og:url" content={seoProps.url} />
+         <script type="application/ld+json">
+          {JSON.stringify(schemaData)}
+        </script>
       </Helmet>
     <div className={`bg-[var(--bg-primary)] rounded-lg`}>
     <article className={`article-container flex flex-col justify-center items-center lg:items-start lg:justify-start rounded-lg bg-[#5800FF]/10 !p-4 md:!pl-0 w-full md:!w-150 xl:!w-220 2xl:!w-260 !pb-6 md:!pb-10 lg:!pl-10 2xl:!pl-14`}>
