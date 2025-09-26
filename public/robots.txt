@@ -1,2 +1,3 @@
 User-agent: *
-Disallow:
+Allow: /
+Sitemap: https://blog-app-production-16c2.up.railway.app/sitemap.xml
