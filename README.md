@@ -91,6 +91,8 @@ Portgres admin panel looks nice:
 ## Issues
 
 - Markdown editor needs work.
+- I've disabled the queue for emails until I add test email panel to admin dashboard so i can test queues before 
+I use them in prod
 - Flash messages are not working properly so I made a workaround for pop-ups.
 - Admin can create and fetch sketches of posts, but sketches are separate from upload panel so the UI is not the most intuitive.
 - Annoying backend related issues: email sends do not always trigger etc.
