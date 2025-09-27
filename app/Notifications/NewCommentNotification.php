@@ -1,39 +1,6 @@
-<!-- Not in use anymore -->
-
-<!-- If you want to use this, you need to change this block to commentcontroller.php:
- 
-// Notify admin for every comment
-        try {
-        $admin = User::where('is_admin', true)->first();
-        if ($admin) {
-            Log::info('Admin for notification:', ['admin' => $admin]);
-            $admin->notify(new NewCommentNotification($comment));
-        }
-        } catch (\Exception $e) {
-            Log::error('Failed to send comment notification: ' . $e->getMessage());
-        }
-
-        // Notify parent comment author if it is a reply and they want notifications
-        
-        if ($comment->parent_id) {
-            $parentComment = Comment::find($comment->parent_id);
-            if ($parentComment && $parentComment->user_id) {
-                $parentUser = User::find($parentComment->user_id);
-                if ($parentUser && $parentUser->notify_comments) {
-                    try {
-                        $parentUser->notify(new NewCommentNotification($comment));
-                    } catch (\Exception $e) {
-                        Log::error('Failed to send reply notification to user: ' . $e->getMessage());
-                    }
-                }
-            }
-        }
-
--->
-
 <?php
 
-// namespace App\Notifications;
+namespace App\Notifications;
 
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Notification;
@@ -41,7 +8,7 @@ use Illuminate\Notifications\Messages\MailMessage;
 use App\Models\Comment;
 use Illuminate\Contracts\Queue\ShouldQueue;
 
-class NewCommentNotification extends Notification implements ShouldQueue
+class NewCommentNotificationForAdmin extends Notification implements ShouldQueue
 {
     use Queueable;
 
@@ -52,29 +19,37 @@ class NewCommentNotification extends Notification implements ShouldQueue
         $this->comment = $comment;
     }
 
+    /**
+     * Determine which channels the notification will be sent through.
+     */
     public function via($notifiable)
     {
+        // Send to mail only if the admin wants notifications
         return $notifiable->notify_comments ? ['mail'] : [];
     }
 
+    /**
+     * Build the mail representation of the notification.
+     */
     public function toMail($notifiable)
     {
         return (new MailMessage)
-            ->subject('New Comment Posted')
-            ->line('A new comment was posted:')
-            ->line($this->comment->content)
+            ->subject('New Comment Posted on Blog')
+            ->line('A new comment was posted by: ' . ($this->comment->user->name ?? 'Anonymous'))
+            ->line('Comment content: ' . $this->comment->content)
             ->action('View Post', url('/posts/' . $this->comment->post_id));
     }
 
     /**
-     * Get the array representation of the notification.
-     *
-     * @return array<string, mixed>
+     * Representation for database (optional).
      */
-    public function toArray(object $notifiable): array
+    public function toArray($notifiable)
     {
         return [
-            //
+            'comment_id' => $this->comment->id,
+            'post_id' => $this->comment->post_id,
+            'content' => $this->comment->content,
+            'user_name' => $this->comment->user->name ?? 'Anonymous',
         ];
     }
 }

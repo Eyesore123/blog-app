@@ -19,6 +19,12 @@ class NewCommentNotificationForAdmin extends Notification implements ShouldQueue
         $this->comment = $comment;
     }
 
+    // <<< This is required
+    public function via($notifiable)
+    {
+        return ['mail'];
+    }
+
     public function toMail($notifiable)
     {
         return (new MailMessage)
