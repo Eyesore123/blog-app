@@ -94,6 +94,7 @@ Portgres admin panel looks nice:
 - Flash messages are not working properly so I made a workaround for pop-ups.
 - Admin can create and fetch sketches of posts, but sketches are separate from upload panel so the UI is not the most intuitive.
 - Annoying backend related issues: email sends do not always trigger etc.
+- Aside section is a bit heavy and can disturb the function called page scroll: when user clicks on a link, the page might stop going all the way up when the aside part is still loading. So instead of page scrolling all the way up, it might stop somewhere in between in some instances.
 
 ## Testing
 
@@ -121,6 +122,8 @@ Running a server (use two different terminals):
 
 After that server runs on port 8000 by default:
 http://127.0.0.1:8000
+
+Notice also that this repo is still using a lot of absolute paths. Yes, that was a stupid decision, but I was too focused on getting this blog to work so I let that happen mistakenly. If I later decide to use a custom domain, I might replace absolute paths to relative and test changes in a new branch, but hey, at least it works.
 
 ## What I've learned during this project
 
