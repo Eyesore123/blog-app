@@ -104,6 +104,13 @@ I use them in prod
 
 Preparations:
 
+Make sure that you have
+- Node.js installed
+- Git bash installed, preferably
+- Php and Laravel Herd installed
+
+Then:
+
 - Set suitable cors policy before testing to avoid errors.
 - Make sure you're using sqlite database for testing and you've set the right database connection and set it up correctly.
 - "npm install" - installs all npm dependencies.
