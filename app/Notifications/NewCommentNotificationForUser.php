@@ -19,6 +19,11 @@ class NewCommentNotificationForUser extends Notification implements ShouldQueue
         $this->comment = $comment;
     }
 
+    public function via($notifiable)
+    {
+        return ['mail']; // could also add 'database' if you want DB notifications
+    }
+
     public function toMail($notifiable)
     {
         return (new MailMessage)
