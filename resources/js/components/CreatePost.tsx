@@ -225,6 +225,25 @@ export function CreatePost({ onPreviewChange }: CreatePostProps) {
           className="!w-full !p-2 !rounded !border !border-[#5800FF] !bg-[var(--bg-primary)]"
         />
 
+        {/* Style check */}
+
+        {/* <button
+          type="button"
+          onClick={async () => {
+            if (!editorContent) return showAlert("Write some content first", "error");
+            try {
+              const res = await axiosInstance.post("/posts/style-check", { draft: editorContent });
+              showAlert(res.data.analysis || "No feedback", "info");
+            } catch (err) {
+              console.error(err);
+              showAlert("Style check failed", "error");
+            }
+          }}
+          className="!px-4 !py-2 !bg-green-500 !text-white !rounded !mb-4"
+        >
+          Check Style
+        </button> */}
+
         {/* Image URL */}
         <input
           type="text"

@@ -18,6 +18,9 @@ use App\Mail\NewPostNotification;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 
+use App\Http\Controllers\Controller;
+use App\Services\AIService;
+
 class PostController extends Controller
 {
     /**
@@ -388,5 +391,46 @@ class PostController extends Controller
             ->limit(12)
             ->get(['id', 'title', 'slug', 'image_path']);
         return response()->json($suggested);
+    }
+
+    // New functions
+
+    public function suggestIdeas(Request $request, AIService $ai)
+    {
+        $topic = $request->input('topic');
+        if (!$topic) {
+            return response()->json(['error' => 'Topic required'], 400);
+        }
+
+        // Fetch up to 5 latest posts for the topic
+        $recentPosts = Post::where('topic', $topic)
+            ->latest()
+            ->limit(5)
+            ->get(['title', 'content']);
+
+        if ($recentPosts->isEmpty()) {
+            return response()->json(['ideas' => [], 'message' => 'No posts found for this topic']);
+        }
+
+        $ideas = $ai->generateIdeas($recentPosts->toArray());
+
+        return response()->json(['ideas' => $ideas]);
+    }
+
+    public function styleCheck(Request $request, AIService $ai)
+    {
+        $draft = $request->input('draft', '');
+
+        if (empty($draft)) {
+            return response()->json(['error' => 'Draft is empty'], 400);
+        }
+
+        try {
+            $analysis = $ai->checkStyle($draft);
+            return response()->json(['analysis' => $analysis]);
+        } catch (\Throwable $e) {
+            Log::error("Style check failed: {$e->getMessage()}");
+            return response()->json(['error' => 'AI request failed'], 500);
+        }
     }
 }

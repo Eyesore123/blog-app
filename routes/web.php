@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use Illuminate\Support\Str;
 use App\Models\User;
+use App\Models\Post;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\AuthController;
@@ -98,7 +99,6 @@ Route::get('/uploads/{filename}', function ($filename) {
     return response()->file($path);
 });
 
-
 Route::get('api/comments/post/{post_id}', [CommentController::class, 'comments.index']);
 Route::get('/post/{identifier}', [PostController::class, 'show'])->name('post.show');
 Route::get('/post/{id}/edit', [AdminController::class, 'edit'])->name('admin.edit');
@@ -114,7 +114,7 @@ Route::middleware(['auth', 'throttle:10,1'])
 
 // Route::get('api/comments/remaining', [CommentController::class, 'getRemaining']);
 
-// Update this route to use auth middleware
+// Route to delete a comment
 Route::delete('api/comments/{comment_id}', [CommentController::class, 'destroy'])
     ->middleware('auth')
     ->name('comments.destroy');
@@ -299,6 +299,24 @@ Route::post('/update-name', function (Request $request) {
 
 Route::get('/hugs', [HugController::class, 'index']);
 Route::post('/hugs', [HugController::class, 'store']);
+
+// AI routes
+
+Route::post('/posts/style-check', [PostController::class, 'styleCheck'])
+    ->name('posts.style-check')
+    ->middleware(['auth', AdminMiddleware::class]);
+
+Route::post('/posts/suggest-ideas', [PostController::class, 'suggestIdeas'])
+    ->name('posts.suggest-ideas')
+    ->middleware(['auth', AdminMiddleware::class]);
+
+// Topics route for fetching topics (new dropdown feature, not implemented yet)
+
+Route::get('/api/topics', function () {
+    return \App\Models\Post::select('topic')
+        ->distinct()
+        ->pluck('topic');
+})->middleware(['auth', AdminMiddleware::class]);
 
 // Fallback route for 404 after everything else fails
 
