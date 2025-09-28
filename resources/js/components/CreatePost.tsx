@@ -30,6 +30,27 @@ export function CreatePost({ onPreviewChange }: CreatePostProps) {
   const [allTags, setAllTags] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
+  const [styleFeedback, setStyleFeedback] = useState('');
+
+  const handleStyleCheck = async () => {
+  try {
+    const response = await fetch('/posts/style-check', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-CSRF-TOKEN': (document.querySelector('meta[name="csrf-token"]') as HTMLMetaElement)?.content as string
+      },
+      body: JSON.stringify({
+        draft: editorContent, // send your draft here
+      }),
+    });
+
+    const data = await response.json();
+    setStyleFeedback(data.analysis || data.error);
+  } catch (err) {
+    setStyleFeedback('Error contacting AI.');
+  }
+};
 
   // Fetch all tags
   useEffect(() => {
@@ -227,22 +248,23 @@ export function CreatePost({ onPreviewChange }: CreatePostProps) {
 
         {/* Style check */}
 
-        {/* <button
+        <div className="!mt-4 !flex !flex-col !items-start !gap-3">
+        <button
           type="button"
-          onClick={async () => {
-            if (!editorContent) return showAlert("Write some content first", "error");
-            try {
-              const res = await axiosInstance.post("/posts/style-check", { draft: editorContent });
-              showAlert(res.data.analysis || "No feedback", "info");
-            } catch (err) {
-              console.error(err);
-              showAlert("Style check failed", "error");
-            }
-          }}
-          className="!px-4 !py-2 !bg-green-500 !text-white !rounded !mb-4"
+          onClick={handleStyleCheck}
+          className="!inline-flex !items-center !gap-2 !px-4 !py-2 !bg-green-500 !text-white !rounded-lg hover:!bg-green-600 !transition-colors focus:!ring-2 focus:!ring-green-400"
         >
-          Check Style
-        </button> */}
+          ✨ Check Style
+        </button>
+        {styleFeedback && (
+          <div className="!w-full !p-4 !border !border-green-200 !rounded-lg !bg-green-50">
+            <h4 className="!mb-2 !font-semibold !text-green-700">AI Feedback:</h4>
+            <pre className="!whitespace-pre-wrap !text-sm !text-green-800">
+              {styleFeedback}
+            </pre>
+          </div>
+        )}
+      </div>
 
         {/* Image URL */}
         <input
