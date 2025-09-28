@@ -197,7 +197,7 @@ Route::get('/forgot-password', [PasswordResetLinkController::class, 'create'])
     ->middleware('guest')
     ->name('password.request');
 
-// Handle sending email
+// Handle sending email when password reset link is requested
 Route::post('/forgot-password', [PasswordResetLinkController::class, 'store'])
     ->middleware('guest')
     ->name('password.email');
@@ -317,6 +317,12 @@ Route::get('/api/topics', function () {
         ->distinct()
         ->pluck('topic');
 })->middleware(['auth', AdminMiddleware::class]);
+
+// Admin post send route
+
+Route::post('/admin/send-emails', [AdminEmailController::class, 'send'])
+    ->middleware(['auth', 'can:send-emails']); // optional permission
+
 
 // Fallback route for 404 after everything else fails
 

@@ -6,6 +6,7 @@ import Header from '@/components/Header';
 import AdminUserManagement from '@/components/AdminUserManagement';
 import AdminPostPreview from '@/components/AdminPostPreview';
 import AdminImageControl from '@/components/AdminImageControl';
+import SendEmails from '@/components/SendEmails';
 import PostPanel from '@/components/PostPanel';
 import axiosInstance from '../components/axiosInstance';
 import { Post } from '@/types/post';
@@ -27,7 +28,7 @@ export default function AdminDashboard() {
     props: AdminDashboardProps;
   }>().props;
 
-  const [currentView, setCurrentView] = useState<'create' | 'users' | 'posts' | 'images'>('create');
+  const [currentView, setCurrentView] = useState<'create' | 'users' | 'posts' | 'images' | 'sendEmails'>('create');
   const [previewPost, setPreviewPost] = useState<Post | null>(null);
 
   useEffect(() => {
@@ -62,7 +63,7 @@ export default function AdminDashboard() {
 
         {/* Menu Navigation */}
         <div className="flex justify-center !mb-8 gap-4">
-          {(['create', 'users', 'posts', 'images'] as const).map((view) => (
+          {(['create', 'users', 'posts', 'images', 'sendEmails'] as const).map((view) => (
             <button
               key={view}
               onClick={() => setCurrentView(view)}
@@ -70,13 +71,15 @@ export default function AdminDashboard() {
                 currentView === view ? 'bg-amber-400 text-black' : 'bg-gray-700 text-white'
               }`}
             >
-              {view === 'create'
+               {view === 'create'
                 ? 'Create Post'
                 : view === 'users'
                 ? 'User Management'
                 : view === 'posts'
                 ? 'Posts & Translations'
-                : 'Images'}
+                : view === 'images'
+                ? 'Images'
+                : 'Send Emails'}
             </button>
           ))}
         </div>
@@ -111,6 +114,8 @@ export default function AdminDashboard() {
               <AdminImageControl />
             </div>
           )}
+
+          {currentView === 'sendEmails' && <SendEmails />}
 
         </div>
       </div>
