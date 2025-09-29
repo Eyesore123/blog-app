@@ -10,8 +10,6 @@
 
 This app works like a basic blog app: it shows posts and comments. Posts can be searched by title and topic. Posts also can be searched using the dropdown menu. There are archive pages which show all the posts for each year (paginated). Posts use tags (optional) and posts can be filtered by tags just by clicking a tag on the post.
 
-RSS Feed component is also included. Users see the recent activity on the main page (posts and comments).
-
 Admin can add new posts, edit posts and delete comments. Admin can add new images to database from a link or from local storage and change post images. Admin can also deactivate and - as an ultimate solution - delete accounts. Logged in users can add comments, edit their comments and delete comments when there are no replies.
 
 All registered users need to very email address via a link sent to their email address. This is done using Laravel's built-in email verification feature.
@@ -30,6 +28,8 @@ Login page view has a "forgot password" section so user can reset their password
 
 Comments are hidden on the landing page but revealed by default on the post page. Users see two suggested posts based on the tags of the current post (post page only).
 
+RSS Feed component is also included. Users see the recent activity on the main page (posts and comments).
+
 ## Styles
 
 App uses only a few colors that I've personally picked to match the colors of my portfolio site, including: #000000; #ffffff; #ffc600; #e900ff; transparent: rgba(255, 255, 255, 0.05); linear-gradient(to right, #e900ff, #ffc600); linear-gradient(to right, #5800ff, #e900ff);
@@ -38,8 +38,7 @@ UseTheme hook is used to change the color consistently across the app. User clic
 
 Loading spinners are used for images and log-in. Custom alerts pop up to notify user of successful logout. Login doesn't include popup, because it would feel a bit intrusive towards regular users. Admin gets a pop up notification when a new post is added. Custom dialogue window in used for verifying important actions (like deleting a post or a user account).
 
-The fanciest stylistic decision is the use of framer-motion in the unemployment counter component. When a user gives a virtual hug, it sends hearts
-flying towards the top of the screen.
+The fanciest stylistic decision is the use of framer-motion in the unemployment counter component. When a user gives a virtual hug, it sends hearts flying towards the top of the screen.
 
 ## Backend, error handling and planned improvements
 
@@ -66,6 +65,7 @@ Blog still needs some work, though, including:
 4. Scheduled uploads feature would be nice
 5. Customized emails that look better than the default Laravel emails in comment notiifications and email verifications. Default emails are not bad but could be better.
 6. Profile image features. I added profile image upload as an extra feature, but noticed that image compression would speed up the site a lot, and so it would be nice to add a feature to compress images. It would also be nice to have a feature to crop images, and use images in the comment section. Without compression I might have to offer images from a selection of smaller size icons.
+7. I'm building a pipeline for automatic sitemap updates with Google pings that start sitemap indexing
 
 ## Deployment
 
