@@ -41,7 +41,7 @@ export function CreatePost({ onPreviewChange }: CreatePostProps) {
         'X-CSRF-TOKEN': (document.querySelector('meta[name="csrf-token"]') as HTMLMetaElement)?.content as string
       },
       body: JSON.stringify({
-        draft: editorContent, // send your draft here
+        draft: editorContent,
       }),
     });
 

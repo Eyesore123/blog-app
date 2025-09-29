@@ -170,6 +170,8 @@ const handlePageInput = (e) => {
         <Header />
         
         <main className="!p-4 md:!p-8 !gap-1 main relative">
+           {/* Visually hidden H1 for SEO */}
+          <h1 className="sr-only">My Blog – Latest Posts</h1>
           <div className="flex flex-col lg:flex-row gap-4 md:gap-30 custom-2xl-gap items-center lg:items-start lg:!pt-1 2xl:!pt-1">
             <aside className="lg:block w-full md:!w-2/3 xl:!w-2/3 xl:!ml-10  xl:max-w-120 2xl:!ml-30 xl:!mr-10 !mb-8 lg:!mb-0 mx-auto rounded-lg">
               <div className={`lg:top-24 !space-y-4 md:!space-y-6 flexcontainer w-full lg:!w-80 xl:!w-120 bg-[var(--bg-primary)] lg:!mt-0 rounded-lg`}>
@@ -179,38 +181,6 @@ const handlePageInput = (e) => {
                     Hi there! This is my personal blog where I explore web development, design, tech, business, and marketing — along with the occasional reflection on life and what it means to live in society.
                   </p>
                 </div>
-
-                {/* <div className="bg-[#5800FF]/10 !pl-4 md:!pl-10 !mb-0 !pr-4 !pb-8 2xl:!pl-6">
-                  <h3 className="font-semibold !mb-2">Topics</h3>
-                  <ul className="!space-y-1">
-                    <li>
-                      <button
-                        onClick={() => handleTopicChange(null)}
-                        className={`w-full text-left !px-2 !py-1 rounded ${
-                          currentTopic === null ? 'bg-[#5800FF] text-white' : 'hover:bg-[#5800FF]/20'
-                        }`}
-                      >
-                        All Topics
-                      </button>
-                    </li>
-                    {topics.length > 0 ? (
-                      topics.map((topic) => (
-                        <li key={topic}>
-                          <button
-                            onClick={() => handleTopicChange(topic)}
-                            className={`w-full text-left !px-2 !py-1 rounded ${
-                              currentTopic === topic ? 'bg-[#5800FF] text-white' : 'hover:bg-[#5800FF]/20'
-                            }`}
-                          >
-                            {topic}
-                          </button>
-                        </li>
-                      ))
-                    ) : (
-                      <li className="!ml-2">No topics available</li>
-                    )}
-                  </ul>
-                </div> */}
 
                 <div className="bg-[#5800FF]/10 !pl-4 md:!pl-10 !mb-0 !pr-4 !pb-8 2xl:!pl-6">
                   <h3 className="font-semibold !mb-3">Topics</h3>

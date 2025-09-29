@@ -270,6 +270,8 @@ const PostPage: React.FC<PostPageProps> = ({ post }) => {
 
             <div className="flex flex-col items-center lg:-translate-x-14">
               <div className="!space-y-6 md:!space-y-8">
+                {/* Hidden H1 for SEO */}
+                <h1 className="sr-only">{post.title}</h1>
                 <BlogPost
                   post={post}
                   comments={comments}

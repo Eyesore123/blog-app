@@ -14,7 +14,7 @@ class AIService
     {
         $this->apiKey = env('AI_API_KEY');
         $this->apiUrl = env('AI_API_BASE', 'https://openrouter.ai.api/v1/chat/completions');
-        $this->model = env('AI_MODEL', 'gpt-3.5-turbo');
+        $this->model = env('AI_MODEL', 'gpt-4o');
     }
     public function chat(array $messages, int $maxTokens = 500): string
     {
