@@ -1,4 +1,5 @@
 <?php
+// Token check
 $validToken = getenv('ADMIN_SETUP_TOKEN');
 $providedToken = $_GET['token'] ?? '';
 
@@ -7,21 +8,38 @@ if (!$validToken || $providedToken !== $validToken) {
     exit(1);
 }
 
-// Build sitemap URL
+// Build sitemap URL dynamically
 $sitemapUrl = rtrim(
-    (isset($_SERVER['HTTPS']) ? 'https' : 'http') . '://' . $_SERVER['HTTP_HOST'],
+    (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' ? 'https' : 'http')
+    . '://' . $_SERVER['HTTP_HOST'],
     '/'
 ) . '/sitemap.xml';
 
-// Did user click the button?
+// Defaults
 $pinged = false;
 $success = false;
+$errorMsg = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $pingUrl = 'https://www.google.com/ping?sitemap=' . urlencode($sitemapUrl);
-    $response = @file_get_contents($pingUrl);
+
+    // use cURL for HTTPS
+    $ch = curl_init($pingUrl);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+    curl_setopt($ch, CURLOPT_TIMEOUT, 15);
+
+    $response = curl_exec($ch);
+    $err = curl_error($ch);
+    $statusCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    curl_close($ch);
+
     $pinged = true;
-    $success = ($response !== false);
+    if ($response !== false && empty($err) && $statusCode === 200) {
+        $success = true;
+    } else {
+        $errorMsg = $err ?: "HTTP status: $statusCode";
+    }
 }
 ?>
 <!DOCTYPE html>
@@ -62,7 +80,7 @@ button:hover { background: #059669; }
       <?php if ($success): ?>
         ✅ Google Ping Successful! (<?= htmlspecialchars($sitemapUrl) ?>)
       <?php else: ?>
-        ❌ Google Ping Failed. Check your network or sitemap URL.
+        ❌ Google Ping Failed. <?= htmlspecialchars($errorMsg) ?>
       <?php endif; ?>
     </div>
   <?php endif; ?>
