@@ -29,5 +29,9 @@ php artisan storage:link
 # php artisan migrate --env=local --path=database/migrations/2025_06_29_053854_update_tags_sequence.php --force
 php artisan migrate --env=local --path=database/migrations/2025_09_19_083656_create_hugs_table.php --force
 
-# 8. Start PHP server
+
+# 8. Generate sitemap
+php artisan sitemap:generate
+
+# 9. Start PHP server
 php -S 0.0.0.0:8080 -t public
