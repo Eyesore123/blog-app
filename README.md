@@ -69,13 +69,29 @@ Blog still needs some work, though, including:
 
 ## Deployment
 
-I deployed this app on Railway with three different services or containers, one for app (both frontend and backend use the same url), one for database (PostgreSQL) and one for queue worker which takes care of notifications (comment and blog post notifications). Railway uses a volume to store the images so they are not lost after a new deployment.
+I deployed this app on Railway using three separate services/containers:
 
-A few words about the deployment:
+1. App container – serves both frontend and backend at the same URL.
 
-The start.sh script is the main entrypoint for Railway deployment. The Railway service uses "bash start.sh" as its start command. The build command is defined in railway.toml, which calls the railway-build script from package.json, and this script runs start.sh.
+2. Database container – PostgreSQL.
 
-Check start.sh for more details. There are some scripts included in this repo that are not used in Railway but have been used in local development for testing. Start.sh was created to make the deployment process easier: it made the start command shorter and it decreased the amount of manual steps in deployment, like fixing the symlink and rebuilding vite assets. Postbuild script is not in use anymore but it's still included in the repo in case bash scripts need changes.
+3. Queue worker container – handles notifications for comments and blog posts.
+
+Railway uses a volume to store images, so they persist across deployments.
+
+Deployment details:
+
+Originally start.sh was the main entrypoint for Railway. Now I split the deployment into two phases: build phase and run phase, each with its own script.
+
+Build phase: bash build.sh (set as the build command in Railway).
+
+Run phase: bash run.sh (set as the start command in Railway).
+
+These commands are executed separately in the Railway dashboard. The old build command from railway.toml is no longer used; it previously called the railway-build script from package.json, which in turn ran start.sh. I keep start.sh in the repo as a fallback in case I want to revert to a single-script deployment.
+
+When adding the sitemap generator, I realized it’s important to keep build and run phases separate because the sitemap generator needs runtime access to the database. Most other tasks would work in a single script, but separating build and runtime tasks makes the deployment cleaner and more reliable.
+
+Some scripts in the repo are only used for local development and testing. start.sh simplifies deployment by reducing manual steps, like fixing symlinks and rebuilding Vite assets. The postbuild script is no longer used in Railway but remains in the repo for potential future use.
 
 ## Screenshots
 
@@ -155,4 +171,10 @@ Notice also that this repo is still using a lot of absolute paths. Yes, that was
 - Deployment can also be a pain if you don't know all the ins and outs of the deployment process. I've never deployed a Laravel app before so I had to learn a lot about it. How Laravel caching works, how images should be loaded (and stored), how to set cors policies properly etc.
 - Laravel has some default behaviour and structuring that can be extremely hard to override. For example, I spent a lot of time trying to figure out why I can't redirect a user from email link to /login/success route (it went to /login every time). I was trying to keep the user signed out during the email verification process, but it was not working. I tried everything. Eventually I decided to keep the user signed in and redirect to /login/success route after the email verification, and it worked. Lesson learned: it's usually a good idea to follow Laravel's default behaviour. You can't tweak everything. Even if you could, it would require dismantling the Laravel default structure and rebuilding some of the features from scratch.
 - Laravel + React + Inertia combo would not be very practical to work with for a large team. That's because making even small changes requires intricate knowledge of the project structure. It's hard to make even slight changes without changing both frontend code and backend code at the same time. Blade views are the default Laravel way of creating templates for the frontend, so using React components instead of blade views can be a bit tricky at times and not for the faint of heart.
+
 - Vite was causing more issues than usual in my Laravel setup. I had to add bash scripts and other scripts, a Vite helper, and an htaccess file, and then I had to make some extra changes to providers and vite config file just to get the vite build to work.
+
+When deploying Laravel + React + Vite on Railway, hashed JS chunks sometimes end up referenced by public/build/manifest.json but only public/build/.vite/manifest.json exists. Laravel’s vite() helper fails silently and components appear missing.
+
+To debug this, I created a small PHP “Vite Debug” page that checks both manifest paths, lists the actual built asset files, and lets me copy the manifest into the expected location or trigger a rebuild. This immediately solved “missing components” issues like my Footer not rendering. I still have to use my Vite Debug page after deployment to
+correct the Vite assets
