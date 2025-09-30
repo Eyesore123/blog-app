@@ -34,4 +34,4 @@ php artisan migrate --env=local --path=database/migrations/2025_09_19_083656_cre
 php artisan sitemap:generate
 
 # 9. Start PHP server
-php -S 0.0.0.0:8080 -t public
+# php -S 0.0.0.0:8080 -t public
