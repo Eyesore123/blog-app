@@ -320,9 +320,7 @@ Route::get('/api/topics', function () {
 
 // Admin post send route
 
-Route::post('/admin/send-emails', [AdminEmailController::class, 'send'])
-    ->middleware(['auth', 'can:send-emails']); // optional permission
-
+Route::post('/admin/send-emails', [AdminEmailController::class, 'send']);
 
 // Fallback route for 404 after everything else fails
 
