@@ -40,7 +40,7 @@ Loading spinners are used for images and log-in. Custom alerts pop up to notify 
 
 The fanciest stylistic decision is the use of framer-motion in the unemployment counter component. When a user gives a virtual hug, it sends hearts flying towards the top of the screen.
 
-## Backend, error handling and planned improvements
+## Backend, error handling
 
 Errors are mostly handled with custom error pages. Errors are mainly handled via controllers: user is shown a custom error page with customized message in case request doesn't return anything with selected values. If a user requests a page that doesn't exist, default NotFound page is shown.
 Images use a fallback image in case the image is not founds so there should be an image shown even when the requested resource is not available.
@@ -57,6 +57,12 @@ Postgres admin panel is added to make the backend adjustments easier. Backend ad
 
 Providers are used for alerts and confirmations. I added a markdown editor for posts to improve the styling of the posts. Perhaps I could add another editor for comments, but it was quite bothersome to get markdown to work properly for posts alone so I probably won't be adding any new editors.
 
+## SEO
+
+I'll write about SEO once I get it to work the way I want it.
+
+## Planned improvements
+
 Blog still needs some work, though, including:
 
 1. Post translation save to database and fetch for translated posts (partially done)
@@ -65,7 +71,7 @@ Blog still needs some work, though, including:
 4. Scheduled uploads feature would be nice
 5. Customized emails that look better than the default Laravel emails in comment notiifications and email verifications. Default emails are not bad but could be better.
 6. Profile image features. I added profile image upload as an extra feature, but noticed that image compression would speed up the site a lot, and so it would be nice to add a feature to compress images. It would also be nice to have a feature to crop images, and use images in the comment section. Without compression I might have to offer images from a selection of smaller size icons.
-7. I'm building a pipeline for automatic sitemap updates with Google pings that start sitemap indexing
+7. Improvements to infobanner: instead of typing text manually, backend route and backend script can be used for infobanner dynamic text
 
 ## Deployment
 

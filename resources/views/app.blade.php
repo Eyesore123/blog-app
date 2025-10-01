@@ -31,7 +31,7 @@
       "description": "A blog about web development, coding, personal projects and life in general.",
       "publisher": {
         "@type": "Person",
-        "name": "Joni"
+        "name": "Joni Putkinen"
       }
     }
     </script>
