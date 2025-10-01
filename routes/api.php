@@ -8,6 +8,12 @@ use App\Http\Controllers\LatestPostController;
 use App\Http\Controllers\RecentActivityController;
 use App\Http\Controllers\ArchiveController;
 use App\Models\User;
+use App\Http\Controllers\Api\InfoBannerController;
+
+// Route for info banner in the backend:
+
+Route::get('/info-banner', [InfoBannerController::class, 'index']);
+Route::post('/admin/info-banner', [InfoBannerController::class, 'update']);
 
 // Login route
 Route::post('login', function (Request $request) {

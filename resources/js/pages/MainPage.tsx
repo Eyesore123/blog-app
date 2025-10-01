@@ -166,7 +166,7 @@ const handlePageInput = (e) => {
     <div className={`min-h-160 ${theme}`}>
       <div className="min-h-160 bg-[var(--bg-primary)] text-[var(--text-primary)]">
         <Navbar />
-        {/* <InfoBanner /> */}
+        <InfoBanner />
         <Header />
         
         <main className="!p-4 md:!p-8 !gap-1 main relative">

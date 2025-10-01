@@ -40,22 +40,26 @@ Loading spinners are used for images and log-in. Custom alerts pop up to notify 
 
 The fanciest stylistic decision is the use of framer-motion in the unemployment counter component. When a user gives a virtual hug, it sends hearts flying towards the top of the screen.
 
-## Backend, error handling
+## Error handling + backend
 
-Errors are mostly handled with custom error pages. Errors are mainly handled via controllers: user is shown a custom error page with customized message in case request doesn't return anything with selected values. If a user requests a page that doesn't exist, default NotFound page is shown.
-Images use a fallback image in case the image is not founds so there should be an image shown even when the requested resource is not available.
-Errorboundary is also used for error handling, but it's mostly decorative and shouldn't be triggered too often, and the same goes to exception handler.
+Images use a fallback image in case the image is not found so there should be an image shown even when the requested resource is not available.
 
-I added acustom API endpoint for recent activity, which is used in recent activity component in landing page. It fetches the latest data from the
-backend. I also created "the latest post" endpoint which can be used to fetch the latest post. It's an alternative to rss feed.
+Error handling and what is shown to user depends on what causes the error. If the user is 'lost' and the requested page doesn't exist, the custom default 404 error page is shown. Errorboundary is used for error handling, but it's mostly decorative and shouldn't be triggered too often, and the same is true for exception handler. In all typical error cases user gets an error page, either served by Laravel or by custom routes and pages. 
+
+---------------------------------------------
+
+Postgres admin panel is added to make the backend adjustments easier. Backend admin can run scripts, make changes to users and tables, create new admins etc. Only admins have access to admin panel and scripts.
+
+I added a custom API endpoint for recent activity, which is used in recent activity component in landing page. It fetches the latest data from the backend. I also created "the latest post" endpoint which can be used to fetch the latest post. It's an alternative to rss feed.
 
 Comments are rate limited by IP address (10 comments per day), and there are no Captchas because IP address guarantees that the limiter applies to many users from the same IP address. Rate limiter is done using custom RateLimitService class. Likewise SEO is done using a custom SEO class and then provided for the app using react-helmet-async package (it was the easiest solution considering I'm not using blade views).
 
 Automated backups - Php scripts are used for controlling backups. Cron jobs are set up with GitHub Actions to back up the db in regular intervals.
 
-Postgres admin panel is added to make the backend adjustments easier. Backend admin can run scripts, make changes to users and tables, create new admins etc. Only admins have access to admin panel and scripts.
-
 Providers are used for alerts and confirmations. I added a markdown editor for posts to improve the styling of the posts. Perhaps I could add another editor for comments, but it was quite bothersome to get markdown to work properly for posts alone so I probably won't be adding any new editors.
+
+Infobanner component: instead of typing text manually to code and updating text with each deployment, admins can use backend route
+and backend script to toggle infotext component and change text dynamically.
 
 ## SEO
 
@@ -71,7 +75,6 @@ Blog still needs some work, though, including:
 4. Scheduled uploads feature would be nice
 5. Customized emails that look better than the default Laravel emails in comment notiifications and email verifications. Default emails are not bad but could be better.
 6. Profile image features. I added profile image upload as an extra feature, but noticed that image compression would speed up the site a lot, and so it would be nice to add a feature to compress images. It would also be nice to have a feature to crop images, and use images in the comment section. Without compression I might have to offer images from a selection of smaller size icons.
-7. Improvements to infobanner: instead of typing text manually, backend route and backend script can be used for infobanner dynamic text
 
 ## Deployment
 
@@ -127,7 +130,7 @@ I use them in prod
 Preparations:
 
 Make sure that you have
-- Node.js installed
+- Node.js and node package manager installed
 - Git bash installed, preferably
 - Php and Laravel Herd installed
 

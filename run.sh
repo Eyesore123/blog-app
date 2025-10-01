@@ -10,7 +10,10 @@ php artisan config:clear
 # link storage
 php artisan storage:link || true
 
-# run migrations (now DB is reachable)
+# run specific migrations (optional)
+php artisan migrate --env=local --path=database/migrations/2025_10_01_083657_create_info_banners_table.php --force
+
+# run the rest of the migrations
 php artisan migrate --force || true
 
 # generate sitemap
