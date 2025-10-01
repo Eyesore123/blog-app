@@ -28,6 +28,20 @@ use App\Http\Controllers\HugController;
 use App\Http\Middleware\AdminMiddleware;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
+use App\Http\Controllers\VideoController;
+
+Route::prefix('admin')->group(function () {
+    // Upload a video
+    Route::post('/videos/upload', [VideoController::class, 'upload']);
+
+    // List all videos
+    Route::get('/videos', [VideoController::class, 'index']);
+
+    // Delete a video by name
+    Route::delete('/videos/{name}', [VideoController::class, 'destroy']);
+
+    Route::get('/videos/{filename}', [VideoController::class, 'show']);
+});
 
 // Route::get('/force404', function () {
 //     return Inertia::render('errors/NotFound', [

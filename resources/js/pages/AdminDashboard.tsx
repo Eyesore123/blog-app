@@ -6,6 +6,7 @@ import Header from '@/components/Header';
 import AdminUserManagement from '@/components/AdminUserManagement';
 import AdminPostPreview from '@/components/AdminPostPreview';
 import AdminImageControl from '@/components/AdminImageControl';
+import AdminVideoControl from '@/components/AdminVideoControl';
 import SendEmails from '@/components/SendEmails';
 import PostPanel from '@/components/PostPanel';
 import axiosInstance from '../components/axiosInstance';
@@ -28,7 +29,7 @@ export default function AdminDashboard() {
     props: AdminDashboardProps;
   }>().props;
 
-  const [currentView, setCurrentView] = useState<'create' | 'users' | 'posts' | 'images' | 'sendEmails'>('create');
+  const [currentView, setCurrentView] = useState<'create' | 'users' | 'posts' | 'images' | 'videos' | 'sendEmails'>('create');
   const [previewPost, setPreviewPost] = useState<Post | null>(null);
 
   useEffect(() => {
@@ -63,7 +64,7 @@ export default function AdminDashboard() {
 
         {/* Menu Navigation */}
         <div className="flex justify-center !mb-8 gap-4">
-          {(['create', 'users', 'posts', 'images', 'sendEmails'] as const).map((view) => (
+          {(['create', 'users', 'posts', 'images', 'videos', 'sendEmails'] as const).map((view) => (
             <button
               key={view}
               onClick={() => setCurrentView(view)}
@@ -79,7 +80,11 @@ export default function AdminDashboard() {
                 ? 'Posts & Translations'
                 : view === 'images'
                 ? 'Images'
-                : 'Send Emails'}
+                : view === 'videos'
+                ? 'Videos'
+                : view === 'sendEmails'
+                ? 'Send Emails'
+                : ''}
             </button>
           ))}
         </div>
@@ -112,6 +117,12 @@ export default function AdminDashboard() {
           {currentView === 'images' && (
             <div className="w-full max-w-6xl">
               <AdminImageControl />
+            </div>
+          )}
+
+          {currentView === 'videos' && (
+            <div className="w-full max-w-6xl">
+              <AdminVideoControl />
             </div>
           )}
 

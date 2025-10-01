@@ -61,6 +61,8 @@ Providers are used for alerts and confirmations. I added a markdown editor for p
 Infobanner component: instead of typing text manually to code and updating text with each deployment, admins can use backend route
 and backend script to toggle infotext component and change text dynamically.
 
+Sitemap generator: sitemap is being generated with each new deployment and put into public folder.
+
 ## SEO
 
 I'll write about SEO once I get it to work the way I want it.
