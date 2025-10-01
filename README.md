@@ -38,6 +38,8 @@ UseTheme hook is used to change the color consistently across the app. User clic
 
 Loading spinners are used for images and log-in. Custom alerts pop up to notify user of successful logout. Login doesn't include popup, because it would feel a bit intrusive towards regular users. Admin gets a pop up notification when a new post is added. Custom dialogue window in used for verifying important actions (like deleting a post or a user account).
 
+Lucide-react package is used for some of the icons.
+
 The fanciest stylistic decision is the use of framer-motion in the unemployment counter component. When a user gives a virtual hug, it sends hearts flying towards the top of the screen.
 
 ## Error handling + backend

@@ -19,6 +19,7 @@ import { useState } from 'react';
 import { BookComponent } from '@/components/BookComponent';
 import { InfoBanner } from '@/components/InfoBanner';
 import UnemploymentCounter from '@/components/UnemploymentCounter';
+import { OfferComponent } from '@/components/OfferComponent';
 
 interface BlogPostType {
   id: number;
@@ -235,6 +236,7 @@ const handlePageInput = (e) => {
                   <RssSubscribeLink />
                   <RecentActivityFeed key="recent-activity-feed" />
                   <PortfolioLink />
+                  <OfferComponent />
                   <WebsiteAnalyzerLink />
                   <BookComponent />
                   <UnemploymentCounter />
