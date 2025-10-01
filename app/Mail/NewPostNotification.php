@@ -9,8 +9,9 @@ use Illuminate\Queue\SerializesModels;
 use League\CommonMark\CommonMarkConverter;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Contracts\Queue\ShouldQueue;
 
-class NewPostNotification extends Mailable
+class NewPostNotification extends Mailable implements ShouldQueue
 {
     use Queueable, SerializesModels;
 
@@ -19,17 +20,16 @@ class NewPostNotification extends Mailable
 
     public function __construct(Post $post, string $email)
     {
-        $this->post = $post;
+        $this->post  = $post;
         $this->email = $email;
     }
 
     public function build()
-    
     {
         Log::info('Building email HTML');
 
         $converter = new CommonMarkConverter([
-            'html_input' => 'escape',
+            'html_input'         => 'escape',
             'allow_unsafe_links' => false,
         ]);
         $htmlContent = $converter->convert($this->post->content);
@@ -40,14 +40,16 @@ class NewPostNotification extends Mailable
         }
 
         $imageHtml = $imageUrl
-    ? "<img src=\"{$imageUrl}\" alt=\"Post image\" style=\"max-width: 500px; margin-bottom: 1rem;\" />"
-    : "";
+            ? "<img src=\"{$imageUrl}\" alt=\"Post image\" style=\"max-width: 500px; margin-bottom: 1rem;\" />"
+            : "";
 
         $unsubscribeUrl = URL::temporarySignedRoute(
-        'unsubscribe', now()->addDays(7), [
-            'email' => $this->email,
-            'type' => 'post'
-        ]
+            'unsubscribe',
+            now()->addDays(7),
+            [
+                'email' => $this->email,
+                'type'  => 'post'
+            ]
         );
 
         $emailHtml = "
