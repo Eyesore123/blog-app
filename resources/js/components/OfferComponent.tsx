@@ -49,7 +49,7 @@ export function OfferComponent() {
         muted={muted}
         loop
         playsInline
-        className="absolute top-0 left-0 w-full h-full object-cover opacity-30"
+        className="absolute top-0 left-0 w-full h-full object-cover opacity-40"
       />
 
       {/* Overlay content */}
