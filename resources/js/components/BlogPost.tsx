@@ -85,11 +85,11 @@ export function BlogPost({ post, isPostPage = false }: BlogPostProps) {
   image: post.image_url || "https://blog-app-production-16c2.up.railway.app/fallbackimage.jpg",
   author: {
     "@type": "Person",
-    "name": "Joni"
+    "name": "Joni Putkinen"
   },
   publisher: {
     "@type": "Person",
-    "name": "Joni"
+    "name": "Joni Putkinen"
   },
   datePublished: post.created_at,
   dateModified: post.updated_at

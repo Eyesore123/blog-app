@@ -72,6 +72,37 @@ Sitemap generator: sitemap is being generated with each new deployment and put i
 
 ## SEO
 
+Currently the most effective SEO method is the JSON-LD script that's placed inside the header:
+
+{
+  "@context": "https://schema.org",
+  "@type": "Blog",
+  "url": "https://blog-app-production-16c2.up.railway.app/",
+  "name": "Joni's Blog",
+  "description": "A blog about web development, coding, personal projects and life in general.",
+  "publisher": {
+    "@type": "Person",
+    "name": "Joni Putkinen"
+  }
+}
+
+I also have a Helmet section in each post (BlogPost.tsx) which 'sends' the JSON-LD script as a schema data - this helps the search engines understand the content and the individual posts better. For example, it might look something like this:
+
+{
+  "@context":"https://schema.org",
+  "@type":"BlogPosting",
+  "mainEntityOfPage":{"@type":"WebPage","@id":"..."},
+  "headline":"How to do SEO as a freelancer",
+  "description":"When you’re a freelancer, visibility is everything...",
+  "image":"/storage/uploads/...",
+  "author":{"@type":"Person","name":"Joni Putkinen"},
+  "publisher":{"@type":"Person","name":"Joni Putkinen"},
+  "datePublished":"2025-09-28T12:12:41.000000Z",
+  "dateModified":"2025-09-28T12:37:08.000000Z"
+}
+
+Built-in sitemap generator creates a sitemap with each new deployment and places it inside public folder. Sitemap goes to Google immediately either by sending a ping from script or replacing sitemap manually on Google console. Google gets the sitemap eventually even without sending it.
+
 I'll write about SEO once I get it to work the way I want it.
 
 ## Planned improvements
@@ -83,6 +114,7 @@ Blog still needs some work, though, including:
 3. Scheduled uploads feature would be nice
 4. Customized emails that look better than the default Laravel emails in comment notiifications and email verifications. Default emails are not bad but could be better.
 5. Profile image features. I added profile image upload as an extra feature, but noticed that image compression would speed up the site a lot, and so it would be nice to add a feature to compress images. It would also be nice to have a feature to crop images, and use images in the comment section. Without compression I might have to offer images from a selection of smaller size icons.
+6. Administrator tags for admins in comment section
 
 ## Deployment
 
@@ -123,7 +155,7 @@ Portgres admin panel looks nice:
 
 ## Issues
 
-- Markdown editor needs work.
+- Markdown editor needs some work.
 - Flash messages are not working properly so I made a workaround for pop-ups.
 - Admin can create and fetch sketches of posts, but sketches are separate from upload panel so the UI is not the most intuitive.
 - Aside section is a bit heavy and can disturb the function called page scroll: when user clicks on a link, the page might stop going all the way up when the aside part is still loading. So instead of page scrolling all the way up, it might stop somewhere in between in some instances.
