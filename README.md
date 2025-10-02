@@ -18,17 +18,22 @@ Registered users (not anonymous) have a My Account page where they can change th
 
 Registered users have a toggle option in My Account page: they can choose to receive email notifications when a new post is added (showing the post content). There's also a separate option to get a notification when someone has replied to their comment.
 
+Login page view has a "forgot password" section so user can reset their password using email.
+
 Registered users can add or change their profile image that's shown in the navbar. Anon users have a Guy Fawkes mask as their profile picture, and registered users who don't have a profile image have a default user icon image.
+
+Comments are hidden on the landing page but revealed by default on the post page. Users see two suggested posts based on the tags of the current post (post page only).
+
+RSS Feed component is included in the app. Users see the recent activity on the main page (posts and comments).
 
 Admin gets notifications of all new comments and a post notification to email when a new post is added.
 
 Admin can use Google Cloud Translation API to translate posts to other languages.
 
-Login page view has a "forgot password" section so user can reset their password using email.
+Admin has an additional panel in admin dashboard that lets admin send emails to users. Options: to everyone / admins / subbed users / users. Admin can also send a test post send to selected email.
 
-Comments are hidden on the landing page but revealed by default on the post page. Users see two suggested posts based on the tags of the current post (post page only).
+Admin can store images and videos from admin dashboard to a database. Admin can also fetch images and videos from db and show them as a list and delete items.
 
-RSS Feed component is also included. Users see the recent activity on the main page (posts and comments).
 
 ## Styles
 
@@ -75,10 +80,9 @@ Blog still needs some work, though, including:
 
 1. Post translation save to database and fetch for translated posts (partially done)
 2. Advanced features for admin (image size adjustments? etc.)
-3. An additional panel in admin dashboard that let's admin send emails to users. Options: to everyone / admins / subbed users / unsubbed users.
-4. Scheduled uploads feature would be nice
-5. Customized emails that look better than the default Laravel emails in comment notiifications and email verifications. Default emails are not bad but could be better.
-6. Profile image features. I added profile image upload as an extra feature, but noticed that image compression would speed up the site a lot, and so it would be nice to add a feature to compress images. It would also be nice to have a feature to crop images, and use images in the comment section. Without compression I might have to offer images from a selection of smaller size icons.
+3. Scheduled uploads feature would be nice
+4. Customized emails that look better than the default Laravel emails in comment notiifications and email verifications. Default emails are not bad but could be better.
+5. Profile image features. I added profile image upload as an extra feature, but noticed that image compression would speed up the site a lot, and so it would be nice to add a feature to compress images. It would also be nice to have a feature to crop images, and use images in the comment section. Without compression I might have to offer images from a selection of smaller size icons.
 
 ## Deployment
 
@@ -120,11 +124,8 @@ Portgres admin panel looks nice:
 ## Issues
 
 - Markdown editor needs work.
-- I've disabled the queue for emails until I add test email panel to admin dashboard so i can test queues before 
-I use them in prod
 - Flash messages are not working properly so I made a workaround for pop-ups.
 - Admin can create and fetch sketches of posts, but sketches are separate from upload panel so the UI is not the most intuitive.
-- Annoying backend related issues: email sends do not always trigger etc.
 - Aside section is a bit heavy and can disturb the function called page scroll: when user clicks on a link, the page might stop going all the way up when the aside part is still loading. So instead of page scrolling all the way up, it might stop somewhere in between in some instances.
 
 ## Testing
@@ -169,11 +170,12 @@ Notice also that this repo is still using a lot of absolute paths. Yes, that was
 - How to pass data from backend to frontend via Inertia
 - How to add custom API endpoints to Laravel.
 - How to use models, controllers, routes and views in Laravel (views that are rendered with Inertia).
+- How to use commands to create my own functionalities and pipelines in Laravel environment in both testing and production
 - How to add and use a markdown editor.
 - How to use Mailtrap for email testing in a sandbox, and also use it for testing backend routes. Previously I've used SendGrid for sending emails (in my Next.js web shop), but Mailtrap seems to be very easy to use for testing purposes.
 - How to set up rate limiters in Laravel.
 - How to add admin privileges securely and how to force https in Laravel. Previously I've added admin privileges by changing user data in db, but now it was created with a secure create-admin route (with middleware and a random token) and also by inserting values straight with pgAdmin. Forcing https was done using middleware and rules, and it was a bit more tricky than the usual approach, like setting the rules in .htaccess file or forcing it on the server.
-- How to add a queue for sending emails and set up the database queue table and a worker + how to use the database driver in Laravel.
+- How to add a queue for sending emails and set up the database queue table and a worker + how to use the database driver in Laravel. Working with emails is very intricate work. Email sending issues can be annoying, because email sends do not always trigger, routes and controllers need to be flawless etc.
 - How to use sqlite db in test environment and then switch to Postgres in production.
 - How to use Railway services, Railway CLI and how connect app to db in Railway.
 - How to use several services or container in tandem in Railway and connect them to each other.
