@@ -29,6 +29,8 @@ use App\Http\Middleware\AdminMiddleware;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use App\Http\Controllers\VideoController;
+use App\Http\Controllers\AdminEmailController;
+
 
 Route::prefix('admin')->group(function () {
     // Upload a video
@@ -95,11 +97,14 @@ Route::post('/login', [AuthController::class, 'login']);
 Route::post('/posts', [PostController::class, 'store'])
 ->middleware(['auth']);
 Route::middleware('auth')->post('/logout', [AuthController::class, 'logout'])->name('logout');
-Route::get('/admin', [AdminController::class, 'index'])
-    ->middleware(['auth', AdminMiddleware::class]);
 
-// Here a new admin route (group) for image control, hasn't been
-// tested yet
+Route::middleware(['auth', AdminMiddleware::class])->prefix('admin')->group(function () {
+    Route::get('/', [AdminController::class, 'index']);
+
+    // ✅ Test post notification route
+    Route::post('/test-post-notification', [AdminEmailController::class, 'testPostNotification']);
+});
+
 
 Route::get('/admin/images', [AdminImageController::class, 'index']);
 Route::delete('/admin/images/{name}', [AdminImageController::class, 'destroy']);
@@ -334,7 +339,13 @@ Route::get('/api/topics', function () {
 
 // Admin post send route
 
-Route::post('/admin/send-emails', [AdminEmailController::class, 'send']);
+// Route::post('/admin/send-emails', [AdminEmailController::class, 'send']);
+
+Route::middleware(['auth', AdminMiddleware::class])->prefix('admin')->group(function () {
+    Route::post('/send-emails', [AdminEmailController::class, 'send']);          // mass email
+    Route::post('/send-test-email', [AdminEmailController::class, 'sendTestEmail']); // test email
+    Route::post('/test-post-notification', [AdminEmailController::class, 'testPostNotification']); // quick test
+});
 
 // Fallback route for 404 after everything else fails
 

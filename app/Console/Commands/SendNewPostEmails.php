@@ -29,10 +29,12 @@ class SendNewPostEmails extends Command
 
     foreach ($posts as $post) {
         foreach ($subscribers as $subscriber) {
-            Log::info("Found " . $subscribers->count() . " subscribers.");
-            Mail::to($subscriber->email)->send(new NewPostNotification($post, $subscriber->email));
+            Log::info("Queuing mail for subscriber {$subscriber->email}");
+            Mail::to($subscriber->email)
+                ->queue(new NewPostNotification($post, $subscriber->email));
         }
     }
+
 
     $this->info('Emails sent for ' . $posts->count() . ' new post(s).');
     return 0;

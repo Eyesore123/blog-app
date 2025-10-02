@@ -10,19 +10,23 @@ class CustomAdminMessage extends Mailable
 {
     use Queueable, SerializesModels;
 
-    public $subjectLine;
-    public $bodyText;
+    public $subjectText;
+    public $bodyMessage;
 
-    public function __construct($subjectLine, $bodyText)
+    public function __construct($subject, $message)
     {
-        $this->subjectLine = $subjectLine;
-        $this->bodyText = $bodyText;
+        $this->subjectText = $subject;
+        $this->bodyMessage = $message;
+        $this->subject($subject);
     }
 
-    public function build()
+   public function build()
     {
-        return $this->subject($this->subjectLine)
-                    ->view('emails.custom_admin_message')
-                    ->with(['bodyText' => $this->bodyText]);
+        return $this->subject($this->subjectText)
+                    ->view('emails.generic')   // <--- use your actual view name here
+                    ->with([
+                        'bodyMessage' => $this->bodyMessage,
+                    ]);
     }
+
 }
