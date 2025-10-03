@@ -1,5 +1,4 @@
 <?php
-// send_latest_post_test.php
 
 $validToken = getenv('ADMIN_SETUP_TOKEN');
 $providedToken = $_GET['token'] ?? '';
@@ -46,7 +45,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             } catch (\Throwable $e) {
                 Log::error("Failed to queue test email", [
                     'email' => $myEmail,
-                    'post_id' => $post->id,
+                    'post_id' => $post->id ?? null,
                     'error' => $e->getMessage()
                 ]);
 

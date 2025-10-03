@@ -43,8 +43,9 @@ class NewPostNotification extends Mailable implements ShouldQueue
                         ->html("<p>Sorry, this post could not be found.</p>");
         }
 
-        Log::info('NewPostNotification: building email HTML for ' . $this->email);
+        Log::info("Building NewPostNotification email for {$this->email} (Post ID: {$post->id})");
 
+        // Convert Markdown content to HTML
         $converter = new CommonMarkConverter([
             'html_input'         => 'escape',
             'allow_unsafe_links' => false,
@@ -52,15 +53,25 @@ class NewPostNotification extends Mailable implements ShouldQueue
 
         $htmlContent = $converter->convert($post->content);
 
-        $imageUrl = $post->image_path;
+        // Generate absolute image URL for email
+       $imageUrl = $post->image_path;
+
         if ($imageUrl && !preg_match('/^https?:\/\//', $imageUrl)) {
-            $imageUrl = asset('storage/' . str_replace('\\', '', $imageUrl));
+            if (app()->environment('local')) {
+                // Local testing: use full local URL
+                $imageUrl = url('storage/' . str_replace('\\', '/', $imageUrl));
+            } else {
+                // Production: uses APP_URL
+                $imageUrl = asset('storage/' . str_replace('\\', '/', $imageUrl));
+            }
         }
+
 
         $imageHtml = $imageUrl
             ? "<img src=\"{$imageUrl}\" alt=\"Post image\" style=\"max-width: 500px; margin-bottom: 1rem;\" />"
             : "";
 
+        // Temporary signed unsubscribe link
         $unsubscribeUrl = URL::temporarySignedRoute(
             'unsubscribe',
             now()->addDays(7),
@@ -70,26 +81,27 @@ class NewPostNotification extends Mailable implements ShouldQueue
             ]
         );
 
+        // Full HTML email template
         $emailHtml = "
             <html>
                 <body style='text-align:center;'>
-                    <div style='max-width: 700px; margin: auto; padding: 20px;'>
-                        <h2>Here's the latest blog post from Joni's blog:</h2>
+                    <div style='max-width: 700px; margin:auto; padding:20px; font-family:sans-serif;'>
+                        <h2>Here's the latest blog post from Joni's Blog:</h2>
                         <h1>{$post->title}</h1>
                         {$imageHtml}
-                        <div style='font-size:16px;line-height:1.6;max-width:700px;margin-bottom:2rem;text-align:left;'>
+                        <div style='font-size:16px; line-height:1.6; max-width:700px; margin-bottom:2rem; text-align:left;'>
                             {$htmlContent}
                         </div>
                         <a href='" . url('/posts/' . $post->slug) . "' style='color:#5800FF;'>Read more</a>
-                        <p style='margin-top:2rem;'>
-                            <a href='{$unsubscribeUrl}' style='color:#888;font-size:13px;'>Unsubscribe from these emails</a>
+                        <p style='margin-top:2rem; font-size:13px; color:#888;'>
+                            <a href='{$unsubscribeUrl}' style='color:#888;'>Unsubscribe from these emails</a>
                         </p>
                     </div>
                 </body>
             </html>
         ";
 
-        return $this->subject("Joni's Blog: " . $post->title)
+        return $this->subject("Joni's Blog: {$post->title}")
                     ->html($emailHtml);
     }
 
@@ -98,8 +110,9 @@ class NewPostNotification extends Mailable implements ShouldQueue
      */
     public function failed(\Throwable $exception): void
     {
-        Log::error('NewPostNotification failed for ' . $this->email . ': ' . $exception->getMessage(), [
+        Log::error("NewPostNotification failed for {$this->email}: {$exception->getMessage()}", [
             'trace' => $exception->getTraceAsString(),
+            'post_id' => $this->post->id ?? null,
         ]);
     }
 }
