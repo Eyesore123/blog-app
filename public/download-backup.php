@@ -1,41 +1,37 @@
 <?php
-
 $validToken = getenv('ADMIN_SETUP_TOKEN');
 $providedToken = $_GET['token'] ?? '';
 
 if (!$validToken || $providedToken !== $validToken) {
-    echo "Unauthorized";
-    exit(1);
+    die("Unauthorized");
 }
 
-// Get the requested backup file
+// Get requested file
 $fileName = $_GET['file'] ?? '';
-
-// Allow any file that starts with backup_ and ends with .sql
-if (empty($fileName) || !preg_match('/^backup_.*\.sql$/', $fileName)) {
-    echo "Invalid backup file name.";
-    exit(1);
-}
-
+$fileName = basename($fileName); // sanitize
 $backupDir = realpath(__DIR__ . '/../storage/app/backups');
 $filePath = realpath($backupDir . DIRECTORY_SEPARATOR . $fileName);
 
-// Security: Ensure the file is inside the backup directory
+// Security: ensure file exists and is inside backup dir
 if (!$filePath || strpos($filePath, $backupDir) !== 0 || !is_file($filePath)) {
-    echo "Backup file not found.";
-    exit(1);
+    die("Backup file not found.");
 }
 
-// Set headers for file download
+// Determine MIME type
+$mime = mime_content_type($filePath) ?: 'application/octet-stream';
+
+// Clean output buffer
 while (ob_get_level()) ob_end_clean();
+
+// Send headers
 header('Content-Description: File Transfer');
-header('Content-Type: application/octet-stream');
+header('Content-Type: ' . $mime);
 header('Content-Disposition: attachment; filename="' . basename($fileName) . '"');
 header('Expires: 0');
 header('Cache-Control: must-revalidate');
 header('Pragma: public');
 header('Content-Length: ' . filesize($filePath));
 
-// Read the file and output it to the browser
+// Output file
 readfile($filePath);
 exit;

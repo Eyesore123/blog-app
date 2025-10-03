@@ -158,8 +158,9 @@ if (!$backups) {
         $fileSizeFormatted = $fileSize > 1024 ? round($fileSize / 1024, 2) . " KB" : $fileSize . " bytes";
         $fileDate = date("F j, Y, g:i a", filemtime($backup));
 
-        $downloadUrl = "?token=$validToken&download=$fileName";
+        $downloadUrl = "/download-backup.php?token=$validToken&file=$fileName";
         $deleteUrl   = "?token=$validToken&delete=$fileName";
+
 
         echo "<li>
                 $fileName - $fileSizeFormatted - $fileDate
