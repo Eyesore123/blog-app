@@ -21,26 +21,30 @@ use Illuminate\Support\Facades\Log;
 
 $message = '';
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $myEmail = filter_var($_POST['email'] ?? '', FILTER_VALIDATE_EMAIL);
-    $mode = ($_POST['mode'] ?? 'queue') === 'send' ? 'send' : 'queue';
+// Determine environment-based mode
+$queueConnection = config('queue.default', 'sync'); // defaults to 'sync' if not set
+$autoMode = ($queueConnection === 'sync') ? 'send' : 'queue';
 
-    if (! $myEmail) {
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $myEmail = filter_var((string)($_POST['email'] ?? ''), FILTER_VALIDATE_EMAIL);
+    $mode = ($_POST['mode'] ?? $autoMode) === 'send' ? 'send' : 'queue'; // fallback to auto
+
+    if (!$myEmail) {
         $message = "Please enter a valid email address.";
     } else {
         $post = Post::latest()->first();
-        if (! $post) {
+        if (!$post) {
             $message = "No posts found to send.";
         } else {
             try {
+                $mailable = new NewPostNotification($post, $myEmail); // pass Post object
+
                 if ($mode === 'send') {
-                    // synchronous send (useful for testing)
-                    Mail::to($myEmail)->send(new NewPostNotification($post->id, $myEmail));
+                    Mail::to($myEmail)->send($mailable);
                     Log::info("Test email SENT (sync)", ['email' => $myEmail, 'post_id' => $post->id]);
                     $message = "Test email SENT successfully to {$myEmail} (Post ID: {$post->id}).";
                 } else {
-                    // queue the job for the worker
-                    Mail::to($myEmail)->queue(new NewPostNotification($post->id, $myEmail));
+                    Mail::to($myEmail)->queue($mailable);
                     Log::info("Test email QUEUED", ['email' => $myEmail, 'post_id' => $post->id]);
                     $message = "Test email queued for {$myEmail} (Post ID: {$post->id}).";
                 }
@@ -82,13 +86,20 @@ fieldset{margin-top:.6rem}
 
   <fieldset>
     <legend>Mode</legend>
-    <label><input type="radio" name="mode" value="queue" checked> Queue (recommended)</label><br>
-    <label><input type="radio" name="mode" value="send"> Send now (sync)</label>
+    <label>
+        <input type="radio" name="mode" value="queue" <?= $autoMode === 'queue' ? 'checked' : '' ?>> Queue (recommended)
+    </label><br>
+    <label>
+        <input type="radio" name="mode" value="send" <?= $autoMode === 'send' ? 'checked' : '' ?>> Send now (sync)
+    </label>
   </fieldset>
 
   <button type="submit">Send Test Email</button>
 </form>
-<p style="font-size:12px;color:#666;margin-top:1rem">Make sure you open your logs to confirm and that your queue worker is running if you selected "Queue".</p>
+<p style="font-size:12px;color:#666;margin-top:1rem">
+    Laravel detected <strong><?= htmlspecialchars($queueConnection) ?></strong> queue connection.
+    Make sure your queue worker is running if emails are queued.
+</p>
 </div>
 </body>
 </html>
