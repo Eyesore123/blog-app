@@ -174,8 +174,8 @@ class PostController extends Controller
         try {
             $subscribers = User::where('is_subscribed', 1)->get();
             foreach ($subscribers as $subscriber) {
-                Mail::to($subscriber->email)
-                ->queue(new NewPostNotification($post, $subscriber->email));
+                Mail::to($subscriber->email)->queue(new NewPostNotification($post->id, $subscriber->email));
+
 
             }
         } catch (\Throwable $e) {

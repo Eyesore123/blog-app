@@ -18,25 +18,25 @@ class SendNewPostEmails extends Command
     {
         Log::info('Retrieving post data');
         $posts = Post::where('created_at', '>=', now()->subHour())->get();
-        Log::info('Post data retrieved: ' . json_encode($posts));
+        Log::info('Post data retrieved: ' . $posts->pluck('id')->toJson());
 
-            if ($posts->isEmpty()) {
+        if ($posts->isEmpty()) {
             $this->info('No new posts to send.');
             return 0;
         }
 
-    $subscribers = User::where('is_subscribed', 1)->get();
+        $subscribers = User::where('is_subscribed', 1)->get();
 
-    foreach ($posts as $post) {
-        foreach ($subscribers as $subscriber) {
-            Log::info("Queuing mail for subscriber {$subscriber->email}");
-            Mail::to($subscriber->email)
-                ->queue(new NewPostNotification($post, $subscriber->email));
+        foreach ($posts as $post) {
+            foreach ($subscribers as $subscriber) {
+                Log::info("Queueing mail for subscriber {$subscriber->email} (Post ID: {$post->id})");
+                Mail::to($subscriber->email)->queue(
+                    new NewPostNotification($post->id, $subscriber->email)
+                );
+            }
         }
-    }
 
-
-    $this->info('Emails sent for ' . $posts->count() . ' new post(s).');
-    return 0;
+        $this->info('Emails queued for ' . $posts->count() . ' new post(s).');
+        return 0;
     }
 }

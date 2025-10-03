@@ -15,48 +15,59 @@ class NewPostNotification extends Mailable implements ShouldQueue
 {
     use Queueable, SerializesModels;
 
-    public $post;
+    public $postId;
     public $email;
+    public $post;
 
-    public function __construct(Post $post, string $email)
+    public function __construct(int $postId, string $email)
     {
-        $this->post  = $post;
-        $this->email = $email;
+        $this->postId = $postId;
+        $this->email  = $email;
     }
 
     public function build()
     {
-        Log::info('Building email HTML');
+        // Load the post safely
+        if (!isset($this->post)) {
+            $this->post = Post::find($this->postId);
 
-        $converter = new CommonMarkConverter([
+            if (!$this->post) {
+                Log::error("NewPostNotification: Post not found", ['post_id' => $this->postId]);
+                throw new \Exception("Post not found (ID: {$this->postId})");
+            }
+        }
+
+        Log::info("Building email HTML for Post ID: {$this->post->id}");
+
+        // Convert Markdown content to HTML
+        $converter   = new CommonMarkConverter([
             'html_input'         => 'escape',
             'allow_unsafe_links' => false,
         ]);
         $htmlContent = $converter->convert($this->post->content);
 
+        // Handle post image
         $imageUrl = $this->post->image_path;
         if ($imageUrl && !preg_match('/^https?:\/\//', $imageUrl)) {
             $imageUrl = asset('storage/' . str_replace('\\', '', $imageUrl));
         }
-
         $imageHtml = $imageUrl
-            ? "<img src=\"{$imageUrl}\" alt=\"Post image\" style=\"max-width: 500px; margin-bottom: 1rem;\" />"
+            ? "<img src=\"{$imageUrl}\" alt=\"Post image\" style=\"max-width:500px;margin-bottom:1rem;\" />"
             : "";
 
+        // Generate temporary unsubscribe URL
         $unsubscribeUrl = URL::temporarySignedRoute(
             'unsubscribe',
             now()->addDays(7),
-            [
-                'email' => $this->email,
-                'type'  => 'post'
-            ]
+            ['email' => $this->email, 'type' => 'post']
         );
 
+        // Build full email HTML
         $emailHtml = "
             <html>
                 <body style='text-align:center;'>
-                    <div style='max-width: 700px; margin: auto; padding: 20px;'>
-                        <h2>Here's the latest blog post from Joni&#39;s blog:</h2>
+                    <div style='max-width:700px;margin:auto;padding:20px;'>
+                        <h2>Here's the latest blog post from Joni's blog:</h2>
                         <h1>{$this->post->title}</h1>
                         {$imageHtml}
                         <div style='font-size:16px;line-height:1.6;max-width:700px;margin-bottom:2rem;text-align:left;'>
