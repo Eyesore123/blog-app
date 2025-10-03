@@ -46,6 +46,7 @@ class User extends Authenticatable implements MustVerifyEmail
     protected $casts = [
     'email_verified_at' => 'datetime',
     'password' => 'hashed',
+    'is_subscribed' => 'boolean',
 ];
 
     public function comments()

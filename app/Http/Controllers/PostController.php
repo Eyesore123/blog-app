@@ -172,12 +172,13 @@ class PostController extends Controller
 
         // Send emails after DB commit
         try {
-            $subscribers = User::where('is_subscribed', 1)->get();
+            $subscribers = User::where('is_subscribed', true)->get();
             foreach ($subscribers as $subscriber) {
+                Log::info('Queueing NewPostNotification for: ' . $subscriber->email);
                 Mail::to($subscriber->email)
-                ->queue(new NewPostNotification($post, $subscriber->email));
-
+                    ->queue(new NewPostNotification($post, $subscriber->email));
             }
+
         } catch (\Throwable $e) {
             Log::error("Email sending failed: {$e->getMessage()}");
         }
