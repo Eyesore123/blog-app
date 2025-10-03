@@ -26,12 +26,13 @@ class NewPostNotification extends Mailable implements ShouldQueue
 
     public function build()
     {
-        Log::info('Building email HTML');
+        Log::info('NewPostNotification: building email HTML for ' . $this->email);
 
         $converter = new CommonMarkConverter([
             'html_input'         => 'escape',
             'allow_unsafe_links' => false,
         ]);
+
         $htmlContent = $converter->convert($this->post->content);
 
         $imageUrl = $this->post->image_path;
@@ -73,5 +74,15 @@ class NewPostNotification extends Mailable implements ShouldQueue
 
         return $this->subject("Joni's Blog: " . $this->post->title)
                     ->html($emailHtml);
+    }
+
+    /**
+     * This will be called automatically if the queued mail fails.
+     */
+    public function failed(\Throwable $exception): void
+    {
+        Log::error('NewPostNotification failed for ' . $this->email . ': ' . $exception->getMessage(), [
+            'trace' => $exception->getTraceAsString(),
+        ]);
     }
 }
