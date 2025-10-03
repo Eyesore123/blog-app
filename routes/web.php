@@ -31,6 +31,22 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\VideoController;
 use App\Http\Controllers\AdminEmailController;
 
+use Illuminate\Support\Facades\Mail;
+use App\Mail\CustomAdminMessage;
+
+Route::get('/test-email', function () {
+    try {
+        Mail::to('joni.putkinen@protonmail.com')->send(
+            new CustomAdminMessage('Test Email', 'This is a test from production.')
+        );
+        return 'Test email sent!';
+    } catch (\Throwable $e) {
+        \Illuminate\Support\Facades\Log::error('SMTP test failed: ' . $e->getMessage());
+        return 'Failed: ' . $e->getMessage();
+    }
+});
+
+
 
 Route::prefix('admin')->group(function () {
     // Upload a video
