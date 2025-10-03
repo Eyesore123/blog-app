@@ -28,6 +28,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
         $message = "Failed jobs flushed successfully!";
     } elseif ($action === 'delete_job' && $jobId) {
         DB::table('jobs')->where('id', $jobId)->delete();
+        DB::table('failed_jobs')->where('id', $jobId)->delete();
         $message = "Job #{$jobId} deleted!";
     } elseif ($action === 'retry_failed' && $jobId) {
         $job = DB::table('failed_jobs')->where('id', $jobId)->first();
@@ -50,31 +51,46 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
 $pendingJobs = DB::getSchemaBuilder()->hasTable('jobs') ? DB::table('jobs')->get() : [];
 $failedJobs  = DB::getSchemaBuilder()->hasTable('failed_jobs') ? DB::table('failed_jobs')->get() : [];
 
+// Safe job display function
 function prettyJob($job) {
     $payload = isset($job->payload) ? json_decode($job->payload, true) : null;
     $constructorParams = [];
+    $jobClass = '(unknown)';
 
-    if ($payload && isset($payload['data']['command'])) {
-        $commandData = $payload['data']['command'];
-        try {
-            $command = unserialize(base64_decode($commandData));
-            if (is_object($command)) {
-                $constructorParams = get_object_vars($command);
+    if ($payload) {
+        if (!empty($payload['displayName'])) {
+            $jobClass = $payload['displayName'];
+        } elseif (!empty($payload['data']['commandName'])) {
+            $jobClass = $payload['data']['commandName'];
+        } elseif (!empty($payload['data']['command'])) {
+            $jobClass = '(serialized command)';
+        }
+
+        if (!empty($payload['data']['command'])) {
+            $commandData = $payload['data']['command'];
+            try {
+                $decoded = base64_decode($commandData);
+                $command = @unserialize($decoded, ['allowed_classes' => true]);
+                if (is_object($command)) {
+                    $constructorParams = get_object_vars($command);
+                } else {
+                    $constructorParams = ['raw_payload' => $commandData];
+                }
+            } catch (\Throwable $e) {
+                $constructorParams = ['error' => $e->getMessage(), 'raw_payload' => $commandData];
             }
-        } catch (\Throwable $e) {
-            $constructorParams = ['error' => $e->getMessage()];
         }
     }
 
     return [
-        'id'        => $job->id ?? null,
-        'queue'     => $job->queue ?? null,
-        'class'     => $payload['displayName'] ?? '(unknown)',
-        'attempts'  => $job->attempts ?? 0,
-        'payload'   => $constructorParams ?: $payload,
-        'failed_at' => $job->failed_at ?? null,
+        'id'          => $job->id ?? null,
+        'queue'       => $job->queue ?? null,
+        'class'       => $jobClass,
+        'attempts'    => $job->attempts ?? 0,
+        'payload'     => $constructorParams ?: $payload,
+        'failed_at'   => $job->failed_at ?? null,
         'reserved_at' => $job->reserved_at ?? null,
-        'available_at' => $job->available_at ?? null,
+        'available_at'=> $job->available_at ?? null,
     ];
 }
 ?>
