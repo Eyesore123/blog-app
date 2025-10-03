@@ -30,7 +30,7 @@ Admin gets notifications of all new comments and a post notification to email wh
 
 Admin can use Google Cloud Translation API to translate posts to other languages.
 
-Admin has an additional panel in admin dashboard that lets admin send emails to users. Options: to everyone / admins / subbed users / users. Admin can also send a test post send to selected email.
+Admin has an additional panel (front-end) in admin dashboard that lets admin send emails to users. Options: to everyone / admins / subbed users / users. Admin can also send a test post send to selected email.
 
 Admin can store images and videos from admin dashboard to a database. Admin can also fetch images and videos from db and show them as a list and delete items.
 
@@ -55,7 +55,9 @@ Error handling and what is shown to user depends on what causes the error. If th
 
 ---------------------------------------------
 
-Postgres admin panel is added to make the backend adjustments easier. Backend admin can run scripts, make changes to users and tables, create new admins etc. Only admins have access to admin panel and scripts.
+Postgres admin panel is added to make the backend adjustments easier. There are two reasons for this. First, admin can make changes to values in postgres tables when production database is "locked down". No need to go change values in the database itself. Second, scripts add more robustness to the blog making it more environment-dependent. If the user decides to change host, it is easier to do that.
+
+Backend admin can run scripts, make changes to users and tables, create new admins etc. Only admins have access to admin panel and scripts. Scripts are categorized to different tasks.
 
 I added a custom API endpoint for recent activity, which is used in recent activity component in landing page. It fetches the latest data from the backend. I also created "the latest post" endpoint which can be used to fetch the latest post. It's an alternative to rss feed.
 
@@ -86,7 +88,7 @@ Currently the most effective SEO method is the JSON-LD script that's placed insi
   }
 }
 
-I also have a Helmet section in each post (BlogPost.tsx) which 'sends' the JSON-LD script as a schema data - this helps the search engines understand the content and the individual posts better. For example, it might look something like this:
+I also have a Helmet section in each post (BlogPost.tsx) which 'sends' the JSON-LD script as schema data - this helps search engines understand the content and the individual posts better. For example, it might look something like this:
 
 {
   "@context":"https://schema.org",
