@@ -31,7 +31,7 @@ if (!$conn) {
 // Handle form submission
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $message = $_POST['message'] ?? '';
-    $is_visible = isset($_POST['is_visible']) ? 1 : 0;
+    $is_visible = isset($_POST['is_visible']) ? 'TRUE' : 'FALSE'; // ← use TRUE/FALSE
 
     // Escape message to prevent SQL injection
     $messageEscaped = pg_escape_string($conn, $message);
@@ -44,7 +44,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         pg_query($conn, "INSERT INTO info_banners (message, is_visible, created_at, updated_at) VALUES ('$messageEscaped', $is_visible, NOW(), NOW())");
     }
 
-    header("Location: ".$_SERVER['PHP_SELF']."?token=".$providedToken);
+    // Redirect safely
+    header("Location: " . $_SERVER['PHP_SELF'] . "?token=" . urlencode($providedToken));
     exit;
 }
 
@@ -52,7 +53,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 $result = pg_query($conn, "SELECT * FROM info_banners LIMIT 1");
 $banner = pg_fetch_assoc($result);
 $currentMessage = $banner['message'] ?? '';
-$isVisible = isset($banner['is_visible']) && $banner['is_visible'] == '1';
+$isVisible = isset($banner['is_visible']) && $banner['is_visible'] === 't'; // PostgreSQL returns 't'/'f' for boolean
 ?>
 
 <!DOCTYPE html>

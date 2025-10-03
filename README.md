@@ -72,6 +72,14 @@ and backend script to toggle infotext component and change text dynamically.
 
 Sitemap generator: sitemap is being generated with each new deployment and put into public folder.
 
+# Emails & workers
+
+- Previously I used Gmail STMP for email notifications, but that stopped working for some reason and my mails were blocked. Emails work in this app, but mailer needs to be defined in mail.php and mailer keys in .env.
+
+In my production app I'm moving to use some other mailer, but I need my own domain first. Email notifications are not in use at the moment. 
+
+- Backend scripts include scripts for checking worker jobs and email sending.
+
 ## SEO
 
 Currently the most effective SEO method is the JSON-LD script that's placed inside the header:
@@ -159,7 +167,7 @@ Portgres admin panel looks nice:
 
 - Markdown editor needs some work.
 - Flash messages are not working properly so I made a workaround for pop-ups.
-- Admin can create and fetch sketches of posts, but sketches are separate from upload panel so the UI is not the most intuitive.
+- Admin can create and fetch sketches of posts, but sketches are separate from upload panel so the UI is not the most intuitive, and currently it's not filling all the fields
 - Aside section is a bit heavy and can disturb the function called page scroll: when user clicks on a link, the page might stop going all the way up when the aside part is still loading. So instead of page scrolling all the way up, it might stop somewhere in between in some instances.
 
 ## Testing
