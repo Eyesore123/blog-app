@@ -67,12 +67,14 @@ class CommentController extends Controller
         $comment = Comment::create([
             'post_id' => $request->post_id,
             'user_id' => Auth::id(),
+            'user_name' => Auth::check() ? Auth::user()->name : null,
             'guest_name' => Auth::check() ? null : $request->cookie('anonId'),
             'content' => $request->content,
             'parent_id' => $request->parent_id,
             'deleted' => false,
             'edited' => false,
         ]);
+
 
         // Notify admin for every comment
         try {
