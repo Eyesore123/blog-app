@@ -34,7 +34,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         } else {
             try {
                 // Queue the email safely
-                Mail::to($myEmail)->queue(new NewPostNotification($post, $myEmail));
+                Mail::to($myEmail)->send(new NewPostNotification($post, $myEmail));
 
                 Log::info("Test email queued", [
                     'email' => $myEmail,
