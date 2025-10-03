@@ -18,7 +18,7 @@ use Illuminate\Support\Facades\Queue;
 // Handle actions
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
     $action = $_POST['action'];
-    $jobId = $_POST['job_id'] ?? null;
+    $jobId  = $_POST['job_id'] ?? null;
 
     if ($action === 'flush_pending' && DB::getSchemaBuilder()->hasTable('jobs')) {
         DB::table('jobs')->truncate();
@@ -26,6 +26,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
     } elseif ($action === 'flush_failed' && DB::getSchemaBuilder()->hasTable('failed_jobs')) {
         DB::table('failed_jobs')->truncate();
         $message = "Failed jobs flushed successfully!";
+    } elseif ($action === 'flush_broken') {
+        // Remove jobs that fail unserialization
+        $broken = 0;
+        foreach (DB::table('jobs')->get() as $job) {
+            $payload = json_decode($job->payload, true);
+            if (!isset($payload['data']['command']) || @unserialize(base64_decode($payload['data']['command']), ['allowed_classes' => true]) === false) {
+                DB::table('jobs')->where('id', $job->id)->delete();
+                $broken++;
+            }
+        }
+        $message = "Flushed {$broken} broken pending job(s).";
     } elseif ($action === 'delete_job' && $jobId) {
         DB::table('jobs')->where('id', $jobId)->delete();
         DB::table('failed_jobs')->where('id', $jobId)->delete();
@@ -121,6 +132,8 @@ form.inline { display:inline; }
 <form method="POST">
     <input type="hidden" name="action" value="flush_pending">
     <button type="submit">Flush Pending Queue</button>
+    <input type="hidden" name="action" value="flush_broken">
+    <button type="submit" name="action" value="flush_broken">Flush Broken Jobs</button>
 </form>
 <table>
 <tr><th>ID</th><th>Queue</th><th>Class</th><th>Attempts</th><th>Payload</th><th>Actions</th></tr>

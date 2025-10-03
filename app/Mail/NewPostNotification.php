@@ -18,14 +18,31 @@ class NewPostNotification extends Mailable implements ShouldQueue
     public $post;
     public $email;
 
+    /**
+     * Pass the Post model and subscriber email.
+     */
     public function __construct(Post $post, string $email)
     {
         $this->post  = $post;
         $this->email = $email;
     }
 
+    /**
+     * Build the email content.
+     */
     public function build()
     {
+        $post = $this->post;
+
+        if (!$post) {
+            Log::error("Post not found for NewPostNotification", [
+                'email' => $this->email
+            ]);
+
+            return $this->subject("Post not found")
+                        ->html("<p>Sorry, this post could not be found.</p>");
+        }
+
         Log::info('NewPostNotification: building email HTML for ' . $this->email);
 
         $converter = new CommonMarkConverter([
@@ -33,9 +50,9 @@ class NewPostNotification extends Mailable implements ShouldQueue
             'allow_unsafe_links' => false,
         ]);
 
-        $htmlContent = $converter->convert($this->post->content);
+        $htmlContent = $converter->convert($post->content);
 
-        $imageUrl = $this->post->image_path;
+        $imageUrl = $post->image_path;
         if ($imageUrl && !preg_match('/^https?:\/\//', $imageUrl)) {
             $imageUrl = asset('storage/' . str_replace('\\', '', $imageUrl));
         }
@@ -57,13 +74,13 @@ class NewPostNotification extends Mailable implements ShouldQueue
             <html>
                 <body style='text-align:center;'>
                     <div style='max-width: 700px; margin: auto; padding: 20px;'>
-                        <h2>Here's the latest blog post from Joni&#39;s blog:</h2>
-                        <h1>{$this->post->title}</h1>
+                        <h2>Here's the latest blog post from Joni's blog:</h2>
+                        <h1>{$post->title}</h1>
                         {$imageHtml}
                         <div style='font-size:16px;line-height:1.6;max-width:700px;margin-bottom:2rem;text-align:left;'>
                             {$htmlContent}
                         </div>
-                        <a href='" . url('/posts/' . $this->post->slug) . "' style='color:#5800FF;'>Read more</a>
+                        <a href='" . url('/posts/' . $post->slug) . "' style='color:#5800FF;'>Read more</a>
                         <p style='margin-top:2rem;'>
                             <a href='{$unsubscribeUrl}' style='color:#888;font-size:13px;'>Unsubscribe from these emails</a>
                         </p>
@@ -72,12 +89,12 @@ class NewPostNotification extends Mailable implements ShouldQueue
             </html>
         ";
 
-        return $this->subject("Joni's Blog: " . $this->post->title)
+        return $this->subject("Joni's Blog: " . $post->title)
                     ->html($emailHtml);
     }
 
     /**
-     * This will be called automatically if the queued mail fails.
+     * Called if the queued mail fails.
      */
     public function failed(\Throwable $exception): void
     {

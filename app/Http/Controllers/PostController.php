@@ -175,10 +175,10 @@ class PostController extends Controller
             $subscribers = User::where('is_subscribed', true)->get();
             foreach ($subscribers as $subscriber) {
                 Log::info('Queueing NewPostNotification for: ' . $subscriber->email);
-                Mail::to($subscriber->email)
-                    ->queue(new NewPostNotification($post, $subscriber->email));
-            }
 
+                Mail::to($subscriber->email)
+                    ->queue(new \App\Mail\NewPostNotification($post, $subscriber->email));
+            }
         } catch (\Throwable $e) {
             Log::error("Email sending failed: {$e->getMessage()}");
         }
@@ -193,6 +193,7 @@ class PostController extends Controller
 
         return redirect()->back()->with('success', 'Post created successfully.');
     }
+
 
     /**
      * Display a single post (by ID or slug).
