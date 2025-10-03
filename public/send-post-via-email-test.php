@@ -21,13 +21,13 @@ use Illuminate\Support\Facades\Log;
 
 $message = '';
 
-// Determine environment-based mode
-$queueConnection = config('queue.default', 'sync'); // defaults to 'sync' if not set
+// Detect queue mode automatically
+$queueConnection = config('queue.default', 'sync'); // default to sync
 $autoMode = ($queueConnection === 'sync') ? 'send' : 'queue';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $myEmail = filter_var((string)($_POST['email'] ?? ''), FILTER_VALIDATE_EMAIL);
-    $mode = ($_POST['mode'] ?? $autoMode) === 'send' ? 'send' : 'queue'; // fallback to auto
+    $mode = ($_POST['mode'] ?? $autoMode) === 'send' ? 'send' : 'queue';
 
     if (!$myEmail) {
         $message = "Please enter a valid email address.";
@@ -37,7 +37,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $message = "No posts found to send.";
         } else {
             try {
-                $mailable = new NewPostNotification($post, $myEmail); // pass Post object
+                // Pass the post ID, not the object
+                $mailable = new NewPostNotification($post->id, $myEmail);
 
                 if ($mode === 'send') {
                     Mail::to($myEmail)->send($mailable);
