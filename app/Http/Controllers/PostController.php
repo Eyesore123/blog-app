@@ -172,21 +172,15 @@ class PostController extends Controller
 
         // Send emails after DB commit
         try {
-            $subscribers = User::where('is_subscribed', true)->get();
-
+            $subscribers = User::where('is_subscribed', 1)->get();
             foreach ($subscribers as $subscriber) {
-                Log::info('Queueing NewPostNotification for: ' . $subscriber->email, [
-                    'post_id' => $post->id
-                ]);
-
-                // Queue only the post ID and email (no model instance)
                 Mail::to($subscriber->email)
-                    ->queue(new NewPostNotification($post->id, $subscriber->email))->afterCommit();
+                ->queue(new NewPostNotification($post, $subscriber->email));
+
             }
         } catch (\Throwable $e) {
-            Log::error("Email sending failed: {$e->getMessage()}", ['exception' => $e]);
+            Log::error("Email sending failed: {$e->getMessage()}");
         }
-
 
         if ($request->expectsJson()) {
             return response()->json([
@@ -198,7 +192,6 @@ class PostController extends Controller
 
         return redirect()->back()->with('success', 'Post created successfully.');
     }
-
 
     /**
      * Display a single post (by ID or slug).
