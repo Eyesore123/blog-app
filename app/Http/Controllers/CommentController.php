@@ -45,52 +45,52 @@ class CommentController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'post_id' => 'required|exists:posts,id',
-            'content' => 'required|string|max:1000',
+            'post_id'   => 'required|exists:posts,id',
+            'content'   => 'required|string|max:1000',
             'parent_id' => 'nullable|exists:comments,id',
         ]);
 
-        // Skip rate limiting for admin users
+        // Rate limiting for non-admins
         if (!(Auth::check() && Auth::user()->is_admin)) {
             $remaining = $this->rateLimiter->getRemainingComments();
-
             if ($remaining <= 0) {
                 return response()->json([
                     'message' => 'You have reached the maximum of 10 comments today. Please try again tomorrow.',
                 ], 429);
             }
-
-            // Increment count after passing check
             $this->rateLimiter->incrementCommentCount();
         }
 
+        // Determine author
+        $userName = Auth::check() ? Auth::user()->name : null;
+        $guestName = Auth::check() ? null : $request->cookie('anonId');
+
+        // Create comment
         $comment = Comment::create([
-            'post_id' => $request->post_id,
-            'user_id' => Auth::id(),
-            'user_name' => Auth::check() ? Auth::user()->name : null,
-            'guest_name' => Auth::check() ? null : $request->cookie('anonId'),
-            'content' => $request->content,
-            'parent_id' => $request->parent_id,
-            'deleted' => false,
-            'edited' => false,
+            'post_id'    => $request->post_id,
+            'user_id'    => Auth::id(),
+            'user_name'  => $userName,
+            'guest_name' => $guestName,
+            'content'    => $request->content,
+            'parent_id'  => $request->parent_id,
+            'deleted'    => false,
+            'edited'     => false,
         ]);
 
-
-        // Notify admin for every comment
+        // Notify admin
         try {
             $admin = User::where('is_admin', true)->first();
             if ($admin) {
-                Log::info('Admin for notification:', ['admin' => $admin]);
                 $admin->notify(new NewCommentNotificationForAdmin($comment));
             }
         } catch (\Exception $e) {
             Log::error('Failed to send comment notification: ' . $e->getMessage());
         }
 
-        // Notify parent comment author if it is a reply and they want notifications
+        // Notify parent comment author if reply
         if ($comment->parent_id) {
             $parentComment = Comment::find($comment->parent_id);
-            if ($parentComment && $parentComment->user_id) {
+            if ($parentComment) {
                 $parentUser = User::find($parentComment->user_id);
                 if ($parentUser && $parentUser->notify_comments) {
                     try {
@@ -103,13 +103,13 @@ class CommentController extends Controller
         }
 
         return response()->json([
-            '_id' => $comment->id,
-            'authorName' => Auth::check() ? Auth::user()->name : $request->cookie('anonId'),
-            'content' => $comment->content,
-            'createdAt' => $comment->created_at->toDateTimeString(),
-            'parent_id' => $comment->parent_id,
-            'deleted' => false,
-            'edited' => false,
+            '_id'        => $comment->id,
+            'authorName' => $userName ?? $guestName ?? 'Anonymous',
+            'content'    => $comment->content,
+            'createdAt'  => $comment->created_at->toDateTimeString(),
+            'parent_id'  => $comment->parent_id,
+            'deleted'    => false,
+            'edited'     => false,
         ]);
     }
 

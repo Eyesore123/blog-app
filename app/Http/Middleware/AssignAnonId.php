@@ -9,9 +9,11 @@ class AssignAnonId
 {
     public function handle(Request $request, Closure $next)
     {
-        if (!$request->user() && !$request->session()->has('anonId')) {
+        // If user is not logged in and no anonId cookie exists, generate one
+        if (!$request->user() && !$request->cookie('anonId')) {
             $anonId = 'Anon' . random_int(1000, 9999);
-            $request->session()->put('anonId', $anonId);
+            // Set cookie for 1 year
+            cookie()->queue('anonId', $anonId, 525600); // minutes in 1 year
         }
 
         return $next($request);

@@ -9,18 +9,20 @@ use App\Models\User;
 use App\Models\Post;
 
 class Comment extends Model
-{
-    use HasFactory;
+    {
+        use HasFactory;
 
-    protected $fillable = [
+        protected $fillable = [
         'content',
         'post_id',
         'user_id',
         'parent_id',
         'deleted',
-        'authorName',
         'edited',
+        'user_name',
+        'guest_name',
     ];
+
 
     protected $casts = [
         'deleted' => 'boolean',
