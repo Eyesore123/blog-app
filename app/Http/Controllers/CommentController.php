@@ -22,20 +22,19 @@ class CommentController extends Controller
 
     public function index($post_id)
     {
-        $comments = Comment::where('post_id', $post_id)
-            ->with('user')  // include user info
+       $comments = Comment::where('post_id', $post_id)
             ->orderBy('created_at', 'asc')
             ->get()
             ->map(function ($comment) {
                 return [
-                    '_id' => $comment->id,
-                    'authorName' => $comment->user->name ?? $comment->guest_name ?? 'Anonymous',
-                    'content' => $comment->content,
-                    'createdAt' => $comment->created_at->toDateTimeString(),
-                    'parent_id' => $comment->parent_id,
-                    'user_id' => $comment->user_id,
-                    'edited' => $comment->edited,
-                    'deleted' => $comment->deleted ?? false,
+                    '_id'        => $comment->id,
+                    'authorName' => $comment->display_name ?? 'Anonymous',
+                    'content'    => $comment->content,
+                    'createdAt'  => $comment->created_at->toDateTimeString(),
+                    'parent_id'  => $comment->parent_id,
+                    'user_id'    => $comment->user_id,
+                    'edited'     => $comment->edited,
+                    'deleted'    => $comment->deleted ?? false,
                 ];
             });
 
@@ -65,22 +64,26 @@ class CommentController extends Controller
 
         // Determine if this is a real user or an anonymous session
         $user = Auth::user();
-        $isAnon = $user && ($user->is_anonymous ?? false); // true if user is anonymous session
+        $isAnon = $user && ($user->is_anonymous ?? false);
 
-        $userId = $isAnon ? null : ($user->id ?? null);
-        $userName = $isAnon ? null : ($user->name ?? null);
+        $userId    = $isAnon ? null : ($user->id ?? null);
+        $userName  = $isAnon ? null : ($user->name ?? null);
         $guestName = $isAnon ? $request->session()->get('anonId') : null;
 
+        $displayName = $userName ?? $guestName ?? 'Anonymous';
+
         $comment = Comment::create([
-            'post_id'   => $request->post_id,
-            'user_id'   => $userId,
-            'user_name' => $userName,
-            'guest_name'=> $guestName,
-            'content'   => $request->content,
-            'parent_id' => $request->parent_id,
-            'deleted'   => false,
-            'edited'    => false,
+            'post_id'      => $request->post_id,
+            'user_id'      => $userId,
+            'user_name'    => $userName,
+            'guest_name'   => $guestName,
+            'display_name' => $displayName,
+            'content'      => $request->content,
+            'parent_id'    => $request->parent_id,
+            'deleted'      => false,
+            'edited'       => false,
         ]);
+
 
         // Notify admin
         try {
