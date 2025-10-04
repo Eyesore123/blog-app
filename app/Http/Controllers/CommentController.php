@@ -62,14 +62,17 @@ class CommentController extends Controller
             $this->rateLimiter->incrementCommentCount();
         }
 
-        // Determine if this is a real user or an anonymous session
+        // Get the logged-in user (if any)
         $user = Auth::user();
-        $isAnon = $user && ($user->is_anonymous ?? false);
 
-        $userId    = $isAnon ? null : ($user->id ?? null);
-        $userName  = $isAnon ? null : ($user->name ?? null);
-        $guestName = $isAnon ? $request->session()->get('anonId') : null;
+        // For logged-in users
+        $userId   = $user?->id;
+        $userName = $user?->name;
 
+        // For anonymous visitors (not logged in)
+        $guestName = !$user ? $request->cookie('anonId') : null;
+
+        // What to show as author
         $displayName = $userName ?? $guestName ?? 'Anonymous';
 
         $comment = Comment::create([
@@ -83,7 +86,6 @@ class CommentController extends Controller
             'deleted'      => false,
             'edited'       => false,
         ]);
-
 
         // Notify admin
         try {
@@ -113,7 +115,7 @@ class CommentController extends Controller
         // Return JSON response
         return response()->json([
             '_id'        => $comment->id,
-            'authorName' => $isAnon ? $guestName : $userName,
+            'authorName' => $displayName,
             'content'    => $comment->content,
             'createdAt'  => $comment->created_at->toDateTimeString(),
             'parent_id'  => $comment->parent_id,
