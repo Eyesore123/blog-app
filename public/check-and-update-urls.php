@@ -62,7 +62,7 @@ function scanTables(PDO $pdo, string $oldUrl) {
         // Build SELECT dynamically
         $selectCols = $idColumn ? "$idColumn, $column" : $column;
 
-        $stmt = $pdo->prepare("SELECT $selectCols FROM $table WHERE $column LIKE :like LIMIT 20");
+        $stmt = $pdo->prepare("SELECT $selectCols FROM $table WHERE $column LIKE :like");
         $stmt->execute([':like' => "%$oldUrl%"]);
         $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
