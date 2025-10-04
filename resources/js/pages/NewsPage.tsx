@@ -33,6 +33,19 @@ export default function NewsPage() {
     fetchNews();
   }, []);
 
+  // Helper to format timestamps
+  const formatDate = (dateString?: string) => {
+    if (!dateString) return "";
+    const date = new Date(dateString);
+    return date.toLocaleString("en-GB", {
+      day: "2-digit",
+      month: "short",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+  };
+
   return (
     <div className={`min-h-screen ${theme}`}>
       <Navbar />
@@ -43,20 +56,20 @@ export default function NewsPage() {
           </h1>
 
           {loading ? (
-            <p className={`text-center opacity-70 ${theme === 'light' ? 'text-black' : 'text-white'}`}>
+            <p className={`text-center opacity-70 ${theme === "light" ? "text-black" : "text-white"}`}>
               Loading news...
             </p>
           ) : news.length === 0 ? (
-            <p className={`text-center opacity-70 ${theme === 'light' ? 'text-black' : 'text-white'}`}>
+            <p className={`text-center opacity-70 ${theme === "light" ? "text-black" : "text-white"}`}>
               No news yet.
             </p>
           ) : (
             <ul className="!space-y-6">
               {news.map((item, index) => (
-                <li key={item.id ?? index} className={`!mb-4 ${theme === 'light' ? 'text-black' : 'text-white'}`}>
-                  <h3 className="font-semibold text-lg md:text-xl">{item.title}</h3>
+                <li key={item.id ?? index} className={`!mb-4 ${theme === "light" ? "text-black" : "text-white"}`}>
+                  <h3 className="font-semibold text-lg md:text-xl !mb-4">{item.title}</h3>
                   <p className="text-sm md:text-base opacity-90">{item.content}</p>
-                  <p className="text-xs opacity-70">{item.created_at}</p>
+                  <p className="text-xs opacity-70 !mt-4">{formatDate(item.created_at)}</p>
                 </li>
               ))}
             </ul>
