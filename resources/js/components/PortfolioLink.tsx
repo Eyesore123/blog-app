@@ -8,7 +8,7 @@ export function PortfolioLink() {
 
   const imageUrl = "/Heroimage.png";
   const fallbackImageUrl = "/fallbackimage.jpg";
-  const portfolioUrl = "https://jonis-portfolio.netlify.app/";
+  const portfolioUrl = "https://joniputkinen.com/";
 
   const handleImageClick = () => {
     window.open(portfolioUrl, "_blank", "noopener,noreferrer");

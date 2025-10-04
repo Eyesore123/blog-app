@@ -44,6 +44,7 @@ class HandleCors
             'http://localhost:5173',
             'http://127.0.0.1:3000',
             'http://127.0.0.1:5173',
+            'https://joniputkinen.com'
         ];
 
         $origin = $request->header('Origin');
@@ -53,6 +54,6 @@ class HandleCors
         }
 
         // Default to your portfolio site
-        return 'https://jonis-portfolio.netlify.app';
+        return 'https://joniputkinen.com';
     }
 }

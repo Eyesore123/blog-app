@@ -14,7 +14,7 @@ class LatestPostController extends Controller
         
         if (!$latestPost) {
             return response()->json(['message' => 'No posts found'], 404)
-                ->header('Access-Control-Allow-Origin', 'https://jonis-portfolio.netlify.app')
+                ->header('Access-Control-Allow-Origin', 'https://joniputkinen.com')
                 ->header('Access-Control-Allow-Methods', 'GET, OPTIONS')
                 ->header('Access-Control-Allow-Headers', 'Content-Type');
         }
@@ -28,7 +28,7 @@ class LatestPostController extends Controller
             'excerpt' => \Illuminate\Support\Str::limit(strip_tags($latestPost->content), 100),
             'publishedAt' => $latestPost->created_at->toDateString(),
             'imageUrl' => $imageUrl,
-        ])->header('Access-Control-Allow-Origin', 'https://jonis-portfolio.netlify.app')
+        ])->header('Access-Control-Allow-Origin', 'https://joniputkinen.com')
           ->header('Access-Control-Allow-Methods', 'GET, OPTIONS')
           ->header('Access-Control-Allow-Headers', 'Content-Type');
     }
@@ -88,7 +88,7 @@ class LatestPostController extends Controller
     public function options()
     {
         return response('', 200)
-            ->header('Access-Control-Allow-Origin', 'https://jonis-portfolio.netlify.app')
+            ->header('Access-Control-Allow-Origin', 'https://joniputkinen.com')
             ->header('Access-Control-Allow-Methods', 'GET, OPTIONS')
             ->header('Access-Control-Allow-Headers', 'Content-Type');
     }

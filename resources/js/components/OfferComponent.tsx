@@ -3,7 +3,7 @@ import { useTheme } from '../context/ThemeContext';
 import { Play, Pause, VolumeX, Volume2 } from 'lucide-react';
 
 export function OfferComponent() {
-  const contactUrl = "https://jonis-portfolio.netlify.app/contact";
+  const contactUrl = "https://joniputkinen.com/contact";
   const videoRef = useRef<HTMLVideoElement>(null);
 
   const { theme } = useTheme();

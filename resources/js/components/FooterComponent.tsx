@@ -18,7 +18,7 @@ export function FooterComponent() {
             <img src="/In-Blue-128.png" alt="LinkedIn" className="!w-6 !h-6" />
           </a>
           <a
-            href="https://jonis-portfolio.netlify.app/"
+            href="https://joniputkinen.com/"
             target="_blank"
             rel="noopener noreferrer"
             className="hover:text-[#E900FF] text-[#5800FF] text-lg"
