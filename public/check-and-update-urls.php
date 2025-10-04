@@ -1,4 +1,8 @@
 <?php
+$validToken = getenv('ADMIN_SETUP_TOKEN');
+if (($_GET['token'] ?? '') !== $validToken) { http_response_code(404); exit; }
+
+
 /**
  * Web-based admin script for scanning/replacing/reverting URLs
  * Includes database content and media files in /storage/uploads/
@@ -9,9 +13,14 @@ $newUrl = 'https://blog.joniputkinen.com';
 $backupFile = __DIR__ . '/url_replacement_backup.json';
 $uploadsDir = __DIR__ . '/storage/uploads';
 
-$dsn = getenv('DATABASE_DSN'); // e.g., "pgsql:host=...;dbname=..."
-$user = getenv('DB_USER');
-$pass = getenv('DB_PASS');
+$databaseUrl = getenv('DATABASE_URL');
+if (!$databaseUrl) die("DATABASE_URL not set");
+
+$dbParts = parse_url($databaseUrl);
+
+$dsn = "pgsql:host={$dbParts['host']};port=" . ($dbParts['port'] ?? 5432) . ";dbname=" . ltrim($dbParts['path'], '/');
+$user = $dbParts['user'] ?? '';
+$pass = $dbParts['pass'] ?? '';
 
 try {
     $pdo = new PDO($dsn, $user, $pass, [
@@ -20,6 +29,7 @@ try {
 } catch (Exception $e) {
     die("Database connection failed: " . $e->getMessage());
 }
+
 
 // ===== Helper functions =====
 function scanTables(PDO $pdo, string $oldUrl) {
