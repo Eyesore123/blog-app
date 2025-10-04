@@ -5,6 +5,11 @@
 
     RewriteEngine On
 
+    # Redirect old domain to new domain
+    RewriteCond %{HTTP_HOST} ^blog-app-production-16c2\.up\.railway\.app$ [NC]
+    RewriteRule ^(.*)$ https://blog.joniputkinen.com/$1 [L,R=301]
+
+
     # Handle Authorization Header
     RewriteCond %{HTTP:Authorization} .
     RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
