@@ -46,13 +46,17 @@ export default function TriviaPage() {
         </h1>
 
         {loading ? (
-          <p className={`text-center opacity-70 ${theme === 'light' ? 'text-black' : 'text-white'}`}>Loading trivia...</p>
+          <p className={`text-center opacity-70 ${theme === 'light' ? 'text-black' : 'text-white'}`}>
+            Loading trivia...
+          </p>
         ) : trivia.length === 0 ? (
-          <p className={`text-center opacity-70 ${theme === 'light' ? 'text-black' : 'text-white'}`}>No trivia added yet.</p>
+          <p className={`text-center opacity-70 ${theme === 'light' ? 'text-black' : 'text-white'}`}>
+            No trivia added yet.
+          </p>
         ) : (
           <ul className="list-disc !ml-6 !mb-6 text-lg md:text-xl !space-y-3">
             {trivia.map((item, index) => (
-              <li key={item.id ?? index}>
+              <li key={item.id ?? index} className={`!mb-4 ${theme === 'light' ? 'text-black' : 'text-white'}`}>
                 <span className="font-semibold">{item.label}:</span> {item.value}
               </li>
             ))}
