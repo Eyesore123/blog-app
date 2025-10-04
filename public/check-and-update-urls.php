@@ -47,20 +47,36 @@ function scanTables(PDO $pdo, string $oldUrl) {
         $columns = $columnsStmt->fetchAll(PDO::FETCH_COLUMN);
 
         foreach ($columns as $column) {
-            $stmt = $pdo->prepare("SELECT id, $column FROM $table WHERE $column LIKE :like LIMIT 20");
-            $stmt->execute([':like' => "%$oldUrl%"]);
-            $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        // Check if the table has a primary key column (or just include the first column as identifier)
+        $idColumn = null;
+        $pkStmt = $pdo->prepare("
+            SELECT a.attname as column_name
+            FROM pg_index i
+            JOIN pg_attribute a ON a.attrelid = i.indrelid AND a.attnum = ANY(i.indkey)
+            WHERE i.indrelid = :table::regclass AND i.indisprimary
+        ");
+        $pkStmt->execute([':table' => $table]);
+        $pkCols = $pkStmt->fetchAll(PDO::FETCH_COLUMN);
+        if (!empty($pkCols)) $idColumn = $pkCols[0]; // use first primary key
 
-            foreach ($rows as $row) {
-                $backupData[] = [
-                    'type' => 'db',
-                    'table' => $table,
-                    'column' => $column,
-                    'id' => $row['id'],
-                    'original' => $row[$column],
-                ];
-            }
+        // Build SELECT dynamically
+        $selectCols = $idColumn ? "$idColumn, $column" : $column;
+
+        $stmt = $pdo->prepare("SELECT $selectCols FROM $table WHERE $column LIKE :like LIMIT 20");
+        $stmt->execute([':like' => "%$oldUrl%"]);
+        $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        foreach ($rows as $row) {
+            $backupData[] = [
+                'type' => 'db',
+                'table' => $table,
+                'column' => $column,
+                'id' => $idColumn ? $row[$idColumn] : null,
+                'original' => $row[$column],
+            ];
         }
+    }
+
     }
 
     return $backupData;
@@ -91,16 +107,29 @@ function replaceUrls(PDO $pdo, array $data, string $oldUrl, string $newUrl, stri
 
     foreach ($data as $row) {
         if ($row['type'] === 'db') {
-            $stmt = $pdo->prepare("
-                UPDATE {$row['table']} 
-                SET {$row['column']} = REPLACE({$row['column']}, :old, :new) 
-                WHERE id = :id
-            ");
-            $stmt->execute([
-                ':old' => $oldUrl,
-                ':new' => $newUrl,
-                ':id' => $row['id'],
-            ]);
+            if ($row['id'] !== null) {
+                $stmt = $pdo->prepare("
+                    UPDATE {$row['table']} 
+                    SET {$row['column']} = REPLACE({$row['column']}, :old, :new) 
+                    WHERE id = :id
+                ");
+                $stmt->execute([
+                    ':old' => $oldUrl,
+                    ':new' => $newUrl,
+                    ':id' => $row['id'],
+                ]);
+            } else {
+                // no primary key, update all matching rows
+                $stmt = $pdo->prepare("
+                    UPDATE {$row['table']}
+                    SET {$row['column']} = REPLACE({$row['column']}, :old, :new)
+                    WHERE {$row['column']} LIKE :like
+                ");
+                $stmt->execute([
+                    ':old' => $oldUrl,
+                    ':like' => "%$oldUrl%"
+                ]);
+            }
             $backupData[] = $row;
         } elseif ($row['type'] === 'file') {
             file_put_contents($row['path'], str_replace($oldUrl, $newUrl, $row['original']));
@@ -112,21 +141,36 @@ function replaceUrls(PDO $pdo, array $data, string $oldUrl, string $newUrl, stri
     file_put_contents($backupFile, json_encode($backupData, JSON_PRETTY_PRINT));
 }
 
-function revertUrls(PDO $pdo, string $backupFile) {
+// ===== Helper functions =====
+function revertUrls(PDO $pdo, string $backupFile, string $oldUrl) {
     if (!file_exists($backupFile)) return false;
 
     $backupData = json_decode(file_get_contents($backupFile), true);
     foreach ($backupData as $row) {
         if ($row['type'] === 'db') {
-            $stmt = $pdo->prepare("
-                UPDATE {$row['table']} 
-                SET {$row['column']} = :original 
-                WHERE id = :id
-            ");
-            $stmt->execute([
-                ':original' => $row['original'],
-                ':id' => $row['id'],
-            ]);
+            if ($row['id'] !== null) {
+                // Update by primary key
+                $stmt = $pdo->prepare("
+                    UPDATE {$row['table']} 
+                    SET {$row['column']} = :original 
+                    WHERE id = :id
+                ");
+                $stmt->execute([
+                    ':original' => $row['original'],
+                    ':id' => $row['id'],
+                ]);
+            } else {
+                // No primary key, update all rows containing old content
+                $stmt = $pdo->prepare("
+                    UPDATE {$row['table']} 
+                    SET {$row['column']} = :original
+                    WHERE {$row['column']} LIKE :like
+                ");
+                $stmt->execute([
+                    ':original' => $row['original'],
+                    ':like' => "%$oldUrl%"
+                ]);
+            }
         } elseif ($row['type'] === 'file') {
             file_put_contents($row['path'], $row['original']);
         }
@@ -173,7 +217,7 @@ if ($action === 'scan' || $action === 'preview') {
         $message = "No occurrences found to replace.";
     }
 } elseif ($action === 'revert') {
-    if (revertUrls($pdo, $backupFile)) {
+    if (revertUrls($pdo, $backupFile, $oldUrl)) {
         $message = "Revert completed from backup.";
     } else {
         $message = "No backup file found. Cannot revert.";
