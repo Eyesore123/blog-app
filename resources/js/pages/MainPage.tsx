@@ -20,6 +20,7 @@ import { BookComponent } from '@/components/BookComponent';
 import { InfoBanner } from '@/components/InfoBanner';
 import UnemploymentCounter from '@/components/UnemploymentCounter';
 import { OfferComponent } from '@/components/OfferComponent';
+import TriviaComponent from '@/components/TriviaComponent';
 
 interface BlogPostType {
   id: number;
@@ -240,6 +241,7 @@ const handlePageInput = (e) => {
                   <WebsiteAnalyzerLink />
                   <BookComponent />
                   <UnemploymentCounter />
+                  <TriviaComponent />
                 </div>
               </div>
             </aside>

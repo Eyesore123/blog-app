@@ -9,6 +9,8 @@ use App\Http\Controllers\RecentActivityController;
 use App\Http\Controllers\ArchiveController;
 use App\Models\User;
 use App\Http\Controllers\Api\InfoBannerController;
+use App\Http\Controllers\TriviaController;
+use Inertia\Inertia;
 
 // Route for info banner in the backend:
 
@@ -68,4 +70,13 @@ Route::get('/blog/latest', function () {
         ->first();
         
     return response()->json($post);
+});
+
+
+// Admin API for managing trivia
+Route::prefix('admin')->middleware(['auth', 'admin'])->group(function () {
+    Route::get('/trivia', [TriviaController::class, 'index']);       // fetch all for admin
+    Route::post('/trivia', [TriviaController::class, 'store']);      // add
+    Route::put('/trivia/{trivia}', [TriviaController::class, 'update']);  // edit
+    Route::delete('/trivia/{trivia}', [TriviaController::class, 'destroy']); // delete
 });

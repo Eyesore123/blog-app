@@ -5,6 +5,7 @@ use Inertia\Inertia;
 use Illuminate\Support\Str;
 use App\Models\User;
 use App\Models\Post;
+use App\Models\Trivia;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\AuthController;
@@ -356,12 +357,17 @@ Route::get('/api/topics', function () {
 
 // Admin post send route
 
-// Route::post('/admin/send-emails', [AdminEmailController::class, 'send']);
 
 Route::middleware(['auth', AdminMiddleware::class])->prefix('admin')->group(function () {
     Route::post('/send-emails', [AdminEmailController::class, 'send']);          // mass email
     Route::post('/send-test-email', [AdminEmailController::class, 'sendTestEmail']); // test email
     Route::post('/test-post-notification', [AdminEmailController::class, 'testPostNotification']); // quick test
+});
+
+Route::get('/trivia', function () {
+    return Inertia::render('TriviaPage', [
+        'trivia' => Trivia::all(),
+    ]);
 });
 
 // Fallback route for 404 after everything else fails
