@@ -45,8 +45,8 @@ class CommentController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'post_id' => 'required|exists:posts,id',
-            'content' => 'required|string|max:1000',
+            'post_id'   => 'required|exists:posts,id',
+            'content'   => 'required|string|max:1000',
             'parent_id' => 'nullable|exists:comments,id',
         ]);
 
@@ -59,24 +59,27 @@ class CommentController extends Controller
                     'message' => 'You have reached the maximum of 10 comments today. Please try again tomorrow.',
                 ], 429);
             }
+
             $this->rateLimiter->incrementCommentCount();
         }
 
-        // Assign user or guest
-        $isLoggedIn = Auth::check();
-        $userId = $isLoggedIn ? Auth::id() : null;
-        $userName = $isLoggedIn ? Auth::user()->name : null;
-        $guestName = $isLoggedIn ? null : $request->session()->get('anonId'); // session, not cookie
+        // Determine if this is a real user or an anonymous session
+        $user = Auth::user();
+        $isAnon = $user && ($user->is_anonymous ?? false); // true if user is anonymous session
+
+        $userId = $isAnon ? null : ($user->id ?? null);
+        $userName = $isAnon ? null : ($user->name ?? null);
+        $guestName = $isAnon ? $request->session()->get('anonId') : null;
 
         $comment = Comment::create([
-            'post_id' => $request->post_id,
-            'user_id' => $userId,
+            'post_id'   => $request->post_id,
+            'user_id'   => $userId,
             'user_name' => $userName,
-            'guest_name' => $guestName,
-            'content' => $request->content,
+            'guest_name'=> $guestName,
+            'content'   => $request->content,
             'parent_id' => $request->parent_id,
-            'deleted' => false,
-            'edited' => false,
+            'deleted'   => false,
+            'edited'    => false,
         ]);
 
         // Notify admin
@@ -92,8 +95,8 @@ class CommentController extends Controller
         // Notify parent comment author if this is a reply
         if ($comment->parent_id) {
             $parentComment = Comment::find($comment->parent_id);
-            if ($parentComment && $parentComment->user_id) {
-                $parentUser = User::find($parentComment->user_id);
+            if ($parentComment) {
+                $parentUser = $parentComment->user;
                 if ($parentUser && $parentUser->notify_comments) {
                     try {
                         $parentUser->notify(new NewCommentNotificationForUser($comment));
@@ -104,14 +107,15 @@ class CommentController extends Controller
             }
         }
 
+        // Return JSON response
         return response()->json([
-            '_id' => $comment->id,
-            'authorName' => $isLoggedIn ? $userName : $guestName,
-            'content' => $comment->content,
-            'createdAt' => $comment->created_at->toDateTimeString(),
-            'parent_id' => $comment->parent_id,
-            'deleted' => false,
-            'edited' => false,
+            '_id'        => $comment->id,
+            'authorName' => $isAnon ? $guestName : $userName,
+            'content'    => $comment->content,
+            'createdAt'  => $comment->created_at->toDateTimeString(),
+            'parent_id'  => $comment->parent_id,
+            'deleted'    => false,
+            'edited'     => false,
         ]);
     }
 
