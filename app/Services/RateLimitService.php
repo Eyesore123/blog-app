@@ -10,36 +10,44 @@ class RateLimitService
 {
     protected $limit = 10;
 
+    protected function getIdentifier(): string
+    {
+        if (Auth::check()) {
+            return 'user-' . Auth::id();
+        }
+
+        $anonId = Request::cookie('anonId');
+        if ($anonId) {
+            return 'guest-' . $anonId;
+        }
+
+        return 'guest-ip-' . Request::ip();
+    }
+
     public function getRemainingComments()
     {
-        // Use user ID if authenticated, otherwise use IP address
-        $identifier = Auth::check() ? Auth::id() : Request::ip();
-
-        // Skip rate limiting for admin users
         if (Auth::check() && Auth::user()->is_admin) {
             return '∞';
         }
 
+        $identifier = $this->getIdentifier();
         $key = $this->getCacheKey($identifier);
         $count = Cache::get($key, 0);
 
-        return max(0, $this->limit - $count); // Return how many comments the user can still make
+        return max(0, $this->limit - $count);
     }
 
     public function incrementCommentCount()
     {
-        // Skip rate limiting for admin users
         if (Auth::check() && Auth::user()->is_admin) {
             return;
         }
 
-        // Use user ID if authenticated, otherwise use IP address
-        $identifier = Auth::check() ? Auth::id() : Request::ip();
+        $identifier = $this->getIdentifier();
         $key = $this->getCacheKey($identifier);
         $expiresAt = now()->endOfDay();
 
-        // Ensure the cache key exists and increment the comment count
-        Cache::add($key, 0, $expiresAt); // Ensure key exists
+        Cache::add($key, 0, $expiresAt);
         Cache::increment($key);
     }
 

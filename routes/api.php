@@ -37,13 +37,16 @@ Route::post('login', function (Request $request) {
     ]);
 });
 
-// Comment routes
-Route::get('/comments/{postId}', [CommentController::class, 'index']);
-Route::get('/comments/{id}', [CommentController::class, 'show']);
+// GET comments for a post
+Route::get('/comments/{post_id}', [CommentController::class, 'index']);
 
-Route::middleware(['auth:sanctum', 'throttle:comment-post'])->group(function () {
-    Route::post('/comments', [CommentController::class, 'store']);
-});
+Route::post('/api/comments', [CommentController::class, 'store'])
+    ->middleware('throttle:10,1'); // guests + logged-in users
+
+// Optional: get remaining comments
+Route::get('/comments/remaining', [CommentController::class, 'getRemaining']);
+
+
 
 // Archive routes
 Route::get('/archives/years', [ArchiveController::class, 'getYears']);

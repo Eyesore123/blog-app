@@ -13,15 +13,16 @@ class Comment extends Model
         use HasFactory;
 
         protected $fillable = [
-        'content',
-        'post_id',
-        'user_id',
-        'parent_id',
-        'deleted',
-        'edited',
-        'user_name',
-        'guest_name',
-    ];
+            'content',
+            'post_id',
+            'user_id',
+            'parent_id',
+            'deleted',
+            'edited',
+            'user_name',
+            'guest_name',
+            'display_name',
+        ];
 
 
     protected $casts = [

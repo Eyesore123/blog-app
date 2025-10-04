@@ -42,87 +42,89 @@ class CommentController extends Controller
     }
 
     public function store(Request $request)
-    {
-        $request->validate([
-            'post_id'   => 'required|exists:posts,id',
-            'content'   => 'required|string|max:1000',
-            'parent_id' => 'nullable|exists:comments,id',
-        ]);
+{
+    // Validate request
+    $request->validate([
+        'post_id'   => 'required|exists:posts,id',
+        'content'   => 'required|string',
+        'parent_id' => 'nullable|exists:comments,id',
+    ]);
 
-        // Skip rate limiting for admin users
-        if (!(Auth::check() && Auth::user()->is_admin)) {
-            $remaining = $this->rateLimiter->getRemainingComments();
+    $user = Auth::user();
+$guestName = null;
 
-            if ($remaining <= 0) {
-                return response()->json([
-                    'message' => 'You have reached the maximum of 10 comments today. Please try again tomorrow.',
-                ], 429);
-            }
+if (!$user) {
+    $guestName = $request->cookie('anonId');
 
-            $this->rateLimiter->incrementCommentCount();
-        }
-
-        // Get the logged-in user (if any)
-        $user = Auth::user();
-
-        // For logged-in users
-        $userId   = $user?->id;
-        $userName = $user?->name;
-
-        // For anonymous visitors (not logged in)
-        $guestName = !$user ? $request->cookie('anonId') : null;
-
-        // What to show as author
-        $displayName = $userName ?? $guestName ?? 'Anonymous';
-
-        $comment = Comment::create([
-            'post_id'      => $request->post_id,
-            'user_id'      => $userId,
-            'user_name'    => $userName,
-            'guest_name'   => $guestName,
-            'display_name' => $displayName,
-            'content'      => $request->content,
-            'parent_id'    => $request->parent_id,
-            'deleted'      => false,
-            'edited'       => false,
-        ]);
-
-        // Notify admin
-        try {
-            $admin = User::where('is_admin', true)->first();
-            if ($admin) {
-                $admin->notify(new NewCommentNotificationForAdmin($comment));
-            }
-        } catch (\Exception $e) {
-            Log::error('Failed to send comment notification: ' . $e->getMessage());
-        }
-
-        // Notify parent comment author if this is a reply
-        if ($comment->parent_id) {
-            $parentComment = Comment::find($comment->parent_id);
-            if ($parentComment) {
-                $parentUser = $parentComment->user;
-                if ($parentUser && $parentUser->notify_comments) {
-                    try {
-                        $parentUser->notify(new NewCommentNotificationForUser($comment));
-                    } catch (\Exception $e) {
-                        Log::error('Failed to send reply notification: ' . $e->getMessage());
-                    }
-                }
-            }
-        }
-
-        // Return JSON response
-        return response()->json([
-            '_id'        => $comment->id,
-            'authorName' => $displayName,
-            'content'    => $comment->content,
-            'createdAt'  => $comment->created_at->toDateTimeString(),
-            'parent_id'  => $comment->parent_id,
-            'deleted'    => false,
-            'edited'     => false,
-        ]);
+    if (!$guestName) {
+        $guestName = 'Anon' . random_int(1000, 9999);
+        cookie()->queue(cookie()->forever('anonId', $guestName));
     }
+}
+
+$displayName = $user?->name ?? $guestName; // <-- remove fallback 'Anonymous'
+
+
+    // Skip rate limiting for admin
+    if (!(Auth::check() && Auth::user()->is_admin)) {
+        $remaining = $this->rateLimiter->getRemainingComments();
+        if ($remaining <= 0) {
+            return response()->json([
+                'message' => 'You have reached the maximum of 10 comments today. Please try again tomorrow.',
+            ], 429);
+        }
+        $this->rateLimiter->incrementCommentCount();
+    }
+
+    // Create comment
+    $comment = Comment::create([
+        'post_id'      => $request->post_id,
+        'user_id'      => $user?->id,
+        'user_name'    => $user?->name,
+        'guest_name'   => $guestName,
+        'display_name' => $displayName,
+        'content'      => $request->content,
+        'parent_id'    => $request->parent_id,
+        'deleted'      => false,
+        'edited'       => false,
+    ]);
+
+    $comment->load('user');
+
+    // Notify admin
+    try {
+        $admin = User::where('is_admin', true)->first();
+        if ($admin) {
+            $admin->notify(new NewCommentNotificationForAdmin($comment));
+        }
+    } catch (\Exception $e) {
+        Log::error('Failed to send comment notification: ' . $e->getMessage());
+    }
+
+    // Notify parent author if reply
+    if ($comment->parent_id) {
+        $parentComment = Comment::find($comment->parent_id);
+        if ($parentComment && $parentComment->user?->notify_comments) {
+            try {
+                $parentComment->user->notify(new NewCommentNotificationForUser($comment));
+            } catch (\Exception $e) {
+                Log::error('Failed to send reply notification: ' . $e->getMessage());
+            }
+        }
+    }
+
+    // Return JSON for frontend
+    return response()->json([
+        '_id'        => $comment->id,
+        'authorName' => $displayName,
+        'user_id'    => $comment->user_id,
+        'content'    => $comment->content,
+        'createdAt'  => $comment->created_at->toDateTimeString(),
+        'parent_id'  => $comment->parent_id,
+        'deleted'    => $comment->deleted,
+        'edited'     => $comment->edited,
+    ]);
+}
 
 
     public function destroy($id)

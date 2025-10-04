@@ -179,48 +179,38 @@ const handleDeletePost = async (postId: number) => {
   e.preventDefault();
 
   if (!mainCommentRef.current || !mainCommentRef.current.value.trim()) return;
-
   if (!post?.id) {
     showAlert('Post ID missing', 'error');
     return;
   }
 
   const commentContent = mainCommentRef.current.value;
-  const newCommentData = {
-    post_id: post.id,
-    content: commentContent,
-    user_id: user?.id || 0,
-  };
+  let parentId: string | null = null;
 
   setSubmitting(true);
   await getCsrfToken();
 
   try {
-    const response = await axiosInstance.post('/api/comments', newCommentData);
+    const response = await axiosInstance.post('/api/comments', {
+  post_id: post.id,
+  content: commentContent,
+  parent_id: parentId || null,
+});
 
-    const enrichedComment = {
-      ...response.data,
-      user_id: user?.id || 0,
-      user: {
-        id: user?.id,
-        name: user?.name,
-      },
-    };
 
-    setComments(prev => [...prev, enrichedComment]);
-    setMessage(response.data.message || "Comment posted successfully");
+    const newComment = response.data;
+
+    // Add new comment to state
+    setComments(prev => [...prev, newComment]);
+
+    setMessage("Comment posted successfully");
     mainCommentRef.current.value = "";
 
-    setTimeout(() => {
-      setMessage("");
-    }, 5000);
+    setTimeout(() => setMessage(""), 5000);
   } catch (error) {
     console.error('Failed to post comment', error);
-    setMessage("Error posting comment. We apologize for the inconvenience. If you hit the limit of 10 messages per day, please try again tomorrow.");
-
-    setTimeout(() => {
-      setMessage("");
-    }, 5000);
+    setMessage("Error posting comment. You might have reached your daily limit of 10 comments.");
+    setTimeout(() => setMessage(""), 5000);
   } finally {
     setSubmitting(false);
   }
