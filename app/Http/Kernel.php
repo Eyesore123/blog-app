@@ -14,6 +14,7 @@ use App\Http\Middleware\HttpsRedirect;
 use App\Http\Middleware\HandleCors;
 use App\Http\Middleware\CheckCookieContent;
 use App\Http\Middleware\RedirectOldDomain;
+use App\Http\Middleware\AssignAnonId;
 
 class Kernel extends HttpKernel
 {
@@ -26,7 +27,7 @@ class Kernel extends HttpKernel
         \Illuminate\View\Middleware\ShareErrorsFromSession::class,
         \App\Http\Middleware\HandleInertiaRequests::class,
         \Illuminate\Routing\Middleware\SubstituteBindings::class,
-        \App\Http\Middleware\AssignAnonId::class,
+        AssignAnonId::class,
         ContentSecurityPolicy::class,
         HttpsRedirect::class,
         RewriteAssetUrls::class,
