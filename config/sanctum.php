@@ -15,7 +15,7 @@ return [
     |
     */
 
-   'stateful' => explode(',', env('SANCTUM_STATEFUL_DOMAINS', 'localhost,127.0.0.1,jonis-blog.netlify.app,blog-app-production-16c2.up.railway.app,joniputkinen.com')),
+   'stateful' => explode(',', env('SANCTUM_STATEFUL_DOMAINS', 'localhost,127.0.0.1,jonis-blog.netlify.app,blog-app-production-16c2.up.railway.app,joniputkinen.com,blog.joniputkinen.com')),
 
 
         Sanctum::currentApplicationUrlWithPort(),

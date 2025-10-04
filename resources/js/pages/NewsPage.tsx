@@ -67,6 +67,7 @@ export default function NewsPage() {
             <ul className="!space-y-6">
               {news.map((item, index) => (
                 <li key={item.id ?? index} className={`!mb-4 ${theme === "light" ? "text-black" : "text-white"}`}>
+                  {/* Add onClick event here */}
                   <h3 className="font-semibold text-lg md:text-xl !mb-4">{item.title}</h3>
                   <p className="text-sm md:text-base opacity-90">{item.content}</p>
                   <p className="text-xs opacity-70 !mt-4">{formatDate(item.created_at)}</p>

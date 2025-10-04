@@ -13,12 +13,14 @@ use App\Http\Middleware\RewriteAssetUrls;
 use App\Http\Middleware\HttpsRedirect;
 use App\Http\Middleware\HandleCors;
 use App\Http\Middleware\CheckCookieContent;
+use App\Http\Middleware\RedirectOldDomain;
 
 class Kernel extends HttpKernel
 {
     protected $middlewareGroups = [
     'web' => [
         EncryptCookies::class,
+        // \App\Http\Middleware\RedirectOldDomain::class,
         \Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse::class,
         \Illuminate\Session\Middleware\StartSession::class,
         \Illuminate\View\Middleware\ShareErrorsFromSession::class,
