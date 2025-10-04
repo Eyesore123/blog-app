@@ -29,7 +29,7 @@ const RecentActivityFeed: React.FC = () => {
 
     const fetchActivities = async () => {
       try {
-        const res = await fetch('https://blog-app-production-16c2.up.railway.app/api/recent-activity', {
+        const res = await fetch('https://blog.joniputkinen.com/api/recent-activity', {
           signal: abortController.signal,
         });
         const data: Activity[] = await res.json();

@@ -11,7 +11,7 @@ jobs:
     steps:
       - name: Trigger database backup
         run: |
-          curl -X POST "https://blog-app-production-16c2.up.railway.app/backup-database.php?token=${{ secrets.ADMIN_SETUP_TOKEN }}"
+          curl -X POST "https://blog.joniputkinen.com/backup-database.php?token=${{ secrets.ADMIN_SETUP_TOKEN }}"
       
       - name: Check backup status
         if: ${{ always() }}

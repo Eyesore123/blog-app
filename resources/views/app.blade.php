@@ -16,7 +16,7 @@
     <link rel="icon" href="/favicon.png" type="image/png">
     <link rel="apple-touch-icon" href="/favicon.png">
     <link rel="manifest" href="/site.webmanifest">
-    <link rel="canonical" href="https://blog-app-production-16c2.up.railway.app/">
+    <link rel="canonical" href="https://blog.joniputkinen.com/">
     <meta name="theme-color" content="#ffffff">
     <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
     <link rel="preconnect" href="https://fonts.bunny.net">
@@ -26,7 +26,7 @@
     {
       "@context": "https://schema.org",
       "@type": "Blog",
-      "url": "https://blog-app-production-16c2.up.railway.app/",
+      "url": "https://blog.joniputkinen.com/",
       "name": "Joni's Blog",
       "description": "A blog about web development, coding, personal projects and life in general.",
       "publisher": {

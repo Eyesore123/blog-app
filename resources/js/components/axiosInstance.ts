@@ -3,7 +3,7 @@ import axios from 'axios';
 
 const axiosInstance = axios.create({
   baseURL: process.env.NODE_ENV === 'production'
-    ? 'https://blog-app-production-16c2.up.railway.app' // ✅ Laravel backend
+    ? 'https://blog.joniputkinen.com' // ✅ Laravel backend
     : 'http://127.0.0.1:8000', // ✅ Update this to your Laravel dev port if different
   headers: {
     'X-Requested-With': 'XMLHttpRequest',

@@ -78,11 +78,11 @@ export function BlogPost({ post, isPostPage = false }: BlogPostProps) {
   "@type": "BlogPosting",
   mainEntityOfPage: {
     "@type": "WebPage",
-    "@id": `https://blog-app-production-16c2.up.railway.app/posts/${post.slug || post.id}`
+    "@id": `https://blog.joniputkinen.com/posts/${post.slug || post.id}`
   },
   headline: post.title,
   description: post.content?.slice(0, 160),
-  image: post.image_url || "https://blog-app-production-16c2.up.railway.app/fallbackimage.jpg",
+  image: post.image_url || "https://blog.joniputkinen.com/fallbackimage.jpg",
   author: {
     "@type": "Person",
     "name": "Joni Putkinen"
@@ -133,7 +133,7 @@ const handleImageError = () => {
 
   const backendBaseUrl =
   process.env.NODE_ENV === 'production'
-    ? 'https://blog-app-production-16c2.up.railway.app'
+    ? 'https://blog.joniputkinen.com'
     : 'http://127.0.0.1:9000';
 
   useEffect(() => {
@@ -605,7 +605,7 @@ const postUrl = `/posts/${post.id}`;
   </Head>
     <Helmet>
         <title>{seoProps.title}</title>
-        <link rel="canonical" href={`https://blog-app-production-16c2.up.railway.app/post/${post.slug || post.id}`} />
+        <link rel="canonical" href={`https://blog.joniputkinen.com/post/${post.slug || post.id}`} />
         <meta name="description" content={seoProps.description} />
         <meta name="keywords" content={seoProps.keywords || 'blog, post'} />
         <meta property="og:title" content={seoProps.title} />

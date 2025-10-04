@@ -120,6 +120,6 @@ if (file_exists($uploadsDir)) {
 </form>
 
 <p><strong>After fixing, your images should be accessible at:</strong><br>
-<code>https://blog-app-production-16c2.up.railway.app/storage/uploads/filename.jpg</code></p>
+<code>https://blog.joniputkinen.com/storage/uploads/filename.jpg</code></p>
 
 </body></html>

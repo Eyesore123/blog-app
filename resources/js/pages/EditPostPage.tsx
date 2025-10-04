@@ -238,12 +238,12 @@ const EditPostPage: React.FC<EditPostPageProps> = ({ post }) => {
                   <div className="!mt-2">
                     <p className="text-sm !mb-3">Current Image:</p>
                     <a
-                      href={`https://blog-app-production-16c2.up.railway.app/storage${post.image_url}`}
+                      href={`https://blog.joniputkinen.com/storage${post.image_url}`}
                       target="_blank"
                       rel="noopener noreferrer"
                     >
                       <img
-                        src={`https://blog-app-production-16c2.up.railway.app/storage${post.image_url}`}
+                        src={`https://blog.joniputkinen.com/storage${post.image_url}`}
                         alt="Current"
                         className="max-w-xs rounded shadow"
                       />

@@ -101,7 +101,7 @@ APP_NAME=Laravel
 APP_ENV=production
 APP_KEY=base64:your-app-key
 APP_DEBUG=false
-APP_URL=https://blog-app-production-16c2.up.railway.app
+APP_URL=https://blog.joniputkinen.com
 
 LOG_CHANNEL=stack
 LOG_DEPRECATIONS_CHANNEL=null

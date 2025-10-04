@@ -89,7 +89,7 @@ Currently the most effective SEO method is the JSON-LD script that's placed insi
 {
   "@context": "https://schema.org",
   "@type": "Blog",
-  "url": "https://blog-app-production-16c2.up.railway.app/",
+  "url": "https://blog.joniputkinen.com/",
   "name": "Joni's Blog",
   "description": "A blog about web development, coding, personal projects and life in general.",
   "publisher": {

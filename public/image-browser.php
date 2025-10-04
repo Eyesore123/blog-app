@@ -140,7 +140,7 @@ if (empty($imagesPage)) {
     foreach ($imagesPage as $image) {
         // Changed from /storage/images/ to /storage/uploads/
         $imageUrl = "/storage/uploads/" . $image['name'];
-        $fullUrl = "https://blog-app-production-16c2.up.railway.app" . $imageUrl;
+        $fullUrl = "https://blog.joniputkinen.com" . $imageUrl;
         
         echo "<div style='border: 1px solid #e5e7eb; border-radius: 8px; padding: 15px; background: white;'>";
         
