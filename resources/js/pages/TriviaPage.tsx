@@ -18,23 +18,23 @@ export default function TriviaPage() {
     // Scroll to top when page loads
     window.scrollTo({ top: 0 });
 
-    async function fetchTrivia() {
-      try {
-        const response = await axiosInstance.get("/trivia");
-        const data = Array.isArray(response.data)
-          ? response.data
-          : response.data.trivia || [];
-        setTrivia(data);
-      } catch (err) {
-        console.error("Failed to fetch trivia:", err);
-        setTrivia([]); // fallback
-      } finally {
-        setLoading(false);
-      }
-    }
+        async function fetchTrivia() {
+        try {
+            const response = await axiosInstance.get("/api/trivia"); // use API route
+            const data = Array.isArray(response.data)
+            ? response.data
+            : response.data.trivia || [];
+            setTrivia(data); // ✅ set the correct array
+        } catch (err) {
+            console.error("Failed to fetch trivia:", err);
+            setTrivia([]); // fallback
+        } finally {
+            setLoading(false);
+        }
+        }
 
-    fetchTrivia();
-  }, []);
+        fetchTrivia();
+    }, []);
 
   return (
   <div className={`min-h-screen ${theme}`}>

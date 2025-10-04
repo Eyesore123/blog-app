@@ -364,9 +364,11 @@ Route::middleware(['auth', AdminMiddleware::class])->prefix('admin')->group(func
     Route::post('/test-post-notification', [AdminEmailController::class, 'testPostNotification']); // quick test
 });
 
+// Trivia route
+
 Route::get('/trivia', function () {
     return Inertia::render('TriviaPage', [
-        'trivia' => Trivia::all(),
+        'trivia' => Trivia::all(), // passes array of trivia to page
     ]);
 });
 

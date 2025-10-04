@@ -11,6 +11,7 @@ use App\Models\User;
 use App\Http\Controllers\Api\InfoBannerController;
 use App\Http\Controllers\TriviaController;
 use Inertia\Inertia;
+use App\Models\Trivia;
 
 // Route for info banner in the backend:
 
@@ -72,6 +73,9 @@ Route::get('/blog/latest', function () {
     return response()->json($post);
 });
 
+Route::get('/trivia', function () {
+    return response()->json(Trivia::all());
+});
 
 // Admin API for managing trivia
 Route::prefix('admin')->middleware(['auth', 'admin'])->group(function () {
