@@ -1,1 +1,0 @@
-import{j as e}from"./axiosInstance-B60J37ny.js";function r(){return e.jsx("div",{children:e.jsx("div",{className:"headerstyles text-center !py-8 bg-gradient-to-r from-[#5800FF] via-[#E900FF] to-[#FFC600] text-white",children:e.jsx("h1",{className:"text-4xl font-bold hover:cursor-pointer",onClick:()=>window.location.href="/",children:"Joni's Blog"})})})}export{r as H};
