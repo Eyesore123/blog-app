@@ -21,6 +21,7 @@ import { InfoBanner } from '@/components/InfoBanner';
 import UnemploymentCounter from '@/components/UnemploymentCounter';
 import { OfferComponent } from '@/components/OfferComponent';
 import TriviaComponent from '@/components/TriviaComponent';
+import NewsComponent from '@/components/NewsComponent';
 
 interface BlogPostType {
   id: number;
@@ -177,7 +178,7 @@ const handlePageInput = (e) => {
           <div className="flex flex-col lg:flex-row gap-4 md:gap-30 custom-2xl-gap items-center lg:items-start lg:!pt-1 2xl:!pt-1">
             <aside className="lg:block w-full md:!w-2/3 xl:!w-2/3 xl:!ml-10  xl:max-w-120 2xl:!ml-30 xl:!mr-10 !mb-8 lg:!mb-0 mx-auto rounded-lg">
               <div className={`lg:top-24 !space-y-4 md:!space-y-6 flexcontainer w-full lg:!w-80 xl:!w-120 bg-[var(--bg-primary)] lg:!mt-0 rounded-lg`}>
-                <div className=" bg-[#5800FF]/10 !pl-4 md:!pl-10 !mb-0 !pr-4 !pb-10 2xl:!pl-6 bg-solid rounded-t-lg">
+                <div className=" bg-[#5800FF]/10 !pl-4 md:!pl-10 !mb-0 !pr-4 !pb-6 2xl:!pl-6 bg-solid rounded-t-lg">
                   <h3 className="font-semibold !mb-4 !pt-4 md:!pt-8">About</h3>
                   <p className="opacity-80">
                     Hi there! This is my personal blog where I explore web development, design, tech, business, and marketing — along with the occasional reflection on life and what it means to live in society.
@@ -185,6 +186,7 @@ const handlePageInput = (e) => {
                 </div>
 
                 <div className="bg-[#5800FF]/10 !pl-4 md:!pl-10 !mb-0 !pr-4 !pb-8 2xl:!pl-6">
+                <NewsComponent />
                   <h3 className="font-semibold !mb-3">Topics</h3>
 
                   {/* Full width All Topics button */}

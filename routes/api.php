@@ -12,6 +12,7 @@ use App\Http\Controllers\Api\InfoBannerController;
 use App\Http\Controllers\TriviaController;
 use Inertia\Inertia;
 use App\Models\Trivia;
+use App\Http\Controllers\NewsController;
 
 // Route for info banner in the backend:
 
@@ -83,4 +84,12 @@ Route::prefix('admin')->middleware(['auth', 'admin'])->group(function () {
     Route::post('/trivia', [TriviaController::class, 'store']);      // add
     Route::put('/trivia/{trivia}', [TriviaController::class, 'update']);  // edit
     Route::delete('/trivia/{trivia}', [TriviaController::class, 'destroy']); // delete
+});
+
+// Admin API for managing news
+Route::prefix('admin')->middleware(['auth', 'admin'])->group(function () {
+    Route::get('/news', [NewsController::class, 'adminIndex']);       // fetch all for admin
+    Route::post('/news', [NewsController::class, 'store']);          // add
+    Route::put('/news/{news}', [NewsController::class, 'update']);   // edit
+    Route::delete('/news/{news}', [NewsController::class, 'destroy']); // delete
 });

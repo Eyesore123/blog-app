@@ -31,6 +31,15 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use App\Http\Controllers\VideoController;
 use App\Http\Controllers\AdminEmailController;
+use App\Http\Controllers\NewsController;
+use App\Models\News;
+
+// News page
+Route::get('/news', [NewsController::class, 'index']);
+
+// Latest 2 news for component (JSON)
+Route::get('/api/news/latest', [NewsController::class, 'latest']);
+
 
 // Test email route for production environment
 
@@ -368,7 +377,15 @@ Route::middleware(['auth', AdminMiddleware::class])->prefix('admin')->group(func
 
 Route::get('/trivia', function () {
     return Inertia::render('TriviaPage', [
-        'trivia' => Trivia::all(), // passes array of trivia to page
+        'trivia' => Trivia::all(),
+    ]);
+});
+
+// News page route
+
+Route::get('/news', function () {
+    return Inertia::render('NewsPage', [
+        'news' => News::all(),
     ]);
 });
 
