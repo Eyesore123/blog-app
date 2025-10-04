@@ -44,7 +44,8 @@ class HandleCors
             'http://localhost:5173',
             'http://127.0.0.1:3000',
             'http://127.0.0.1:5173',
-            'https://joniputkinen.com'
+            'https://joniputkinen.com',
+            'https://blog.joniputkinen.com'
         ];
 
         $origin = $request->header('Origin');

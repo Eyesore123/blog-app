@@ -8,6 +8,8 @@
 
 - This is a blog app that is used in conjunction with my portfolio site. Work in progress!
 
+- Now I'm working on a news controller which lets me write news to users dynamically. 
+
 This app works like a basic blog app: it shows posts and comments. Posts can be searched by title and topic. Posts also can be searched using the dropdown menu. There are archive pages which show all the posts for each year (paginated). Posts use tags (optional) and posts can be filtered by tags just by clicking a tag on the post.
 
 Admin can add new posts, edit posts and delete comments. Admin can add new images to database from a link or from local storage and change post images. Admin can also deactivate and - as an ultimate solution - delete accounts. Logged in users can add comments, edit their comments and delete comments when there are no replies.
