@@ -108,6 +108,7 @@ function replaceUrls(PDO $pdo, array $data, string $oldUrl, string $newUrl, stri
     foreach ($data as $row) {
         if ($row['type'] === 'db') {
             if ($row['id'] !== null) {
+                // Update by primary key
                 $stmt = $pdo->prepare("
                     UPDATE {$row['table']} 
                     SET {$row['column']} = REPLACE({$row['column']}, :old, :new) 
@@ -119,7 +120,7 @@ function replaceUrls(PDO $pdo, array $data, string $oldUrl, string $newUrl, stri
                     ':id' => $row['id'],
                 ]);
             } else {
-                // no primary key, update all matching rows
+                // No primary key, update all matching rows
                 $stmt = $pdo->prepare("
                     UPDATE {$row['table']}
                     SET {$row['column']} = REPLACE({$row['column']}, :old, :new)
@@ -127,9 +128,11 @@ function replaceUrls(PDO $pdo, array $data, string $oldUrl, string $newUrl, stri
                 ");
                 $stmt->execute([
                     ':old' => $oldUrl,
-                    ':like' => "%$oldUrl%"
+                    ':new' => $newUrl,   // fixed missing parameter
+                    ':like' => "%$oldUrl%",
                 ]);
             }
+
             $backupData[] = $row;
         } elseif ($row['type'] === 'file') {
             file_put_contents($row['path'], str_replace($oldUrl, $newUrl, $row['original']));
