@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useTheme } from "../context/ThemeContext";
 import { router } from '@inertiajs/react';
 import axiosInstance from "../components/axiosInstance";
+import { on } from "events";
 
 interface NewsItem {
   id?: number;
@@ -37,7 +38,7 @@ export default function NewsComponent() {
 
 
   return (
-    <div className={`rounded-lg !pt-2 !mt-4 !mb-10 text-left relative overflow-visible ${theme}`}>
+    <div className={`rounded-lg !pt-2 md:!mt-4 !mb-10 text-left relative overflow-visible ${theme}`}>
       <h3 className='font-semibold !mt-2 !mb-2'>News</h3>
       <div className="text-[14px] !mb-6 !mt-4 opacity-100">📰 Latest Updates</div>
 
@@ -52,8 +53,8 @@ export default function NewsComponent() {
       ) : (
         <ul className="list-disc !ml-6 !mb-6 text-sm md:text-base !space-y-2">
           {news.map((item, index) => (
-            <li key={item.id ?? index} className={`!mb-2 ${theme === 'light' ? 'text-black' : 'text-white'}`}>
-              {item.title}
+            <li key={item.id ?? index} className={`!mb-2 cursor-pointer ${theme === 'light' ? 'text-black' : 'text-white'}`} onClick={() => goToNews()}>
+                {item.title}
             </li>
           ))}
         </ul>
