@@ -27,6 +27,7 @@ class NewPostNotification extends Mailable implements ShouldQueue
 
     public function build()
     {
+        Log::info("Building email for Post ID: {$this->postId}, recipient: {$this->email}");
         // Load the post safely
         if (!isset($this->post)) {
             $this->post = Post::find($this->postId);
@@ -36,8 +37,6 @@ class NewPostNotification extends Mailable implements ShouldQueue
                 throw new \Exception("Post not found (ID: {$this->postId})");
             }
         }
-
-        Log::info("Building email HTML for Post ID: {$this->post->id}");
 
         // Convert Markdown content to HTML
         $converter   = new CommonMarkConverter([

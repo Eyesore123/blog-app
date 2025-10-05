@@ -43,9 +43,14 @@ App uses only a few colors that I've personally picked to match the colors of my
 
 UseTheme hook is used to change the color consistently across the app. User clicks on the button and it changes the colors of texts and backgrounds.
 
-Loading spinners are used for images and log-in. Custom alerts pop up to notify user of successful logout. Login doesn't include popup, because it would feel a bit intrusive towards regular users. Admin gets a pop up notification when a new post is added. Custom dialogue window in used for verifying important actions (like deleting a post or a user account).
+Loading spinners are used for images and log-in. Inertia requests use a different loading spinner
+on the top left corner, which means that slow loads between pages have a loading spinner, too, and it signifies to the user that something is happening even when nothing moves on the screen.
+
+Custom alerts pop up to notify user of successful logout. Login doesn't include popup, because it would feel a bit intrusive towards regular users. Admin gets a pop up notification when a new post is added. Custom dialogue window in used for verifying important actions (like deleting a post or a user account).
 
 Lucide-react package is used for some of the icons.
+
+Scroll-to-top button is on the bottom right corner to increase accessibility.
 
 The fanciest stylistic decision is the use of framer-motion in the unemployment counter component. When a user gives a virtual hug, it sends hearts flying towards the top of the screen.
 
@@ -76,9 +81,7 @@ Sitemap generator: sitemap is being generated with each new deployment and put i
 
 # Emails & workers
 
-- Previously I used Gmail STMP for email notifications, but that stopped working for some reason and my mails were blocked. Emails work in this app, but mailer needs to be defined in mail.php and mailer keys in .env.
-
-In my production app I'm moving to use some other mailer, but I need my own domain first. Email notifications are not in use at the moment. 
+- Previously I used Gmail STMP for email notifications, but that stopped working for some reason and my mails were blocked. Production app uses resend. Emails work in this app, but mailer needs to be defined in mail.php and mailer keys in .env before deployment. Tinker can be used to log mails, when MAIL_MAILER value is set to "log". Eventserviceprovider is added for improved logging on testing and on the server.
 
 - Backend scripts include scripts for checking worker jobs and email sending.
 
@@ -115,7 +118,7 @@ I also have a Helmet section in each post (BlogPost.tsx) which 'sends' the JSON-
 
 Built-in sitemap generator creates a sitemap with each new deployment and places it inside public folder. Sitemap goes to Google immediately either by sending a ping from script or replacing sitemap manually on Google console. Google gets the sitemap eventually even without sending it.
 
-I'll write about SEO once I get it to work the way I want it.
+This kind of SEO has proved to be work effectively. Google finds new posts quickly, and puts the headline, image and a short description below the post links that appear on Google results.
 
 ## Planned improvements
 
@@ -126,7 +129,6 @@ Blog still needs some work, though, including:
 3. Scheduled uploads feature would be nice
 4. Customized emails that look better than the default Laravel emails in comment notiifications and email verifications. Default emails are not bad but could be better.
 5. Profile image features. I added profile image upload as an extra feature, but noticed that image compression would speed up the site a lot, and so it would be nice to add a feature to compress images. It would also be nice to have a feature to crop images, and use images in the comment section. Without compression I might have to offer images from a selection of smaller size icons.
-6. Administrator tags for admins in comment section
 
 ## Deployment
 

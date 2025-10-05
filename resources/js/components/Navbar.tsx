@@ -38,16 +38,16 @@ export function Navbar() {
 const isDefaultIcon = profileUrl === '/default-user-icon.svg';
 
     return (
-    <div className="flex flex-col md:flex-row items-center gap-4 md:!gap-6 2xl:!pl-40 custompadding z-20">
+    <div className="flex flex-col md:flex-row items-center gap-4 md:!gap-0 lg:!gap-6 md:!pl-12 2xl:!pl-40 custompadding z-20">
       {user && (
         <div className="flex items-center !gap-2">
-          <span className="text-[#FFC600] font-semibold min-w-[150px]">
+          <span className="text-[#FFC600] font-semibold !text-sm min-w-[150px]">
             Welcome, {user.name}!
           </span>
           <img
             src={profileUrl}
             alt="Profile"
-            className={`w-10 h-10 !ml-4 !mr-10 rounded-full object-cover ${
+            className={`w-10 h-10 md:!ml-10 md:!mr-10 rounded-full object-cover ${
               isDefaultIcon && theme === 'dark' ? 'filter invert' : ''
             }`}
           />
@@ -55,7 +55,7 @@ const isDefaultIcon = profileUrl === '/default-user-icon.svg';
       )}
 
           <Link href="/privacy-policy"
-          className="hover:text-purple-400 min-w-[100px]"
+          className="hover:text-purple-400 min-w-[100px] text-sm lg:!text-base"
           onClick={(e) => {
             e.preventDefault();
             window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -65,7 +65,7 @@ const isDefaultIcon = profileUrl === '/default-user-icon.svg';
             Privacy Policy
           </Link>
           <Link href="/"
-          className="hover:text-purple-400 min-w-[100px]"
+          className="hover:text-purple-400 min-w-[100px] text-sm lg:!text-base"
           onClick={(e) => {
             e.preventDefault();
             router.visit('/', { preserveState: true });
@@ -75,7 +75,7 @@ const isDefaultIcon = profileUrl === '/default-user-icon.svg';
           </Link>
 
           {isAdmin && (
-            <Link href="/admin" className="hover:text-purple-400 min-w-[100px]">
+            <Link href="/admin" className="hover:text-purple-400 min-w-[100px] !text-sm lg:!text-base">
               Admin Dashboard
             </Link>
           )}
@@ -104,19 +104,19 @@ const isDefaultIcon = profileUrl === '/default-user-icon.svg';
               {!user.is_anonymous ? (
                 <Link
                   href="/account"
-                  className="!px-4 !py-2 rounded bg-[#5800FF] text-white hover:bg-[#E900FF] transition-colors"
+                  className="!px-3 !py-2 xl:! xl:!px-4 xl:!py-2 rounded bg-[#5800FF] text-white text-sm hover:bg-[#E900FF] transition-colors"
                 >
                   My Account
                 </Link>
               ) : (
-                <span className="text-gray-500">Anonymous User</span>
+                <span className="text-gray-500 text-sm">Anonymous User</span>
               )}
               <SignOutButton />
             </>
           ) : (
             <Link
               href={route('login')}
-              className="!px-4 !py-2 rounded bg-[#5800FF] text-white hover:bg-[#E900FF] transition-colors !mb-4 md:!mb-0"
+              className="!px-4 !py-2 rounded bg-[#5800FF] text-white hover:bg-[#E900FF] transition-colors !mb-4 md:!mb-0 !text-sm xl:!text-base"
             >
               Sign In
             </Link>
@@ -135,7 +135,7 @@ const isDefaultIcon = profileUrl === '/default-user-icon.svg';
         </button>
         <Link
           href={route('login')}
-          className="!px-4 !py-2 rounded bg-[#5800FF] text-white hover:bg-[#E900FF] transition-colors !mb-4 md:!mb-0"
+          className="!px-4 !py-2 rounded bg-[#5800FF] text-white hover:bg-[#E900FF] transition-colors !mb-4 md:!mb-0 !text-sm xl:!text-base"
         >
           Sign In
         </Link>

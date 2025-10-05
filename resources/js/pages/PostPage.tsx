@@ -16,6 +16,7 @@ import { useTheme } from '../context/ThemeContext';
 import axiosInstance from "../components/axiosInstance";
 import { useAlert } from '@/context/AlertContext';
 import { useConfirm } from '@/context/ConfirmationContext';
+import { OfferComponent } from '@/components/OfferComponent';
 
 interface User {
   id: number;
@@ -185,40 +186,6 @@ const PostPage: React.FC<PostPageProps> = ({ post }) => {
                 
                   {topics && (
 
-                    // All topic list with each topic on its own line:
-
-                    // <div className="!mb-6">
-                    //   <h3 className="font-semibold !mb-2">Topics</h3>
-                    //   <ul className="!space-y-1">
-                    //     <li>
-                    //       <button
-                    //         onClick={() => handleTopicChange(null)}
-                    //         className={`w-full text-left !px-2 !py-1 rounded ${
-                    //           currentTopic === null
-                    //             ? 'bg-[#5800FF] text-white'
-                    //             : 'hover:bg-[#5800FF]/20'
-                    //         }`}
-                    //       >
-                    //         All Topics
-                    //       </button>
-                    //     </li>
-                    //     {topics.map((topic) => (
-                    //       <li key={topic}>
-                    //         <button
-                    //           onClick={() => handleTopicChange(topic)}
-                    //           className={`w-full text-left !px-2 !py-1 rounded ${
-                    //             currentTopic === topic
-                    //               ? 'bg-[#5800FF] text-white'
-                    //               : 'hover:bg-[#5800FF]/20'
-                    //           }`}
-                    //         >
-                    //           {topic}
-                    //         </button>
-                    //       </li>
-                    //     ))}
-                    //   </ul>
-                    // </div>
-
                     <div className="!mb-8">
                       <h3 className="font-semibold !mb-3">Topics</h3>
 
@@ -264,6 +231,7 @@ const PostPage: React.FC<PostPageProps> = ({ post }) => {
                   <RecentActivityFeed key="recent-activity-feed" />
                   <RssSubscribeLink />
                   <PortfolioLink />
+                  <OfferComponent />
                 </div>
               </div>
             </aside>
