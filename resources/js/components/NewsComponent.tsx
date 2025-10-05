@@ -38,7 +38,7 @@ export default function NewsComponent() {
 
 
   return (
-    <div className={`rounded-lg !pt-2 md:!mt-4 !mb-10 text-left relative overflow-visible ${theme}`}>
+    <div className={`rounded-lg !pt-2 !mb-10 text-left relative overflow-visible ${theme}`}>
       <h3 className='font-semibold !mt-2 !mb-2'>News</h3>
       <div className="text-[14px] !mb-6 !mt-4 opacity-100">📰 Latest Updates</div>
 

@@ -54,7 +54,7 @@ export default function TriviaPage() {
             No trivia added yet.
           </p>
         ) : (
-          <ul className="list-disc !ml-6 !mb-6 text-lg md:text-xl !space-y-3">
+          <ul className="list-disc !ml-6 !mb-6 !text-md lg:!text-lg !space-y-3">
             {trivia.map((item, index) => (
               <li key={item.id ?? index} className={`!mb-4 ${theme === 'light' ? 'text-black' : 'text-white'}`}>
                 <span className="font-semibold">{item.label}:</span> {item.value}
@@ -67,7 +67,7 @@ export default function TriviaPage() {
           <div className="flex w-full justify-center items-center">
                 <button
                   onClick={() => window.history.back()}
-                  className={`!px-6 !py-2 border !mt-4 lg:!mt-8 border-[#5800FF] text-[#5800FF] rounded-lg hover:bg-[#5800FF]/10 transition-colors sm:block`}
+                  className={`!px-6 !py-2 border !mt-4 lg:!mt-8 border-[#E900FF] text-[#E900FF] rounded-lg hover:bg-[#5800FF]/10 transition-colors sm:block`}
                 >
                   Go Back
                 </button>

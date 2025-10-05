@@ -68,8 +68,8 @@ export default function NewsPage() {
               {news.map((item, index) => (
                 <li key={item.id ?? index} className={`!mb-4 ${theme === "light" ? "text-black" : "text-white"}`}>
                   <h3 className="font-semibold text-lg md:text-xl !mb-4">{item.title}</h3>
-                  <p className="text-sm md:text-base opacity-90">{item.content}</p>
-                  <p className="text-xs opacity-70 !mt-4">{formatDate(item.created_at)}</p>
+                  <p className="!text-sm md:!text-base opacity-90">{item.content}</p>
+                  <p className="!text-xs opacity-70 !mt-4">{formatDate(item.created_at)}</p>
                 </li>
               ))}
             </ul>
@@ -79,7 +79,7 @@ export default function NewsPage() {
           <div className="flex w-full justify-center items-center">
                 <button
                   onClick={() => window.history.back()}
-                  className={`!px-6 !py-2 border !mt-4 lg:!mt-8 border-[#5800FF] text-[#5800FF] rounded-lg hover:bg-[#5800FF]/10 transition-colors sm:block`}
+                  className={`!px-6 !py-2 border !mt-4 lg:!mt-8 border-[#E900FF] text-[#E900FF] rounded-lg hover:bg-[#5800FF]/10 transition-colors sm:block`}
                 >
                   Go Back
                 </button>

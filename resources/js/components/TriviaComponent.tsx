@@ -16,7 +16,7 @@ export default function TriviaComponent() {
   };
 
   return (
-    <div className={`rounded-lg !mt-8 !pb-4 text-left relative overflow-visible ${theme}`}>
+    <div className={`rounded-lg !mt-4 !pb-4 text-left relative overflow-visible ${theme}`}>
       <h3 className='font-semibold !mb-2'>Trivia</h3>
       <div className="text-[14px] !mb-6 !mt-6 opacity-80">🎲 Trivia Corner</div>
 
