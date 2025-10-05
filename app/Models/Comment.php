@@ -28,6 +28,7 @@ class Comment extends Model
     protected $casts = [
         'deleted' => 'boolean',
         'edited' => 'boolean',
+        'is_admin' => 'boolean',
     ];
 
     public function replies()

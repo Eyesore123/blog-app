@@ -168,6 +168,8 @@ Portgres admin panel looks nice:
 ## Issues
 
 - Markdown editor needs some work.
+- When a user logs in to add a comment, it takes user back to main page. I was wondering if that could be improved,
+similar to how History.back() sends to the exact same page location.
 - Flash messages are not working properly so I made a workaround for pop-ups.
 - Admin can create and fetch sketches of posts, but sketches are separate from upload panel so the UI is not the most intuitive, and currently it's not filling all the fields
 - Aside section is a bit heavy and can disturb the function called page scroll: when user clicks on a link, the page might stop going all the way up when the aside part is still loading. So instead of page scrolling all the way up, it might stop somewhere in between in some instances.

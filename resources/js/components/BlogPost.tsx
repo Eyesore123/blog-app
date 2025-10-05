@@ -43,6 +43,8 @@ interface Comment {
   deleted?: boolean;
   user_id: number;
   edited?: boolean;
+  is_admin?: boolean;
+  is_owner?: boolean;
 }
 
 interface AuthUser {
@@ -198,7 +200,10 @@ const handleDeletePost = async (postId: number) => {
 });
 
 
-    const newComment = response.data;
+      const newComment = {
+      ...response.data,
+      is_admin: response.data.is_admin ?? isAdmin, // add admin status
+    };
 
     // Add new comment to state
     setComments(prev => [...prev, newComment]);
@@ -381,6 +386,7 @@ const renderComment = (comment: Comment, level = 0) => {
   const replies = getReplies(comment._id);
   const isDeleted = comment.deleted;
   const isCommentOwner = Boolean(user && comment.user_id && user.id === comment.user_id);
+  const isCommentAdmin = comment.is_admin || false;
   const hasReplies = comments.some(c => c.parent_id === comment._id);
   
   // Limit nesting on mobile
@@ -451,7 +457,13 @@ const renderComment = (comment: Comment, level = 0) => {
   
   return (
     <div key={comment._id} className={`bg-[#5800FF]/${10 - Math.min(level, 5) * 2} rounded !p-2 md:!p-3 ${indentClass}`}>
-      <p className="font-medium text-xs md:text-sm">{comment.authorName}</p>
+      <p className="font-medium text-xs md:text-sm">
+        {comment.authorName}{" "}
+        {isCommentAdmin && (
+          <span className="!ml-1 !px-1 !py-[1px] text-[7px] md:text-[8px] bg-[#E900FF] text-white rounded">Admin</span>
+        )}
+         {comment.is_owner && <span className="!ml-1 !px-1 !py-[1px] bg-yellow-500 text-black text-[7px] md:text-[8px] rounded">Owner</span>}
+      </p>
       
       {isDeleted ? (
         <p className="opacity-60 italic text-xs md:text-sm">[Message removed by moderator]</p>

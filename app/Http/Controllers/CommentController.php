@@ -35,6 +35,8 @@ class CommentController extends Controller
                     'user_id'    => $comment->user_id,
                     'edited'     => $comment->edited,
                     'deleted'    => $comment->deleted ?? false,
+                    'is_admin' => $comment->user ? $comment->user->isAdmin() : false, // admin check
+                    'is_owner'   => $comment->user ? $comment->user->email === 'joni.putkinen@protonmail.com' : false,
                 ];
             });
 
@@ -123,6 +125,8 @@ $displayName = $user?->name ?? $guestName; // <-- remove fallback 'Anonymous'
         'parent_id'  => $comment->parent_id,
         'deleted'    => $comment->deleted,
         'edited'     => $comment->edited,
+        'is_admin'   => $comment->user ? $comment->user->isAdmin() : false, // admin check
+        'is_owner'   => $comment->user ? $comment->user->email === 'joni.putkinen@protonmail.com' : false,
     ]);
 }
 
