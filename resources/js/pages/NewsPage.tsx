@@ -75,6 +75,16 @@ export default function NewsPage() {
             </ul>
           )}
         </div>
+        {/* Go back btn */}
+          <div className="flex w-full justify-center items-center">
+                <button
+                  onClick={() => window.history.back()}
+                  className={`!px-6 !py-2 border !mt-4 lg:!mt-8 border-[#5800FF] text-[#5800FF] rounded-lg hover:bg-[#5800FF]/10 transition-colors sm:block`}
+                >
+                  Go Back
+                </button>
+          </div>
+
       </main>
     </div>
   );
