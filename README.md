@@ -163,6 +163,10 @@ Comment section looks like this when user is not signed in. Signed in users can 
 ![blog3](https://github.com/user-attachments/assets/9b47ad5c-13f9-4858-9291-1eb1d2397d96)
 <img width="1898" height="949" alt="blogimage" src="https://github.com/user-attachments/assets/c65fca2e-b3de-4d7c-901d-c4c18be86df0" />
 
+Admin dashboard view on the frontend:
+
+<img width="1888" height="917" alt="admindashboard" src="https://github.com/user-attachments/assets/0206601d-8f2f-4140-a693-b287bd8cf358" />
+
 Portgres admin panel looks nice:
 
 ![admindashboard](https://github.com/user-attachments/assets/0530e3cf-617f-4e1a-974d-68bf35c829f2)
