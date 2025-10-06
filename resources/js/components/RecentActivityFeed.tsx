@@ -29,9 +29,10 @@ const RecentActivityFeed: React.FC = () => {
 
     const fetchActivities = async () => {
       try {
-        const res = await fetch('https://blog.joniputkinen.com/api/recent-activity', {
-          signal: abortController.signal,
-        });
+        const res = await fetch(
+          'https://blog.joniputkinen.com/api/recent-activity',
+          { signal: abortController.signal }
+        );
         const data: Activity[] = await res.json();
         setActivities(data.slice(0, 9)); // limit to 9
       } catch (err: any) {
@@ -68,6 +69,35 @@ const RecentActivityFeed: React.FC = () => {
     </div>
   );
 
+  const handleClick = (e: React.MouseEvent, activity: Activity) => {
+  e.preventDefault();
+
+  const isPost = activity.type === 'post';
+  const url = isPost
+    ? activity.url
+    : activity.postUrl
+    ? `${activity.postUrl}#comments`
+    : '#';
+
+  router.visit(url, {
+    onSuccess: () => {
+      setTimeout(() => {
+        if (isPost) {
+          // 📝 Post clicked — scroll to top
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        } else {
+          // 💬 Comment clicked — scroll to comments section
+          const commentsEl = document.getElementById('comments');
+          if (commentsEl) {
+            commentsEl.scrollIntoView({ behavior: 'smooth' });
+          }
+        }
+      }, 200); // short delay to let page render
+    },
+  });
+};
+
+
   return (
     <div className="rounded-lg !pb-4 !mt-6">
       <h3 className="font-semibold !mb-2">Recent Activity</h3>
@@ -87,20 +117,24 @@ const RecentActivityFeed: React.FC = () => {
           {activities.map((activity, index) => (
             <li key={index}>
               <a
-                href={activity.type === 'post' ? activity.url : activity.postUrl || '#'}
-                onClick={(e) => {
-                  e.preventDefault();
-                  router.visit(activity.type === 'post' ? activity.url : activity.postUrl || '#');
-                  window.scrollTo({ top: 0, behavior: 'smooth' });
-                }}
+                href={
+                  activity.type === 'post'
+                    ? activity.url
+                    : activity.postUrl || '#'
+                }
+                onClick={(e) => handleClick(e, activity)}
                 className="block w-full text-left !px-2 !py-1 rounded hover:bg-[#5800FF]/20"
               >
                 <span className="font-medium">
                   {activity.type === 'post'
                     ? `📝 New post: ${activity.title}`
-                    : `💬 New comment to: ${activity.postTitle || 'unknown post'}`}
+                    : `💬 New comment to: ${
+                        activity.postTitle ?? 'unknown post'
+                      }`}
                 </span>
-                <span className="text-xs opacity-60 block">{activity.createdAt}</span>
+                <span className="text-xs opacity-60 block">
+                  {activity.createdAt}
+                </span>
               </a>
             </li>
           ))}

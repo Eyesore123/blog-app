@@ -768,7 +768,7 @@ const postUrl = `/posts/${post.id}`;
   </button>
 
   {showComments && (
-    <div className="!mt-3 md:!mt-4 !space-y-3 md:!space-y-4 w-full">
+    <div id="comments" className="!mt-3 md:!mt-4 !space-y-3 md:!space-y-4 w-full">
       {comments.length > 0 ? (
         getTopLevelComments().map(comment => renderComment(comment))
       ) : (
