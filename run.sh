@@ -19,7 +19,9 @@ php artisan storage:link || true
 
 # php artisan migrate --env=local --path=database/migrations/2025_10_04_104903_create_news_table.php --force
 
-php artisan migrate --env=local --path=database/migrations/2025_10_04_193349_add_display_name_to_comments_table.php --force
+# php artisan migrate --env=local --path=database/migrations/2025_10_04_193349_add_display_name_to_comments_table.php --force
+
+php artisan migrate --env=local --path=database/migrations/2025_10_07_044758_add_sort_order_to_trivia_table.php --force
 
 # run the rest of the migrations
 php artisan migrate --force || true

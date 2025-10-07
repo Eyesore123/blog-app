@@ -9,5 +9,9 @@ class Trivia extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['label', 'value'];
+    protected $fillable = [
+        'label',
+        'value',
+        'sort_order',
+    ];
 }

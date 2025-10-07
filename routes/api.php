@@ -85,6 +85,7 @@ Route::get('/trivia', function () {
 Route::prefix('admin')->middleware(['auth', 'admin'])->group(function () {
     Route::get('/trivia', [TriviaController::class, 'index']);       // fetch all for admin
     Route::post('/trivia', [TriviaController::class, 'store']);      // add
+    Route::put('/trivia/reorder', [TriviaController::class, 'reorder']);
     Route::put('/trivia/{trivia}', [TriviaController::class, 'update']);  // edit
     Route::delete('/trivia/{trivia}', [TriviaController::class, 'destroy']); // delete
 });
