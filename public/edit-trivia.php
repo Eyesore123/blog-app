@@ -25,6 +25,25 @@ $password = $dbParts['pass'] ?? '';
 $conn = pg_connect("host=$host port=$port dbname=$database user=$username password=$password");
 if (!$conn) die("Connection failed: " . pg_last_error());
 
+// Auto-fix sort_order if all are zero
+$checkResult = pg_query($conn, "SELECT COUNT(*) AS total, SUM(CASE WHEN sort_order = 0 THEN 1 ELSE 0 END) AS zero_count FROM trivia");
+$checkData = pg_fetch_assoc($checkResult);
+
+if ($checkData && $checkData['total'] > 0 && $checkData['total'] == $checkData['zero_count']) {
+    // Assign sequential sort_order values
+    $fixQuery = "
+        WITH ordered AS (
+            SELECT id, ROW_NUMBER() OVER (ORDER BY id) AS rn
+            FROM trivia
+        )
+        UPDATE trivia
+        SET sort_order = ordered.rn
+        FROM ordered
+        WHERE trivia.id = ordered.id;
+    ";
+    pg_query($conn, $fixQuery);
+}
+
 // ============================
 //  Handle Form Actions
 // ============================
