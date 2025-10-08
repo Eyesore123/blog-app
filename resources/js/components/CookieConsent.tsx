@@ -63,13 +63,14 @@ export default function CookieConsent() {
 
             <div className="space-y-2">
               <label className="flex items-center !space-x-2">
-                <input type="checkbox" checked disabled className="cursor-not-allowed" />
+                <input type="checkbox" name='necessary' checked disabled className="cursor-not-allowed" />
                 <span>Necessary cookies (required)</span>
               </label>
 
               <label className="flex items-center !space-x-2">
                 <input
                   type="checkbox"
+                  name='optional'
                   checked={settings.optional}
                   onChange={(e) =>
                     setSettings({ ...settings, optional: e.target.checked })

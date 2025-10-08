@@ -3,7 +3,7 @@ import React from "react";
 export default function Spinner({ size = 72 }: { size?: number }) {
   return (
     <div
-      className="flex items-center justify-center"
+      className="flex items-center justify-center z-50"
       style={{
         width: size,
         height: size,
