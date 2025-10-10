@@ -670,27 +670,86 @@ const postUrl = `/posts/${post.id}`;
   </div>
 )}
 
-  <ReactMarkdown children={post.content || '(No content)'} components={{ p: ({ node, ...props }) => ( <p className="!text-sm md:!text-base 2xl:!text-lg !mb-4 !mt-2 md:!min-w-[340px] max-w-[340px] md:max-w-[500px] xl:max-w-[600px] xl:!pr-8 2xl:!pr-0 2xl:max-w-[900px] break-words" {...props} /> ), ul: ({ node, ...props }) => <ul className="list-disc !ml-4 !mb-4" {...props} />, ol: ({ node, ...props }) => <ol className="list-decimal !ml-4 !mb-4" {...props} />, li: ({ node, ...props }) => ( <li className="!mb-2 !ml-4 max-w-[280px] md:max-w-[500px] xl:max-w-[700px] 2xl:max-w-[900px]" {...props} /> ), a: ({ node, ...props }) => ( <a className="text-purple-400 hover:text-white transition-colors" {...props} 
+  <ReactMarkdown
+  children={post.content || '(No content)'}
+  components={{
+    p: ({ node, ...props }) => (
+      <p
+        className="
+          !text-sm md:!text-base 2xl:!text-lg
+          !mb-4 !mt-2
+          md:!min-w-[340px] max-w-[340px]
+          md:max-w-[500px] xl:max-w-[600px]
+          xl:!pr-8 2xl:!pr-0 2xl:max-w-[900px]
+          break-words
+        "
+        {...props}
       />
     ),
+
+    ul: ({ node, ...props }) => (
+      <ul className="list-disc !ml-4 !mb-4" {...props} />
+    ),
+
+    ol: ({ node, ...props }) => (
+      <ol className="list-decimal !ml-4 !mb-4" {...props} />
+    ),
+
+    li: ({ node, ...props }) => (
+      <li className="
+        !mb-2 !ml-4
+        max-w-[280px] md:max-w-[500px]
+        xl:max-w-[700px] 2xl:max-w-[900px]
+      " {...props} />
+    ),
+
+    a: ({ node, ...props }) => (
+      <a
+        className="text-purple-400 hover:text-white transition-colors break-words"
+        {...props}
+      />
+    ),
+
     strong: ({ node, ...props }) => (
-      <strong className="!mt-4 font-bold max-w-[340px] md:max-w-[500px] xl:max-w-[700px] 2xl:max-w-[900px]" {...props} />
+      <strong
+        className="!mt-4 font-bold max-w-[340px] md:max-w-[500px] xl:max-w-[700px] 2xl:max-w-[900px]"
+        {...props}
+      />
     ),
+
     em: ({ node, ...props }) => <em className="italic" {...props} />,
+
     blockquote: ({ node, ...props }) => (
-      <blockquote className="!border-l-4 border-gray-300 !pl-4 italic text-gray-600 !mb-4 max-w-[340px] md:max-w-[500px] xl:max-w-[700px] 2xl:max-w-[900px]" {...props} />
+      <blockquote
+        className="
+          !border-l-4 border-gray-300 !pl-4 italic text-gray-600
+          !mb-4 max-w-[340px] md:max-w-[500px]
+          xl:max-w-[700px] 2xl:max-w-[900px]
+        "
+        {...props}
+      />
     ),
+
     code: ({ node, inline, className, children, ...props }) => {
       if (inline) {
         return (
-          <code className="text-sm !px-1 !py-0.5 rounded break-words whitespace-pre-wrap" {...props}>
+          <code
+            className="text-sm !px-1 !py-0.5 rounded break-words whitespace-pre-wrap"
+            {...props}
+          >
             {children}
           </code>
         );
       }
 
       return (
-        <pre className="break-words whitespace-pre-wrap !p-4 rounded text-sm max-w-[340px] md:max-w-[500px] xl:max-w-[700px] 2xl:max-w-[900px]">
+        <pre
+          className="
+            break-words whitespace-pre-wrap !p-4 rounded text-sm
+            max-w-[340px] md:max-w-[500px]
+            xl:max-w-[700px] 2xl:max-w-[900px]
+          "
+        >
           <code className={className} {...props}>
             {children}
           </code>
@@ -698,27 +757,26 @@ const postUrl = `/posts/${post.id}`;
       );
     },
 
-    // Image support with fallback
     img: ({ node, ...props }) => (
-    <figure className="!mt-2 !mb-2 md:!mb-8 md:!mt-8 text-center">
-      <img
-        {...props}
-        className="max-w-full h-auto rounded-lg mx-auto"
-        alt={props.alt || "Image"}
-        onError={(e) => {
-          e.currentTarget.src = '/placeholder_image.svg';
-        }}
-      />
-      {props.alt && (
-        <figcaption className="text-sm text-gray-500 !mt-2 italic">
-          {props.alt}
-        </figcaption>
-      )}
-    </figure>
-  ),
+      <figure className="!mt-2 !mb-2 md:!mt-8 md:!mb-8 text-center">
+        <img
+          {...props}
+          className="max-w-full h-auto rounded-lg mx-auto"
+          alt={props.alt || "Image"}
+          onError={(e) => {
+            e.currentTarget.src = '/placeholder_image.svg';
+          }}
+        />
+        {props.alt && (
+          <figcaption className="text-sm text-gray-500 !mt-2 italic">
+            {props.alt}
+          </figcaption>
+        )}
+      </figure>
+    ),
+  }}
+/>
 
-    }}
-  />
       
       <div className="text-xs md:text-sm flex flex-col justify-center items-center  md:justify-start md:items-start text-gray-500 !mt-3 !pt-4 md:!pt-6 !space-y-1 border-t border-[#5800FF]/20">
         {post.created_at &&  (
