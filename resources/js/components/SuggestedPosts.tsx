@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "@inertiajs/react";
 import { useTheme } from "@/context/ThemeContext";
+import Spinner from "./Spinner4";
 
 type SuggestedPost = {
   id: number;
@@ -11,6 +12,8 @@ type SuggestedPost = {
 
 export default function SuggestedPosts({ slug }: { slug: string }) {
   const [suggested, setSuggested] = useState<SuggestedPost[]>([]);
+  const [loadingImages, setLoadingImages] = useState<Record<number, boolean>>({});
+  const [loading, setLoading] = useState(true);
   const { theme } = useTheme();
 
   useEffect(() => {
@@ -19,60 +22,108 @@ export default function SuggestedPosts({ slug }: { slug: string }) {
         const res = await fetch(`/posts/${slug}/suggested`);
         const data: SuggestedPost[] = await res.json();
 
-        // Shuffle using Fisher–Yates
+        // Shuffle + remove duplicates
         const shuffled = [...data];
         for (let i = shuffled.length - 1; i > 0; i--) {
           const j = Math.floor(Math.random() * (i + 1));
           [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
         }
 
-        // Remove duplicates by id
         const unique = Array.from(new Map(shuffled.map(p => [p.id, p])).values());
+        const finalPosts = unique.slice(0, 3);
 
-        // Only take up to 3
-        setSuggested(unique.slice(0, 3));
+        // Initialize image loading states
+        const initial: Record<number, boolean> = {};
+        finalPosts.forEach(p => (initial[p.id] = true));
+        setLoadingImages(initial);
+
+        setSuggested(finalPosts);
       } catch (error) {
         console.error("Error fetching suggested posts:", error);
+      } finally {
+        // show spinner briefly even if fetch is fast
+        setTimeout(() => setLoading(false), 0);
       }
     };
 
     fetchSuggested();
   }, [slug]);
 
-  const handleImgError = (e: React.SyntheticEvent<HTMLImageElement, Event>) => {
-    e.currentTarget.onerror = null;
-    e.currentTarget.src = "/fallbackimage.jpg";
+  const handleImgLoad = (id: number) => {
+    setTimeout(() => {
+      setLoadingImages(prev => ({ ...prev, [id]: false }));
+    }, 300);
   };
 
-  if (!suggested.length) return null; // parent handles the fallback message
+  const handleImgError = (
+    e: React.SyntheticEvent<HTMLImageElement, Event>,
+    id: number
+  ) => {
+    e.currentTarget.onerror = null;
+    e.currentTarget.src = "/favicon.png"; // fallback image
+    setLoadingImages(prev => ({ ...prev, [id]: false }));
+  };
+
+  // Global spinner (before any data loaded)
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center w-full !py-8">
+        <Spinner size={48} />
+      </div>
+    );
+  }
+
+  if (!suggested.length) return null;
 
   return (
-    <div className="w-full flex flex-col items-center md:items-start !mt-6 md:!mt-8 !pt-4 md:!pt-6 border-t border-[#5800FF]/20 2xl:!ml-32 xl:w-4/5">
+    <div className="w-full flex flex-col items-center md:items-start !mt-6 md:!mt-8 !pt-4 md:!pt-6 border-t border-[#5800FF]/20 2xl:!ml-32 xl:!w-4/5">
       <h3
-        className={`font-semibold !text-lg lg:!text-2xl xl:!text-3xl ${
+        className={`font-semibold text-lg lg:text-2xl xl:text-3xl ${
           theme === "light" ? "text-black" : "text-white"
         } !mb-6 lg:!mb-14 sm:!pl-10`}
       >
         Suggested posts for you:
       </h3>
+
       <ul className="flex flex-col !gap-4 w-full">
-        {suggested.map((post) => (
+        {suggested.map(post => (
           <li
             key={post.id}
             className="flex items-center bg-[#5800FF]/10 rounded-lg shadow !p-3 !pl-10 hover:shadow-lg transition-shadow w-full"
           >
-            <Link href={`/posts/${post.slug}`} className="flex items-center w-full" onClick={(e) => window.scrollTo({ top: 0, behavior: 'smooth' })}>
-              <img
-                src={post.image_path ? `/storage/${post.image_path}` : "/fallbackimage.jpg"}
-                alt={post.title}
-                onError={handleImgError}
-                className="!w-14 !h-14 md:!w-16 md:!h-16 object-cover rounded-full bg-white/20 !mr-4"
-                loading="lazy"
-              />
+            <Link
+              href={`/posts/${post.slug}`}
+              className="flex items-center w-full"
+              onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+            >
+              <div className="relative !w-14 !h-14 md:!w-16 md:!h-16 !mr-4 flex items-center justify-center">
+                {/* Spinner centered */}
+                {loadingImages[post.id] && (
+                  <div className="absolute inset-0 flex items-center justify-center bg-black/10 rounded-full z-10">
+                    <Spinner size={22} />
+                  </div>
+                )}
+
+                {/* Image with smooth fade-in, fallback to favicon.png */}
+                <img
+                  src={
+                    post.image_path
+                      ? `/storage/${post.image_path}`
+                      : "/favicon.png"
+                  }
+                  alt={post.title}
+                  onLoad={() => handleImgLoad(post.id)}
+                  onError={e => handleImgError(e, post.id)}
+                  className={`object-cover rounded-full w-full h-full transition-opacity duration-700 ${
+                    loadingImages[post.id] ? "opacity-0" : "opacity-100"
+                  }`}
+                />
+              </div>
+
               <span
                 className={`${
                   theme === "light" ? "text-black" : "text-white"
-                } font-medium hover:underline text-sm md:text-base line-clamp-2 !ml-6`}
+                } font-medium hover:underline text-sm md:text-base !line-clamp-2 !ml-6`}
               >
                 {post.title}
               </span>

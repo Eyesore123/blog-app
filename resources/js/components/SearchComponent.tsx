@@ -63,6 +63,7 @@ const SearchComponent: React.FC<SearchComponentProps> = ({ posts = [] }) => {
       <h3 className="font-semibold !mb-2">Search Posts</h3>
       <input
         type="text"
+        name="search"
         value={query}
         onChange={(e) => setQuery(e.target.value)}
         placeholder="Search by title or topic"

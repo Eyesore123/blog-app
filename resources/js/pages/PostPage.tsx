@@ -256,7 +256,7 @@ const PostPage: React.FC<PostPageProps> = ({ post }) => {
                   showComments={true}
                 />
                   {post.slug ? (
-                <SuggestedPosts slug={post.slug} />
+                <SuggestedPosts slug={post.slug || ""} />
               ) : (
                 <div>Check out my other posts!</div>
               )}
