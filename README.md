@@ -6,9 +6,7 @@
 
 ## Introduction
 
-- This is a blog app that is used in conjunction with my portfolio site. Work in progress!
-
-- Now I'm working on a news controller which lets me write news to users dynamically. 
+- This is a blog app that is used in conjunction with my portfolio site. Work in progress! 
 
 This app works like a basic blog app: it shows posts and comments. Posts can be searched by title and topic. Posts also can be searched using the dropdown menu. There are archive pages which show all the posts for each year (paginated). Posts use tags (optional) and posts can be filtered by tags just by clicking a tag on the post.
 
