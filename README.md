@@ -54,6 +54,11 @@ Scroll-to-top button is on the bottom right corner to increase accessibility.
 
 The fanciest stylistic decision is the use of framer-motion in the unemployment counter component. When a user gives a virtual hug, it sends hearts flying towards the top of the screen.
 
+Post texts use React Markdown for styles. Different viewports are taken into account so that text renders differently for different viewports
+
+Blog posts can be written with regular markdown, and blog posts that get sent look good also on email markdown. Markdowns in
+posts and emails do not look exactly the same, but differences are subtle. The biggest difference in terms of regular use is that quotations in posts need to written without backticks, because email markdown recognizes backticks as quotation marks, but React markdown doesn't (it starts generating extra line breaks).
+
 ## Error handling + backend
 
 Images use a fallback image in case the image is not found so there should be an image shown even when the requested resource is not available.
@@ -74,10 +79,9 @@ Automated backups - Php scripts are used for controlling backups. Cron jobs are 
 
 Providers are used for alerts and confirmations. I added a markdown editor for posts to improve the styling of the posts. Perhaps I could add another editor for comments, but it was quite bothersome to get markdown to work properly for posts alone so I probably won't be adding any new editors.
 
-Infobanner component: instead of typing text manually to code and updating text with each deployment, admins can use backend route
-and backend script to toggle infotext component and change text dynamically.
+Infobanner component: instead of typing text manually to code and updating text with each deployment, admins can use backend route and backend script to toggle infotext component and change text dynamically.
 
-Sitemap generator: sitemap is being generated with each new deployment and put into public folder.
+Sitemap generator: sitemap is being generated with each new deployment and put into public folder with generatesitemap command. This makes the deployment easier. And because it uses Laravel's built-in mechanism for sitemap creation, generated sitemaps are better than what you would get using other methods, like website crawlers (Laravel has access to routes etc.).
 
 # Emails & workers
 
@@ -173,12 +177,11 @@ Portgres admin panel looks nice:
 
 ## Issues
 
-- Markdown editor needs some work.
 - When a user logs in to add a comment, it takes user back to main page. I was wondering if that could be improved,
 similar to how History.back() sends to the exact same page location.
 - Flash messages are not working properly so I made a workaround for pop-ups.
 - Admin can create and fetch sketches of posts, but sketches are separate from upload panel so the UI is not the most intuitive, and currently it's not filling all the fields
-- Aside section is a bit heavy and can disturb the function called page scroll: when user clicks on a link, the page might stop going all the way up when the aside part is still loading. So instead of page scrolling all the way up, it might stop somewhere in between in some instances.
+- Aside section is a bit heavy and can disturb the function-called page scroll: when user clicks on a link, the page might stop going all the way up when the aside part is still loading. So instead of page scrolling all the way up, it might stop somewhere in between in some instances.
 
 ## Testing
 
