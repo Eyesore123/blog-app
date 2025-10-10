@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import { useTheme } from "../context/ThemeContext";
 import { router } from '@inertiajs/react';
 import axiosInstance from "../components/axiosInstance";
-import { on } from "events";
 
 interface NewsItem {
   id?: number;

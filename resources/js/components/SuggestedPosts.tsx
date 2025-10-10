@@ -108,7 +108,7 @@ export default function SuggestedPosts({ slug }: { slug: string }) {
                     alt={post.title}
                     onLoad={() => handleImgLoad(post.id)}
                     onError={e => handleImgError(e, post.id)}
-                    className={`w-full h-full object-cover transition-opacity duration-700 ${
+                    className={`w-full h-full object-contain transition-opacity duration-700 ${
                       loadingImages[post.id] ? "opacity-0" : "opacity-100"
                     }`}
                   />
