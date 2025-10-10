@@ -60,7 +60,6 @@ export default function SuggestedPosts({ slug }: { slug: string }) {
     setLoadingImages(prev => ({ ...prev, [id]: false }));
   };
 
-  // Global spinner before any data loads
   if (loading) {
     return (
       <div className="flex justify-center items-center w-full !py-8">
@@ -85,16 +84,15 @@ export default function SuggestedPosts({ slug }: { slug: string }) {
         {suggested.map(post => (
           <li
             key={post.id}
-            className="flex items-center bg-[#5800FF]/10 rounded-lg shadow !p-3 !pl-6 md:!pl-10 hover:shadow-lg transition-shadow w-full"
+            className="bg-[#5800FF]/10 rounded-lg shadow hover:shadow-lg transition-shadow w-full"
           >
             <Link
               href={`/posts/${post.slug}`}
-              className="flex items-center w-full group"
               onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+              className="flex items-center w-full !p-3 !pl-6 md:!pl-10 min-h-[72px] md:min-h-[90px] group"
             >
-              {/* Image container with guaranteed circular shape */}
-              <div className="relative aspect-square !w-14 md:!w-16 !mr-4 flex items-center justify-center">
-                {/* Spinner overlay */}
+              {/* Image container */}
+              <div className="relative w-[56px] h-[56px] md:w-[64px] md:h-[64px] flex-shrink-0 flex items-center justify-center !mr-4">
                 {loadingImages[post.id] && (
                   <div className="absolute inset-0 flex items-center justify-center bg-black/10 rounded-full z-10">
                     <Spinner size={22} />
@@ -112,10 +110,11 @@ export default function SuggestedPosts({ slug }: { slug: string }) {
                 />
               </div>
 
+              {/* Title */}
               <span
                 className={`${
                   theme === "light" ? "text-black" : "text-white"
-                } font-medium hover:underline text-sm md:text-base !line-clamp-2 !ml-6`}
+                } font-medium hover:underline text-sm md:text-base line-clamp-2 !ml-6`}
               >
                 {post.title}
               </span>
