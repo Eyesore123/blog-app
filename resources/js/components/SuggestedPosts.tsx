@@ -41,7 +41,6 @@ export default function SuggestedPosts({ slug }: { slug: string }) {
       } catch (error) {
         console.error("Error fetching suggested posts:", error);
       } finally {
-        // optionally show spinner briefly
         setTimeout(() => setLoading(false), 0);
       }
     };
@@ -82,37 +81,35 @@ export default function SuggestedPosts({ slug }: { slug: string }) {
         Suggested posts for you:
       </h3>
 
-      <ul className="flex flex-col !gap-4 w-full">
+      <ul className="flex flex-col gap-4 w-full">
         {suggested.map(post => (
           <li
             key={post.id}
-            className="flex items-center bg-[#5800FF]/10 rounded-lg shadow !p-3 !pl-10 hover:shadow-lg transition-shadow w-full"
+            className="flex items-center bg-[#5800FF]/10 rounded-lg shadow !p-3 !pl-6 md:!pl-10 hover:shadow-lg transition-shadow w-full"
           >
             <Link
               href={`/posts/${post.slug}`}
-              className="flex items-center w-full"
+              className="flex items-center w-full group"
               onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
             >
-              <div className="relative !w-14 !h-14 md:!w-16 md:!h-16 !mr-4 flex items-center justify-center">
-                {/* Spinner centered while image loads */}
+              {/* Image container with guaranteed circular shape */}
+              <div className="relative aspect-square !w-14 md:!w-16 !mr-4 flex items-center justify-center">
+                {/* Spinner overlay */}
                 {loadingImages[post.id] && (
                   <div className="absolute inset-0 flex items-center justify-center bg-black/10 rounded-full z-10">
                     <Spinner size={22} />
                   </div>
                 )}
 
-                {/* Inner wrapper to keep image perfectly round */}
-                <div className="w-full h-full rounded-full overflow-hidden">
-                  <img
-                    src={post.image_path ? `/storage/${post.image_path}` : "/favicon.png"}
-                    alt={post.title}
-                    onLoad={() => handleImgLoad(post.id)}
-                    onError={e => handleImgError(e, post.id)}
-                    className={`w-full h-full object-contain transition-opacity duration-700 ${
-                      loadingImages[post.id] ? "opacity-0" : "opacity-100"
-                    }`}
-                  />
-                </div>
+                <img
+                  src={post.image_path ? `/storage/${post.image_path}` : "/favicon.png"}
+                  alt={post.title}
+                  onLoad={() => handleImgLoad(post.id)}
+                  onError={e => handleImgError(e, post.id)}
+                  className={`rounded-full object-cover w-full h-full transition-opacity duration-700 ${
+                    loadingImages[post.id] ? "opacity-0" : "opacity-100"
+                  } group-hover:scale-105 transition-transform duration-500`}
+                />
               </div>
 
               <span
