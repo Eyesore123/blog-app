@@ -41,7 +41,7 @@ export default function SuggestedPosts({ slug }: { slug: string }) {
       } catch (error) {
         console.error("Error fetching suggested posts:", error);
       } finally {
-        // show spinner briefly even if fetch is fast
+        // optionally show spinner briefly
         setTimeout(() => setLoading(false), 0);
       }
     };
@@ -55,16 +55,13 @@ export default function SuggestedPosts({ slug }: { slug: string }) {
     }, 300);
   };
 
-  const handleImgError = (
-    e: React.SyntheticEvent<HTMLImageElement, Event>,
-    id: number
-  ) => {
+  const handleImgError = (e: React.SyntheticEvent<HTMLImageElement, Event>, id: number) => {
     e.currentTarget.onerror = null;
     e.currentTarget.src = "/favicon.png"; // fallback image
     setLoadingImages(prev => ({ ...prev, [id]: false }));
   };
 
-  // Global spinner (before any data loaded)
+  // Global spinner before any data loads
   if (loading) {
     return (
       <div className="flex justify-center items-center w-full !py-8">
@@ -97,27 +94,25 @@ export default function SuggestedPosts({ slug }: { slug: string }) {
               onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
             >
               <div className="relative !w-14 !h-14 md:!w-16 md:!h-16 !mr-4 flex items-center justify-center">
-                {/* Spinner centered */}
+                {/* Spinner centered while image loads */}
                 {loadingImages[post.id] && (
                   <div className="absolute inset-0 flex items-center justify-center bg-black/10 rounded-full z-10">
                     <Spinner size={22} />
                   </div>
                 )}
 
-                {/* Image with smooth fade-in, fallback to favicon.png */}
-                <img
-                  src={
-                    post.image_path
-                      ? `/storage/${post.image_path}`
-                      : "/favicon.png"
-                  }
-                  alt={post.title}
-                  onLoad={() => handleImgLoad(post.id)}
-                  onError={e => handleImgError(e, post.id)}
-                  className={`object-cover rounded-full w-full h-full transition-opacity duration-700 ${
-                    loadingImages[post.id] ? "opacity-0" : "opacity-100"
-                  }`}
-                />
+                {/* Inner wrapper to keep image perfectly round */}
+                <div className="w-full h-full rounded-full overflow-hidden">
+                  <img
+                    src={post.image_path ? `/storage/${post.image_path}` : "/favicon.png"}
+                    alt={post.title}
+                    onLoad={() => handleImgLoad(post.id)}
+                    onError={e => handleImgError(e, post.id)}
+                    className={`w-full h-full object-cover transition-opacity duration-700 ${
+                      loadingImages[post.id] ? "opacity-0" : "opacity-100"
+                    }`}
+                  />
+                </div>
               </div>
 
               <span
