@@ -282,6 +282,7 @@ const handlePageInput = (e) => {
                       
                      <input
                         type="number"
+                        name="number"
                         value={inputValue}
                         onChange={(e) => setInputValue(parseInt(e.target.value))}
                         onKeyDown={handlePageInput}

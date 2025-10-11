@@ -19,6 +19,9 @@
     <link rel="canonical" href="https://blog.joniputkinen.com/">
     <meta name="theme-color" content="#ffffff">
     <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
+    <meta http-equiv="X-Content-Type-Options" content="nosniff">
+    <meta name="description" content="A blog about web development, coding, personal projects and life in general. 
+    Written by Joni Putkinen.">
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=instrument-sans:400,500,600" rel="stylesheet" />
 

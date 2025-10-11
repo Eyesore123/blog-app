@@ -84,13 +84,13 @@ export default function CookieConsent() {
           <div className="flex flex-col md:flex-row !space-y-2 md:!space-y-0 md:!space-x-3">
             <button
               onClick={() => saveConsent(settings)}
-              className="bg-[#5800FF] hover:bg-[#E900FF] text-white !px-4 !py-2 rounded shadow-md transition-colors"
+              className="bg-[#5800FF] hover:bg-[#E900FF] hover:cursor-pointer text-white !px-4 !py-2 rounded shadow-md transition-colors"
             >
               Accept
             </button>
             <button
               onClick={() => saveConsent({ necessary: true, optional: false })}
-              className="bg-[#E900FF] hover:bg-[#5800FF] text-white !px-4 !py-2 rounded shadow-md transition-colors"
+              className="bg-[#E900FF] hover:bg-[#5800FF] hover:cursor-pointer text-white !px-4 !py-2 rounded shadow-md transition-colors"
             >
               Decline optional
             </button>
