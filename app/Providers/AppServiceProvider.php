@@ -23,28 +23,32 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-         if (env('APP_ENV') !== 'local') {
+        // Force HTTPS in production
+        if (env('APP_ENV') !== 'local') {
             URL::forceScheme('https');
         }
 
-            Inertia::share([
-            'flash' => function () {
-                return [
-                    'alert' => session('alert'),
-                ];
-            },
+        // Share global data with Inertia
+        Inertia::share([
+            'flash' => fn () => [
+                'alert' => session('alert'),
+            ],
+
+            'isCrawler' => fn () => request()->attributes->get('isCrawler', false),
+
+            // If you later add cookie consent or other globals, include them here
             // 'cookieConsent' => fn () => app('cookieConsent'),
         ]);
 
-        // Register custom Blade directive
+        // Register custom Blade directive for Vite
         Blade::directive('viteCustom', function ($expression) {
             return "<?php echo \App\Helpers\ViteHelper::viteAssets($expression); ?>";
         });
-        
-        // Check if the manifest exists in the .vite directory and copy it if needed
+
+        // Copy .vite manifest if it exists but the main one doesn't
         $manifestPath = public_path('build/manifest.json');
         $altManifestPath = public_path('build/.vite/manifest.json');
-        
+
         if (!file_exists($manifestPath) && file_exists($altManifestPath)) {
             File::copy($altManifestPath, $manifestPath);
         }

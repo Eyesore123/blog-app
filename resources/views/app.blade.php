@@ -18,10 +18,21 @@
     <link rel="manifest" href="/site.webmanifest">
     <link rel="canonical" href="https://blog.joniputkinen.com/">
     <meta name="theme-color" content="#ffffff">
-    <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
-    <meta http-equiv="X-Content-Type-Options" content="nosniff">
+
+    <!-- SEO meta -->
     <meta name="description" content="A blog about web development, coding, personal projects and life in general. 
     Written by Joni Putkinen.">
+    <meta name="robots" content="index, follow">
+    <meta name="keywords" content="web development, web developer, Joni Putkinen">
+
+    <!-- Open Graph -->
+    <meta property="og:title" content="Joni's Blog | Joni Putkinen - Web Developer & Designer">
+    <meta property="og:description" content="Web developer and designer based in Rantasalmi, Finland. Specializing in creating modern, responsive websites and applications.">
+    <meta property="og:image" content="https://blog.joniputkinen.com/fallbackimage.jpg">
+
+    <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
+    <meta http-equiv="X-Content-Type-Options" content="nosniff">
+
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=instrument-sans:400,500,600" rel="stylesheet" />
 
@@ -46,6 +57,20 @@
 </head>
 
 <body class="font-sans antialiased">
+    {{-- Add H1 for crawlers ONLY if request is from a bot --}}
+    @if(request()->attributes->get('isCrawler'))
+        <h1 class="sr-only">Joni's Blog | Joni Putkinen – Web Developer & Designer</h1>
+    @endif
+
+    <!-- Fallback content for users without JavaScript -->
+    <noscript>
+        <div style="padding: 20px; text-align: center;">
+            <h2>Joni's Blog | Joni Putkinen - Web Developer & Designer</h2>
+            <p>A blog about web development, coding, personal projects and life in general.</p>
+            <p>Please enable JavaScript for the full experience.</p>
+        </div>
+    </noscript>
+    
     @inertia
 </body>
 

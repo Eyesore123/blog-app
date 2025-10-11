@@ -14,6 +14,8 @@ use App\Http\Middleware\HttpsRedirect;
 use App\Http\Middleware\HandleCors;
 use App\Http\Middleware\CheckCookieContent;
 use App\Http\Middleware\RedirectOldDomain;
+use App\Http\Middleware\SecurityHeaders;
+use App\Http\Middleware\DetectCrawler;
 use App\Http\Middleware\AssignAnonId;
 
 class Kernel extends HttpKernel
@@ -21,6 +23,8 @@ class Kernel extends HttpKernel
     protected $middlewareGroups = [
     'web' => [
         RedirectOldDomain::class,
+        DetectCrawler::class,
+        SecurityHeaders::class,
         EncryptCookies::class,
         \Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse::class,
         \Illuminate\Session\Middleware\StartSession::class,
