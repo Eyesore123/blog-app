@@ -10,7 +10,7 @@
         html.dark { background-color: oklch(0.145 0 0); }
     </style>
 
-    <title inertia>{{ config('app.name', 'Laravel') }}</title>
+    <title inertia>{{ config('app.name', 'Joni\'s Blog') }}</title>
 
     <link rel="icon" href="/favicon.ico" sizes="any">
     <link rel="icon" href="/favicon.png" type="image/png">
@@ -32,6 +32,11 @@
 
     <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
     <meta http-equiv="X-Content-Type-Options" content="nosniff">
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:site" content="@PutkinenJoni">
+    <meta name="twitter:creator" content="@PutkinenJoni">
 
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=instrument-sans:400,500,600" rel="stylesheet" />
@@ -57,10 +62,12 @@
 </head>
 
 <body class="font-sans antialiased">
-    {{-- Add H1 for crawlers ONLY if request is from a bot --}}
     @if(request()->attributes->get('isCrawler'))
-        <h1 class="sr-only">Joni's Blog | Joni Putkinen – Web Developer & Designer</h1>
+    <h1 class="sr-only">
+        @yield('botH1', "Joni's Blog | Joni Putkinen – Web Developer & Designer")
+    </h1>
     @endif
+
 
     <!-- Fallback content for users without JavaScript -->
     <noscript>

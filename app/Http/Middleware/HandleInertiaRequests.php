@@ -22,6 +22,7 @@ class HandleInertiaRequests extends Middleware
 
         return [
             ...parent::share($request),
+
             'name' => config('app.name'),
             'quote' => [
                 'message' => trim($message),
@@ -36,12 +37,15 @@ class HandleInertiaRequests extends Middleware
             ],
             'sidebarOpen' => $request->cookie('sidebar_state', 'true') === 'true',
             'flash' => [
-            'success' => $request->session()->get('success'),
-            'error' => $request->session()->get('error'),
-            'status' => $request->session()->get('status'),
-            'message' => $request->session()->get('message'),
-        ],
+                'success' => $request->session()->get('success'),
+                'error' => $request->session()->get('error'),
+                'status' => $request->session()->get('status'),
+                'message' => $request->session()->get('message'),
+            ],
 
+            // Crawler detection
+            'isCrawler' => $request->attributes->get('isCrawler', false),
         ];
     }
+
 }

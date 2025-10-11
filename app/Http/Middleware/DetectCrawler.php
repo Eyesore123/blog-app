@@ -7,25 +7,22 @@ use Illuminate\Http\Request;
 
 class DetectCrawler
 {
-    protected $bots = [
-        'googlebot',
-        'bingbot',
-        'slurp',
-        'duckduckbot',
-        'baiduspider',
-        'yandex',
-        'sogou',
-        'exabot',
-        'facebot',
-        'ia_archiver',
+    protected $crawlers = [
+        'googlebot', 'bingbot', 'slurp', 'duckduckbot', 'baiduspider', 'yandex', 'sogou', 'exabot', 'facebot', 'ia_archiver'
     ];
 
     public function handle(Request $request, Closure $next)
     {
-        $userAgent = strtolower($request->userAgent());
-        $isCrawler = collect($this->bots)->contains(fn($bot) => str_contains($userAgent, $bot));
+        $userAgent = strtolower($request->header('User-Agent', ''));
 
-        // Store crawler info in request for Inertia and views
+        $isCrawler = false;
+        foreach ($this->crawlers as $crawler) {
+            if (str_contains($userAgent, $crawler)) {
+                $isCrawler = true;
+                break;
+            }
+        }
+
         $request->attributes->set('isCrawler', $isCrawler);
 
         return $next($request);
