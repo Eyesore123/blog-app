@@ -174,7 +174,7 @@ const handlePageInput = (e) => {
         
         <main className="!p-4 md:!p-8 !gap-1 main relative">
            {/* Visually hidden H1 for SEO */}
-          <h1 className="sr-only">Joni's Blog – Latest Posts | Joni Putkinen, Web Developer</h1>
+          <h1 className="sr-only">Joni's Blog – Latest blog posts | Joni Putkinen, Web Developer</h1>
           <div className="flex flex-col lg:flex-row gap-4 md:gap-30 custom-2xl-gap items-center lg:items-start lg:!pt-1 2xl:!pt-1">
             <aside className="lg:block w-full md:!w-2/3 xl:!w-2/3 xl:!ml-10  xl:max-w-120 2xl:!ml-30 xl:!mr-10 !mb-8 lg:!mb-0 mx-auto rounded-lg">
               <div className={`lg:top-24 !space-y-4 md:!space-y-6 flexcontainer w-full lg:!w-80 xl:!w-120 bg-[var(--bg-primary)] lg:!mt-0 rounded-lg`}>

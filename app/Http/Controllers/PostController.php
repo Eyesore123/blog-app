@@ -59,7 +59,7 @@ class PostController extends Controller
     public function index(Request $request)
 {
     $topicFilter = $request->query('topic');
-    $props = [];
+    $props['botH1'] = "Joni's Blog – Latest Posts | Joni Putkinen, Web Developer";
 
     // Pagination query for main posts
     $query = Post::with('tags');

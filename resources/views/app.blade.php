@@ -20,8 +20,7 @@
     <meta name="theme-color" content="#ffffff">
 
     <!-- SEO meta -->
-    <meta name="description" content="A blog about web development, coding, personal projects and life in general. 
-    Written by Joni Putkinen.">
+    <meta name="description" content="A blog about web development, coding, personal projects and life in general. Written by Joni Putkinen.">
     <meta name="robots" content="index, follow">
     <meta name="keywords" content="web development, web developer, Joni Putkinen">
 
@@ -62,16 +61,17 @@
 </head>
 
 <body class="font-sans antialiased">
-    @if(request()->attributes->get('isCrawler'))
-    <h1 class="sr-only">
-        @yield('botH1', "Joni's Blog | Joni Putkinen – Web Developer & Designer")
-    </h1>
-    @endif
 
+    {{-- Blade H1 for crawlers on pages without React H1 --}}
+    @if(request()->attributes->get('isCrawler') && empty($__env->yieldContent('botH1')))
+        <h1 class="sr-only">
+            @yield('botH1', "Latest posts from Joni's Blog | Joni Putkinen – Web Developer & Designer")
+        </h1>
+    @endif
 
     <!-- Fallback content for users without JavaScript -->
     <noscript>
-        <div style="padding: 20px; text-align: center;">
+        <div style="padding: 20px; text-align: center; margin-top: 20px;">
             <h2>Joni's Blog | Joni Putkinen - Web Developer & Designer</h2>
             <p>A blog about web development, coding, personal projects and life in general.</p>
             <p>Please enable JavaScript for the full experience.</p>
