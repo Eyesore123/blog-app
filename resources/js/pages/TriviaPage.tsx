@@ -115,7 +115,7 @@ export default function TriviaPage() {
             </p>
           ) : (
             <ul
-              className="list-disc list-inside mx-auto text-center !mb-6 !text-md lg:!text-lg space-y-4 flex flex-col items-center"
+              className="!ist-disc !ist-inside !x-auto text-center !mb-6 !text-md lg:!text-lg !pace-y-4 flex flex-col items-center"
             >
               {trivia.map((item, index) => (
                 <li
