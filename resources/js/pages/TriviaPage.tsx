@@ -53,11 +53,11 @@ export default function TriviaPage() {
             Trivia About Me
           </h1>
 
-          {/* Image section below header */}
+          {/* ✅ Image section */}
           <div
             className={`relative w-full flex justify-center items-center !my-10 transition-all duration-300`}
             style={{
-              minHeight: imageLoading ? "200px" : "auto", // space for spinner
+              minHeight: imageLoading ? "200px" : "auto", // keeps spinner area spaced
             }}
           >
             {imageLoading && !imageError && (
@@ -96,7 +96,6 @@ export default function TriviaPage() {
             )}
           </div>
 
-
           {/* ✅ Trivia section */}
           {loading ? (
             <p
@@ -116,12 +115,12 @@ export default function TriviaPage() {
             </p>
           ) : (
             <ul
-              className="list-disc list-inside text-center !mb-6 !text-md lg:!text-lg space-y-3"
+              className="list-disc list-inside mx-auto text-center !mb-6 !text-md lg:!text-lg space-y-4 flex flex-col items-center"
             >
               {trivia.map((item, index) => (
                 <li
                   key={item.id ?? index}
-                  className={`inline-block text-left !mb-4 ${
+                  className={`w-full md:w-3/4 lg:w-2/3 text-left leading-relaxed break-words ${
                     theme === "light" ? "text-black" : "text-white"
                   }`}
                 >
