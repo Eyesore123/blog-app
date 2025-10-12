@@ -115,11 +115,13 @@ export default function TriviaPage() {
               No trivia added yet.
             </p>
           ) : (
-            <ul className="list-disc !ml-6 !mb-6 !text-md lg:!text-lg !space-y-3">
+            <ul
+              className="list-disc list-inside text-center !mb-6 !text-md lg:!text-lg space-y-3"
+            >
               {trivia.map((item, index) => (
                 <li
                   key={item.id ?? index}
-                  className={`!mb-4 ${
+                  className={`inline-block text-left !mb-4 ${
                     theme === "light" ? "text-black" : "text-white"
                   }`}
                 >
