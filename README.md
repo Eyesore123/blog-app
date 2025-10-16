@@ -6,7 +6,7 @@
 
 ## Introduction
 
-- This is a blog app that is used in conjunction with my portfolio site. Work in progress! 
+- This is a blog app that is used in conjunction with my portfolio site. Work in progress!
 
 This app works like a basic blog app: it shows posts and comments. Posts can be searched by title and topic. Posts also can be searched using the dropdown menu. There are archive pages which show all the posts for each year (paginated). Posts use tags (optional) and posts can be filtered by tags just by clicking a tag on the post.
 
@@ -34,7 +34,6 @@ Admin has an additional panel (front-end) in admin dashboard that lets admin sen
 
 Admin can store images and videos from admin dashboard to a database. Admin can also fetch images and videos from db and show them as a list and delete items.
 
-
 ## Styles
 
 App uses only a few colors that I've personally picked to match the colors of my portfolio site, including: #000000; #ffffff; #ffc600; #e900ff; transparent: rgba(255, 255, 255, 0.05); linear-gradient(to right, #e900ff, #ffc600); linear-gradient(to right, #5800ff, #e900ff);
@@ -61,9 +60,9 @@ posts and emails do not look exactly the same, but differences are subtle. The b
 
 Images use a fallback image in case the image is not found so there should be an image shown even when the requested resource is not available.
 
-Error handling and what is shown to user depends on what causes the error. If the user is 'lost' and the requested page doesn't exist, the custom default 404 error page is shown. Errorboundary is used for error handling, but it's mostly decorative and shouldn't be triggered too often, and the same is true for exception handler. In all typical error cases user gets an error page, either served by Laravel or by custom routes and pages. 
+Error handling and what is shown to user depends on what causes the error. If the user is 'lost' and the requested page doesn't exist, the custom default 404 error page is shown. Errorboundary is used for error handling, but it's mostly decorative and shouldn't be triggered too often, and the same is true for exception handler. In all typical error cases user gets an error page, either served by Laravel or by custom routes and pages.
 
----------------------------------------------
+---
 
 Postgres admin panel is added to make the backend adjustments easier. There are two reasons for this. First, admin can make changes to values in postgres tables when production database is "locked down". No need to go change values in the database itself. Second, scripts add more robustness to the blog making it more environment-dependent. If the user decides to change host, it is easier to do that.
 
@@ -92,30 +91,30 @@ Sitemap generator: sitemap is being generated with each new deployment and put i
 Currently the most effective SEO method is the JSON-LD script that's placed inside the header:
 
 {
-  "@context": "https://schema.org",
-  "@type": "Blog",
-  "url": "https://blog.joniputkinen.com/",
-  "name": "Joni's Blog",
-  "description": "A blog about web development, coding, personal projects and life in general.",
-  "publisher": {
-    "@type": "Person",
-    "name": "Joni Putkinen"
-  }
+"@context": "https://schema.org",
+"@type": "Blog",
+"url": "https://blog.joniputkinen.com/",
+"name": "Joni's Blog",
+"description": "A blog about web development, coding, personal projects and life in general.",
+"publisher": {
+"@type": "Person",
+"name": "Joni Putkinen"
+}
 }
 
 I also have a Helmet section in each post (BlogPost.tsx) which 'sends' the JSON-LD script as schema data - this helps search engines understand the content and the individual posts better. For example, it might look something like this:
 
 {
-  "@context":"https://schema.org",
-  "@type":"BlogPosting",
-  "mainEntityOfPage":{"@type":"WebPage","@id":"..."},
-  "headline":"How to do SEO as a freelancer",
-  "description":"When you’re a freelancer, visibility is everything...",
-  "image":"/storage/uploads/...",
-  "author":{"@type":"Person","name":"Joni Putkinen"},
-  "publisher":{"@type":"Person","name":"Joni Putkinen"},
-  "datePublished":"2025-09-28T12:12:41.000000Z",
-  "dateModified":"2025-09-28T12:37:08.000000Z"
+"@context":"https://schema.org",
+"@type":"BlogPosting",
+"mainEntityOfPage":{"@type":"WebPage","@id":"..."},
+"headline":"How to do SEO as a freelancer",
+"description":"When you’re a freelancer, visibility is everything...",
+"image":"/storage/uploads/...",
+"author":{"@type":"Person","name":"Joni Putkinen"},
+"publisher":{"@type":"Person","name":"Joni Putkinen"},
+"datePublished":"2025-09-28T12:12:41.000000Z",
+"dateModified":"2025-09-28T12:37:08.000000Z"
 }
 
 Built-in sitemap generator creates a sitemap with each new deployment and places it inside public folder. Sitemap goes to Google immediately either by sending a ping from script or replacing sitemap manually on Google console. Google gets the sitemap eventually even without sending it.
@@ -176,7 +175,8 @@ Portgres admin panel looks nice:
 ## Issues
 
 - When a user logs in to add a comment, it takes user back to main page. I was wondering if that could be improved,
-similar to how History.back() sends to the exact same page location.
+  similar to how History.back() sends to the exact same page location.
+- Large images that are added to posts (inside react markdown) can get too wide on email markdown and overflow on the x-axis.
 - Flash messages are not working properly so I made a workaround for pop-ups.
 - Admin can create and fetch sketches of posts, but sketches are separate from upload panel so the UI is not the most intuitive, and currently it's not filling all the fields
 - Aside section is a bit heavy and can disturb the function-called page scroll: when user clicks on a link, the page might stop going all the way up when the aside part is still loading. So instead of page scrolling all the way up, it might stop somewhere in between in some instances.
@@ -188,6 +188,7 @@ similar to how History.back() sends to the exact same page location.
 Preparations:
 
 Make sure that you have
+
 - Node.js and node package manager installed
 - Git bash installed, preferably
 - Php and Laravel Herd installed
