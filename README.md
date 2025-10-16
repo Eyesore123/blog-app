@@ -216,7 +216,7 @@ Running a server (use two different terminals):
 After that server runs on port 8000 by default:
 http://127.0.0.1:8000
 
-Notice also that this repo is still using a lot of absolute paths. Yes, that was a stupid decision, but I was too focused on getting this blog to work so I let that happen mistakenly. If I later decide to use a custom domain, I might replace absolute paths to relative and test changes in a new branch, but hey, at least it works.
+Notice also that this repo is still using a lot of absolute paths. Yes, that was a stupid decision, but I was too focused on getting this blog to work so I let that happen mistakenly. If I later decide to use another domain, I'd have to replace absolute paths to relative and test changes in a new branch, but hey, at least it works.
 
 ## What I've learned during this project
 
